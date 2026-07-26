@@ -43,6 +43,9 @@ import {
   Bookmark,
   Maximize2,
   Minimize2,
+  Mic,
+  MicOff,
+  Undo2,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Logo } from '@/components/logo'
@@ -50,6 +53,7 @@ import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
+import { FlashcardTour } from '@/components/flashcards/flashcard-tour'
 import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { cn } from '@/lib/utils'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
@@ -67,6 +71,7 @@ import {
   type FlashcardProgress,
 } from '@/lib/flashcard-progress'
 import { sortCardsForSpacedRepetition } from '@/lib/flashcard-spaced-repetition'
+import { useFlashcardVoice, type VoiceRating } from '@/hooks/use-flashcard-voice'
 import {
   PricingEventCountdown,
   type PricingEventStatePayload,
@@ -123,6 +128,11 @@ type DeckCard = FlashcardManualCard & { _id: string; spacedProgress?: SpacedProg
 
 const FULLSCREEN_HINT_KEY = 'gdx:flashcard-fullscreen-hint'
 const FULLSCREEN_PREF_KEY = 'gdx:flashcard-fullscreen-pref'
+const VOICE_PREF_KEY = 'gdx:flashcard-voice-pref'
+
+// Quanto tempo o aviso "Ouvi: X" fica na tela — é também a janela para desfazer
+// uma avaliação que o reconhecimento entendeu errado.
+const VOICE_UNDO_MS = 2600
 
 // A ordem da fixação intensa é determinística e depende só do progresso que já
 // veio junto com os cards — dá para calcular aqui e entrar no estudo na hora,
@@ -189,6 +199,15 @@ export default function DeckPage() {
   const [fullscreenHint, setFullscreenHint] = useState(false)
   const [fullscreenPref, setFullscreenPref] = useState(false)
   const autoFullscreenRef = useRef(false)
+  // Modo voz: ligado na página antes de iniciar e mantido durante a sessão.
+  const [voicePref, setVoicePref] = useState(false)
+  const [voiceEnabled, setVoiceEnabled] = useState(false)
+  const [voiceFeedback, setVoiceFeedback] = useState<
+    { rating: 'facil' | 'equilibrado' | 'porrada'; heard: string; cardId: string } | null
+  >(null)
+  // O avanço automático vira um timer nomeado para que "Desfazer" consiga
+  // cancelá-lo antes de o card trocar embaixo do usuário.
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [showComment, setShowComment] = useState(false)
@@ -271,6 +290,7 @@ export default function DeckPage() {
     try {
       setFullscreenHint(window.localStorage.getItem(FULLSCREEN_HINT_KEY) !== 'dismissed')
       setFullscreenPref(window.localStorage.getItem(FULLSCREEN_PREF_KEY) === '1')
+      setVoicePref(window.localStorage.getItem(VOICE_PREF_KEY) === '1')
     } catch {
       setFullscreenHint(true)
     }
@@ -285,6 +305,16 @@ export default function DeckPage() {
     setFullscreenPref(prev => {
       const next = !prev
       try { window.localStorage.setItem(FULLSCREEN_PREF_KEY, next ? '1' : '0') } catch {}
+      return next
+    })
+  }, [])
+
+  const toggleVoicePref = useCallback(() => {
+    setVoicePref(prev => {
+      const next = !prev
+      try { window.localStorage.setItem(VOICE_PREF_KEY, next ? '1' : '0') } catch {}
+      // Ligar durante a sessão vale para a sessão em andamento também.
+      setVoiceEnabled(next)
       return next
     })
   }, [])
@@ -415,23 +445,34 @@ export default function DeckPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studying, currentIndex, flipped, data, fullscreen, toggleFullscreen])
 
+  // Trocar de card cancela um avanço automático pendente e limpa o aviso do
+  // modo voz — ele fala do card que ficou para trás.
+  function resetCardTransientState() {
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = null
+    }
+    setFlipped(false); setShowComment(false); setShowHint(false)
+    setScheduleFeedback(null); setVoiceFeedback(null)
+  }
+
   function goNext() {
     if (currentIndex < studyCards.length - 1) {
       setCurrentIndex(i => i + 1)
-      setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
+      resetCardTransientState()
     }
   }
   function goPrev() {
     if (currentIndex > 0) {
       setCurrentIndex(i => i - 1)
-      setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
+      resetCardTransientState()
     }
   }
   function goToIndex(index: number) {
     if (studyCards.length === 0) return
     const nextIndex = Math.max(0, Math.min(index, studyCards.length - 1))
     setCurrentIndex(nextIndex)
-    setFlipped(false); setShowComment(false); setShowHint(false); setScheduleFeedback(null)
+    resetCardTransientState()
   }
 
   // Entra no estudo imediatamente: a ordem é calculada aqui e os dados só são
@@ -449,6 +490,8 @@ export default function DeckPage() {
     setShowComment(false)
     setShowHint(false)
     setScheduleFeedback(null)
+    setVoiceFeedback(null)
+    setVoiceEnabled(voicePref)
     autoFullscreenRef.current = false
     if (fullscreenPref) setFullscreen(true)
     setStudying(true)
@@ -458,6 +501,12 @@ export default function DeckPage() {
   function exitStudy() {
     setStudying(false)
     setStudyOrder(null)
+    setVoiceEnabled(false)
+    setVoiceFeedback(null)
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = null
+    }
   }
 
   // Deslizar para trocar de card. Só entra em ação quando o gesto é claramente
@@ -504,7 +553,7 @@ export default function DeckPage() {
     return 'PORRETE'
   }
 
-  async function rate(value: 'facil' | 'equilibrado' | 'porrada') {
+  async function rate(value: 'facil' | 'equilibrado' | 'porrada', opts?: { source?: 'voice' }) {
     if (!data) return
     const card = studyCards[currentIndex]
     if (!card) return
@@ -536,8 +585,79 @@ export default function DeckPage() {
       }
     }
     if (currentIndex < studyCards.length - 1) {
-      setTimeout(() => goNext(), activeStudyMode === 'spaced' ? 850 : 250)
+      // Por voz o avanço espera a janela de "Desfazer" fechar — se o
+      // reconhecimento errou, o card ainda está na tela para corrigir.
+      const delay = opts?.source === 'voice'
+        ? VOICE_UNDO_MS
+        : activeStudyMode === 'spaced' ? 850 : 250
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = setTimeout(() => {
+        advanceTimerRef.current = null
+        goNext()
+      }, delay)
     }
+  }
+
+  // ─── Modo voz ──────────────────────────────────────────────────────────────
+  // O microfone só existe enquanto o card está no verso e ainda não foi
+  // avaliado. Fora disso (frente do card, navegando, fora do estudo) ele é
+  // desligado de verdade — nada de gravação em segundo plano.
+  const currentStudyCard = studyCards[currentIndex]
+  const currentCardId = currentStudyCard ? String(currentStudyCard._id) : null
+  const voiceListeningAllowed =
+    studying && voiceEnabled && flipped && !!currentCardId &&
+    !ratingBusyCard && !ratings[currentCardId]
+
+  const voice = useFlashcardVoice({
+    enabled: voiceListeningAllowed,
+    onRating: (rating: VoiceRating, heard: string) => {
+      if (!currentCardId) return
+      setVoiceFeedback({ rating, heard, cardId: currentCardId })
+      rate(rating, { source: 'voice' })
+    },
+  })
+
+  // O aviso "Ouvi: X" se apaga sozinho quando a janela de desfazer termina.
+  useEffect(() => {
+    if (!voiceFeedback) return
+    const timer = setTimeout(() => setVoiceFeedback(null), VOICE_UNDO_MS)
+    return () => clearTimeout(timer)
+  }, [voiceFeedback])
+
+  // Permissão negada: não adianta insistir — desliga o modo e avisa o usuário.
+  useEffect(() => {
+    if (voice.status === 'denied' && voiceEnabled) {
+      setVoiceEnabled(false)
+      setToast({
+        open: true,
+        message: 'Microfone bloqueado. Libere o acesso ao microfone nas permissões do navegador para usar o modo voz.',
+        type: 'error',
+      })
+    }
+  }, [voice.status, voiceEnabled])
+
+  // Nunca deixar um avanço automático pendurado ao desmontar a página.
+  useEffect(() => () => {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+  }, [])
+
+  // Desfaz a avaliação marcada por voz: tira a marca, cancela o avanço e
+  // devolve o card. No modo espaçado a revisão já foi gravada, mas a próxima
+  // avaliação do mesmo card sobrescreve o agendamento no servidor.
+  function undoVoiceRating() {
+    const feedback = voiceFeedback
+    if (!feedback) return
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = null
+    }
+    setRatings(prev => {
+      const next = { ...prev }
+      delete next[feedback.cardId]
+      return next
+    })
+    setScheduleFeedback(null)
+    setVoiceFeedback(null)
   }
 
   async function finishSession() {
@@ -749,6 +869,25 @@ export default function DeckPage() {
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-muted dark:text-slate-100">
                   {currentIndex + 1} / {total}
                 </span>
+                {/* Modo voz — liga/desliga sem sair do estudo. Some de vez em
+                    navegadores sem reconhecimento de fala. */}
+                {voice.supported && (
+                  <button
+                    type="button"
+                    onClick={() => setVoiceEnabled(v => !v)}
+                    aria-pressed={voiceEnabled}
+                    aria-label={voiceEnabled ? 'Desligar modo voz' : 'Ligar modo voz'}
+                    title={voiceEnabled ? 'Modo voz ligado' : 'Ligar modo voz'}
+                    className={cn(
+                      'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full shadow-sm transition active:scale-95',
+                      voiceEnabled
+                        ? 'bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-emerald-500/30'
+                        : 'bg-slate-100 text-slate-500 dark:bg-muted dark:text-slate-300',
+                    )}
+                  >
+                    {voiceEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+                  </button>
+                )}
                 {/* Botão de tela cheia / foco — sempre visível (mobile, iPad, PC) */}
                 <button
                   type="button"
@@ -875,6 +1014,78 @@ export default function DeckPage() {
               </AnimatePresence>
             )}
 
+            {/* Modo voz: o que o microfone está fazendo agora e o que ele ouviu.
+                Sempre no mesmo lugar, logo acima das avaliações. */}
+            {voiceEnabled && (
+              <AnimatePresence mode="wait" initial={false}>
+                {voiceFeedback ? (
+                  <motion.div
+                    key="voice-heard"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    transition={{ duration: 0.16 }}
+                    className="mx-auto flex max-w-md items-center gap-2 rounded-2xl border border-emerald-300/50 bg-emerald-500/12 px-3 py-2 text-sm"
+                  >
+                    <Mic className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300" />
+                    <span className="min-w-0 flex-1 truncate text-emerald-900 dark:text-emerald-100">
+                      Ouvi “{voiceFeedback.heard}” →{' '}
+                      <strong className="font-bold">
+                        {RATINGS.find(r => r.value === voiceFeedback.rating)?.label}
+                      </strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={undoVoiceRating}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-xl border border-emerald-400/50 bg-white/70 px-2.5 py-1 text-xs font-bold text-emerald-800 transition active:scale-95 dark:bg-slate-900/70 dark:text-emerald-100"
+                    >
+                      <Undo2 className="h-3.5 w-3.5" /> Desfazer
+                    </button>
+                  </motion.div>
+                ) : voiceListeningAllowed ? (
+                  <motion.div
+                    key="voice-listening"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    transition={{ duration: 0.16 }}
+                    className="mx-auto flex max-w-md items-center gap-2 rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-3 py-2"
+                  >
+                    <span className="relative flex h-2.5 w-2.5 shrink-0">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600" />
+                    </span>
+                    <span className="min-w-0 flex-1 text-xs font-medium leading-snug text-emerald-900 dark:text-emerald-100">
+                      {voice.status === 'starting'
+                        ? 'Abrindo o microfone...'
+                        : voice.status === 'error'
+                          ? 'Microfone instável — use os botões abaixo.'
+                          : 'Ouvindo: diga suave, no ponto ou porrete'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setVoiceEnabled(false)}
+                      aria-label="Desligar modo voz"
+                      title="Desligar modo voz"
+                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-emerald-800/70 transition hover:bg-emerald-500/15 dark:text-emerald-100/70"
+                    >
+                      <MicOff className="h-4 w-4" />
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.p
+                    key="voice-idle"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-center text-[11px] text-slate-400"
+                  >
+                    Modo voz ligado · o microfone abre quando você virar o card
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            )}
+
             {/* Ação principal: virar o card OU avaliar — troca suavemente */}
             <AnimatePresence mode="wait" initial={false}>
               {!flipped ? (
@@ -960,11 +1171,13 @@ export default function DeckPage() {
 
             <p className="text-center text-[11px] text-slate-400 sm:hidden">
               Deslize ← → para trocar de card · toque para virar
+              {voiceEnabled && ' · fale suave / no ponto / porrete'}
             </p>
             <p className="hidden text-center text-[11px] text-slate-400 sm:block">
               {fullscreen
                 ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
                 : 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · F: tela cheia'}
+              {voiceEnabled && ' · voz: suave / no ponto / porrete'}
             </p>
           </div>
         </div>
@@ -1166,6 +1379,48 @@ export default function DeckPage() {
                     {fullscreenPref && <CheckCircle2 className="h-3.5 w-3.5" />}
                   </button>
                 )}
+                {/* Modo voz — mesma faixa de decisão do "tela cheia": é aqui
+                    que a pessoa escolhe COMO vai estudar, antes de começar. */}
+                {cards.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={toggleVoicePref}
+                      aria-pressed={voicePref}
+                      disabled={!voice.supported}
+                      title={
+                        voice.supported
+                          ? 'Avalie os cards falando: suave, no ponto ou porrete'
+                          : 'Seu navegador não reconhece voz. Use Chrome, Edge ou Safari.'
+                      }
+                      className={cn(
+                        'inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition',
+                        !voice.supported
+                          ? 'cursor-not-allowed border-border bg-card text-muted-foreground/60'
+                          : voicePref
+                            ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200'
+                            : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                      )}
+                    >
+                      {voicePref && voice.supported ? <Mic className="h-3.5 w-3.5" /> : <MicOff className="h-3.5 w-3.5" />}
+                      {!voice.supported
+                        ? 'Modo voz indisponível'
+                        : voicePref ? 'Modo voz ligado' : 'Estudar por voz'}
+                      {voicePref && voice.supported && <CheckCircle2 className="h-3.5 w-3.5" />}
+                    </button>
+                    {voicePref && voice.supported && (
+                      <p className="max-w-[15rem] text-right text-[11px] leading-snug text-muted-foreground sm:text-right">
+                        O microfone liga sozinho quando o card vira. Diga <strong>suave</strong>,{' '}
+                        <strong>no ponto</strong> ou <strong>porrete</strong>.
+                      </p>
+                    )}
+                    {!voice.supported && (
+                      <p className="max-w-[15rem] text-right text-[11px] leading-snug text-muted-foreground">
+                        Ditado por voz precisa de Chrome, Edge ou Safari.
+                      </p>
+                    )}
+                  </>
+                )}
                 </div>
               )}
             </div>
@@ -1179,9 +1434,21 @@ export default function DeckPage() {
         )}
 
         {isLocked ? (
-          <LockedPreview deck={deck} access={access} />
+          <>
+            <LockedPreview deck={deck} access={access} />
+            {/* Quem ainda não tem acesso vê o estudo funcionando de verdade num
+                card de demonstração — é o único jeito de saber o que está
+                comprando. Por isso abre expandido nesse caso. */}
+            <div className="mt-4">
+              <FlashcardTour
+                variant="locked"
+                onBuyClick={isPaid ? () => buy() : undefined}
+              />
+            </div>
+          </>
         ) : (
           <div>
+            <FlashcardTour variant="unlocked" />
             <AnimatePresence>
               {savedProgress && (
                 <ResumeBanner
