@@ -156,11 +156,12 @@ const LIVE_PAGE_RADIUS = 3
 // aparecem na tela, mas cada canvas vivo custa dezenas de MB. Manter 3 páginas
 // vivas em zoom alto era o que estourava a memória no celular.
 function liveRadiusForZoom(zoom: number) {
-  // No celular fica sempre 1 (a página atual + uma de cada lado). Cada página
-  // viva é um canvas grande, e no Safari do iOS 7 deles ao mesmo tempo estouram
-  // o limite de memória de canvas da aba: a tela fica branca e o processo cai.
-  // Uma de folga em cada lado já cobre a leitura contínua.
-  if (isMobileViewport()) return 1
+  // No celular o raio é fixo: cada página viva é um canvas grande e no Safari
+  // do iOS o limite de memória de canvas da aba é baixo. Fixo também para não
+  // mudar no meio de um gesto — era o que fazia todas as páginas
+  // re-rasterizarem de uma vez e a tela piscar branca.
+  // 2 => 5 páginas vivas => ~44 MB de canvas, com folga larga.
+  if (isMobileViewport()) return 2
   if (zoom > 1.8) return 1
   if (zoom > 1.2) return 2
   return LIVE_PAGE_RADIUS
@@ -573,8 +574,24 @@ function releasePageProxy(materialId: string, pageNumber: number) {
 const MAX_CANVAS_MPX_MOBILE = 2.2
 const MAX_CANVAS_MPX_DESKTOP = 9
 
+// ATENÇÃO: não usar `window.innerWidth` aqui.
+//
+// No Safari do iOS, `window.innerWidth` reflete o viewport VISUAL — ele cresce
+// quando o usuário pinça para trás. Como esta função decidia o teto de
+// megapixels e quantas páginas ficam vivas, pinçar para trás fazia o valor
+// cruzar 768 e virar "desktop" no meio do gesto: o teto saltava de 2,2 para
+// 9 Mpx (4x mais pixels por canvas) e as páginas vivas de 3 para 7. Resultado:
+// todas as páginas re-rasterizavam de uma vez, ~250 MB de canvas, e o Safari
+// pintava tudo de branco. Era exatamente o "pinço pra trás e recarrega a tela".
+//
+// `matchMedia` responde pelo viewport de LAYOUT, que a pinça não altera.
+let mobileQuery: MediaQueryList | null = null
+
 function isMobileViewport() {
-  return typeof window !== 'undefined' && window.innerWidth < 768
+  if (typeof window === 'undefined') return false
+  if (typeof window.matchMedia !== 'function') return false
+  if (!mobileQuery) mobileQuery = window.matchMedia('(max-width: 767px)')
+  return mobileQuery.matches
 }
 
 function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
@@ -1700,7 +1717,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // em telas grandes garante a coluna visível; em telas menores abre o drawer.
   const openSidePanel = useCallback((tab: 'pages' | 'summary') => {
     setSidePanelTab(tab)
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    // matchMedia e não innerWidth: com o usuário pinçado, `innerWidth` no iOS
+    // não corresponde ao layout e o painel abriria na variante errada.
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches) {
       // No celular tudo passa pela folha inferior — mesma SidePanel, só que
       // ancorada onde o polegar alcança. Antes havia um drawer lateral
       // separado fazendo exatamente isto, com dois estados para manter.
@@ -1732,7 +1751,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!element || !pageSize) return
     zoomTouchedRef.current = true
     const availableWidth = element.clientWidth - 24
-    const availableHeight = window.innerHeight - 148
+    // `documentElement.clientHeight` acompanha o layout; `window.innerHeight`
+    // encolhe/cresce com a pinça no iOS e daria uma altura falsa aqui.
+    const viewportHeight = document.documentElement.clientHeight || window.innerHeight
+    const availableHeight = viewportHeight - 148
     setZoom(clampZoom(Math.min(availableWidth / pageSize.width, availableHeight / pageSize.height), minZoom, maxZoom))
     setMode('single')
   }, [maxZoom, minZoom, pageSize])
