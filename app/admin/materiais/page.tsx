@@ -57,7 +57,17 @@ import {
   KeyRound,
   Code2,
   Layers,
+  Sparkles,
+  Copy,
+  Check,
+  Wand2,
 } from 'lucide-react'
+import {
+  buildSummaryPrompt,
+  parseSummaryMarkdown,
+  SUMMARY_MARKDOWN_EXAMPLE,
+  type ParsedSummaryEntry,
+} from '@/lib/pdf-summary-import'
 import { upload } from '@vercel/blob/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -2404,6 +2414,7 @@ function AdminMateriaisContent() {
                       <PdfViewerStructureEditor
                         config={materialForm.pdfViewerConfig}
                         pageCount={pdfPageCount}
+                        materialTitle={materialForm.title}
                         onChange={(next) => setMaterialForm(p => ({ ...p, pdfViewerConfig: next }))}
                       />
                     )}
@@ -3471,16 +3482,199 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
+// ─── Importação do sumário do PDF via markdown gerado por IA ─────────────────
+// Fluxo: copiar o prompt → mandar o PDF + prompt para a IA → colar o markdown
+// de volta aqui → conferir a prévia → substituir/adicionar ao sumário.
+function SummaryMarkdownImport({
+  pageCount,
+  materialTitle,
+  hasExistingEntries,
+  onImport,
+  onClose,
+}: {
+  pageCount: number
+  materialTitle?: string
+  hasExistingEntries: boolean
+  onImport: (entries: ParsedSummaryEntry[], mode: 'replace' | 'append') => void
+  onClose: () => void
+}) {
+  const [text, setText] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [showPrompt, setShowPrompt] = useState(false)
+
+  const prompt = useMemo(
+    () => buildSummaryPrompt({ pageCount, materialTitle }),
+    [pageCount, materialTitle]
+  )
+  const parsed = useMemo(() => parseSummaryMarkdown(text, pageCount), [text, pageCount])
+
+  const copyPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Sem permissão de clipboard: o prompt fica visível para cópia manual.
+      setShowPrompt(true)
+    }
+  }
+
+  const runImport = (mode: 'replace' | 'append') => {
+    if (parsed.entries.length === 0) return
+    onImport(parsed.entries, mode)
+    setText('')
+    onClose()
+  }
+
+  return (
+    <div className="space-y-3 rounded-lg border border-violet-500/30 bg-violet-500/5 p-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start gap-1.5 text-xs text-violet-800 dark:text-violet-200">
+          <Wand2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span className="leading-snug">
+            Copie o prompt, envie junto com o PDF para a IA e cole aqui o markdown que ela devolver.
+            O sumário inteiro entra de uma vez, sem cadastrar entrada por entrada.
+          </span>
+        </div>
+        <button type="button" onClick={onClose} className="text-muted-foreground hover:text-foreground shrink-0" title="Fechar">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Passo 1 — prompt */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-semibold text-muted-foreground">
+            1. Prompt para a IA {pageCount > 0 ? `(já inclui as ${pageCount} páginas deste PDF)` : ''}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <Button type="button" size="sm" variant="outline" onClick={() => setShowPrompt(s => !s)} className="h-7 text-xs">
+              {showPrompt ? 'Ocultar' : 'Ver'}
+            </Button>
+            <Button type="button" size="sm" onClick={copyPrompt} className="h-7 gap-1 text-xs">
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? 'Copiado!' : 'Copiar prompt'}
+            </Button>
+          </div>
+        </div>
+        {showPrompt && (
+          <Textarea
+            readOnly
+            value={prompt}
+            onFocus={e => e.currentTarget.select()}
+            className="h-40 font-mono text-[11px] leading-relaxed"
+          />
+        )}
+      </div>
+
+      {/* Passo 2 — colar a resposta */}
+      <div className="space-y-1.5">
+        <span className="text-[11px] font-semibold text-muted-foreground">2. Cole a resposta da IA</span>
+        <Textarea
+          value={text}
+          onChange={e => setText(e.target.value)}
+          placeholder={SUMMARY_MARKDOWN_EXAMPLE}
+          className="h-32 font-mono text-[11px] leading-relaxed"
+        />
+        <p className="text-[11px] text-muted-foreground">
+          Formato: <code>#</code>/<code>##</code>/<code>###</code> para o nível e <code>:: página</code> no fim.
+          Também aceita listas com <code>-</code>, numeração <code>1.2</code>, tabelas markdown e pontilhados
+          (<code>Introdução ...... 3</code>).
+        </p>
+      </div>
+
+      {/* Passo 3 — prévia + importar */}
+      {text.trim() && (
+        <div className="space-y-2">
+          <span className="text-[11px] font-semibold text-muted-foreground">
+            3. Prévia — {parsed.entries.length} {parsed.entries.length === 1 ? 'entrada lida' : 'entradas lidas'}
+          </span>
+
+          {parsed.entries.length > 0 && (
+            <div className="max-h-44 overflow-y-auto rounded-md border border-input bg-background p-2 space-y-0.5">
+              {parsed.entries.map((entry, index) => (
+                <div key={index} className="flex items-center gap-2 text-[11px]">
+                  <span
+                    className="flex-1 truncate"
+                    style={{ paddingLeft: `${(entry.level ?? 0) * 12}px` }}
+                    title={entry.title}
+                  >
+                    <span className="text-muted-foreground mr-1">H{(entry.level ?? 0) + 1}</span>
+                    {entry.title}
+                  </span>
+                  <span className="shrink-0 tabular-nums text-muted-foreground">p. {entry.page}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {parsed.warnings.map((warning, index) => (
+            <p key={index} className="flex items-start gap-1.5 text-[11px] text-amber-600 dark:text-amber-400">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-px" /> {warning}
+            </p>
+          ))}
+
+          {parsed.issues.length > 0 && (
+            <details className="text-[11px] text-red-500">
+              <summary className="cursor-pointer">
+                {parsed.issues.length} {parsed.issues.length === 1 ? 'linha ignorada' : 'linhas ignoradas'}
+              </summary>
+              <ul className="mt-1 space-y-0.5 pl-4 list-disc">
+                {parsed.issues.slice(0, 20).map((issue, index) => (
+                  <li key={index}>
+                    Linha {issue.line}: {issue.reason} — <span className="font-mono">{issue.text.slice(0, 80)}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => runImport('replace')}
+              disabled={parsed.entries.length === 0}
+              className="h-8 gap-1 text-xs"
+            >
+              <Check className="h-3.5 w-3.5" />
+              {hasExistingEntries ? 'Substituir sumário' : 'Importar sumário'}
+            </Button>
+            {hasExistingEntries && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => runImport('append')}
+                disabled={parsed.entries.length === 0}
+                className="h-8 gap-1 text-xs"
+              >
+                <Plus className="h-3.5 w-3.5" /> Adicionar ao final
+              </Button>
+            )}
+            <Button type="button" size="sm" variant="ghost" onClick={() => setText('')} className="h-8 text-xs">
+              Limpar
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Editor de Capa, Sumário e Navegação do PDF Viewer ───────────────────────
 function PdfViewerStructureEditor({
   config,
   pageCount,
+  materialTitle,
   onChange,
 }: {
   config: PdfViewerConfig
   pageCount: number
+  materialTitle?: string
   onChange: (next: PdfViewerConfig) => void
 }) {
+  const [importOpen, setImportOpen] = useState(false)
   const summary = config.summary || []
   const navigation = config.navigation || []
   const preview = config.preview || { enabled: false, ranges: [] }
@@ -3552,6 +3746,17 @@ function PdfViewerStructureEditor({
     if (target < 0 || target >= next.length) return
     ;[next[index], next[target]] = [next[target], next[index]]
     onChange({ ...config, summary: next })
+  }
+
+  // Importação em lote: converte as entradas lidas do markdown em PdfSummaryEntry.
+  const applyImportedSummary = (imported: ParsedSummaryEntry[], mode: 'replace' | 'append') => {
+    const created = imported.map(entry => ({
+      id: genId('toc'),
+      title: entry.title,
+      page: clampPage(entry.page),
+      level: entry.level,
+    }))
+    onChange({ ...config, summary: mode === 'replace' ? created : [...summary, ...created] })
   }
 
   // Navegação
@@ -3697,10 +3902,32 @@ function PdfViewerStructureEditor({
           <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
             <List className="h-3.5 w-3.5" /> Sumário interativo
           </div>
-          <Button type="button" size="sm" variant="outline" onClick={addSummary} className="h-7 gap-1 text-xs">
-            <Plus className="h-3.5 w-3.5" /> Entrada
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setImportOpen(o => !o)}
+              className="h-7 gap-1 text-xs border-violet-500/40 text-violet-600 hover:text-violet-700 dark:text-violet-300"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Importar com IA
+            </Button>
+            <Button type="button" size="sm" variant="outline" onClick={addSummary} className="h-7 gap-1 text-xs">
+              <Plus className="h-3.5 w-3.5" /> Entrada
+            </Button>
+          </div>
         </div>
+
+        {importOpen && (
+          <SummaryMarkdownImport
+            pageCount={pageCount}
+            materialTitle={materialTitle}
+            hasExistingEntries={summary.length > 0}
+            onImport={applyImportedSummary}
+            onClose={() => setImportOpen(false)}
+          />
+        )}
+
         {summary.length === 0 ? (
           <p className="text-[11px] text-muted-foreground">Nenhuma entrada. Adicione títulos para criar o sumário clicável.</p>
         ) : (
