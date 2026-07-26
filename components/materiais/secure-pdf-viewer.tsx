@@ -152,16 +152,21 @@ const EMPTY_ANNOTATIONS: PdfAnnotation[] = []
 // pré-carrega algumas páginas à frente/atrás.
 const LIVE_PAGE_RADIUS = 3
 
-// O raio encolhe conforme o zoom sobe: numa página ampliada as vizinhas nem
-// aparecem na tela, mas cada canvas vivo custa dezenas de MB. Manter 3 páginas
-// vivas em zoom alto era o que estourava a memória no celular.
+// Quantas páginas à frente têm os bytes baixados de antemão. Diferente do raio
+// acima: aqui não se cria canvas nenhum, só se guarda o PDF de uma página
+// (centenas de KB) no cache. É o jeito barato de a página seguinte aparecer na
+// hora — o caro é canvas, não byte.
+const PREFETCH_AHEAD = 3
+
 function liveRadiusForZoom(zoom: number) {
-  // No celular o raio é fixo: cada página viva é um canvas grande e no Safari
-  // do iOS o limite de memória de canvas da aba é baixo. Fixo também para não
-  // mudar no meio de um gesto — era o que fazia todas as páginas
-  // re-rasterizarem de uma vez e a tela piscar branca.
-  // 2 => 5 páginas vivas => ~44 MB de canvas, com folga larga.
-  if (isMobileViewport()) return 2
+  // No celular o raio é FIXO em 3 (7 páginas vivas, ~112 MB de canvas com o
+  // teto de 3,5 Mpx). Fixo é o ponto: quando ele variava, uma mudança de zoom
+  // montava/desmontava páginas no meio do gesto e todas re-rasterizavam de uma
+  // vez. O teto de megapixels já é quem limita a memória — o raio não precisa
+  // fazer esse trabalho também.
+  if (isMobileViewport()) return LIVE_PAGE_RADIUS
+  // No desktop o zoom é absoluto e pode ir bem alto, com canvas de 9 Mpx. Aí
+  // vale encolher: numa página muito ampliada as vizinhas nem aparecem na tela.
   if (zoom > 1.8) return 1
   if (zoom > 1.2) return 2
   return LIVE_PAGE_RADIUS
@@ -447,7 +452,10 @@ async function fetchPdfPageBytes(
 // A contagem de referências é obrigatória: destruir um doc enquanto um
 // `page.render()` ainda está em curso quebra a página. Na eviction marcamos
 // `doomed` e só destruímos quando o último consumidor solta.
-const PAGE_PROXY_CACHE_MAX = 8
+// Precisa caber a janela inteira de páginas vivas (7) COM folga: se o teto
+// ficar rente ao número de páginas referenciadas, virar uma página evicta um
+// documento que vai ser pedido de novo em seguida, e o parse se repete à toa.
+const PAGE_PROXY_CACHE_MAX = 14
 
 interface PageProxyEntry {
   doc: any
@@ -565,13 +573,25 @@ function releasePageProxy(materialId: string, pageNumber: number) {
 // Agora: DPR real limitado a 2 e um TETO de megapixels por canvas. A escala
 // continua crescendo com o zoom (a página fica mesmo mais nítida ao ampliar),
 // só que dentro de um orçamento fixo de memória.
-// Teto de megapixels por canvas. O valor do celular era 4,5 e provocou tela
-// branca e queda da aba no Safari do iOS: ele tem um limite duro de memória de
-// canvas por aba e, ao estourar, primeiro pinta os canvas de branco e depois
-// mata o processo. 2,2 Mpx numa A4 dá ~1140x1610px — acima da densidade real
-// que um celular consegue mostrar (tela de ~390pt), então não se perde nitidez
-// perceptível e o consumo cai pela metade.
-const MAX_CANVAS_MPX_MOBILE = 2.2
+// Teto de megapixels por canvas.
+//
+// A conta que define o valor do celular (A4 de 595x842pt, tela de ~390pt com
+// DPR 3 = 1170px reais de largura):
+//
+//   2,2 Mpx -> 1247px de canvas -> 1,07x a tela na largura ajustada
+//   3,5 Mpx -> 1573px de canvas -> 1,34x a tela na largura ajustada
+//
+// Ou seja: na largura ajustada já 2,2 entrega mais pixels do que a tela mostra,
+// e subir não muda nada de visível. A diferença aparece AMPLIADO, onde a mesma
+// imagem é esticada: em 2,5x o zoom, 2,2 Mpx cai para 0,43x a densidade da tela
+// (visivelmente borrado) e 3,5 Mpx vai a 0,54x. Daí a escolha de 3,5.
+//
+// O pico com 7 páginas vivas fica em ~112 MB, com folga larga para o limite de
+// memória de canvas do Safari do iOS. O que tinha derrubado a aba não era este
+// número: era `window.innerWidth` (viewport VISUAL no iOS) fazendo o leitor se
+// achar desktop no meio da pinça e trocar 2,2 por 9 Mpx de uma vez. Ver
+// isMobileViewport().
+const MAX_CANVAS_MPX_MOBILE = 3.5
 const MAX_CANVAS_MPX_DESKTOP = 9
 
 // ATENÇÃO: não usar `window.innerWidth` aqui.
@@ -1565,21 +1585,34 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   useEffect(() => {
     if (!access) return
-    // Pré-carrega a próxima página. Em prévia, a "próxima" é a próxima página
-    // liberada — nunca uma bloqueada (evita 403 inútil).
-    let nextPage = currentPage + 1
+    // Pré-carrega as próximas páginas — só os BYTES, sem canvas. É o jeito
+    // barato de ter mais página pronta: um PDF de uma página pesa centenas de
+    // KB, enquanto cada canvas vivo custa dezenas de MB. Assim a página aparece
+    // instantânea mesmo estando fora da janela de páginas renderizadas.
+    // Em prévia, "próxima" é a próxima LIBERADA — nunca uma bloqueada (403 à toa).
+    const upcoming: number[] = []
     if (previewActive) {
       const index = allowedPages.indexOf(currentPage)
-      if (index === -1 || index >= allowedPages.length - 1) return
-      nextPage = allowedPages[index + 1]
-    } else if (currentPage >= pageCount) {
-      return
+      if (index === -1) return
+      for (let step = 1; step <= PREFETCH_AHEAD && index + step < allowedPages.length; step += 1) {
+        upcoming.push(allowedPages[index + step])
+      }
+    } else {
+      for (let step = 1; step <= PREFETCH_AHEAD && currentPage + step <= pageCount; step += 1) {
+        upcoming.push(currentPage + step)
+      }
+      // Uma para trás também: voltar página é tão comum quanto avançar.
+      if (currentPage > 1) upcoming.push(currentPage - 1)
     }
+    if (upcoming.length === 0) return
+
     const timer = window.setTimeout(() => {
-      fetchPdfPageBytes(materialId, nextPage)
-        .then((result) => updateKnownPageCount(result.pageCount))
-        .catch(() => {})
-    }, 500)
+      for (const page of upcoming) {
+        fetchPdfPageBytes(materialId, page)
+          .then((result) => updateKnownPageCount(result.pageCount))
+          .catch(() => {})
+      }
+    }, 400)
     return () => window.clearTimeout(timer)
   }, [access, currentPage, materialId, pageCount, updateKnownPageCount, previewActive, allowedPages])
 
