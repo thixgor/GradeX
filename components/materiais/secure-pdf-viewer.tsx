@@ -172,16 +172,6 @@ function liveRadiusForZoom(zoom: number) {
   return LIVE_PAGE_RADIUS
 }
 
-// Quantas páginas ficam materializadas no DOM (como página real OU espaçador)
-// ao redor da atual. O resto vira dois blocos de preenchimento com a altura
-// somada. Sem isso, o modo contínuo — agora o padrão — criaria um nó por
-// página do documento inteiro logo no primeiro paint: num material de 3000
-// páginas são 3000 nós antes de o leitor rolar um pixel.
-const RENDERED_WINDOW_RADIUS = 60
-// De quantas páginas a leitura precisa se afastar do centro da janela para ela
-// ser recentrada. Bem menor que o raio, para a página atual nunca chegar perto
-// da borda da janela materializada.
-const WINDOW_RECENTER_THRESHOLD = 20
 // Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
 // de a primeira página real reportar o tamanho verdadeiro.
 const DEFAULT_PAGE_WIDTH = 595
@@ -1196,9 +1186,6 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [pageInput, setPageInput] = useState('1')
   const [zoom, setZoom] = useState(1)
   const [settledZoom, setSettledZoom] = useState(1)
-  // Índice em torno do qual a janela de páginas materializadas é centrada. É
-  // separado da página atual de propósito — ver o efeito de histerese.
-  const [windowAnchor, setWindowAnchor] = useState(0)
   const [mode, setMode] = useState<ViewerMode>('single')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
@@ -1463,17 +1450,6 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (zoom > maxZoom + 0.005) setZoom(maxZoom)
   }, [maxZoom, zoom])
 
-  // Histerese da janela de renderização. Se ela fosse recentrada a cada página
-  // focada, cada página rolada mexeria na altura dos dois blocos de
-  // preenchimento — um reflow por página, que aparece como tremida na rolagem.
-  // Recentrando só quando o leitor sai de uma banda, isso vira um reflow a cada
-  // ~20 páginas. Um salto longo (sumário) passa da banda e recentra na hora.
-  useEffect(() => {
-    if (mode === 'single') return
-    const index = Math.max(0, pages.indexOf(currentPage))
-    if (Math.abs(index - windowAnchor) > WINDOW_RECENTER_THRESHOLD) setWindowAnchor(index)
-  }, [currentPage, mode, pages, windowAnchor])
-
   // Zoom "assentado": acompanha o zoom com atraso, para que decisões de LAYOUT
   // (altura dos espaçadores, quantas páginas ficam vivas) não sejam refeitas a
   // cada quadro de uma pinça. Sem isso, o gesto montava e desmontava páginas no
@@ -1563,18 +1539,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         // ignorado, senão o observer do topo reverte para a página 1.
         suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 500)
         element.scrollIntoView({ behavior: 'auto', block: 'start' })
-        // Só damos a retomada por concluída quando a altura real da página já
-        // é conhecida. Antes disso os blocos de preenchimento usam a estimativa
-        // A4, e a posição desliza quando a medida verdadeira chega — o efeito
-        // roda de novo (via `pageSize`) e corrige o destino.
-        if (pageSize) pendingResumeRef.current = null
+        // A retomada só termina quando o layout PAROU de mudar: é preciso já
+        // conhecer a altura real da página E o zoom já ter assentado. Antes os
+        // espaçadores usam a estimativa A4 com zoom 1; quando a medida real
+        // chega e o auto-ajuste encolhe o zoom, todas as alturas acima mudam e
+        // a posição desliza. Largar o controle cedo demais era o que deixava o
+        // leitor parado longe da página que ele pediu no sumário.
+        if (pageSize && settledZoom === zoom) pendingResumeRef.current = null
         return
       }
       if (frame++ < 30) window.requestAnimationFrame(attempt)
     }
     window.requestAnimationFrame(attempt)
     return () => { cancelled = true }
-  }, [access, mode, pageSize])
+    // `zoom`/`settledZoom` nas dependências: cada mudança de escala remexe a
+    // altura de todos os espaçadores acima, então a retomada precisa reajustar
+    // o destino até o layout parar de se mexer.
+  }, [access, mode, pageSize, settledZoom, zoom])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -2032,19 +2013,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const liveStart = centerIndex - liveRadius
   const liveEnd = centerIndex + liveRadius
 
-  // Segunda camada de virtualização: fora desta janela nem espaçador é criado.
-  // Os dois blocos de preenchimento abaixo reservam a altura das páginas
-  // ocultas para o scrollbar continuar proporcional ao documento inteiro.
-  // Centrada na ÂNCORA (com histerese), não na página atual — senão cada página
-  // rolada mudaria a altura dos preenchimentos e a rolagem tremeria.
-  const anchorIndex = Math.min(Math.max(0, windowAnchor), Math.max(0, pages.length - 1))
-  const windowStart = mode === 'single' ? 0 : Math.max(0, anchorIndex - RENDERED_WINDOW_RADIUS)
-  const windowEnd = mode === 'single' ? pages.length - 1 : Math.min(pages.length - 1, anchorIndex + RENDERED_WINDOW_RADIUS)
-  const renderedPages = mode === 'single' ? pages : pages.slice(windowStart, windowEnd + 1)
-  // Altura de uma página no fluxo: moldura (16px de respiro) + gap-5 (20px).
-  const pageSlotHeight = spacerSize.height + 16 + 20
-  const fillerTopHeight = Math.max(0, windowStart * pageSlotHeight)
-  const fillerBottomHeight = Math.max(0, (pages.length - 1 - windowEnd) * pageSlotHeight)
+  // NÃO existe uma segunda camada de virtualização aqui, e é de propósito.
+  //
+  // Houve uma: só uma janela de páginas era materializada e o resto virava dois
+  // blocos de preenchimento com a altura somada. Ela criava uma ZONA MORTA. Os
+  // blocos são divs vazios, sem IntersectionObserver — se a rolagem parasse
+  // dentro de um deles, nada reportava a página atual, a âncora da janela nunca
+  // se movia e a janela nunca vinha até o leitor: tela vazia permanente.
+  //
+  // E era fácil cair lá. Ao retomar numa página distante, a rolagem usava a
+  // altura ESTIMADA do preenchimento; depois chegava o tamanho real da página e
+  // o zoom se auto-ajustava, o preenchimento de cima encolhia, o documento
+  // inteiro encurtava e o navegador prendia a rolagem no fim — em cima do vazio.
+  //
+  // Cada página tem seu próprio espaçador (PdfPageSpacer), que é um div leve com
+  // `content-visibility: auto` e observador compartilhado. Assim toda posição de
+  // rolagem corresponde a um elemento real que sabe dizer onde o leitor está.
+  // A virtualização que importa para performance continua: só as páginas dentro
+  // de `liveRadius` viram canvas de verdade.
 
   return (
     <ViewerShell>
@@ -2464,11 +2450,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             }`}
           >
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
-              {fillerTopHeight > 0 && (
-                <div aria-hidden style={{ height: fillerTopHeight }} className="w-full shrink-0" />
-              )}
-              {renderedPages.map((page, offset) => {
-                const index = mode === 'single' ? offset : windowStart + offset
+              {pages.map((page, index) => {
                 const isLive = mode === 'single' || (index >= liveStart && index <= liveEnd)
                 if (!isLive) {
                   return (
@@ -2507,9 +2489,6 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   />
                 )
               })}
-              {fillerBottomHeight > 0 && (
-                <div aria-hidden style={{ height: fillerBottomHeight }} className="w-full shrink-0" />
-              )}
             </div>
           </section>
 
@@ -3265,8 +3244,12 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
     <div
       id={`pdf-page-${pageNumber}`}
       ref={ref}
-      className="flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2"
-      style={{ justifyContent: overflowing ? 'flex-start' : 'center' }}
+      className="flex w-full scroll-mt-36 px-0 sm:px-2"
+      // `clip` e não `auto`: um espaçador é só um lugar reservado, ninguém
+      // arrasta ele. `auto` criaria um contêiner de rolagem por página — num
+      // material de milhares de páginas, milhares deles. `clip` recorta sem
+      // criar contêiner nenhum.
+      style={{ justifyContent: overflowing ? 'flex-start' : 'center', overflowX: 'clip' }}
     >
       <div
         className="relative flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
