@@ -695,6 +695,19 @@ function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
 // para CADA uma — o pico multiplicado por 7 era o que derrubava a aba no iOS.
 let rasterQueue: Promise<unknown> = Promise.resolve()
 
+// `requestIdleCallback` não existe no Safari mais antigo; o timeout cobre.
+function scheduleIdle(task: () => void): number {
+  const ric = (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback
+  if (typeof ric === 'function') return ric(task, { timeout: 1200 })
+  return window.setTimeout(task, 240)
+}
+
+function cancelIdle(handle: number) {
+  const cic = (window as Window & { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback
+  if (typeof cic === 'function') cic(handle)
+  else window.clearTimeout(handle)
+}
+
 function enqueueRaster<T>(task: () => Promise<T>): Promise<T> {
   const run = rasterQueue.then(task, task)
   // A cauda ignora o resultado (e a falha) para a fila nunca travar.
@@ -1552,8 +1565,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   useEffect(() => {
     if (mode === 'single' || pages.length === 0) return
     let frame = 0
-    const measure = () => {
-      frame = 0
+    let trailing: number | null = null
+    let lastMeasuredAt = 0
+
+    const applyAnchor = () => {
       const element = contentRef.current
       if (!element) return
       const slot = pageSlotHeightRef.current
@@ -1565,10 +1580,35 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       const index = Math.min(pages.length - 1, Math.max(0, Math.round(offset / slot)))
       setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
     }
+
+    // `getBoundingClientRect` força o navegador a recalcular o layout, e fazer
+    // isso a cada quadro de uma rolagem por inércia trava o celular. A janela
+    // tem 10 páginas de folga antes de precisar se mover, então medir ~7x por
+    // segundo basta — com uma medição de fechamento, senão parar de rolar logo
+    // depois de uma medida deixaria a posição final sem ser vista.
+    const measure = () => {
+      frame = 0
+      const now = Date.now()
+      const elapsed = now - lastMeasuredAt
+      if (elapsed < 140) {
+        if (trailing == null) {
+          trailing = window.setTimeout(() => {
+            trailing = null
+            lastMeasuredAt = Date.now()
+            applyAnchor()
+          }, 140 - elapsed)
+        }
+        return
+      }
+      lastMeasuredAt = now
+      applyAnchor()
+    }
+
     const onScroll = () => {
       if (frame) return
       frame = window.requestAnimationFrame(measure)
     }
+
     // `capture`: eventos de scroll não borbulham, e o contêiner que rola pode
     // ser o documento ou o shell. Capturando na janela, os dois casos chegam.
     window.addEventListener('scroll', onScroll, { passive: true, capture: true })
@@ -1577,6 +1617,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', onScroll)
       if (frame) window.cancelAnimationFrame(frame)
+      if (trailing != null) window.clearTimeout(trailing)
     }
   }, [mode, pages.length])
 
@@ -3520,6 +3561,14 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const [editor, setEditor] = useState<EditorState | null>(null)
   const requestedRef = useRef(false)
   const autoRetryRef = useRef(0)
+  // O canvas já tem um desenho? Decide se vale pagar o canvas fora da tela
+  // (só faz sentido quando há um bitmap antigo para não piscar).
+  const hasBitmapRef = useRef(false)
+  // `active` num ref: o efeito de rasterização precisa saber se esta é a página
+  // que o leitor está olhando, mas sem `active` nas dependências — senão cada
+  // troca de foco durante a rolagem redesenharia tudo.
+  const activeRef = useRef(active)
+  activeRef.current = active
   // Escala já rasterizada no canvas. O zoom muda na hora (o frame redimensiona
   // e o bitmap é reescalado pela GPU); a rasterização nítida vem depois, com
   // debounce, e só quando a diferença for grande o bastante para ser visível.
@@ -3528,6 +3577,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   useEffect(() => {
     requestedRef.current = false
     autoRetryRef.current = 0
+    hasBitmapRef.current = false
     setPageProxy(null)
     setError('')
     setWaitSeconds(0)
@@ -3645,10 +3695,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     async function renderPage() {
       setError('')
-      // Canvas fora da tela: rasterizamos nele e só then copiamos para o
-      // visível. Antes desenhávamos direto no visível, e o
-      // `canvas.width = ...` APAGA o bitmap — a página ficava em branco até o
-      // render terminar. Em cada passo de zoom isso era uma piscada.
+      // O canvas fora da tela existe para o REDESENHO não piscar: `canvas.width
+      // = ...` apaga o bitmap, então mudar o zoom deixaria a página em branco
+      // até o render terminar. Mas ele custa uma alocação do tamanho da página
+      // inteira (megabytes) mais uma cópia completa — e na PRIMEIRA vez que uma
+      // página é desenhada não há bitmap nenhum a proteger. Fazer isso a cada
+      // virada de página era boa parte do congelamento no celular.
+      const needsOffscreen = hasBitmapRef.current
       let offscreen: HTMLCanvasElement | null = null
       try {
         const page = entry!.page
@@ -3663,28 +3716,45 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         const displayViewport = page.getViewport({ scale: renderScale })
         if (cancelled) return
 
-        offscreen = document.createElement('canvas')
-        offscreen.width = Math.floor(viewport.width)
-        offscreen.height = Math.floor(viewport.height)
-        const offContext = offscreen.getContext('2d', { alpha: false })
-        if (!offContext) return
-        offContext.imageSmoothingEnabled = true
-        offContext.imageSmoothingQuality = 'high'
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const width = Math.floor(viewport.width)
+        const height = Math.floor(viewport.height)
 
-        renderTask = page.render({ canvasContext: offContext, viewport })
+        let target: HTMLCanvasElement = canvas
+        if (needsOffscreen) {
+          offscreen = document.createElement('canvas')
+          target = offscreen
+        }
+        target.width = width
+        target.height = height
+        const context = target.getContext('2d', { alpha: false })
+        if (!context) return
+        context.imageSmoothingEnabled = true
+        context.imageSmoothingQuality = 'high'
+
+        if (!needsOffscreen) {
+          canvas.style.width = '100%'
+          canvas.style.height = 'auto'
+          setRenderSize({ width: displayViewport.width, height: displayViewport.height })
+        }
+
+        renderTask = page.render({ canvasContext: context, viewport })
         await renderTask.promise
         if (cancelled) return
 
-        // Troca atômica: o bitmap antigo fica na tela até este instante.
-        const canvas = canvasRef.current
-        const context = canvas?.getContext('2d', { alpha: false })
-        if (!canvas || !context) return
-        canvas.width = offscreen.width
-        canvas.height = offscreen.height
-        canvas.style.width = '100%'
-        canvas.style.height = 'auto'
-        context.drawImage(offscreen, 0, 0)
-        setRenderSize({ width: displayViewport.width, height: displayViewport.height })
+        if (needsOffscreen && offscreen) {
+          // Troca: o bitmap antigo fica na tela até este instante.
+          const visibleContext = canvas.getContext('2d', { alpha: false })
+          if (!visibleContext) return
+          canvas.width = width
+          canvas.height = height
+          canvas.style.width = '100%'
+          canvas.style.height = 'auto'
+          visibleContext.drawImage(offscreen, 0, 0)
+          setRenderSize({ width: displayViewport.width, height: displayViewport.height })
+        }
+        hasBitmapRef.current = true
       } catch (err: any) {
         if (!cancelled && err?.name !== 'RenderingCancelledException') {
           setError(err?.message || 'Pagina indisponivel')
@@ -3698,13 +3768,27 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       }
     }
 
-    // Enfileirado: nunca dois canvas fora da tela vivos ao mesmo tempo.
-    enqueueRaster(async () => {
-      if (cancelled) return
-      await renderPage()
-    })
+    // A página que o leitor está olhando desenha JÁ; as vizinhas (que são
+    // pré-carga) esperam a thread principal ficar livre. Sem isso, virar a
+    // página enfileirava o desenho das vizinhas na frente — ou junto — do que
+    // se quer ver, e a interação travava. `active` vem de um ref para não
+    // entrar nas dependências e disparar re-render a cada troca de foco.
+    let idleHandle: number | null = null
+    const start = () => {
+      enqueueRaster(async () => {
+        if (cancelled) return
+        await renderPage()
+      })
+    }
+    if (activeRef.current || hasBitmapRef.current) {
+      start()
+    } else {
+      idleHandle = scheduleIdle(start)
+    }
+
     return () => {
       cancelled = true
+      if (idleHandle != null) cancelIdle(idleHandle)
       renderTask?.cancel?.()
     }
   }, [onPageSize, pageProxy, renderScale])
