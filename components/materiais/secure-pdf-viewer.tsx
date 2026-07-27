@@ -175,6 +175,21 @@ function liveRadiusForZoom(zoom: number) {
   return LIVE_PAGE_RADIUS
 }
 
+// Quantas páginas ficam materializadas no DOM (como página real OU espaçador)
+// ao redor da âncora. O resto vira dois blocos de preenchimento com a altura
+// somada. Num material de 2000+ páginas, renderizar todas é ~4 mil elementos
+// que o React percorre a cada rolagem — trava o aparelho.
+const WINDOW_RADIUS = 25
+// De quantas páginas a leitura precisa se afastar da âncora para a janela ser
+// recentrada. Bem menor que o raio, para a posição atual nunca chegar perto da
+// borda da janela materializada.
+const WINDOW_RECENTER_BAND = 10
+
+// Quantas miniaturas o painel lateral monta de uma vez, ao redor da página
+// atual. Sem isso, um material de 2000+ páginas monta milhares de botões assim
+// que o painel abre — e no desktop ele abre ligado por padrão.
+const THUMB_WINDOW = 60
+
 // Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
 // de a primeira página real reportar o tamanho verdadeiro.
 const DEFAULT_PAGE_WIDTH = 595
@@ -1245,6 +1260,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [pageInput, setPageInput] = useState('1')
   const [zoom, setZoom] = useState(1)
   const [settledZoom, setSettledZoom] = useState(1)
+  // Índice em torno do qual a janela de páginas materializadas fica centrada.
+  const [windowAnchor, setWindowAnchor] = useState(0)
   const [mode, setMode] = useState<ViewerMode>('single')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
@@ -1407,6 +1424,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     height: (pageSize?.height ?? DEFAULT_PAGE_HEIGHT) * settledZoom,
   }), [pageSize, settledZoom])
 
+  // Altura que cada página ocupa no fluxo: moldura (16px) + gap-5 (20px).
+  // Num ref para o listener de rolagem lê-la sem precisar ser reanexado.
+  const pageSlotHeight = spacerSize.height + 36
+  const pageSlotHeightRef = useRef(pageSlotHeight)
+  pageSlotHeightRef.current = pageSlotHeight
+
   const updateKnownPageCount = useCallback((totalPages?: number) => {
     if (!totalPages || totalPages < 1) return
     setAccess((current) => {
@@ -1508,6 +1531,54 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   useEffect(() => {
     if (zoom > maxZoom + 0.005) setZoom(maxZoom)
   }, [maxZoom, zoom])
+
+  // ── Âncora da janela de páginas ─────────────────────────────────────────
+  // Fonte 1: a página atual. Cobre saltos (sumário, "ir para página"), que
+  // precisam materializar o destino antes de rolar até ele.
+  useEffect(() => {
+    if (mode === 'single') return
+    const index = Math.max(0, pages.indexOf(currentPage))
+    setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
+  }, [currentPage, mode, pages])
+
+  // Fonte 2: a posição de rolagem. Esta é a que impede a ZONA MORTA.
+  //
+  // A versão anterior movia a âncora só a partir da página atual, que por sua
+  // vez só era atualizada por IntersectionObserver nos elementos de página. Se
+  // a rolagem parasse dentro de um bloco de preenchimento — que é um div vazio,
+  // sem observer — nada reportava nada: a janela nunca vinha, a tela ficava
+  // vazia e não havia saída. Calcular o índice a partir do deslocamento resolve
+  // porque não depende de elemento nenhum existir naquela posição.
+  useEffect(() => {
+    if (mode === 'single' || pages.length === 0) return
+    let frame = 0
+    const measure = () => {
+      frame = 0
+      const element = contentRef.current
+      if (!element) return
+      const slot = pageSlotHeightRef.current
+      if (!(slot > 0)) return
+      // Relativo à viewport: funciona tanto quando quem rola é o documento
+      // quanto quando é o shell (tela cheia), sem saber qual dos dois é.
+      const viewportHeight = document.documentElement.clientHeight || window.innerHeight
+      const offset = -element.getBoundingClientRect().top + viewportHeight / 2
+      const index = Math.min(pages.length - 1, Math.max(0, Math.round(offset / slot)))
+      setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
+    }
+    const onScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(measure)
+    }
+    // `capture`: eventos de scroll não borbulham, e o contêiner que rola pode
+    // ser o documento ou o shell. Capturando na janela, os dois casos chegam.
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll, true)
+      window.removeEventListener('resize', onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [mode, pages.length])
 
   // Zoom "assentado": acompanha o zoom com atraso, para que decisões de LAYOUT
   // (altura dos espaçadores, quantas páginas ficam vivas) não sejam refeitas a
@@ -2073,24 +2144,25 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const liveStart = centerIndex - liveRadius
   const liveEnd = centerIndex + liveRadius
 
-  // NÃO existe uma segunda camada de virtualização aqui, e é de propósito.
+  // Segunda camada de virtualização: fora desta janela nem espaçador é criado.
+  // Num material de 2000+ páginas, materializar todas são milhares de elementos
+  // que o React percorre a cada rolagem — o aparelho congela.
   //
-  // Houve uma: só uma janela de páginas era materializada e o resto virava dois
-  // blocos de preenchimento com a altura somada. Ela criava uma ZONA MORTA. Os
-  // blocos são divs vazios, sem IntersectionObserver — se a rolagem parasse
-  // dentro de um deles, nada reportava a página atual, a âncora da janela nunca
-  // se movia e a janela nunca vinha até o leitor: tela vazia permanente.
-  //
-  // E era fácil cair lá. Ao retomar numa página distante, a rolagem usava a
-  // altura ESTIMADA do preenchimento; depois chegava o tamanho real da página e
-  // o zoom se auto-ajustava, o preenchimento de cima encolhia, o documento
-  // inteiro encurtava e o navegador prendia a rolagem no fim — em cima do vazio.
-  //
-  // Cada página tem seu próprio espaçador (PdfPageSpacer), que é um div leve com
-  // `content-visibility: auto` e observador compartilhado. Assim toda posição de
-  // rolagem corresponde a um elemento real que sabe dizer onde o leitor está.
-  // A virtualização que importa para performance continua: só as páginas dentro
-  // de `liveRadius` viram canvas de verdade.
+  // Os dois blocos de preenchimento reservam a altura das páginas ocultas para
+  // o documento manter a altura total e o scrollbar ficar proporcional. Eles
+  // são divs vazios, sem observer — foi por isso que uma versão anterior criou
+  // uma ZONA MORTA (parar de rolar em cima de um deles não reportava nada, a
+  // janela nunca vinha e a tela ficava vazia sem saída). Agora a âncora também
+  // é calculada a partir do DESLOCAMENTO da rolagem, que não depende de
+  // elemento nenhum existir naquela posição. Ver o efeito "Fonte 2" acima.
+  const anchorIndex = Math.min(Math.max(0, windowAnchor), Math.max(0, pages.length - 1))
+  const windowStart = mode === 'single' ? 0 : Math.max(0, anchorIndex - WINDOW_RADIUS)
+  const windowEnd = mode === 'single'
+    ? pages.length - 1
+    : Math.min(pages.length - 1, anchorIndex + WINDOW_RADIUS)
+  const renderedPages = mode === 'single' ? pages : pages.slice(windowStart, windowEnd + 1)
+  const fillerTopHeight = Math.max(0, windowStart * pageSlotHeight)
+  const fillerBottomHeight = Math.max(0, (pages.length - 1 - windowEnd) * pageSlotHeight)
 
   return (
     <ViewerShell>
@@ -2510,7 +2582,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             }`}
           >
             <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
-              {pages.map((page, index) => {
+              {fillerTopHeight > 0 && (
+                <div aria-hidden style={{ height: fillerTopHeight }} className="w-full shrink-0" />
+              )}
+              {renderedPages.map((page, offset) => {
+                const index = mode === 'single' ? offset : windowStart + offset
                 const isLive = mode === 'single' || (index >= liveStart && index <= liveEnd)
                 if (!isLive) {
                   return (
@@ -2549,6 +2625,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   />
                 )
               })}
+              {fillerBottomHeight > 0 && (
+                <div aria-hidden style={{ height: fillerBottomHeight }} className="w-full shrink-0" />
+              )}
             </div>
           </section>
 
@@ -2934,12 +3013,32 @@ const SidePanel = memo(function SidePanel({
   // Memoizado: mantém a MESMA referência de array enquanto a contagem/prévia
   // não muda, para que a lista de miniaturas não seja reconstruída a cada
   // re-render do painel disparado pelo scroll (mudança de página atual).
-  const thumbPages = useMemo(
+  const allThumbPages = useMemo(
     () => (pageList && pageList.length
       ? pageList
       : Array.from({ length: pageCount }, (_, index) => index + 1)),
     [pageList, pageCount]
   )
+
+  // Mostra uma janela ao redor da página atual em vez da lista inteira. Num
+  // material de 2000+ páginas, montar todas as miniaturas de uma vez são
+  // milhares de botões e outros tantos registros de observer — e o painel abre
+  // ligado por padrão no desktop, então isso acontecia já na abertura.
+  // O botão "carregar mais" abaixo estende a janela sob demanda.
+  const [thumbLimit, setThumbLimit] = useState(THUMB_WINDOW)
+  useEffect(() => {
+    setThumbLimit(THUMB_WINDOW)
+  }, [materialId])
+
+  const currentThumbIndex = Math.max(0, allThumbPages.indexOf(currentPage))
+  const thumbStart = Math.max(0, currentThumbIndex - Math.floor(thumbLimit / 2))
+  const thumbEnd = Math.min(allThumbPages.length, thumbStart + thumbLimit)
+  const thumbPages = useMemo(
+    () => allThumbPages.slice(thumbStart, thumbEnd),
+    [allThumbPages, thumbStart, thumbEnd]
+  )
+  const hiddenBefore = thumbStart
+  const hiddenAfter = allThumbPages.length - thumbEnd
 
   // UM ÚNICO IntersectionObserver compartilhado por TODAS as miniaturas. Antes,
   // cada miniatura criava o seu próprio observer — num material de 3000 páginas
@@ -3012,6 +3111,15 @@ const SidePanel = memo(function SidePanel({
           <SummaryList summary={summary} currentPage={currentPage} onGoTo={onGoTo} />
         ) : (
           <div className="space-y-2">
+            {hiddenBefore > 0 && (
+              <button
+                type="button"
+                onClick={() => setThumbLimit((value) => value + THUMB_WINDOW)}
+                className="w-full rounded-xl border border-white/10 bg-white/5 py-2 text-[11px] font-semibold text-white/70 hover:bg-white/10"
+              >
+                Mostrar as {Math.min(hiddenBefore, THUMB_WINDOW)} páginas anteriores
+              </button>
+            )}
             {thumbPages.map((page) => (
               <PdfThumbnail
                 key={page}
@@ -3023,6 +3131,15 @@ const SidePanel = memo(function SidePanel({
                 registerObserver={registerThumb}
               />
             ))}
+            {hiddenAfter > 0 && (
+              <button
+                type="button"
+                onClick={() => setThumbLimit((value) => value + THUMB_WINDOW)}
+                className="w-full rounded-xl border border-white/10 bg-white/5 py-2 text-[11px] font-semibold text-white/70 hover:bg-white/10"
+              >
+                Mostrar mais {Math.min(hiddenAfter, THUMB_WINDOW)} páginas
+              </button>
+            )}
           </div>
         )}
       </div>
