@@ -190,6 +190,24 @@ const WINDOW_RECENTER_BAND = 10
 // que o painel abre — e no desktop ele abre ligado por padrão.
 const THUMB_WINDOW = 60
 
+// A partir de quantas páginas o material é tratado como "grande" e abre em
+// "uma página por vez".
+//
+// Rolagem contínua empilha o documento inteiro numa única página web, e isso
+// não escala. Com 5000 páginas o documento passa de 4 milhões de pixels de
+// altura já em 100% de zoom (11 milhões no zoom máximo), e o Safari do iOS
+// para de pintar regiões acima disso — daí molduras colapsadas e faixas
+// vazias. Some-se a isso o erro acumulado: a altura das páginas ainda não
+// desenhadas é ESTIMADA pela primeira página medida, e num material com
+// páginas de tamanhos diferentes esse erro cresce a cada página até a posição
+// calculada não corresponder mais ao que está na tela.
+//
+// Em "uma página por vez" nada disso existe: há UMA página no DOM, sem
+// documento gigante, sem preenchimento estimado e sem erro para acumular.
+// Os outros modos continuam disponíveis no seletor — só deixam de ser o
+// padrão neste tamanho de material.
+const LARGE_DOCUMENT_PAGES = 400
+
 // Dimensões-padrão de página (A4 em pt) usadas como fallback do espaçador antes
 // de a primeira página real reportar o tamanho verdadeiro.
 const DEFAULT_PAGE_WIDTH = 595
@@ -1254,6 +1272,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const viewerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLElement>(null)
   const zoomTouchedRef = useRef(false)
+  // O leitor já escolheu um modo de leitura à mão? Se sim, não sobrescrevemos.
+  const modeTouchedRef = useRef(false)
   // Zoom atual num ref: a pinça precisa do valor no INÍCIO do gesto, sem
   // reanexar os listeners nativos a cada quadro de zoom.
   const zoomRef = useRef(1)
@@ -1391,6 +1411,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Está ampliado além do que cabe na tela? É o que o indicador mostra.
   const zoomedIn = fitWidthZoom != null && zoom > fitWidthZoom * 1.02
 
+  // Ver LARGE_DOCUMENT_PAGES.
+  const isLargeDocument = pageCount >= LARGE_DOCUMENT_PAGES
+
   const annotationsByPage = useMemo(() => {
     const grouped = new Map<number, PdfAnnotation[]>()
     for (const annotation of annotations) {
@@ -1500,7 +1523,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         setCurrentPage(startPage)
         setPageInput(String(startPage))
-        const resolvedMode: ViewerMode = saved?.mode || json.viewer?.defaultMode || 'single'
+        // Material grande abre em "uma página por vez", mesmo que o modo salvo
+        // seja outro. Ver LARGE_DOCUMENT_PAGES: rolar milhares de páginas como
+        // um documento só não é viável, e essa combinação é a origem dos
+        // travamentos e das telas em branco em materiais deste tamanho.
+        const isLargeDocument = total >= LARGE_DOCUMENT_PAGES
+        const resolvedMode: ViewerMode = isLargeDocument
+          ? 'single'
+          : saved?.mode || json.viewer?.defaultMode || 'single'
         setMode(resolvedMode)
         // Em contínuo/largura a lista começa na primeira página, então apenas
         // restaurar `currentPage` não basta: é preciso rolar até a página salva
@@ -1949,9 +1979,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // outros dois não. Antes essa diferença estava espalhada pelo JSX e o modo
   // nem existia no celular.
   const applyMode = useCallback((next: ViewerMode) => {
+    modeTouchedRef.current = true
     if (next === 'width') fitToWidth()
     else setMode(next)
   }, [fitToWidth])
+
+  // A contagem de páginas nem sempre está em cache no banco quando o viewer
+  // abre — nesse caso ela só aparece depois que a primeira página é
+  // renderizada. Se o material se revelar grande, cai para "uma página por
+  // vez", a menos que o leitor já tenha escolhido um modo à mão.
+  useEffect(() => {
+    if (!access || modeTouchedRef.current) return
+    if (pageCount >= LARGE_DOCUMENT_PAGES && mode !== 'single') setMode('single')
+  }, [access, pageCount, mode])
 
   // ── Gestos ──────────────────────────────────────────────────────────────
   const handleSwipe = useCallback((direction: 1 | -1) => {
@@ -2845,10 +2885,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-white">{option.label}</p>
                   <p className="text-xs text-white/55">{option.hint}</p>
+                  {isLargeDocument && option.value !== 'single' && (
+                    <p className="mt-1 text-[11px] text-amber-300/80">
+                      Pode ficar lento neste material, que tem {pageCount} páginas.
+                    </p>
+                  )}
                 </div>
               </button>
             ))}
           </div>
+          {isLargeDocument && (
+            <p className="mt-3 text-[11px] leading-relaxed text-white/45">
+              Este material é muito extenso, então ele abre em &quot;uma página por vez&quot; —
+              é o modo que se mantém leve nesse tamanho. Use o sumário ou o número da
+              página para pular direto para onde você quer.
+            </p>
+          )}
           <div className="mt-4 border-t border-white/10 pt-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Tamanho da letra</p>
             <div className="flex items-center gap-2">
