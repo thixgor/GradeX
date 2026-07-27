@@ -156,7 +156,9 @@ const LIVE_PAGE_RADIUS = 3
 // acima: aqui não se cria canvas nenhum, só se guarda o PDF de uma página
 // (centenas de KB) no cache. É o jeito barato de a página seguinte aparecer na
 // hora — o caro é canvas, não byte.
-const PREFETCH_AHEAD = 3
+function prefetchAhead() {
+  return isLowMemoryDevice() ? 1 : isMobileViewport() ? 2 : 3
+}
 
 function liveRadiusForZoom(zoom: number) {
   // No celular o raio é FIXO em 3 (7 páginas vivas, ~112 MB de canvas com o
@@ -164,7 +166,8 @@ function liveRadiusForZoom(zoom: number) {
   // montava/desmontava páginas no meio do gesto e todas re-rasterizavam de uma
   // vez. O teto de megapixels já é quem limita a memória — o raio não precisa
   // fazer esse trabalho também.
-  if (isMobileViewport()) return LIVE_PAGE_RADIUS
+  if (isLowMemoryDevice()) return 1
+  if (isMobileViewport()) return 2
   // No desktop o zoom é absoluto e pode ir bem alto, com canvas de 9 Mpx. Aí
   // vale encolher: numa página muito ampliada as vizinhas nem aparecem na tela.
   if (zoom > 1.8) return 1
@@ -247,7 +250,20 @@ interface HighlightDraft {
 }
 
 const PAGE_BYTES_CACHE_TTL_MS = 10 * 60 * 1000
+// Limite por BYTES, não por quantidade de páginas.
+//
+// Era só um teto de 36 entradas. O tamanho de uma página varia demais para
+// isso significar alguma coisa: um PDF de texto puro tem páginas de ~100 KB,
+// mas um material com imagens (o caso aqui) pode ter vários MB por página,
+// porque a página recortada carrega junto as imagens e fontes que usa. 36
+// páginas de 3 MB são 108 MB de buffer — e ainda por cima o cache de
+// documentos parseados guarda uma CÓPIA de cada um deles. Somado ao canvas,
+// estourava a memória e o iOS matava a aba ("um problema ocorreu
+// repetidamente"). Com teto em bytes, o pior caso é conhecido.
 const PAGE_BYTES_CACHE_MAX_ENTRIES = 36
+function pageBytesBudget() {
+  return isLowMemoryDevice() ? 12 * 1024 * 1024 : isMobileViewport() ? 20 * 1024 * 1024 : 80 * 1024 * 1024
+}
 const COLOR_SWATCHES = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '#111827']
 const HIGHLIGHT_SWATCHES = ['#facc15', '#fb923c', '#86efac', '#93c5fd', '#f9a8d4']
 const NOTE_SWATCHES = ['#fde68a', '#bbf7d0', '#bfdbfe', '#fecdd3', '#ddd6fe']
@@ -394,15 +410,22 @@ async function fetchPdfPageBytes(
         try {
           const result = await fetchPdfPageBytesOnce(materialId, pageNumber)
 
-          while (pageBytesCache.size >= PAGE_BYTES_CACHE_MAX_ENTRIES) {
-            const oldestKey = pageBytesCache.keys().next().value
-            if (!oldestKey) break
-            pageBytesCache.delete(oldestKey)
-          }
           pageBytesCache.set(key, {
             ...result,
             expiresAt: Date.now() + PAGE_BYTES_CACHE_TTL_MS,
           })
+          // Descarta os mais antigos até caber no orçamento de bytes E na
+          // contagem. O Map preserva a ordem de inserção, então o primeiro da
+          // iteração é sempre o mais velho.
+          const budget = pageBytesBudget()
+          let total = 0
+          for (const entry of pageBytesCache.values()) total += entry.bytes.byteLength
+          while ((total > budget || pageBytesCache.size > PAGE_BYTES_CACHE_MAX_ENTRIES) && pageBytesCache.size > 1) {
+            const oldestKey = pageBytesCache.keys().next().value
+            if (!oldestKey || oldestKey === key) break
+            total -= pageBytesCache.get(oldestKey)?.bytes.byteLength || 0
+            pageBytesCache.delete(oldestKey)
+          }
           return result
         } catch (err) {
           lastError = err
@@ -445,12 +468,26 @@ async function fetchPdfPageBytes(
 // Precisa caber a janela inteira de páginas vivas (7) COM folga: se o teto
 // ficar rente ao número de páginas referenciadas, virar uma página evicta um
 // documento que vai ser pedido de novo em seguida, e o parse se repete à toa.
-const PAGE_PROXY_CACHE_MAX = 14
+// Cada documento parseado guarda uma CÓPIA dos bytes da página (o pdf.js
+// assume a posse do buffer que recebe), então este teto multiplica o tamanho
+// de página igual ao cache de bytes. Precisa caber a janela de páginas vivas
+// com folga — abaixo disso, virar uma página evicta um documento que será
+// pedido logo em seguida e o parse se repete à toa.
+function pageProxyCacheMax() {
+  return isLowMemoryDevice() ? 7 : isMobileViewport() ? 9 : 14
+}
+
+// Teto por bytes, além do de quantidade: numa página com imagens a cópia é de
+// megabytes, e só contar entradas não diz nada sobre a memória usada.
+function pageProxyBudget() {
+  return isLowMemoryDevice() ? 12 * 1024 * 1024 : isMobileViewport() ? 24 * 1024 * 1024 : 96 * 1024 * 1024
+}
 
 interface PageProxyEntry {
   doc: any
   page: any
   totalPages: number
+  bytes: number
   refs: number
   doomed: boolean
   lastUsed: number
@@ -466,19 +503,25 @@ function destroyProxyEntry(entry: PageProxyEntry) {
 }
 
 function evictPageProxies() {
-  if (pageProxyCache.size <= PAGE_PROXY_CACHE_MAX) return
+  const maxEntries = pageProxyCacheMax()
+  const budget = pageProxyBudget()
+  let totalBytes = 0
+  for (const entry of pageProxyCache.values()) totalBytes += entry.bytes
+  if (pageProxyCache.size <= maxEntries && totalBytes <= budget) return
+
   // Só entradas ociosas podem sair; as em uso ficam até serem soltas.
   const idle = Array.from(pageProxyCache.entries())
     .filter(([, entry]) => entry.refs === 0)
     .sort((a, b) => a[1].lastUsed - b[1].lastUsed)
-  let excess = pageProxyCache.size - PAGE_PROXY_CACHE_MAX
+
   for (const [key, entry] of idle) {
-    if (excess <= 0) break
+    if (pageProxyCache.size <= maxEntries && totalBytes <= budget) break
     pageProxyCache.delete(key)
+    totalBytes -= entry.bytes
     destroyProxyEntry(entry)
-    excess -= 1
   }
-  if (excess > 0 && process.env.NODE_ENV !== 'production') {
+
+  if ((pageProxyCache.size > maxEntries || totalBytes > budget) && process.env.NODE_ENV !== 'production') {
     // Sinal de vazamento: todo mundo referenciado e nada pôde ser liberado.
     console.warn('[pdf-viewer] cache de proxies acima do teto com todas as entradas em uso')
   }
@@ -517,6 +560,9 @@ async function acquirePageProxy(
       doc,
       page,
       totalPages: pageCount || 0,
+      // Tamanho da cópia que o pdf.js está segurando, para a eviction poder
+      // raciocinar em memória e não em "número de páginas".
+      bytes: bytes.byteLength,
       refs: 0,
       doomed: false,
       lastUsed: Date.now(),
@@ -581,7 +627,8 @@ function releasePageProxy(materialId: string, pageNumber: number) {
 // número: era `window.innerWidth` (viewport VISUAL no iOS) fazendo o leitor se
 // achar desktop no meio da pinça e trocar 2,2 por 9 Mpx de uma vez. Ver
 // isMobileViewport().
-const MAX_CANVAS_MPX_MOBILE = 3.5
+const MAX_CANVAS_MPX_MOBILE = 3.0
+const MAX_CANVAS_MPX_LOW_MEMORY = 2.0
 const MAX_CANVAS_MPX_DESKTOP = 9
 
 // ATENÇÃO: não usar `window.innerWidth` aqui.
@@ -597,6 +644,15 @@ const MAX_CANVAS_MPX_DESKTOP = 9
 // `matchMedia` responde pelo viewport de LAYOUT, que a pinça não altera.
 let mobileQuery: MediaQueryList | null = null
 
+// Aparelho com pouca memória. `deviceMemory` existe no Chrome/Android e NÃO
+// existe no Safari do iOS — então isto só ajuda no Android fraco; para o iOS
+// quem protege são os orçamentos de celular, que já são conservadores.
+function isLowMemoryDevice() {
+  if (typeof navigator === 'undefined') return false
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory
+  return typeof memory === 'number' && memory > 0 && memory <= 4
+}
+
 function isMobileViewport() {
   if (typeof window === 'undefined') return false
   if (typeof window.matchMedia !== 'function') return false
@@ -608,7 +664,10 @@ function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
   const deviceDpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
   const dpr = Math.min(Math.max(deviceDpr, 1), 2)
   let effective = scale * dpr
-  const budget = (isMobileViewport() ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP) * 1_000_000
+  const budgetMpx = isLowMemoryDevice()
+    ? MAX_CANVAS_MPX_LOW_MEMORY
+    : isMobileViewport() ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP
+  const budget = budgetMpx * 1_000_000
   const wanted = baseWidth * baseHeight * effective * effective
   if (wanted > budget) effective *= Math.sqrt(budget / wanted)
   return effective
@@ -1566,20 +1625,21 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   useEffect(() => {
     if (!access) return
-    // Pré-carrega as próximas páginas — só os BYTES, sem canvas. É o jeito
-    // barato de ter mais página pronta: um PDF de uma página pesa centenas de
-    // KB, enquanto cada canvas vivo custa dezenas de MB. Assim a página aparece
-    // instantânea mesmo estando fora da janela de páginas renderizadas.
+    // Pré-carrega as próximas páginas — só os BYTES, sem canvas. Barato PERTO
+    // de um canvas, mas não de graça: num material com imagens uma página pode
+    // ter megabytes, e pré-carregar demais enche o cache mais rápido do que ele
+    // esvazia. Por isso o número varia com o aparelho.
     // Em prévia, "próxima" é a próxima LIBERADA — nunca uma bloqueada (403 à toa).
+    const ahead = prefetchAhead()
     const upcoming: number[] = []
     if (previewActive) {
       const index = allowedPages.indexOf(currentPage)
       if (index === -1) return
-      for (let step = 1; step <= PREFETCH_AHEAD && index + step < allowedPages.length; step += 1) {
+      for (let step = 1; step <= ahead && index + step < allowedPages.length; step += 1) {
         upcoming.push(allowedPages[index + step])
       }
     } else {
-      for (let step = 1; step <= PREFETCH_AHEAD && currentPage + step <= pageCount; step += 1) {
+      for (let step = 1; step <= ahead && currentPage + step <= pageCount; step += 1) {
         upcoming.push(currentPage + step)
       }
       // Uma para trás também: voltar página é tão comum quanto avançar.
