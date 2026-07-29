@@ -1592,6 +1592,7 @@ function PatologiaContent() {
   const [lightbox, setLightbox] = useState<{ src: string; alt: string; caption?: string } | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
   const [pdfProgress, setPdfProgress] = useState<{ label: string; pct: number } | null>(null)
+  const [sinonimosExpanded, setSinonimosExpanded] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
 
   // ── Highlights ────────────────────────────────────────────────────
@@ -1834,9 +1835,34 @@ function PatologiaContent() {
           </h1>
 
           {patologia.sinonimos.length > 0 && (
-            <p className="text-muted-foreground mt-2.5 text-[15px]">
-              {patologia.sinonimos.join(' · ')}
-            </p>
+            <div className="mt-2.5">
+              <button
+                type="button"
+                onClick={() => setSinonimosExpanded(v => !v)}
+                aria-expanded={sinonimosExpanded}
+                className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <span>Sinônimos ({patologia.sinonimos.length})</span>
+                {sinonimosExpanded ? (
+                  <ChevronUp className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" />
+                )}
+              </button>
+              <AnimatePresence initial={false}>
+                {sinonimosExpanded && (
+                  <motion.p
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="overflow-hidden text-muted-foreground text-[15px]"
+                  >
+                    <span className="block pt-1.5">{patologia.sinonimos.join(' · ')}</span>
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           )}
 
           <div className="flex flex-wrap items-center gap-2 mt-5">
