@@ -81,13 +81,16 @@ export function useAppShell() {
  */
 function skeletonVariantForPath(
   pathname: string | null,
-): 'cards' | 'list' | 'dashboard' {
+): 'cards' | 'catalog' | 'list' | 'dashboard' {
   if (!pathname) return 'cards'
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/profile')) {
     return 'dashboard'
   }
   if (pathname.startsWith('/banco-questoes') || pathname.startsWith('/forum')) {
     return 'list'
+  }
+  if (pathname.startsWith('/materiais')) {
+    return 'catalog'
   }
   return 'cards'
 }
