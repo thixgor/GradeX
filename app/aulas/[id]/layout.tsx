@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { AulaPostagem } from '@/lib/types'
 import { DEFAULT_OG_IMAGE, absoluteUrl, joinSeoParts, privateNoIndexRobots, sanitizeSeoText } from '@/lib/seo'
+import { isPlusOnlyAula } from '@/lib/account-tier'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -39,8 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? aula.capa.imagem
       : DEFAULT_OG_IMAGE
 
-    const isPremium = aula.visibilidade === 'premium'
-    const accessLabel = isPremium ? 'Aula Premium' : 'Aula Gratuita'
+    const isPremium = isPlusOnlyAula(aula.visibilidade)
+    const accessLabel = isPremium ? 'Aula Plus+' : 'Aula Gratuita'
     const tipoLabel = aula.tipo === 'ao-vivo' ? 'Ao vivo' : aula.tipo === 'gravada' ? 'Gravada' : ''
 
     const description = joinSeoParts([descricaoBase, accessLabel, tipoLabel]).slice(0, 200)

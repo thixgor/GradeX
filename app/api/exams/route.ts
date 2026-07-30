@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
 
         if (existingPersonalExams >= personalExamsLifetimeLimit) {
           return NextResponse.json({
-            error: `Limite vitalício de provas pessoais atingido (${personalExamsLifetimeLimit} no total). Faça upgrade para Premium para criar mais provas.`,
+            error: `Limite vitalício de provas pessoais atingido (${personalExamsLifetimeLimit} no total). Faça para o Plus+ para criar mais provas.`,
             requiresUpgrade: true,
             upgradeUrl: '/buy',
             limit: personalExamsLifetimeLimit,

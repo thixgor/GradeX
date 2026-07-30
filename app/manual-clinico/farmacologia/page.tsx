@@ -218,7 +218,7 @@ function FarmacologiaContent() {
 
       {/* ══════════ MAIN ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Premium banner */}
+        {/* Plus+ banner */}
         {!hasFullAccess && product?.isActive && (
           <div className="mb-7 overflow-hidden rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -227,7 +227,7 @@ function FarmacologiaContent() {
                   <Crown className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold leading-snug">Farmacologia faz parte do Manual Clínico Premium.</p>
+                  <p className="text-sm font-bold leading-snug">Farmacologia faz parte do Manual Clínico Completo.</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Desbloqueie todas as fichas de fármacos — mecanismo, posologia, calculadora de dose e mais — por {formatBRL(product.currentPrice)}.
                   </p>
@@ -309,7 +309,7 @@ function FarmacologiaContent() {
                                       )}
                                       {m.isPremiumLocked && (
                                         <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                                          <Lock className="h-3 w-3" /> Premium
+                                          <Lock className="h-3 w-3" /> Plus+
                                         </span>
                                       )}
                                     </div>

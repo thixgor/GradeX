@@ -91,8 +91,8 @@ const PRODUCT_TYPES = [
   ['material', 'Material'],
   ['flashcard', 'Flashcards'],
   ['package', 'Pacote'],
-  ['premium', 'Premium'],
-  ['essential', 'Essential'],
+  ['premium', 'Plus+'],
+  ['essential', 'Plus+'],
 ]
 const STATUSES = [
   ['', 'Todos os status'],

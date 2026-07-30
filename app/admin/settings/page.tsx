@@ -11,6 +11,8 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap, Plus, ArrowUp, ArrowDown } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
+import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
+import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
 import {
   SIDEBAR_SECTION_DEFINITIONS,
   normalizeSidebarSections,
@@ -1084,11 +1086,17 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
+          {/* Plus+ — cargo único da plataforma */}
+          <PlusGuardPanel />
+
           {/* Planos Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Gerenciar Planos</CardTitle>
-              <CardDescription>Configure os planos de preço disponíveis em /buy</CardDescription>
+              <CardTitle>Gerenciar Planos {PLUS_LABEL}</CardTitle>
+              <CardDescription>
+                Preços e durações do {PLUS_LABEL} exibidos em /buy. Todo plano pago concede o
+                mesmo cargo — o que muda entre eles é apenas preço e duração.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Planos List */}
@@ -1166,7 +1174,7 @@ export default function SettingsPage() {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs">Nome (ex: DomineAqui PREMIUM)</Label>
+                        <Label className="text-xs">Nome (ex: DomineAqui Plus+)</Label>
                         <Input
                           value={plano.nome}
                           onChange={(e) => {
@@ -1226,7 +1234,7 @@ export default function SettingsPage() {
                       <div>
                         <Label className="text-xs">Cargo a Atribuir</Label>
                         <select
-                          value={plano.role || 'premium'}
+                          value={normalizeAccountType(plano.role)}
                           onChange={(e) => {
                             const updated = [...planos]
                             updated[idx].role = e.target.value as any
@@ -1234,11 +1242,14 @@ export default function SettingsPage() {
                           }}
                           className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
                         >
-                          <option value="premium">Premium</option>
-                          <option value="essential">Essential</option>
+                          <option value="plus">{PLUS_LABEL}</option>
                           <option value="trial">Trial</option>
                           <option value="gratuito">Gratuito</option>
                         </select>
+                        <p className="mt-1 text-[11px] text-muted-foreground">
+                          Planos antigos com Premium/Essential aparecem aqui como {PLUS_LABEL} e são
+                          gravados como {PLUS_LABEL} ao salvar.
+                        </p>
                       </div>
                       <div>
                         <Label className="text-xs">Duração em Meses (0 = Vitalício)</Label>
@@ -1361,6 +1372,8 @@ export default function SettingsPage() {
                       preco: 0,
                       descricao: '',
                       beneficios: [],
+                      role: 'plus' as const, // único cargo pago da plataforma
+                      durationMonths: 1,
                       oculto: true, // Start hidden
                       ordem: planos.length,
                       criadoEm: new Date(),

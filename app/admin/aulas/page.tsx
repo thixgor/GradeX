@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { ArrowLeft, Plus, Edit2, Trash2, Copy, Eye, EyeOff } from 'lucide-react'
 import { AulaTopic, AulaSubtopic, AulaModulo, AulaPostagem } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { PLUS_LABEL, isPlusOnlyAula } from '@/lib/account-tier'
 
 interface User {
   id: string
@@ -235,11 +236,11 @@ export default function AdminAulasPage() {
                               {aula.tipo === 'ao-vivo' ? 'Ao Vivo' : 'Gravada'}
                             </span>
                             <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                              aula.visibilidade === 'premium'
+                              isPlusOnlyAula(aula.visibilidade)
                                 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200'
                                 : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200'
                             }`}>
-                              {aula.visibilidade === 'premium' ? 'Premium' : 'Gratuita'}
+                              {isPlusOnlyAula(aula.visibilidade) ? PLUS_LABEL : 'Gratuita'}
                             </span>
                             {aula.oculta && (
                               <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-200 font-semibold">

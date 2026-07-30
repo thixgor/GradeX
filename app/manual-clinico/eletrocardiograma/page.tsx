@@ -38,7 +38,7 @@ interface CatalogSummary {
 
 interface AccessResp {
   isAuthenticated: boolean
-  access: { hasFullAccess: boolean; reason: string; includedPlan: 'premium' | 'essential' | null }
+  access: { hasFullAccess: boolean; reason: string; includedPlan: string | null }
   product: {
     label: string
     ctaText: string
@@ -240,7 +240,7 @@ function Paywall({
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   Ele não é vendido à parte nem entra no teste grátis: vem incluído, sem custo extra,
                   para quem assina o <strong className="text-foreground">Manual Clínico</strong> — e para
-                  as contas <strong className="text-foreground">Premium</strong>.
+                  as contas <strong className="text-foreground">Plus+</strong>.
                 </p>
               </div>
             </div>
@@ -320,7 +320,7 @@ function Paywall({
               </>
             ) : (
               <p className="text-sm text-muted-foreground">
-                Acesso liberado para assinantes do Manual Clínico e contas Premium.
+                Acesso liberado para assinantes do Manual Clínico e contas Plus+.
               </p>
             )}
 

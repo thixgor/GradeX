@@ -88,7 +88,7 @@ function BancoQuestoesContent() {
   const router = useRouter()
   const { user, isAdmin, accountType: appAccountType } = useAppShell()
   const [loading, setLoading] = useState(true)
-  const [requiresPremium, setRequiresPremium] = useState(false)
+  const [requiresPlus, setRequiresPlus] = useState(false)
 
   // Derive from useAppShell instead of extra /api/auth/me call
   const accountType = isAdmin ? 'admin' as const : (appAccountType === 'gratuito' ? 'gratuito' as const : appAccountType as 'gratuito' | 'trial' | 'premium' | 'admin')
@@ -166,7 +166,7 @@ function BancoQuestoesContent() {
   useEffect(() => {
     // Skip the first trigger — loadInitialData handles initial questoes load
     if (!initialLoadDone.current) return
-    if (!requiresPremium) {
+    if (!requiresPlus) {
       loadQuestoes()
     }
   }, [filtros])
@@ -242,7 +242,7 @@ function BancoQuestoesContent() {
         accountType !== 'admin'
 
       // Parallelize all independent API calls
-      // A primeira página de questões entra AQUI para usuários premium/admin.
+      // A primeira página de questões entra AQUI para assinantes Plus+/admin.
       // Antes ela era buscada com `await loadQuestoes()` só depois deste lote
       // resolver, criando dois round-trips em série antes de qualquer pixel —
       // o skeleton ficava em tela pelo tempo somado das duas idas. No mount os
@@ -266,8 +266,8 @@ function BancoQuestoesContent() {
 
       if (periodosRes.status === 403) {
         const data = await periodosRes.json()
-        if (data.requiresPremium) {
-          setRequiresPremium(true)
+        if (data.requiresPlus) {
+          setRequiresPlus(true)
           setLoading(false)
           return
         }
@@ -688,7 +688,7 @@ function BancoQuestoesContent() {
                   <div>
                     <p className="text-sm font-semibold">Sabe que voce pode ter mais?</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Faca upgrade para Premium e tenha acesso a mais de 1.000 questoes de banca,
+                      Faca para o Plus+ e tenha acesso a mais de 1.000 questoes de banca,
                       com filtros avancados e criacao de listas personalizadas!
                     </p>
                   </div>
@@ -700,7 +700,7 @@ function BancoQuestoesContent() {
                   size="lg"
                 >
                   <Sparkles className="h-5 w-5 mr-2" />
-                  Fazer Upgrade para Premium
+                  Fazer Assinar Plus+
                 </Button>
               </div>
             </div>
@@ -710,7 +710,7 @@ function BancoQuestoesContent() {
     )
   }
 
-  if (requiresPremium) {
+  if (requiresPlus) {
     return (
       <div className="surface-page">
         <div className="mx-auto w-full max-w-2xl px-4 py-12">
@@ -719,9 +719,9 @@ function BancoQuestoesContent() {
               <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10">
                 <Lock className="h-8 w-8 text-amber-600" />
               </div>
-              <h2 className="text-2xl font-bold tracking-tight">Acesso Premium</h2>
+              <h2 className="text-2xl font-bold tracking-tight">Acesso Plus+</h2>
               <p className="text-sm text-muted-foreground">
-                O Banco de Questoes e exclusivo para assinantes Premium
+                O Banco de Questoes e exclusivo para assinantes Plus+
               </p>
             </div>
             <div className="p-8 pt-0 space-y-6">
@@ -746,7 +746,7 @@ function BancoQuestoesContent() {
                 className="w-full btn-brand-glow text-white rounded-xl"
                 size="lg"
               >
-                Assinar Premium
+                Assinar Plus+
               </Button>
             </div>
           </div>
@@ -1269,7 +1269,7 @@ function BancoQuestoesContent() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold">Voce esta visualizando 5 questoes gratuitas</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Para ver questoes de outro periodo ou usar filtros, faca upgrade para Premium!
+                  Para ver questoes de outro periodo ou usar filtros, faca para o Plus+!
                 </p>
                 <Button
                   size="sm"

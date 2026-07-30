@@ -9,6 +9,8 @@ import {
   resolveDeckAccess,
 } from '@/lib/flashcard-manual'
 import { applyWatermark } from '@/lib/pdf-watermark'
+import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import { emailFingerprint } from '@/lib/watermark-fingerprint'
 import { flashcardPdfFileName, generateFlashcardManualPdf } from '@/lib/flashcard-manual-pdf'
 import { checkRateLimitSync } from '@/lib/api-security'
 import type { FlashcardManualCard, FlashcardManualDeck, User } from '@/lib/types'
@@ -88,6 +90,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Sem acesso ao deck' }, { status: 403 })
     }
 
+    // Plus+ Guard: cota antiabuso de downloads.
+    const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, isAdmin, db })
+    if (!allowance.allowed) {
+      return NextResponse.json(
+        { error: allowance.message || 'Limite de downloads atingido.', reason: allowance.reason, retryAt: allowance.retryAt },
+        { status: 429 },
+      )
+    }
+
     const cards = await db
       .collection<FlashcardManualCard>(FLASHCARD_MANUAL_COLLECTIONS.cards)
       .find({ deckId: String(deck._id) })
@@ -115,6 +126,20 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks)
       .updateOne({ _id: deck._id }, { $inc: { pdfDownloadCount: 1 }, $set: { updatedAt: new Date() } })
       .catch(() => {})
+
+    recordPlusDownload({
+      userId: session.userId,
+      userEmail: user.email || session.email,
+      userName: user.name || session.name,
+      accountType: user.accountType,
+      kind: 'flashcard_deck',
+      resourceId: String(deck._id),
+      resourceTitle: deck.title,
+      ip: request.headers.get('x-forwarded-for')?.split(',')[0] || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+      watermarkFingerprint: emailFingerprint(user.email || session.email),
+      db,
+    }).catch(() => {})
 
     const filename = flashcardPdfFileName(deck.title)
     return new NextResponse(Buffer.from(stamped), {

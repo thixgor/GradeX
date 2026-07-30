@@ -30,7 +30,7 @@ import { BancoListaUsuario } from '@/lib/types/banco-questoes'
 export default function MinhasListasPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [requiresPremium, setRequiresPremium] = useState(false)
+  const [requiresPlus, setRequiresPlus] = useState(false)
   const [listas, setListas] = useState<(BancoListaUsuario & { totalQuestoes?: number })[]>([])
 
   // Modal
@@ -50,8 +50,8 @@ export default function MinhasListasPage() {
       const res = await fetch('/api/banco/listas')
       if (res.status === 403) {
         const data = await res.json()
-        if (data.requiresPremium) {
-          setRequiresPremium(true)
+        if (data.requiresPlus) {
+          setRequiresPlus(true)
           setLoading(false)
           return
         }
@@ -142,7 +142,7 @@ export default function MinhasListasPage() {
     )
   }
 
-  if (requiresPremium) {
+  if (requiresPlus) {
     return (
       <AppShell headerTitle="Minhas Listas">
         <div className="container max-w-2xl py-12">
@@ -151,9 +151,9 @@ export default function MinhasListasPage() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
                 <Lock className="h-8 w-8 text-amber-600" />
               </div>
-              <CardTitle className="text-2xl">Acesso Premium</CardTitle>
+              <CardTitle className="text-2xl">Acesso Plus+</CardTitle>
               <CardDescription className="text-base">
-                As listas personalizadas são exclusivas para assinantes Premium
+                As listas personalizadas são exclusivas para assinantes Plus+
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -162,7 +162,7 @@ export default function MinhasListasPage() {
                 className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
                 size="lg"
               >
-                Assinar Premium
+                Assinar Plus+
               </Button>
             </CardContent>
           </Card>

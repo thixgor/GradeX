@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { AppShell as LayoutShell } from '@/components/app-shell'
 import { cn } from '@/lib/utils'
+import { isPlusAccount } from '@/lib/account-tier'
 
 interface GameCardProps {
     id: string
@@ -239,7 +240,7 @@ export default function GamesPage() {
     }
 
     const isAdmin = userRole === 'admin'
-    const isPremium = accountType === 'premium' || isAdmin
+    const isPremium = isPlusAccount(accountType, isAdmin)
 
     const games: GameCardProps[] = [
         {

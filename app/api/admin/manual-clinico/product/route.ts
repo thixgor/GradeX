@@ -42,8 +42,7 @@ const Schema = z.object({
   freeAccessMode: z.enum(['quantity', 'list']),
   freeQuantity: z.number().int().min(0).max(1000),
   freePathologySlugs: z.array(z.string().min(1)).max(1000),
-  includedInPremium: z.boolean().optional(),
-  includedInEssential: z.boolean().optional(),
+  includedInPlus: z.boolean().optional(),
   pricingEventId: z.string().nullable().optional(),
 })
 

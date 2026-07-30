@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 import { formatStateLabel } from '@/lib/brazil-states'
+import { isPlusAccount, normalizeAccountType, PLUS_LABEL } from '@/lib/account-tier'
 
 const PROFESSION_LABELS: Record<string, string> = {
   medico: 'Médico',
@@ -203,7 +204,9 @@ export default function AdminUsersPage() {
         if (planFilter === 'all') return true
         if (planFilter === 'admin') return user.role === 'admin'
         if (planFilter === 'banned') return !!user.banned
-        return (user.accountType || 'gratuito') === planFilter && user.role !== 'admin'
+        // Normaliza para que o filtro "Plus+" também pegue as contas legadas
+        // ainda gravadas como premium/essential.
+        return normalizeAccountType(user.accountType) === planFilter && user.role !== 'admin'
       })
       .filter((user) => {
         const lastLogin = getUserDateValue(user.lastLoginAt)
@@ -338,7 +341,7 @@ export default function AdminUsersPage() {
           action: 'update_tier',
           accountType: selectedAccountType,
           trialPlanType: selectedAccountType === 'trial' ? selectedTrialSubtype : undefined,
-          premiumPlanType: selectedAccountType === 'premium' ? selectedPremiumSubtype : undefined
+          premiumPlanType: isPlusAccount(selectedAccountType) ? selectedPremiumSubtype : undefined
         })
       })
 
@@ -586,21 +589,17 @@ export default function AdminUsersPage() {
   function getAccountTypeBadge(user: User) {
     const accountType = user.accountType || 'gratuito'
 
+    // Cargo único: 'plus' e os legados premium/essential mostram o mesmo selo.
+    if (isPlusAccount(accountType)) {
+      return (
+        <span className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
+          <Crown className="h-3 w-3" />
+          {PLUS_LABEL}
+        </span>
+      )
+    }
+
     switch (accountType) {
-      case 'premium':
-        return (
-          <span className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
-            <Crown className="h-3 w-3" />
-            Premium
-          </span>
-        )
-      case 'essential':
-        return (
-          <span className="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
-            <Zap className="h-3 w-3" />
-            Essential
-          </span>
-        )
       case 'trial':
         return (
           <span className="text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
@@ -844,8 +843,7 @@ export default function AdminUsersPage() {
                         <SelectItem value="admin">Admins</SelectItem>
                         <SelectItem value="gratuito">Gratuito</SelectItem>
                         <SelectItem value="trial">Trial</SelectItem>
-                        <SelectItem value="essential">Essential</SelectItem>
-                        <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="plus">{PLUS_LABEL}</SelectItem>
                         <SelectItem value="banned">Banidos</SelectItem>
                       </SelectContent>
                     </Select>
@@ -1233,26 +1231,14 @@ export default function AdminUsersPage() {
                   <div className="text-xs opacity-80">Temporário</div>
                 </Button>
                 <Button
-                  variant={selectedAccountType === 'premium' ? 'default' : 'outline'}
-                  onClick={() => setSelectedAccountType('premium')}
+                  variant={isPlusAccount(selectedAccountType) ? 'default' : 'outline'}
+                  onClick={() => setSelectedAccountType('plus')}
                   className="h-auto py-3 flex-col gap-1"
                   size="sm"
                 >
                   <Crown className="h-4 w-4" />
-                  <div className="font-semibold">Premium</div>
-                  <div className="text-xs opacity-80">Vitalício</div>
-                </Button>
-              </div>
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                <Button
-                  variant={selectedAccountType === 'essential' ? 'default' : 'outline'}
-                  onClick={() => setSelectedAccountType('essential')}
-                  className="h-auto py-3 flex-col gap-1"
-                  size="sm"
-                >
-                  <Zap className="h-4 w-4" />
-                  <div className="font-semibold">Essential</div>
-                  <div className="text-xs opacity-80">Sem Aulas</div>
+                  <div className="font-semibold">{PLUS_LABEL}</div>
+                  <div className="text-xs opacity-80">Acesso total</div>
                 </Button>
               </div>
             </div>
@@ -1283,9 +1269,9 @@ export default function AdminUsersPage() {
               </div>
             )}
 
-            {selectedAccountType === 'premium' && (
+            {isPlusAccount(selectedAccountType) && (
               <div className="space-y-2">
-                <Label>Subtipo de Premium</Label>
+                <Label>Subtipo de assinatura</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant={selectedPremiumSubtype === 'teste' ? 'default' : 'outline'}

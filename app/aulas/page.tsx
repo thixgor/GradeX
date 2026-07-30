@@ -709,12 +709,12 @@ function AulasPageContent() {
                         <Pencil className="h-3.5 w-3.5 text-foreground" />
                       </button>
                     )}
-                    {/* Bloqueio Premium */}
+                    {/* Bloqueio Plus+ */}
                     {aula.visibilidade === 'premium' && user?.accountType !== 'premium' && !isAdmin && user?.secondaryRole !== 'monitor' && (
                       <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center z-10">
                         <div className="text-center">
                           <Lock className="h-8 w-8 text-yellow-300 mx-auto mb-2" />
-                          <p className="text-sm font-semibold text-yellow-300">Conteúdo Premium</p>
+                          <p className="text-sm font-semibold text-yellow-300">Conteúdo Plus+</p>
                         </div>
                       </div>
                     )}
@@ -778,7 +778,7 @@ function AulasPageContent() {
                               {aula.visibilidade === 'premium' ? (
                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
                                   <Lock className="h-3 w-3" />
-                                  Premium
+                                  Plus+
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
@@ -1006,7 +1006,7 @@ function AulasPageContent() {
                                   {aula.visibilidade === 'premium' ? (
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
                                       <Lock className="h-3 w-3" />
-                                      Premium
+                                      Plus+
                                     </span>
                                   ) : (
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
@@ -1228,7 +1228,7 @@ function AulasPageContent() {
                                   {aula.visibilidade === 'premium' ? (
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
                                       <Lock className="h-3 w-3" />
-                                      Premium
+                                      Plus+
                                     </span>
                                   ) : (
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
@@ -1444,7 +1444,7 @@ function AulasPageContent() {
                               {aula.visibilidade === 'premium' ? (
                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
                                   <Lock className="h-3 w-3" />
-                                  Premium
+                                  Plus+
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
@@ -1647,7 +1647,7 @@ function AulasPageContent() {
                               {aula.visibilidade === 'premium' ? (
                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
                                   <Lock className="h-3 w-3" />
-                                  Premium
+                                  Plus+
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">
@@ -1879,7 +1879,7 @@ function AulasPageContent() {
                                         {aula.visibilidade === 'premium' ? (
                                           <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold">
                                             <Lock className="h-3 w-3" />
-                                            Premium
+                                            Plus+
                                           </span>
                                         ) : (
                                           <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-primary border border-border text-xs font-semibold">

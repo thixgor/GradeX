@@ -9,6 +9,7 @@ import {
   BancoQuestoesFiltros,
   BancoQuestoesResponse
 } from '@/lib/types/banco-questoes'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,10 +30,10 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
 
-    // Verificar acesso premium (admin sempre tem acesso total)
+    // Verificar acesso Plus+ (admin sempre tem acesso total)
     const periodoId = searchParams.get('periodoId')
     const isAdmin = user.role === 'admin'
-    const isPremiumOrTrial = user.accountType === 'premium' || user.accountType === 'trial'
+    const isPremiumOrTrial = isPlusAccount(user.accountType) || user.accountType === 'trial'
 
     // Usuários gratuitos podem ver até 5 questões FIXAS quando selecionam um período
     const isFreeUser = !isAdmin && !isPremiumOrTrial
@@ -40,8 +41,8 @@ export async function GET(request: NextRequest) {
     // Se for usuário gratuito SEM período selecionado, negar acesso
     if (isFreeUser && !periodoId) {
       return NextResponse.json({
-        error: 'Acesso restrito a usuários Premium',
-        requiresPremium: true
+        error: 'Acesso restrito a assinantes Plus+',
+        requiresPlus: true
       }, { status: 403 })
     }
 
@@ -173,7 +174,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // LÓGICA NORMAL PARA ADMIN E PREMIUM
+    // LÓGICA NORMAL PARA ADMIN E PLUS+
     // Extrair filtros — agora aceita múltiplos IDs separados por vírgula
     const periodoIdParam = searchParams.get('periodoId') || undefined
     const moduloIdParam = searchParams.get('moduloId') || undefined

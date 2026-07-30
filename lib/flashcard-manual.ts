@@ -1,5 +1,6 @@
 import { Db, ObjectId } from 'mongodb'
 import { FlashcardManualDeck, FlashcardManualCard, FlashcardManualFolder, MaterialAccessGroup } from './types'
+import { expandUserAccessGroups } from './account-tier'
 
 export const FLASHCARD_MANUAL_COLLECTIONS = {
   decks: 'flashcardManualDecks',
@@ -239,12 +240,23 @@ export function sanitizeTags(tags: any): string[] {
     .slice(0, FLASHCARD_MANUAL_TAG_LIMIT)
 }
 
+/**
+ * Grupos do usuário para casar com `allowedGroups`.
+ *
+ * Um assinante `plus` recebe também os aliases legados, senão perderia acesso
+ * a decks marcados como `premium`/`essential` antes da consolidação dos cargos.
+ */
 export function getUserGroups(user: { accountType?: string | null; secondaryRole?: string | null } | null): string[] {
   if (!user) return []
-  const groups: string[] = []
-  if (user.accountType) groups.push(user.accountType)
-  if (user.secondaryRole === 'monitor') groups.push('monitor')
-  return groups
+  return expandUserAccessGroups(user.accountType, user.secondaryRole)
 }
 
-export const FLASHCARD_MANUAL_VALID_GROUPS: MaterialAccessGroup[] = ['gratuito', 'trial', 'essential', 'premium', 'monitor']
+export const FLASHCARD_MANUAL_VALID_GROUPS: MaterialAccessGroup[] = [
+  'gratuito',
+  'trial',
+  'plus',
+  'monitor',
+  // Legado — aceito em payloads antigos, nunca oferecido na interface.
+  'essential',
+  'premium',
+]

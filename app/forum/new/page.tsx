@@ -14,6 +14,7 @@ import { RichTextEditor } from '@/components/rich-text-editor'
 import { ArrowLeft, Upload, X, Tag as TagIcon, MessageSquare, Link as LinkIcon, Crown } from 'lucide-react'
 import { ForumType, ForumAttachment, AccountType, ForumPostCreationFreezeMode } from '@/lib/types'
 import { Switch } from '@/components/ui/switch'
+import { isPlusAccount } from '@/lib/account-tier'
 
 function NewForumPostContent() {
   const router = useRouter()
@@ -68,7 +69,7 @@ function NewForumPostContent() {
       case 'pause_only_free_common_and_monitors':
         return isMonitor || (isCommonUser && accountType === 'gratuito')
       case 'pause_only_free_common_and_premium_common':
-        return isCommonUser && (accountType === 'gratuito' || accountType === 'premium')
+        return isCommonUser && (accountType === 'gratuito' || isPlusAccount(accountType))
       default:
         return false
     }
@@ -367,15 +368,15 @@ function NewForumPostContent() {
                 </div>
               )}
 
-              {/* Premium Only (apenas para materiais e admin) */}
+              {/* Plus+ Only (apenas para materiais e admin) */}
               {forumType === 'materials' && userRole === 'admin' && (
                 <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
                     <Crown className="h-5 w-5 text-yellow-600" />
                     <div>
-                      <p className="font-medium">Apenas Premium</p>
+                      <p className="font-medium">Apenas Plus+</p>
                       <p className="text-sm text-muted-foreground">
-                        Apenas usuários premium poderão ver este material
+                        Apenas assinantes Plus+ poderão ver este material
                       </p>
                     </div>
                   </div>

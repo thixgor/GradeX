@@ -212,7 +212,18 @@ export interface ExamSubmission {
   submittedAt: Date // Quando o aluno submeteu a prova
 }
 
-export type AccountType = 'gratuito' | 'trial' | 'premium' | 'essential'
+/**
+ * Cargo da conta. `'plus'` (Plus+) é o único cargo pago oferecido.
+ *
+ * `'premium'` e `'essential'` continuam no union apenas porque documentos
+ * antigos do Mongo ainda os carregam — nunca grave esses valores em código
+ * novo. Use os helpers de `lib/account-tier.ts` para ler/comparar.
+ */
+export type AccountType = 'gratuito' | 'trial' | 'plus' | LegacyPaidAccountType
+
+/** @deprecated Consolidados em `'plus'`. Somente leitura de registros antigos. */
+export type LegacyPaidAccountType = 'premium' | 'essential'
+
 export type PremiumPlanType = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
 export type TrialPlanType = 'teste' | '7dias'
 
@@ -261,11 +272,18 @@ export interface User {
   trialDuration?: number // Duração personalizada do trial em dias (padrão: 7)
   trialPlanType?: TrialPlanType // Tipo de plano trial (teste ou 7dias)
   trialActivatedAt?: Date // Data de ativação do trial
-  // Para Premium
+  // Para o cargo pago (Plus+ — campos com prefixo `premium` por legado)
   premiumPlanType?: PremiumPlanType // Tipo de plano premium (teste, mensal, trimestral, semestral, vitalicio)
   premiumExpiresAt?: Date // Data de expiração do premium
   premiumActivatedAt?: Date // Data de ativação do premium
   premiumPrice?: number // Preço pago em R$
+  // ── Plus+ Guard (antiabuso) ──
+  plusRiskScore?: number // Score de risco acumulado (ver lib/plus-guard.ts)
+  plusRiskFlaggedAt?: Date // Quando passou do limite e entrou para revisão
+  plusDownloadsBlocked?: boolean // Downloads bloqueados (auto ou manual)
+  plusDownloadsBlockedReason?: string
+  plusRefundedAt?: Date // Último reembolso/estorno aprovado
+  plusRefundCount?: number // Quantos reembolsos essa conta já pediu
   // Provider de pagamento (Mercado Pago)
   mercadoPagoCustomerId?: string // ID do cliente (payer) no Mercado Pago
   mercadoPagoPreapprovalId?: string // ID da preapproval (assinatura) ativa
@@ -543,7 +561,8 @@ export interface FlashcardManualSession {
   entries: FlashcardManualStudyEntry[]
 }
 
-export type SerialKeyType = 'trial' | 'premium' | 'custom'
+/** `'premium'` é o valor legado do que hoje é `'plus'`. */
+export type SerialKeyType = 'trial' | 'plus' | 'premium' | 'custom'
 export type SerialKeyTrialSubtype = 'teste' | '7dias'
 export type SerialKeyPremiumSubtype = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
 
@@ -561,8 +580,8 @@ export type SerialKeyProductType =
   | 'material'
   | 'flashcard'
   | 'package'
-  | 'premium'
-  | 'essential'
+  | 'plus'
+  | LegacyPaidAccountType
 
 /** Estado do ciclo de vida de uma serial key de compra. */
 export type SerialKeyStatus = 'unactivated' | 'activated' | 'expired' | 'cancelled'
@@ -889,7 +908,8 @@ export interface StripeSettings {
 
 // Tipos para Aulas
 export type AulaType = 'ao-vivo' | 'gravada'
-export type AulaVisibility = 'premium' | 'gratuita'
+/** `'premium'` é legado — aulas novas usam `'plus'`. */
+export type AulaVisibility = 'plus' | 'gratuita' | 'premium'
 
 export interface AulaSetor {
   _id?: string | import('mongodb').ObjectId
@@ -1022,7 +1042,7 @@ export type PlanType = string // 'mensal' | 'trimestral' | 'semestral' | 'anual'
 export interface PlanConfig {
   _id?: string
   tipo: PlanType
-  nome: string // ex: "DomineAqui PREMIUM"
+  nome: string // ex: "DomineAqui Plus+"
   periodo: string // ex: "Plano Mensal"
   preco: number // Preço principal (ex: 24.90)
   precoOriginal?: number // Preço original com desconto (ex: 29.90)
@@ -1043,9 +1063,126 @@ export interface PlanConfig {
 }
 
 
+// ─── Plus+ Guard (proteção contra abuso e reembolso oportunista) ─────────────
+
+/**
+ * Toda a configuração antiabuso do Plus+, editável em /admin/settings.
+ *
+ * O risco central: o Plus+ libera 100% do acervo, e o CDC (art. 49) dá 7 dias
+ * de arrependimento. Sem trava, dá para assinar, baixar tudo em um dia e pedir
+ * o dinheiro de volta. As defesas abaixo não impedem o reembolso — elas
+ * limitam o quanto dá para extrair antes de a janela fechar e deixam prova
+ * do consumo para contestar o estorno.
+ */
+export interface PlusGuardSettings {
+  /** Liga/desliga o conjunto inteiro. Desligado = nenhum bloqueio (só log). */
+  enabled: boolean
+
+  /** Duração da janela legal de arrependimento, em dias. Padrão: 7. */
+  refundWindowDays: number
+
+  /**
+   * Cotas de download durante a janela de arrependimento (assinante novo).
+   * É aqui que mora a proteção principal.
+   */
+  trialWindow: PlusDownloadQuota
+
+  /** Cotas depois que a janela de arrependimento fecha (assinante estável). */
+  steadyState: PlusDownloadQuota
+
+  /** Teto absoluto de downloads dentro de toda a janela de arrependimento. */
+  refundWindowTotalCap: number
+
+  /** Dispositivos/sessões simultâneas por conta Plus+. 0 = usa o padrão global. */
+  maxDevices: number
+
+  /** Marca a conta para revisão manual ao ultrapassar este score de risco. */
+  riskScoreThreshold: number
+
+  /** Bloqueia downloads automaticamente quando o score passa do limite. */
+  autoBlockOnRisk: boolean
+
+  /** Exige marca d'água com identificação do usuário em todo PDF liberado. */
+  enforceWatermark: boolean
+
+  /**
+   * Ao aprovar reembolso/estorno, rebaixa a conta para gratuito e revoga
+   * acessos concedidos pela assinatura.
+   */
+  revokeOnRefund: boolean
+
+  /** Bloqueia nova assinatura para quem já pediu reembolso. 0 = não bloqueia. */
+  refundCooldownDays: number
+
+  /** Mensagem exibida ao usuário quando uma cota é atingida. */
+  quotaMessage: string
+
+  atualizadoEm?: Date
+  atualizadoPor?: string
+}
+
+export interface PlusDownloadQuota {
+  /** Downloads por hora. Corta o script de raspagem em massa. */
+  perHour: number
+  /** Downloads por dia. */
+  perDay: number
+  /** Downloads por semana. */
+  perWeek: number
+}
+
+/** Categorias de conteúdo contabilizadas pelo Plus+ Guard. */
+export type PlusDownloadKind =
+  | 'material'
+  | 'manual_clinico'
+  | 'flashcard_deck'
+  | 'exam_pdf'
+  | 'aula_pdf'
+  | 'mapa_mental'
+  | 'cronograma'
+  | 'outro'
+
+/** Registro server-side de cada download liberado (prova de consumo). */
+export interface PlusDownloadLog {
+  _id?: string | import('mongodb').ObjectId
+  userId: string
+  userEmail?: string
+  userName?: string
+  accountType?: AccountType
+  kind: PlusDownloadKind
+  resourceId?: string
+  resourceTitle?: string
+  /** true se o download aconteceu dentro da janela de arrependimento. */
+  inRefundWindow: boolean
+  ip?: string
+  userAgent?: string
+  /** Impressão digital gravada na marca d'água do arquivo entregue. */
+  watermarkFingerprint?: string
+  createdAt: Date
+}
+
+/** Motivo pelo qual o Plus+ Guard barrou uma liberação. */
+export type PlusGuardBlockReason =
+  | 'hourly_quota'
+  | 'daily_quota'
+  | 'weekly_quota'
+  | 'refund_window_cap'
+  | 'risk_blocked'
+  | 'refund_cooldown'
+
+export interface PlusGuardDecision {
+  allowed: boolean
+  reason?: PlusGuardBlockReason
+  message?: string
+  /** Downloads restantes na cota mais apertada do momento. */
+  remaining?: number
+  /** Quando a cota atingida se renova. */
+  retryAt?: Date
+}
+
 export interface AdminSettings {
   _id?: string
   planos: PlanConfig[]
+  plusGuard?: PlusGuardSettings
   criadoEm: Date
   atualizadoEm: Date
 }
@@ -1216,8 +1353,14 @@ export interface Doacao {
 
 export type MaterialType = 'pdf' | 'html' | 'video' | 'video_embed' | 'link' | 'image' | 'document' | 'other'
 
-// Grupos de acesso disponíveis para restrição de materiais
-export type MaterialAccessGroup = 'gratuito' | 'trial' | 'essential' | 'premium' | 'monitor'
+// Grupos de acesso disponíveis para restrição de materiais.
+// `essential`/`premium` só aparecem em registros anteriores ao Plus+.
+export type MaterialAccessGroup =
+  | 'gratuito'
+  | 'trial'
+  | 'plus'
+  | 'monitor'
+  | LegacyPaidAccountType
 
 export interface MaterialFolder {
   _id?: string | import('mongodb').ObjectId
@@ -1693,7 +1836,7 @@ export interface ShopOrder {
   updatedAt: Date
 }
 
-// ─── Produto avulso: Manual Clínico Premium ──────────────────────
+// ─── Produto avulso: Manual Clínico Completo ──────────────────────
 
 export type ManualClinicoAccessType = 'lifetime' | 'temporary'
 
@@ -1735,9 +1878,11 @@ export interface ManualClinicoProductConfig {
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
-  /** Inclui o Manual Clínico completo para contas Premium (sem compra avulsa). */
+  /** Inclui o Manual Clínico completo para assinantes Plus+ (sem compra avulsa). */
+  includedInPlus?: boolean
+  /** @deprecated Substituídos por `includedInPlus`. Só leitura de configs antigas. */
   includedInPremium?: boolean
-  /** Inclui o Manual Clínico completo para contas Essential (sem compra avulsa). */
+  /** @deprecated Substituídos por `includedInPlus`. Só leitura de configs antigas. */
   includedInEssential?: boolean
   /** Lote dinâmico por evento (pricingEvent._id) — legado/global. */
   pricingEventId?: string | null

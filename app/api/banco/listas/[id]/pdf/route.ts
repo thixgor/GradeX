@@ -69,8 +69,8 @@ export async function GET(
 
     if (user.role !== 'admin' && user.accountType !== 'premium') {
       return NextResponse.json({
-        error: 'Acesso restrito a usuários Premium',
-        requiresPremium: true
+        error: 'Acesso restrito a assinantes Plus+',
+        requiresPlus: true
       }, { status: 403 })
     }
 

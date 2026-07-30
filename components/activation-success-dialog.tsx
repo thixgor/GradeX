@@ -7,6 +7,7 @@ import {
   Crown, Timer, Check, Sparkles, Clock, FileText, Package, BookOpen,
   Layers, Zap, ArrowRight, KeyRound,
 } from 'lucide-react'
+import { isPlusAccount } from '@/lib/account-tier'
 
 /**
  * Detalhes vindos de /api/serial-keys/activate. Duas famílias de resposta:
@@ -21,7 +22,7 @@ export interface ActivationDetails {
   redirectTo?: string
   alreadyActivated?: boolean
   // Legado (plano)
-  keyType?: 'premium' | 'trial' | 'custom'
+  keyType?: 'plus' | 'trial' | 'custom' | 'premium'
   accountType?: string
   trialExpiresAt?: string | Date
   customDuration?: { days?: number; hours?: number; minutes?: number }
@@ -49,12 +50,14 @@ const PRODUCT_META: Record<string, { label: string; Icon: typeof Crown }> = {
   flashcard: { label: 'Flashcards', Icon: Layers },
   package: { label: 'Pacote', Icon: Package },
   manual_clinico: { label: 'Manual Clínico', Icon: BookOpen },
-  premium: { label: 'Premium', Icon: Crown },
-  essential: { label: 'Essential', Icon: Zap },
+  plus: { label: 'Plus+', Icon: Crown },
+  // Legado — keys emitidas antes da consolidação.
+  premium: { label: 'Plus+', Icon: Crown },
+  essential: { label: 'Plus+', Icon: Zap },
 }
 
 function planDurationText(details: ActivationDetails): string {
-  if (details.keyType === 'premium') return 'Vitalício'
+  if (details.keyType === 'plus' || details.keyType === 'premium') return 'Vitalício'
   if (details.keyType === 'trial') return '7 dias'
   if (details.keyType === 'custom' && details.customDuration) {
     const d = details.customDuration
@@ -71,7 +74,7 @@ function resolveVisual(details: ActivationDetails): Visual {
   // Modo produto (compra) — tem productType.
   if (details.productType) {
     const meta = PRODUCT_META[details.productType] || { label: 'Produto', Icon: Sparkles }
-    const isPlan = details.productType === 'premium' || details.productType === 'essential'
+    const isPlan = isPlusAccount(details.productType)
     const accent = isPlan ? '#fbbf24' : '#34d399'
     return {
       Icon: meta.Icon,
@@ -86,9 +89,9 @@ function resolveVisual(details: ActivationDetails): Visual {
   }
 
   // Modo legado (plano por key de admin).
-  if (details.keyType === 'premium') {
+  if (details.keyType === 'plus' || details.keyType === 'premium') {
     return {
-      Icon: Crown, title: 'Premium Ativado!', chipLabel: 'Plano ativado', chipValue: 'Premium',
+      Icon: Crown, title: 'Plus+ Ativado!', chipLabel: 'Plano ativado', chipValue: 'Plus+',
       accent: '#fbbf24', accentSoft: 'rgba(251,191,36,0.14)', ctaLabel: 'Começar a usar',
       redirectTo: '/dashboard',
     }

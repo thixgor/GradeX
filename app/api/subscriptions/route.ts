@@ -8,6 +8,8 @@ import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
+import { checkRefundCooldown } from '@/lib/plus-guard'
+import { normalizeAccountType } from '@/lib/account-tier'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -48,6 +50,14 @@ export async function POST(request: NextRequest) {
   const { planId, cardTokenId } = parsed.data
 
   const db = await getDb()
+
+  // Carência pós-reembolso: sem isso, o mesmo usuário reassina no dia seguinte
+  // e repete o ciclo "baixa tudo → pede o dinheiro de volta" todo mês.
+  const cooldown = await checkRefundCooldown(session.userId, db)
+  if (cooldown.blocked) {
+    return NextResponse.json({ error: cooldown.message, until: cooldown.until }, { status: 403 })
+  }
+
   const settings = await db.collection('admin_settings').findOne({})
 
   const enabledMethods = { ...DEFAULT_PAYMENT_METHODS, ...(settings?.paymentMethods || {}) }
@@ -103,7 +113,7 @@ export async function POST(request: NextRequest) {
   const subDoc: Omit<SubscriptionRecord, '_id'> = {
     userId: session.userId,
     planId,
-    role: plano.role || 'premium',
+    role: normalizeAccountType(plano.role),
     amount,
     currency: 'BRL',
     billingIntervalMonths: months as 1 | 3 | 12,
@@ -132,7 +142,7 @@ export async function POST(request: NextRequest) {
       { _id: new ObjectId(session.userId) as any },
       {
         $set: {
-          accountType: (plano.role as any) || 'premium',
+          accountType: normalizeAccountType(plano.role),
           premiumPlanType: planId as any,
           premiumActivatedAt: now,
           premiumExpiresAt: periodEnd,

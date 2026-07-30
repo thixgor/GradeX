@@ -382,13 +382,13 @@ const visualTemplatePresets: Record<string, VisualPreset> = {
         ],
     },
     'premium-promo': {
-        subject: 'Condicao especial para virar Premium',
+        subject: 'Condicao especial para assinar o Plus+',
         previewText: 'Aproveite a oferta antes que ela termine.',
         blocks: [
             makeBlock('hero', { title: 'Oferta especial liberada', text: 'Um empurrao para estudar com mais recursos e menos limite.' }),
             makeBlock('highlight', { title: '[X]% de desconto', text: 'Oferta valida ate [DATA]. Ajuste o desconto e a data antes de enviar.' }),
-            makeBlock('list', { title: 'Com Premium voce tem', items: ['Questoes ilimitadas', 'Flashcards e materiais exclusivos', 'Estatisticas avancadas', 'Suporte prioritario'] }),
-            makeBlock('button', { buttonText: 'Quero ser Premium', url: `${appUrl}/buy` }),
+            makeBlock('list', { title: 'Com o Plus+ voce tem', items: ['Questoes ilimitadas', 'Flashcards e materiais exclusivos', 'Estatisticas avancadas', 'Suporte prioritario'] }),
+            makeBlock('button', { buttonText: 'Quero assinar o Plus+', url: `${appUrl}/buy` }),
         ],
     },
     'feedback-request': {
@@ -512,11 +512,11 @@ const visualTemplatePresets: Record<string, VisualPreset> = {
         ],
     },
     renewal: {
-        subject: 'Seu acesso Premium esta perto de expirar',
+        subject: 'Seu acesso Plus+ esta perto de expirar',
         previewText: 'Renove para nao interromper sua rotina de estudos.',
         blocks: [
-            makeBlock('hero', { title: 'Nao deixe seu ritmo quebrar', text: 'Continue com acesso aos recursos Premium.' }),
-            makeBlock('list', { title: 'Voce mantem', items: ['Conteudos Premium', 'Questoes e revisoes', 'Ferramentas de evolucao'] }),
+            makeBlock('hero', { title: 'Nao deixe seu ritmo quebrar', text: 'Continue com acesso aos recursos Plus+.' }),
+            makeBlock('list', { title: 'Voce mantem', items: ['Conteúdos Plus+', 'Questoes e revisoes', 'Ferramentas de evolucao'] }),
             makeBlock('button', { buttonText: 'Renovar acesso', url: `${appUrl}/buy` }),
         ],
     },
@@ -1636,7 +1636,7 @@ export default function AdminEmailsPage() {
                                                 <SelectContent>
                                                     <SelectItem value="all">Todos</SelectItem>
                                                     <SelectItem value="admin">Admins</SelectItem>
-                                                    <SelectItem value="premium">Premium</SelectItem>
+                                                    <SelectItem value="premium">Plus+</SelectItem>
                                                     <SelectItem value="trial">Trial</SelectItem>
                                                     <SelectItem value="gratuito">Gratuito</SelectItem>
                                                 </SelectContent>

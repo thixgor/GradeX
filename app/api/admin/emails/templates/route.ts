@@ -106,10 +106,10 @@ const emailTemplates = [
     },
     {
         id: 'premium-promo',
-        name: '🌟 Promoção Premium',
+        name: '🌟 Promoção Plus+',
         description: 'Oferta especial para upgrade',
-        subject: '🔥 Oferta IMPERDÍVEL: Upgrade para Premium!',
-        previewText: 'Por tempo limitado: condições especiais para você virar Premium!',
+        subject: '🔥 Oferta IMPERDÍVEL: Assinar Plus+!',
+        previewText: 'Por tempo limitado: condições especiais para você assinar o Plus+!',
         content: `
       <h1 style="text-align: center;">Oferta Especial! 🎁</h1>
       
@@ -118,10 +118,10 @@ const emailTemplates = [
       <div style="background: linear-gradient(135deg, #0f3d2e 0%, #1a5c45 100%); color: white; padding: 30px; border-radius: 16px; text-align: center; margin: 25px 0;">
         <p style="font-size: 14px; margin: 0; opacity: 0.9;">POR TEMPO LIMITADO</p>
         <p style="font-size: 32px; font-weight: bold; margin: 10px 0;">[X]% DE DESCONTO</p>
-        <p style="font-size: 16px; margin: 0;">no plano Premium Anual</p>
+        <p style="font-size: 16px; margin: 0;">no plano Plus+ Anual</p>
       </div>
       
-      <p><strong>Com o Premium você tem:</strong></p>
+      <p><strong>Com o Plus+ você tem:</strong></p>
       
       <div class="highlight-box">
         <p>✅ Acesso ilimitado a todas as provas</p>
@@ -137,7 +137,7 @@ const emailTemplates = [
       </p>
       
       <div style="text-align: center;">
-        <a href="{{APP_URL}}/buy" class="cta-button">🚀 Quero Ser Premium!</a>
+        <a href="{{APP_URL}}/buy" class="cta-button">🚀 Quero o Plus+!</a>
       </div>
       
       <p style="text-align: center; font-size: 13px; color: #718096; margin-top: 25px;">
@@ -485,19 +485,19 @@ const emailTemplates = [
     },
     {
         id: 'renewal',
-        name: '🔁 Renovação Premium',
+        name: '🔁 Renovação Plus+',
         description: 'Renovar acesso antes de expirar',
         category: 'Retenção',
-        subject: 'Seu acesso Premium está perto de expirar',
+        subject: 'Seu acesso Plus+ está perto de expirar',
         previewText: 'Renove para não interromper sua rotina de estudos.',
         content: `
       <h1 style="text-align: center;">Não deixe seu ritmo quebrar</h1>
 
-      <p>Seu acesso Premium está chegando ao fim. Para continuar com questões, flashcards, aulas e recursos avançados, você pode renovar agora.</p>
+      <p>Seu acesso Plus+ está chegando ao fim. Para continuar com questões, flashcards, aulas e recursos avançados, você pode renovar agora.</p>
 
       <div class="highlight-box">
         <p><strong>Você mantém:</strong></p>
-        <p>• Acesso aos conteúdos Premium</p>
+        <p>• Acesso aos conteúdos do Plus+</p>
         <p>• Rotina de questões e revisões</p>
         <p>• Ferramentas para acompanhar evolução</p>
       </div>

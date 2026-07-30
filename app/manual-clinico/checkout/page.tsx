@@ -528,7 +528,7 @@ export default function ManualClinicoCheckoutPage() {
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Lock className="mb-4 h-10 w-10 text-white/35" />
                 <h2 className="text-xl font-black">Produto indisponivel</h2>
-                <p className="mt-2 text-sm text-white/55">A compra do Manual Clinico Premium esta pausada no momento.</p>
+                <p className="mt-2 text-sm text-white/55">A compra do Manual Clinico Completo esta pausada no momento.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -546,7 +546,7 @@ export default function ManualClinicoCheckoutPage() {
                   <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
                     <Check className="mx-auto mb-3 h-9 w-9 text-emerald-300" />
                     <h2 className="text-xl font-black">Acesso gratuito</h2>
-                    <p className="mt-2 text-sm text-white/55">Confirme para liberar o Manual Clinico Premium na sua conta.</p>
+                    <p className="mt-2 text-sm text-white/55">Confirme para liberar o Manual Clinico Completo na sua conta.</p>
                     <button
                       onClick={unlockFree}
                       disabled={freeLoading}

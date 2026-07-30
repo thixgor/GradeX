@@ -117,8 +117,8 @@ interface PageData {
 const GROUP_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   gratuito:  { label: 'Gratuito',  color: '#6b7280', icon: <Gift className="h-3.5 w-3.5" /> },
   trial:     { label: 'Trial',     color: '#3b82f6', icon: <Clock className="h-3.5 w-3.5" /> },
-  essential: { label: 'Essential', color: '#8b5cf6', icon: <Zap className="h-3.5 w-3.5" /> },
-  premium:   { label: 'Premium',   color: '#f59e0b', icon: <Crown className="h-3.5 w-3.5" /> },
+  essential: { label: 'Plus+', color: '#8b5cf6', icon: <Zap className="h-3.5 w-3.5" /> },
+  premium:   { label: 'Plus+',   color: '#f59e0b', icon: <Crown className="h-3.5 w-3.5" /> },
   monitor:   { label: 'Monitor',   color: '#10b981', icon: <GraduationCap className="h-3.5 w-3.5" /> },
 }
 

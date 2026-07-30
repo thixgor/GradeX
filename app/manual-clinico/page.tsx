@@ -53,6 +53,7 @@ import { trackMeta } from '@/lib/meta-pixel'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 const SISTEMA_ICONS: Record<string, any> = {
   'Sistema Cardiovascular': Heart,
@@ -178,7 +179,7 @@ interface ManualSubscriptionInfo {
 interface ManualAccess {
   hasFullAccess: boolean
   reason: string
-  includedPlan?: 'premium' | 'essential' | null
+  includedPlan?: string | null
   freeQuota?: {
     mode: 'quantity' | 'list'
     limit: number
@@ -285,7 +286,7 @@ function RenewalBanner({
           <p className="text-xs text-muted-foreground mt-0.5">
             {isCard
               ? 'No vencimento, enviaremos um e-mail com link de 1 clique para renovar com seu cartão.'
-              : 'Renove agora para não perder o acesso premium.'}
+              : 'Renove agora para não perder o acesso Plus+.'}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button
@@ -714,7 +715,7 @@ function ManualClinicoContent() {
               {ctasReady && manualAccess.hasFullAccess && manualAccess.reason === 'included_plan' && (
                 <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
                   <Crown className="h-4 w-4" />
-                  Incluso no seu plano {manualAccess.includedPlan === 'essential' ? 'Essential' : 'Premium'}
+                  Incluso no seu plano {PLUS_LABEL}
                 </div>
               )}
               {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription && (
@@ -1075,7 +1076,7 @@ function ManualClinicoContent() {
                     />
                   </>
                   <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                    <Crown className="h-2.5 w-2.5" /> Premium
+                    <Crown className="h-2.5 w-2.5" /> Plus+
                   </span>
                 </div>
                 <p className="mt-1.5 text-xs text-muted-foreground">
@@ -1219,11 +1220,11 @@ function ManualClinicoContent() {
                           ) : patologia.isPremiumLocked ? (
                             <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
                               <Lock className="h-3 w-3" />
-                              Premium
+                              Plus+
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 rounded-md border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-primary">
-                              Premium liberado
+                              Plus+ liberado
                             </span>
                           )}
                         </div>

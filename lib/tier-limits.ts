@@ -1,4 +1,5 @@
 import { AccountType } from './types'
+import { isPlusAccount, normalizeAccountType, PLUS_LABEL, PLUS_TIER } from './account-tier'
 
 export interface TierLimits {
   examsPerDay: number
@@ -8,6 +9,21 @@ export interface TierLimits {
   cronogramasTotal: number
   flashcardsTotal: number
   personalExamsTotal: number
+}
+
+/**
+ * Plus+ tem acesso irrestrito a tudo. Os cargos legados `premium` e
+ * `essential` apontam para o mesmo objeto — nenhuma conta antiga perde nada
+ * na consolidação.
+ */
+const PLUS_LIMITS: TierLimits = {
+  examsPerDay: Infinity,
+  questionsPerExam: Infinity,
+  personalExamsPerDay: Infinity,
+  bancoQuestoes: true,
+  cronogramasTotal: Infinity,
+  flashcardsTotal: Infinity,
+  personalExamsTotal: Infinity,
 }
 
 export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
@@ -29,24 +45,10 @@ export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
     flashcardsTotal: Infinity,
     personalExamsTotal: Infinity,
   },
-  premium: {
-    examsPerDay: 20,
-    questionsPerExam: 20,
-    personalExamsPerDay: 20,
-    bancoQuestoes: true,
-    cronogramasTotal: Infinity,
-    flashcardsTotal: Infinity,
-    personalExamsTotal: Infinity,
-  },
-  essential: {
-    examsPerDay: 20,
-    questionsPerExam: 20,
-    personalExamsPerDay: 20,
-    bancoQuestoes: true,
-    cronogramasTotal: Infinity,
-    flashcardsTotal: Infinity,
-    personalExamsTotal: Infinity,
-  },
+  plus: PLUS_LIMITS,
+  // Legado — mesmo teto do Plus+.
+  premium: PLUS_LIMITS,
+  essential: PLUS_LIMITS,
   admin: {
     examsPerDay: Infinity,
     questionsPerExam: Infinity,
@@ -58,65 +60,66 @@ export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
   },
 }
 
-export function getTierLimits(accountType?: AccountType, isAdmin?: boolean): TierLimits {
+export function getTierLimits(accountType?: AccountType | string, isAdmin?: boolean): TierLimits {
   if (isAdmin) {
     return TIER_LIMITS.admin
   }
 
-  if (!accountType) {
-    return TIER_LIMITS.gratuito
-  }
-
-  return TIER_LIMITS[accountType]
+  return TIER_LIMITS[normalizeAccountType(accountType)] || TIER_LIMITS.gratuito
 }
 
 /**
- * Whether the user is allowed to download exam PDFs (prova, gabarito,
- * pacote de provas, resposta comentada). Restricted to paid plans
- * (PREMIUM / ESSENTIAL) and admins. Accepts a plain string so callers
- * can pass values whose static type may not yet include 'essential'.
+ * Pode baixar PDFs de prova (prova, gabarito, pacote, resposta comentada)?
+ * Restrito a assinantes Plus+ e admins.
+ *
+ * Atenção: isso responde apenas "tem direito ao recurso". O teto de quantos
+ * downloads cabem por hora/dia é do Plus+ Guard (`lib/plus-guard.ts`).
  */
 export function canDownloadExamPdf(accountType?: string | null, isAdmin?: boolean): boolean {
-  if (isAdmin) return true
-  return accountType === 'premium' || accountType === 'essential'
+  return isPlusAccount(accountType, isAdmin)
 }
 
-export function getPersonalExamsQuota(accountType?: AccountType): number {
+export function getPersonalExamsQuota(accountType?: AccountType | string): number {
   const limits = getTierLimits(accountType)
   return limits.personalExamsPerDay || 3
 }
 
-export function getCronogramasLimit(accountType?: AccountType): number {
-  const limits = getTierLimits(accountType)
-  return limits.cronogramasTotal
+export function getCronogramasLimit(accountType?: AccountType | string): number {
+  return getTierLimits(accountType).cronogramasTotal
 }
 
-export function getFlashcardsLimit(accountType?: AccountType): number {
-  const limits = getTierLimits(accountType)
-  return limits.flashcardsTotal
+export function getFlashcardsLimit(accountType?: AccountType | string): number {
+  return getTierLimits(accountType).flashcardsTotal
 }
 
-export function getPersonalExamsLifetimeLimit(accountType?: AccountType): number {
-  const limits = getTierLimits(accountType)
-  return limits.personalExamsTotal
+export function getPersonalExamsLifetimeLimit(accountType?: AccountType | string): number {
+  return getTierLimits(accountType).personalExamsTotal
 }
 
 // ─── Mapas Mentais ───────────────────────────────────────────
-// Premium e Essential criam mapas ilimitados. Demais contas (gratuito/trial)
-// podem manter apenas 1 mapa mental.
+// Plus+ cria mapas ilimitados. Gratuito/trial mantêm apenas 1.
 export const MINDMAP_FREE_LIMIT = 1
 
 export function canCreateUnlimitedMindMaps(accountType?: string | null, isAdmin?: boolean): boolean {
-  if (isAdmin) return true
-  return accountType === 'premium' || accountType === 'essential'
+  return isPlusAccount(accountType, isAdmin)
 }
 
-export function getUpgradeMessage(currentTier: AccountType | undefined): string {
-  const currentLimits = getTierLimits(currentTier)
-  const premiumLimits = TIER_LIMITS.premium
-
-  return `You've reached your creation limit.
-Upgrade to Premium for ${premiumLimits.examsPerDay} exams per day with up to ${premiumLimits.questionsPerExam} questions per exam.
-
-Contact: (24) 99223-0908`
+/** Banco de questões completo — exclusivo Plus+. */
+export function canUseBancoQuestoes(accountType?: string | null, isAdmin?: boolean): boolean {
+  return isPlusAccount(accountType, isAdmin)
 }
+
+/** Manual Clínico completo — incluso no Plus+ (também vendido avulso). */
+export function hasManualClinicoViaPlan(accountType?: string | null, isAdmin?: boolean): boolean {
+  return isPlusAccount(accountType, isAdmin)
+}
+
+export function getUpgradeMessage(currentTier?: AccountType | string): string {
+  void currentTier
+  return `Você atingiu o limite do seu plano.
+Assine o ${PLUS_LABEL} e libere a plataforma inteira: Manual Clínico, materiais, flashcards, aulas, mapas mentais, provas por IA e cronogramas — sem limite.
+
+Contato: (24) 99223-0908`
+}
+
+export { PLUS_TIER, PLUS_LABEL }

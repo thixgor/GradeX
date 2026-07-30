@@ -320,7 +320,7 @@ function DoseCalculator({ dose, contraindicacoes }: { dose: DoseCalculo; contrai
   )
 }
 
-/* ═══════════ PREMIUM CARD ═══════════ */
+/* ═══════════ PLUS+ CARD ═══════════ */
 function PremiumCard({ data, onCheckout }: { data: MedicamentoResponse; onCheckout: () => void }) {
   const product = data.product
   return (
@@ -330,7 +330,7 @@ function PremiumCard({ data, onCheckout }: { data: MedicamentoResponse; onChecko
           <Lock className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Premium</p>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Plus+</p>
           <h2 className="mt-1 text-2xl font-black tracking-tight">Desbloqueie a Farmacologia do Manual Clínico</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             {product?.shortDescription || 'Mecanismo de ação, metabolismo, excreção, efeitos, contraindicações, posologia e calculadora de dose.'}
@@ -359,7 +359,7 @@ function PremiumCard({ data, onCheckout }: { data: MedicamentoResponse; onChecko
           className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
         >
           <Crown className="h-4 w-4" />
-          {product?.ctaText || 'Desbloquear Manual Clínico Premium'}
+          {product?.ctaText || 'Desbloquear Manual Clínico Completo'}
           <ArrowRight className="h-4 w-4" />
         </button>
       </div>

@@ -13,6 +13,7 @@ import { sendPlanPurchasedEmail, sendMaterialPurchasedEmail, sendCartPurchasedEm
 import { markNumbersSold, releaseReservation } from '../raffles'
 import type { Raffle, RafflePurchase } from '../types'
 import { getPersonalExamsQuota } from '../tier-limits'
+import { normalizeAccountType } from '../account-tier'
 import type {
   PaymentOrder,
   PaymentRecord,
@@ -191,15 +192,31 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
 }
 
 async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatus) {
-  if (order.type === 'plan' && order.userId) {
+  if ((order.type === 'plan' || order.type === 'subscription') && order.userId) {
+    // Clawback do Plus+: rebaixa a conta na hora, encerra a assinatura e
+    // registra o reembolso para a carência de reassinatura. Antes isso ficava
+    // só a cargo do cron/próximo login — janela suficiente para o usuário
+    // continuar baixando depois do estorno aprovado.
+    const { applyPlusRefundClawback } = await import('../plus-guard')
+    const clawback = await applyPlusRefundClawback(order.userId, newStatus).catch(err => {
+      console.error('[effects] clawback Plus+ falhou:', err)
+      return { revoked: false, downloadsInWindow: 0 }
+    })
+
     await audit({
       action: 'role_revoked',
       targetUserId: order.userId,
       resourceType: 'plan',
       resourceId: order.refId,
-      metadata: { reason: newStatus, orderId: String(order._id) },
+      metadata: {
+        reason: newStatus,
+        orderId: String(order._id),
+        // Volume consumido na janela de arrependimento: é a evidência usada
+        // para contestar o estorno junto ao provedor de pagamento.
+        downloadsInRefundWindow: clawback.downloadsInWindow,
+        revoked: clawback.revoked,
+      },
     })
-    // Revogação dura: o cron de assinaturas + o próximo login refletirão
   }
   if (order.type === 'material' && order.userId && order.refId) {
     const db = await getDb()
@@ -294,7 +311,7 @@ async function applyPlanPurchase(order: PaymentOrder) {
     expiresAt = new Date(now)
     expiresAt.setMonth(expiresAt.getMonth() + planoConfig.durationMonths)
   }
-  const role: AccountType = (planoConfig.role as AccountType) || 'premium'
+  const role: AccountType = normalizeAccountType(planoConfig.role)
 
   const usersCol = db.collection<User>('users')
   const user = await usersCol.findOne({ _id: new ObjectId(order.userId) as any })
@@ -327,7 +344,7 @@ async function applyPlanPurchase(order: PaymentOrder) {
   sendPlanPurchasedEmail(
     user.email,
     user.name,
-    planoConfig.nome || 'Plano Premium',
+    planoConfig.nome || 'Plano Plus+',
     planoConfig.durationMonths || 0,
     order.amount
   ).catch(err => console.error('[effects] e-mail plano falhou:', err))
@@ -824,7 +841,7 @@ async function applySubscriptionPayment(order: PaymentOrder) {
   )
 
   // Renova cargo no usuário
-  const role: AccountType = (sub.role as AccountType) || 'premium'
+  const role: AccountType = normalizeAccountType(sub.role)
   await db.collection<User>('users').updateOne(
     { _id: new ObjectId(sub.userId) as any },
     {

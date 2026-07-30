@@ -101,8 +101,10 @@ interface Material {
 const GROUP_META: Record<string, { label: string; color: string; icon: React.ReactNode; upgradeMsg: string }> = {
   gratuito: { label: 'Gratuito', color: '#6b7280', icon: <Gift className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível na conta Gratuita' },
   trial:    { label: 'Trial',    color: '#3b82f6', icon: <Clock className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível no período Trial' },
-  essential:{ label: 'Essential',color: '#8b5cf6', icon: <Zap className="h-3.5 w-3.5" />,  upgradeMsg: 'Disponível no plano Essential' },
-  premium:  { label: 'Premium',  color: '#f59e0b', icon: <Crown className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível no plano Premium' },
+  plus:     { label: 'Plus+',    color: '#f59e0b', icon: <Crown className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível no Plus+' },
+  // Legado — materiais marcados antes da consolidação dos cargos.
+  essential:{ label: 'Plus+',    color: '#f59e0b', icon: <Crown className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível no Plus+' },
+  premium:  { label: 'Plus+',    color: '#f59e0b', icon: <Crown className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível no Plus+' },
   monitor:  { label: 'Monitor',  color: '#10b981', icon: <GraduationCap className="h-3.5 w-3.5" />, upgradeMsg: 'Disponível para Monitores' },
 }
 

@@ -53,7 +53,7 @@ interface HistoricoItem {
 export default function HistoricoPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [requiresPremium, setRequiresPremium] = useState(false)
+  const [requiresPlus, setRequiresPlus] = useState(false)
 
   const [historico, setHistorico] = useState<HistoricoItem[]>([])
   const [paginacao, setPaginacao] = useState<BancoPaginacao | null>(null)
@@ -68,7 +68,7 @@ export default function HistoricoPage() {
   }, [])
 
   useEffect(() => {
-    if (!requiresPremium) {
+    if (!requiresPlus) {
       loadHistorico()
     }
   }, [filtroTipo, filtroResultado])
@@ -79,8 +79,8 @@ export default function HistoricoPage() {
       const statsRes = await fetch('/api/banco/estatisticas')
       if (statsRes.status === 403) {
         const data = await statsRes.json()
-        if (data.requiresPremium) {
-          setRequiresPremium(true)
+        if (data.requiresPlus) {
+          setRequiresPlus(true)
           setLoading(false)
           return
         }
@@ -149,7 +149,7 @@ export default function HistoricoPage() {
     )
   }
 
-  if (requiresPremium) {
+  if (requiresPlus) {
     return (
       <AppShell headerTitle="Histórico">
         <div className="container max-w-2xl py-12">
@@ -158,9 +158,9 @@ export default function HistoricoPage() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
                 <Lock className="h-8 w-8 text-amber-600" />
               </div>
-              <CardTitle className="text-2xl">Acesso Premium</CardTitle>
+              <CardTitle className="text-2xl">Acesso Plus+</CardTitle>
               <CardDescription className="text-base">
-                O histórico de resoluções é exclusivo para assinantes Premium
+                O histórico de resoluções é exclusivo para assinantes Plus+
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -169,7 +169,7 @@ export default function HistoricoPage() {
                 className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
                 size="lg"
               >
-                Assinar Premium
+                Assinar Plus+
               </Button>
             </CardContent>
           </Card>

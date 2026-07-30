@@ -15,6 +15,7 @@ import {
 import { getFlashcardManualLimits } from '@/lib/flashcard-limits'
 import { syncMaterialForFlashcardDeck } from '@/lib/flashcard-material-sync'
 import type { FlashcardManualDeck } from '@/lib/types'
+import { VALID_ACCESS_GROUPS } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
     const ownerType: 'user' | 'admin' = isAdmin && body.asAdmin ? 'admin' : 'user'
     const isPaidByAdmin = ownerType === 'admin' && body.pricing === 'paid'
 
-    const VALID_GROUPS = ['gratuito', 'trial', 'essential', 'premium', 'monitor']
+    const VALID_GROUPS: string[] = [...VALID_ACCESS_GROUPS]
 
     // Visibilidade: admin pode definir qualquer valor; usuários ficam em private por padrão
     let visibility: 'private' | 'public' | 'unlisted' = 'private'

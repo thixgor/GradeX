@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
   ])
 
   if (!config.isActive) {
-    return NextResponse.json({ error: 'O Manual Clinico Premium esta indisponivel no momento.' }, { status: 400 })
+    return NextResponse.json({ error: 'O Manual Clinico Completo esta indisponivel no momento.' }, { status: 400 })
   }
 
   const planKey = data.planKey || 'vitalicio'
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
   // Permite renovação se o plano atual é temporário (prolonga acesso pelo novo plano).
   if (activePurchase && activePurchase.accessType === 'lifetime') {
     return NextResponse.json({
-      error: 'Voce ja possui o Manual Clinico Premium vitalicio.',
+      error: 'Voce ja possui o Manual Clinico Completo vitalicio.',
       alreadyOwned: true,
       redirectTo: '/manual-clinico',
     }, { status: 409 })

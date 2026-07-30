@@ -29,6 +29,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude } from '@/lib/types/manual-clinico'
 import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 const AREA_COLORS: Record<AreaSaude, string> = {
   'Medicina': 'bg-blue-500 text-white',
@@ -67,8 +68,7 @@ type ManualProductConfigForm = {
   freeAccessMode: 'quantity' | 'list'
   freeQuantity: number
   freePathologySlugs: string[]
-  includedInPremium: boolean
-  includedInEssential: boolean
+  includedInPlus: boolean
   pricingEventId: string | null
 }
 
@@ -111,10 +111,10 @@ type ManualQuotaUser = {
 
 function emptyProductConfig(): ManualProductConfigForm {
   return {
-    label: 'Manual Clinico Premium',
+    label: 'Manual Clinico Completo',
     benefitText: 'Desbloqueie 220+ patologias aprofundadas',
     shortDescription: 'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas em um so lugar.',
-    ctaText: 'Desbloquear Manual Clinico Premium',
+    ctaText: 'Desbloquear Manual Clinico Completo',
     coverImageUrl: '',
     fullPdfButtonEnabled: true,
     fullPdfExternalUrl: '',
@@ -128,8 +128,7 @@ function emptyProductConfig(): ManualProductConfigForm {
     freeAccessMode: 'quantity',
     freeQuantity: 5,
     freePathologySlugs: [],
-    includedInPremium: false,
-    includedInEssential: false,
+    includedInPlus: true,
     pricingEventId: null,
   }
 }
@@ -261,8 +260,8 @@ export default function AdminManualClinico() {
         freeAccessMode: cfg.freeAccessMode === 'list' ? 'list' : 'quantity',
         freeQuantity: Number(cfg.freeQuantity || 0),
         freePathologySlugs: Array.isArray(cfg.freePathologySlugs) ? cfg.freePathologySlugs : [],
-        includedInPremium: cfg.includedInPremium === true,
-        includedInEssential: cfg.includedInEssential === true,
+        includedInPlus:
+          cfg.includedInPlus ?? (cfg.includedInPremium === true || cfg.includedInEssential === true),
         pricingEventId: cfg.pricingEventId || null,
       })
       setProductStats(data.stats || { pathologyCount: 0, freeCount: 0, lockedCount: 0, buyerCount: 0, currentPrice: 0, freeQuotaPerUser: 0 })
@@ -383,7 +382,7 @@ export default function AdminManualClinico() {
   }
 
   async function handleRevokeAccess(purchase: ManualAccessPurchase) {
-    if (!confirm(`Tirar o Manual Clinico Premium de ${purchase.userEmail || purchase.userName || 'este usuario'}?`)) return
+    if (!confirm(`Tirar o Manual Clinico Completo de ${purchase.userEmail || purchase.userName || 'este usuario'}?`)) return
     setRevokingId(purchase._id)
     setProductMessage('')
     try {
@@ -495,7 +494,7 @@ export default function AdminManualClinico() {
                 </div>
                 <div className="rounded-xl border bg-amber-500/10 px-3 py-2 text-amber-700 dark:text-amber-300">
                   <p className="text-lg font-black">{productStats.lockedCount}</p>
-                  <p className="text-[10px] uppercase">Premium</p>
+                  <p className="text-[10px] uppercase">Plus+</p>
                 </div>
                 <div className="rounded-xl border bg-primary/10 px-3 py-2 text-primary">
                   <p className="text-lg font-black">{productStats.buyerCount}</p>
@@ -715,8 +714,7 @@ export default function AdminManualClinico() {
                     </p>
                     <div className="space-y-2 text-sm">
                       {([
-                        ['Incluído no Premium', 'includedInPremium'],
-                        ['Incluído no Essential', 'includedInEssential'],
+                        [`Incluído no ${PLUS_LABEL}`, 'includedInPlus'],
                       ] as const).map(([label, key]) => (
                         <label key={key} className="flex items-center justify-between gap-3 rounded-xl border bg-background px-3 py-2">
                           <span>{label}</span>
@@ -802,12 +800,12 @@ export default function AdminManualClinico() {
                   <Users className="h-5 w-5 text-primary" />
                   Acessos e cotas
                 </h2>
-                <p className="text-sm text-muted-foreground">Veja quem tem Premium, consumo das escolhas gratuitas e ultima atividade.</p>
+                <p className="text-sm text-muted-foreground">Veja quem tem Plus+, consumo das escolhas gratuitas e ultima atividade.</p>
               </div>
               <div className="grid grid-cols-2 gap-2 text-center">
                 <div className="rounded-xl border bg-primary/10 px-3 py-2 text-primary">
                   <p className="text-lg font-black">{accessStats.premiumAccessCount}</p>
-                  <p className="text-[10px] uppercase">Premium ativo</p>
+                  <p className="text-[10px] uppercase">Plus+ ativo</p>
                 </div>
                 <div className="rounded-xl border bg-emerald-500/10 px-3 py-2 text-emerald-700 dark:text-emerald-300">
                   <p className="text-lg font-black">{accessStats.quotaUserCount}</p>
@@ -835,7 +833,7 @@ export default function AdminManualClinico() {
             <div className="grid gap-5 lg:grid-cols-2">
               <div>
                 <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-bold">Usuários com Manual Premium</h3>
+                  <h3 className="text-sm font-bold">Usuários com Manual Clínico Completo</h3>
                   <span className="text-xs text-muted-foreground">Últimos 50</span>
                 </div>
                 <div className="space-y-2">
@@ -845,7 +843,7 @@ export default function AdminManualClinico() {
                       Carregando acessos...
                     </div>
                   ) : accessPurchases.length === 0 ? (
-                    <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">Nenhum acesso Premium encontrado.</div>
+                    <div className="rounded-xl border p-6 text-center text-sm text-muted-foreground">Nenhum acesso Plus+ encontrado.</div>
                   ) : accessPurchases.map((purchase) => {
                     const planLabel = purchase.planLabel
                       || (purchase.planKey ? (purchase.planKey[0].toUpperCase() + purchase.planKey.slice(1)) : null)

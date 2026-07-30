@@ -7,12 +7,13 @@ import { sendAccountDeletedEmail } from '@/lib/mail'
 import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
 import { getPaymentProvider } from '@/lib/payments'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Cancela o preapproval do Mercado Pago e marca o registro na coleção subscriptions
- * como cancelled. Usado quando o admin revoga o acesso premium, bane ou deleta um usuário.
+ * como cancelled. Usado quando o admin revoga o acesso Plus+, bane ou deleta um usuário.
  * Fire-and-forget — não lança exceção se o MP falhar (registra intenção mesmo assim).
  */
 async function cancelUserMpSubscription(userId: string): Promise<void> {
@@ -180,7 +181,7 @@ export async function PATCH(
       successMessage = 'Usuário desbanido com sucesso'
 
     } else if (action === 'update_tier') {
-      const VALID_TYPES = ['gratuito', 'trial', 'premium', 'essential']
+      const VALID_TYPES = ['gratuito', 'trial', 'plus', 'premium', 'essential']
       if (!accountType || !VALID_TYPES.includes(accountType)) {
         return NextResponse.json({ error: 'Tipo de conta inválido' }, { status: 400 })
       }
@@ -191,7 +192,7 @@ export async function PATCH(
       // cancelar o preapproval no MP para evitar cobranças futuras.
       const isLosingPremium = accountType !== 'premium' && accountType !== 'essential'
       const isChangingPremiumPlan =
-        (accountType === 'premium' || accountType === 'essential') &&
+        isPlusAccount(accountType) &&
         user.mercadoPagoPreapprovalId
       if (isLosingPremium || isChangingPremiumPlan) {
         await cancelUserMpSubscription(id)
@@ -213,7 +214,7 @@ export async function PATCH(
           dailyPersonalExamsRemaining: newQuota,
           lastDailyReset: new Date(),
         }
-      } else if (accountType === 'premium' || accountType === 'essential') {
+      } else if (isPlusAccount(accountType)) {
         const planType = (premiumPlanType || 'vitalicio') as PremiumPlanType
         const durationMonths = PLAN_DURATION_MONTHS[planType] ?? null
 

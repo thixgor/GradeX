@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
     const totalDecksCreated = user.totalFlashcardDecksCreated || 0
     if (limits.totalDecksLifetime !== Infinity && totalDecksCreated >= limits.totalDecksLifetime) {
       return NextResponse.json({
-        error: `Limite vitalício de decks atingido (${limits.totalDecksLifetime} decks). Faça upgrade para Premium para criar mais.`,
+        error: `Limite vitalício de decks atingido (${limits.totalDecksLifetime} decks). Faça para o Plus+ para criar mais.`,
         requiresUpgrade: true,
         upgradeUrl: '/buy',
         limit: limits.totalDecksLifetime,
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
 
       if (newTotal > limits.totalCardsLifetime) {
         return NextResponse.json({
-          error: `Limite vitalício de cartões atingido (${limits.totalCardsLifetime} cartões). Faça upgrade para Premium para criar mais flashcards.`,
+          error: `Limite vitalício de cartões atingido (${limits.totalCardsLifetime} cartões). Faça para o Plus+ para criar mais flashcards.`,
           requiresUpgrade: true,
           upgradeUrl: '/buy',
           limit: limits.totalCardsLifetime,

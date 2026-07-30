@@ -23,7 +23,7 @@ export function CreateExamModal({
   const handleCreatePersonal = () => {
     if (tierLimitExceeded) {
       alert(`Você atingiu seu limite de criação de provas.
-Faça upgrade para Premium para 10 provas por dia com até 20 questões por prova.
+Faça para o Plus+ para 10 provas por dia com até 20 questões por prova.
 
 Contato: (24) 99223-0908`)
       return

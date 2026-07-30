@@ -271,7 +271,7 @@ export default function CriarAulaPage() {
                     onChange={(e) => setVisibilidade(e.target.value as AulaVisibility)}
                     className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm"
                   >
-                    <option value="premium">Premium</option>
+                    <option value="premium">Plus+</option>
                     <option value="gratuita">Gratuita</option>
                   </select>
                 </div>
