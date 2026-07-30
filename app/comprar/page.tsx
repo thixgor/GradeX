@@ -8,6 +8,7 @@ import { usePricingEventState, usePricingEventStates } from '@/components/pricin
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PublicPageShell } from '@/components/public-page-shell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { PackageContents } from '@/components/shop/package-contents'
 import Link from 'next/link'
 
 interface AppliedCoupon {
@@ -822,6 +823,11 @@ function GenericComprarContent({ productType }: { productType: string }) {
               <p className="mb-4 line-clamp-4 text-sm leading-relaxed text-muted-foreground">
                 {product.productDescription}
               </p>
+            )}
+            {productType === 'package' && product.productId && (
+              <div className="mb-4">
+                <PackageContents packageId={product.productId} variant="light" defaultOpen />
+              </div>
             )}
             <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
               <p className="mb-0.5 text-xs text-muted-foreground">Valor</p>
