@@ -733,9 +733,7 @@ export default function PackageDetailPage() {
 
             {/* RIGHT: Sidebar */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              
-              transition={{ duration: 0.35, delay: 0.08 }}
+              initial={false}
               className="xl:w-[340px] flex-shrink-0 space-y-3"
             >
               {/* CTA Card */}
@@ -939,9 +937,7 @@ export default function PackageDetailPage() {
               <AnimatePresence>
                 {pkg.allowedGroups?.length > 0 && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    
-                    transition={{ delay: 0.2 }}
+                    initial={false}
                     className="bg-card border border-border rounded-lg p-4 border border-border"
                   >
                     <div className="flex items-center gap-2 mb-2.5">
@@ -979,9 +975,7 @@ export default function PackageDetailPage() {
               {/* Discount info */}
               {hasDiscount && !access.hasAccess && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  
-                  transition={{ delay: 0.25 }}
+                  initial={false}
                   className="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20"
                 >
                   <TrendingDown className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />

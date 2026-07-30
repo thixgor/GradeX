@@ -7,6 +7,7 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { PackageContents } from '@/components/shop/package-contents'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 
@@ -819,13 +820,15 @@ export default function MateriaisCheckoutPage() {
                         key={`${previewItem.itemType}:${previewItem.itemId}`}
                         style={{
                           display: 'flex',
-                          gap: '12px',
+                          flexDirection: 'column',
+                          gap: '10px',
                           padding: '12px',
                           borderRadius: '14px',
                           background: 'rgba(255,255,255,0.04)',
                           border: '1px solid rgba(255,255,255,0.08)',
                         }}
                       >
+                        <div style={{ display: 'flex', gap: '12px' }}>
                         <div style={{
                           width: '44px',
                           height: '44px',
@@ -899,6 +902,10 @@ export default function MateriaisCheckoutPage() {
                             </button>
                           )}
                         </div>
+                        </div>
+                        {previewItem.itemType === 'package' && (
+                          <PackageContents packageId={previewItem.itemId} variant="dark" />
+                        )}
                       </div>
                     )
                   })}
