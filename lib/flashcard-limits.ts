@@ -1,4 +1,5 @@
 import { AccountType } from './types'
+import { normalizeAccountType } from './account-tier'
 
 export interface FlashcardTierLimits {
   dailyDecks: number
@@ -6,6 +7,15 @@ export interface FlashcardTierLimits {
   cardsPerDeck: number
   totalCardsLifetime: number
   totalDecksLifetime: number
+}
+
+/** Plus+ gera flashcards por IA sem teto. */
+const PLUS_FLASHCARD_LIMITS: FlashcardTierLimits = {
+  dailyDecks: Infinity,
+  maxActiveDecks: null,
+  cardsPerDeck: Infinity,
+  totalCardsLifetime: Infinity,
+  totalDecksLifetime: Infinity,
 }
 
 const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
@@ -23,20 +33,9 @@ const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
     totalCardsLifetime: Infinity,
     totalDecksLifetime: Infinity,
   },
-  essential: {
-    dailyDecks: 15,
-    maxActiveDecks: 15,
-    cardsPerDeck: 15,
-    totalCardsLifetime: Infinity,
-    totalDecksLifetime: Infinity,
-  },
-  premium: {
-    dailyDecks: 25,
-    maxActiveDecks: null,
-    cardsPerDeck: 20,
-    totalCardsLifetime: Infinity,
-    totalDecksLifetime: Infinity,
-  },
+  plus: PLUS_FLASHCARD_LIMITS,
+  essential: PLUS_FLASHCARD_LIMITS,
+  premium: PLUS_FLASHCARD_LIMITS,
   admin: {
     dailyDecks: Infinity,
     maxActiveDecks: null,
@@ -46,16 +45,12 @@ const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
   },
 }
 
-export function getFlashcardLimits(accountType?: AccountType, isAdmin?: boolean): FlashcardTierLimits {
+export function getFlashcardLimits(accountType?: AccountType | string, isAdmin?: boolean): FlashcardTierLimits {
   if (isAdmin) {
     return FLASHCARD_LIMITS.admin
   }
 
-  if (!accountType) {
-    return FLASHCARD_LIMITS.gratuito
-  }
-
-  return FLASHCARD_LIMITS[accountType]
+  return FLASHCARD_LIMITS[normalizeAccountType(accountType)] || FLASHCARD_LIMITS.gratuito
 }
 
 // ─── Limites de Flashcards Manuais ────────────────────────────────────────────
@@ -69,6 +64,16 @@ export interface FlashcardManualTierLimits {
   maxImageSizeMB: number
   canSetVisibilityPublic: boolean // sempre true (mas exige email verificado)
   canShare: boolean
+}
+
+/** Plus+ monta decks manuais sem teto. */
+const PLUS_MANUAL_LIMITS: FlashcardManualTierLimits = {
+  maxDecks: Infinity,
+  cardsPerDeck: Infinity,
+  maxFolders: Infinity,
+  maxImageSizeMB: 15,
+  canSetVisibilityPublic: true,
+  canShare: true,
 }
 
 const FLASHCARD_MANUAL_LIMITS: Record<AccountType | 'admin', FlashcardManualTierLimits> = {
@@ -88,22 +93,9 @@ const FLASHCARD_MANUAL_LIMITS: Record<AccountType | 'admin', FlashcardManualTier
     canSetVisibilityPublic: true,
     canShare: true,
   },
-  essential: {
-    maxDecks: 30,
-    cardsPerDeck: 120,
-    maxFolders: 20,
-    maxImageSizeMB: 6,
-    canSetVisibilityPublic: true,
-    canShare: true,
-  },
-  premium: {
-    maxDecks: Infinity,
-    cardsPerDeck: 500,
-    maxFolders: Infinity,
-    maxImageSizeMB: 10,
-    canSetVisibilityPublic: true,
-    canShare: true,
-  },
+  plus: PLUS_MANUAL_LIMITS,
+  essential: PLUS_MANUAL_LIMITS,
+  premium: PLUS_MANUAL_LIMITS,
   admin: {
     maxDecks: Infinity,
     cardsPerDeck: Infinity,
@@ -114,8 +106,7 @@ const FLASHCARD_MANUAL_LIMITS: Record<AccountType | 'admin', FlashcardManualTier
   },
 }
 
-export function getFlashcardManualLimits(accountType?: AccountType, isAdmin?: boolean): FlashcardManualTierLimits {
+export function getFlashcardManualLimits(accountType?: AccountType | string, isAdmin?: boolean): FlashcardManualTierLimits {
   if (isAdmin) return FLASHCARD_MANUAL_LIMITS.admin
-  if (!accountType) return FLASHCARD_MANUAL_LIMITS.gratuito
-  return FLASHCARD_MANUAL_LIMITS[accountType]
+  return FLASHCARD_MANUAL_LIMITS[normalizeAccountType(accountType)] || FLASHCARD_MANUAL_LIMITS.gratuito
 }

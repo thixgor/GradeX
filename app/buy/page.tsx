@@ -42,7 +42,7 @@ interface Plan {
 const defaultPlans: Plan[] = [
   {
     id: 'mensal',
-    name: 'DomineAqui PREMIUM',
+    name: 'DomineAqui Plus+',
     period: 'Mensal',
     originalPrice: 29.9,
     price: 24.9,
@@ -59,7 +59,7 @@ const defaultPlans: Plan[] = [
   },
   {
     id: 'trimestral',
-    name: 'DomineAqui PREMIUM',
+    name: 'DomineAqui Plus+',
     period: 'Trimestral',
     originalPrice: 89.7,
     price: 69.9,
@@ -78,7 +78,7 @@ const defaultPlans: Plan[] = [
   },
   {
     id: 'anual',
-    name: 'DomineAqui PREMIUM',
+    name: 'DomineAqui Plus+',
     period: 'Anual',
     originalPrice: 358.8,
     price: 159.9,
@@ -99,7 +99,7 @@ const defaultPlans: Plan[] = [
   },
   {
     id: 'vitalicio',
-    name: 'DomineAqui PREMIUM',
+    name: 'DomineAqui Plus+',
     period: 'Vitalício',
     originalPrice: 1497.0,
     price: 529.0,
@@ -157,7 +157,7 @@ function getPlanMonthly(plan: Plan): string | null {
 
 export default function BuyPage() {
   return (
-    <AppShell allowGuest headerTitle="Premium" headerSubtitle="Assinatura DomineAqui">
+    <AppShell allowGuest headerTitle="Plus+" headerSubtitle="Assinatura DomineAqui">
       <BuyContent />
     </AppShell>
   )
@@ -304,7 +304,7 @@ function BuyContent() {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-secondary">Premium</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-secondary">Plus+</p>
             <p className="truncate text-sm font-semibold text-foreground sm:hidden">Escolha seu plano</p>
           </div>
           <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-semibold text-muted-foreground">
@@ -336,7 +336,7 @@ function BuyContent() {
               <span className="text-primary"> e chegar na prova no piloto automático.</span>
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Escolha o prazo. Ative o Premium. Comece a treinar no ritmo de quem passa —
+              Escolha o prazo. Ative o Plus+. Comece a treinar no ritmo de quem passa —
               sem planilha, sem caos, sem enrolação.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-muted-foreground">
@@ -361,7 +361,7 @@ function BuyContent() {
             <div className="min-w-0 flex-1">
               <p className="font-heading text-lg font-semibold text-foreground">Pagamento aprovado</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Premium ativado{successPlan ? ` (${successPlan})` : ''}. Bora dominar.
+                Plus+ ativado{successPlan ? ` (${successPlan})` : ''}. Bora dominar.
               </p>
               <button
                 type="button"
@@ -380,7 +380,7 @@ function BuyContent() {
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-foreground">Você já tem um plano ativo</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                {sub.type === 'premium' ? 'Premium' : 'Trial'}
+                {sub.type === 'premium' ? 'Plus+' : 'Trial'}
                 {sub.planType ? ` (${sub.planType})` : ''}
                 {' · '}
                 {new Date(sub.expiresAt).getFullYear() >= 9999 ? (

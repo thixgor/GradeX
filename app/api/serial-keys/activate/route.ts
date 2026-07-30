@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
     let trialExpiresAt: Date | undefined
     let durationInMs = 0
 
-    if (serialKey.type === 'premium') {
+    if (serialKey.type === 'plus' || serialKey.type === 'premium') {
       accountType = 'premium'
       trialExpiresAt = undefined
     } else if (serialKey.type === 'trial') {

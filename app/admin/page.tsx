@@ -93,7 +93,7 @@ export default function AdminDashboard() {
     },
     {
       title: 'Serial Keys',
-      description: 'Gerar e gerenciar chaves de ativação para planos Trial, Premium e Personalizados.',
+      description: 'Gerar e gerenciar chaves de ativação para planos Trial, Plus+ e Personalizados.',
       icon: Key,
       href: '/admin/keys',
       color: 'from-purple-500 to-pink-500'

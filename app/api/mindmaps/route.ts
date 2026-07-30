@@ -90,15 +90,14 @@ export async function POST(request: NextRequest) {
       { projection: { name: 1, accountType: 1 } }
     )
 
-    // Limite de plano: gratuito/trial podem manter apenas 1 mapa; Premium,
-    // Essential (e admin) criam mapas ilimitados.
+    // Limite de plano: gratuito/trial podem manter apenas 1 mapa; Plus+ (e admin) criam mapas ilimitados.
     const isAdmin = session.role === 'admin'
     if (!canCreateUnlimitedMindMaps(user?.accountType, isAdmin)) {
       const count = await maps.countDocuments({ ownerId: session.userId })
       if (count >= MINDMAP_FREE_LIMIT) {
         return NextResponse.json(
           {
-            error: `No plano gratuito você pode ter apenas ${MINDMAP_FREE_LIMIT} mapa mental. Assine o Premium ou Essential para criar mapas ilimitados.`,
+            error: `No plano gratuito você pode ter apenas ${MINDMAP_FREE_LIMIT} mapa mental. Assine o Plus+ para criar mapas ilimitados.`,
             requiresUpgrade: true,
             limit: MINDMAP_FREE_LIMIT,
           },

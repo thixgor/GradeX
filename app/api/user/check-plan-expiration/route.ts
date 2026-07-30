@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { User } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,8 +27,8 @@ export async function GET(request: NextRequest) {
     let updated = false
     let updateData: Partial<User> = {}
 
-    // Verificar expiração de Premium ou Essential
-    if ((user.accountType === 'premium' || user.accountType === 'essential') && user.premiumExpiresAt) {
+    // Verificar expiração do Plus+
+    if (isPlusAccount(user.accountType) && user.premiumExpiresAt) {
       if (new Date(user.premiumExpiresAt) <= now) {
         // Plano expirou, reverter para Gratuito
         const gratuitoQuota = getPersonalExamsQuota('gratuito')

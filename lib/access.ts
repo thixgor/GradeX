@@ -4,6 +4,7 @@ import { TokenPayload } from './auth'
 import { resolveDeckAccess, getUserGroups } from './flashcard-manual'
 import { FlashcardManualDeck } from './types'
 import { ReviewTargetType } from './reviews'
+import { matchesAccessGroups } from './account-tier'
 
 export type AccessReason =
   | 'admin'
@@ -79,13 +80,12 @@ async function checkMaterialAccess(
     { _id: new ObjectId(session.userId) },
     { projection: { accountType: 1, secondaryRole: 1 } },
   )
-  const userGroups: string[] = []
-  if (userDoc?.accountType) userGroups.push(userDoc.accountType)
-  if (userDoc?.secondaryRole === 'monitor') userGroups.push('monitor')
-
-  const allowedGroups: string[] = Array.isArray(material.allowedGroups) ? material.allowedGroups : []
-  const matchesGroup =
-    allowedGroups.length === 0 ? true : userGroups.some(g => allowedGroups.includes(g))
+  // Assinante Plus+ também satisfaz os grupos legados premium/essential.
+  const matchesGroup = matchesAccessGroups(
+    material.allowedGroups,
+    userDoc?.accountType,
+    userDoc?.secondaryRole,
+  )
 
   // Material gratuito + grupo permitido → acesso liberado (não é compra)
   if (material.pricing === 'free' && matchesGroup) {

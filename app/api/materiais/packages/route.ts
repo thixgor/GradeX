@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
+import { expandUserAccessGroups } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,8 +25,9 @@ export async function GET(request: NextRequest) {
         { projection: { accountType: 1, secondaryRole: 1 } }
       )
       if (user) {
-        if (user.accountType) userGroups.push(user.accountType)
-        if (user.secondaryRole === 'monitor') userGroups.push('monitor')
+        // Inclui os aliases legados para que um assinante Plus+ continue
+        // enxergando itens marcados como premium/essential.
+        userGroups = expandUserAccessGroups(user.accountType, user.secondaryRole)
       }
     }
 

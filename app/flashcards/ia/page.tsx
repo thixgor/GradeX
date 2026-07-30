@@ -45,6 +45,7 @@ import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { NotificationsBell } from '@/components/notifications-bell'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 interface DeckWithId extends FlashcardDeck {
   _id: string
@@ -67,6 +68,14 @@ interface ThemeWithId {
   contextHint?: string
 }
 
+/** Plus+ não tem teto — é o mesmo arsenal para todos os planos pagos. */
+const PLUS_TIER_LIMITS = {
+  daily: '∞',
+  active: 'Ilimitado',
+  cards: '∞',
+  summary: `Arsenal completo do ${PLUS_LABEL}: decks e cartões ilimitados, sem teto diário.`,
+}
+
 const tierLimits: Record<AccountType | 'admin', { daily: number | string; active: string; cards: number | string; summary: string }> = {
   gratuito: {
     daily: 5,
@@ -80,18 +89,10 @@ const tierLimits: Record<AccountType | 'admin', { daily: number | string; active
     cards: 10,
     summary: 'Test drive com nitro: 10 decks por dia, 10 cartões cada, 10 decks ativos.',
   },
-  essential: {
-    daily: 15,
-    active: '15 decks ativos',
-    cards: 15,
-    summary: 'Plano essencial: 15 decks por dia, 15 cartões cada, 15 decks ativos.',
-  },
-  premium: {
-    daily: 25,
-    active: 'Ilimitado',
-    cards: 20,
-    summary: 'Regime de elite: 25 decks/dia, 20 cartões cada e arsenal ilimitado.',
-  },
+  plus: PLUS_TIER_LIMITS,
+  // Legado — contas ainda não migradas veem o mesmo do Plus+.
+  essential: PLUS_TIER_LIMITS,
+  premium: PLUS_TIER_LIMITS,
   admin: {
     daily: '∞',
     active: 'Ilimitado',

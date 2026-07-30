@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,8 +57,15 @@ function calculateLimits(accountType: string | undefined, role: string) {
     }
   }
 
-  // Baseado no tipo de conta
-  if (accountType === 'premium' || accountType === 'trial' || accountType === 'essential') {
+  // Plus+ libera a plataforma inteira — sem teto de provas nem de questões.
+  if (isPlusAccount(accountType)) {
+    return {
+      dailyExamsLimit: Infinity,
+      aiQuestionsPerExamLimit: Infinity,
+    }
+  }
+
+  if (accountType === 'trial') {
     return {
       dailyExamsLimit: 10,
       aiQuestionsPerExamLimit: 20,

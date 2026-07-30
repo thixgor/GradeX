@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       if (session) {
         const access = await getManualClinicoAccess(db, session)
         if (access.hasFullAccess) {
-          return NextResponse.json({ error: 'Voce ja possui o Manual Clinico Premium.' }, { status: 409 })
+          return NextResponse.json({ error: 'Voce ja possui o Manual Clinico Completo.' }, { status: 409 })
         }
       }
       if (!config.isActive) {

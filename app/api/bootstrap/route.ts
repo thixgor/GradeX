@@ -17,6 +17,7 @@ import { secureApiEndpoint } from '@/lib/api-security'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { normalizeSidebarSections, type SidebarSectionSettings } from '@/lib/sidebar-sections'
+import { normalizeAccountType } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,7 +41,7 @@ interface BootstrapResponse {
     subscriptionEndDate?: string
   }
   tierLimits: {
-    tier: 'free' | 'trial' | 'premium'
+    tier: 'free' | 'trial' | 'plus'
     examsPerMonth: number
     questionsPerDay: number
     questionsPerMonth: number
@@ -302,18 +303,19 @@ function getTierLimits(accountType: string) {
         offlineAccess: false,
       },
     },
-    premium: {
-      tier: 'premium',
-      examsPerMonth: 500,
-      questionsPerDay: 2000,
-      questionsPerMonth: 10000,
-      customExamsLimit: 100,
-      flashcardsPerMonth: 1000,
-      maxGroupSize: 100,
-      teamMembersLimit: 50,
+    plus: {
+      tier: 'plus',
+      // Plus+ libera a plataforma inteira — nenhum destes tetos é aplicado.
+      examsPerMonth: Infinity,
+      questionsPerDay: Infinity,
+      questionsPerMonth: Infinity,
+      customExamsLimit: Infinity,
+      flashcardsPerMonth: Infinity,
+      maxGroupSize: Infinity,
+      teamMembersLimit: Infinity,
       videoAccessLimit: 'unlimited',
-      aiGenerationLimit: 500,
-      storageGB: 100,
+      aiGenerationLimit: Infinity,
+      storageGB: Infinity,
       features: {
         proctoring: true,
         bulkImport: true,
@@ -327,7 +329,12 @@ function getTierLimits(accountType: string) {
     },
   }
 
-  return tiers[accountType] || tiers.free
+  // Normaliza: 'plus' e os legados premium/essential apontam para o mesmo
+  // conjunto; qualquer outro valor cai em gratuito.
+  const normalized = normalizeAccountType(accountType)
+  if (normalized === 'plus') return tiers.plus
+  if (normalized === 'trial') return tiers.trial
+  return tiers.free
 }
 
 // Funções de contagem foram substituídas por uma única aggregation

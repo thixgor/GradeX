@@ -446,7 +446,7 @@ export default function ProfilePage() {
     }
     switch (accountType) {
       case 'premium':
-        return { label: 'Premium', colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
+        return { label: 'Plus+', colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
       case 'trial':
         return { label: `Trial - ${getTrialTimeRemaining()}`, colors: 'from-blue-500 to-cyan-500', icon: <Timer className="h-3.5 w-3.5" /> }
       default:
@@ -559,7 +559,7 @@ export default function ProfilePage() {
                     className="h-9 gap-1.5 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs font-bold"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
-                    Upgrade Premium
+                    Assinar Plus+
                   </Button>
                 )}
                 {userRole !== 'admin' && (
@@ -1316,7 +1316,7 @@ export default function ProfilePage() {
               <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mb-3">
                 <Sparkles className="h-7 w-7 text-white" />
               </div>
-              <DialogTitle className="text-center text-xl">Upgrade para Premium</DialogTitle>
+              <DialogTitle className="text-center text-xl">Assinar Plus+</DialogTitle>
               <DialogDescription className="text-center text-sm">
                 Entre em contato para ter acesso a recursos premium ilimitados.
               </DialogDescription>
@@ -1464,12 +1464,12 @@ export default function ProfilePage() {
               </div>
               <DialogTitle className="text-center text-xl">Cancelar Assinatura?</DialogTitle>
               <DialogDescription className="text-center text-sm">
-                Tem certeza que deseja cancelar sua assinatura {accountType === 'premium' ? 'Premium' : 'Trial'}?
+                Tem certeza que deseja cancelar sua assinatura {accountType === 'premium' ? 'Plus+' : 'Trial'}?
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-3">
               <p className="text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/50 px-3 py-2 rounded-lg">
-                Ao cancelar, sua assinatura no Mercado Pago será encerrada imediatamente, mas você mantém acesso premium até o fim do período já pago. Após isso, sua conta voltará ao plano Gratuito automaticamente.
+                Ao cancelar, sua assinatura no Mercado Pago será encerrada imediatamente, mas você mantém acesso Plus+ até o fim do período já pago. Após isso, sua conta voltará ao plano Gratuito automaticamente.
               </p>
               <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
                 <Phone className="h-4 w-4 text-blue-600 shrink-0" />

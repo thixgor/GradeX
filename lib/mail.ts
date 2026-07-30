@@ -322,9 +322,9 @@ export async function sendPlanPurchasedEmail(
     : ''
 
   const content = `
-    <h1 class="h1">Você agora é Premium! 🎉</h1>
+    <h1 class="h1">Você agora é Plus+! 🎉</h1>
     <p>Olá, ${firstName}!</p>
-    <p>Estamos muito felizes em ter você como aluno Premium no <strong>DomineAqui</strong>.</p>
+    <p>Estamos muito felizes em ter você como assinante Plus+ no <strong>DomineAqui</strong>.</p>
 
     <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
       <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">Comprovante de Pagamento</p>
@@ -350,12 +350,12 @@ export async function sendPlanPurchasedEmail(
     </div>
   `
 
-  const html = getEmailTemplate('Bem-vindo ao Premium! 🚀', content)
+  const html = getEmailTemplate('Bem-vindo ao Plus+! 🚀', content)
 
   await transporter.sendMail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: email,
-    subject: 'Parabéns! Sua jornada Premium começou 🚀',
+    subject: 'Parabéns! Sua jornada Plus+ começou 🚀',
     html,
   })
 }
@@ -424,11 +424,11 @@ export async function sendManualClinicoPurchasedEmail(input: {
   const content = `
     <h1 class="h1">Manual Clínico liberado! 🩺</h1>
     <p>Olá, ${firstName}!</p>
-    <p>Seu pagamento foi confirmado e o Manual Clínico Premium foi liberado na sua conta.</p>
+    <p>Seu pagamento foi confirmado e o Manual Clínico Completo foi liberado na sua conta.</p>
 
     <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
       <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Comprovante de Compra</p>
-      <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">Manual Clínico Premium — Plano ${input.planLabel}</p>
+      <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">Manual Clínico Completo — Plano ${input.planLabel}</p>
       <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">R$ ${input.amount.toFixed(2).replace('.', ',')}</p>
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Duração: <strong>${durationStr}</strong></p>
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Expira em: <strong>${expiresStr}</strong></p>
@@ -476,7 +476,7 @@ export async function sendManualClinicoExpirationReminderEmail(input: {
   const content = `
     <h1 class="h1">Seu Manual Clínico ${input.daysRemaining <= 0 ? 'expirou' : 'está expirando'} ⏰</h1>
     <p>Olá, ${firstName}!</p>
-    <p>O seu plano <strong>${input.planLabel}</strong> do Manual Clínico Premium ${input.daysRemaining <= 0 ? 'expirou em' : 'expira em'} <strong>${expiresStr}</strong>.</p>
+    <p>O seu plano <strong>${input.planLabel}</strong> do Manual Clínico Completo ${input.daysRemaining <= 0 ? 'expirou em' : 'expira em'} <strong>${expiresStr}</strong>.</p>
 
     <div style="background-color: #fee2e2; border: 1px solid #fecaca; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
       <p style="margin: 0; font-size: 14px; color: #991b1b; font-weight: 600;">
@@ -726,7 +726,7 @@ export async function sendOneTimePaymentEndedEmail(email: string, name: string) 
     <p>Esperamos que os estudos tenham sido produtivos! Para continuar acessando as funcionalidades exclusivas (questões ilimitadas, flashcards, aulas), você pode renovar seu acesso agora mesmo.</p>
 
     <div style="text-align: center;">
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/buy" class="button" target="_blank">Renovar Acesso Premium</a>
+      <a href="${process.env.NEXT_PUBLIC_APP_URL}/buy" class="button" target="_blank">Renovar Acesso Plus+</a>
     </div>
 
     <p style="margin-top: 15px;">Se preferir outro método de pagamento ou tiver dúvidas, entre em contato conosco.</p>

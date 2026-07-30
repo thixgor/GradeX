@@ -1525,8 +1525,8 @@ function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void 
 const ADMIN_GROUPS = [
   { id: 'gratuito', label: 'Gratuito' },
   { id: 'trial', label: 'Trial' },
-  { id: 'essential', label: 'Essential' },
-  { id: 'premium', label: 'Premium' },
+  { id: 'essential', label: 'Plus+' },
+  { id: 'premium', label: 'Plus+' },
   { id: 'monitor', label: 'Monitor' },
 ]
 

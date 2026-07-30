@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -129,8 +130,8 @@ export async function GET() {
           $facet: {
             gratuito: [{ $match: { $or: [{ accountType: 'gratuito' }, { accountType: { $exists: false } }] } }, { $count: 'count' }],
             trial: [{ $match: { accountType: 'trial', trialExpiresAt: { $gte: now } } }, { $count: 'count' }],
-            premium: [{ $match: { accountType: 'premium' } }, { $count: 'count' }],
-            essential: [{ $match: { accountType: 'essential' } }, { $count: 'count' }],
+            // Cargo único: 'plus' soma também as contas legadas ainda não migradas.
+            plus: [{ $match: { accountType: { $in: [...PLUS_ACCOUNT_TYPES] } } }, { $count: 'count' }],
           },
         },
       ]).toArray(),
@@ -317,8 +318,7 @@ export async function GET() {
     const accountTypeDistribution = {
       gratuito: accountDist.gratuito?.[0]?.count || 0,
       trial: accountDist.trial?.[0]?.count || 0,
-      premium: accountDist.premium?.[0]?.count || 0,
-      essential: accountDist.essential?.[0]?.count || 0,
+      plus: accountDist.plus?.[0]?.count || 0,
     }
 
     // Exam method distribution from group

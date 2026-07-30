@@ -567,7 +567,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Lock className="mb-4 h-10 w-10 text-muted-foreground" />
               <h2 className="text-xl font-bold">Produto indisponivel</h2>
-              <p className="mt-2 text-sm text-muted-foreground">A compra do Manual Clinico Premium esta pausada no momento.</p>
+              <p className="mt-2 text-sm text-muted-foreground">A compra do Manual Clinico Completo esta pausada no momento.</p>
             </div>
           ) : step === 'buyer' ? (
             <div className="flex flex-col gap-4">

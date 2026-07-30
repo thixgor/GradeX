@@ -165,13 +165,13 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             <Lock className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Premium</p>
-            <h2 className="mt-1 text-2xl font-black tracking-tight">Desbloqueie o Manual Clínico Premium</h2>
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Plus+</p>
+            <h2 className="mt-1 text-2xl font-black tracking-tight">Desbloqueie o Manual Clínico Completo</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               {needsLoginForFreeChoice
                 ? `Entre para escolher esta patologia como uma das suas ${freeQuota?.limit} visualizações gratuitas.`
                 : hasExhaustedFreeChoices
-                  ? `Voce ja usou suas ${freeQuota?.limit} visualizações gratuitas. O Premium libera o acervo completo.`
+                  ? `Voce ja usou suas ${freeQuota?.limit} visualizações gratuitas. O Plus+ libera o acervo completo.`
                   : product?.shortDescription || 'Acesso completo a 220+ patologias aprofundadas com diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas.'}
             </p>
           </div>
@@ -210,7 +210,7 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             <Crown className="h-4 w-4" />
             {needsLoginForFreeChoice
               ? 'Entrar e abrir grátis'
-              : product?.isActive ? (product.ctaText || 'Desbloquear Manual Clínico Premium') : 'Produto indisponível'}
+              : product?.isActive ? (product.ctaText || 'Desbloquear Manual Clínico Completo') : 'Produto indisponível'}
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>

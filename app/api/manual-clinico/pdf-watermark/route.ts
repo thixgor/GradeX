@@ -9,6 +9,8 @@ import {
   getManualClinicoFreeQuotaState,
   isManualClinicoPathologyFree,
 } from '@/lib/manual-clinico-product'
+import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import { emailFingerprint } from '@/lib/watermark-fingerprint'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -43,6 +45,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Plus+ Guard — o Manual Clínico é o acervo mais valioso e o alvo óbvio de
+    // quem quer baixar tudo antes de pedir reembolso.
+    const allowance = await checkPlusDownloadAllowance({
+      userId: session.userId,
+      isAdmin: session.role === 'admin',
+      db,
+    })
+    if (!allowance.allowed) {
+      return NextResponse.json(
+        { error: allowance.message || 'Limite de downloads atingido.', reason: allowance.reason, retryAt: allowance.retryAt },
+        { status: 429 },
+      )
+    }
+
     const pdfArrayBuffer = await request.arrayBuffer()
     if (!isPdfBuffer(pdfArrayBuffer)) {
       return NextResponse.json({ error: 'Arquivo PDF invalido.' }, { status: 400 })
@@ -55,6 +71,19 @@ export async function POST(request: NextRequest) {
       orderId: access.purchase?.providerPaymentId || access.purchase?.providerOrderId || access.purchase?._id?.toString() || session.userId,
       downloadedAt: new Date(),
     })
+
+    recordPlusDownload({
+      userId: session.userId,
+      userEmail: session.email,
+      userName: session.name,
+      kind: 'manual_clinico',
+      resourceId: slug || mode,
+      resourceTitle: mode === 'single' ? `Patologia ${slug}` : 'Manual Clínico (completo)',
+      ip: request.headers.get('x-forwarded-for')?.split(',')[0] || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+      watermarkFingerprint: emailFingerprint(session.email),
+      db,
+    }).catch(() => {})
 
     return new NextResponse(Buffer.from(watermarked), {
       status: 200,

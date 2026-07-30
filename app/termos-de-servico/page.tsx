@@ -28,15 +28,33 @@ export default function TermosDeServicoPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3">2. Assinatura e Cancelamento</h2>
+              <h2 className="text-2xl font-semibold mb-3">2. Assinatura Plus+, Cancelamento e Reembolso</h2>
               <p className="text-muted-foreground leading-relaxed mb-3">
-                <strong>Cancelamento:</strong> Após cancelar o serviço de assinatura, você perderá automaticamente o acesso aos benefícios premium. O valor devido não continuará sendo cobrado após o cancelamento.
+                <strong>Plano único:</strong> a assinatura Plus+ é o único plano pago da plataforma e libera todo o acervo — Manual Clínico, materiais, flashcards, aulas, mapas mentais, provas por IA, flashcards por IA e cronogramas. Os planos disponíveis diferem apenas em preço e duração.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-3">
-                <strong>Reembolso:</strong> O serviço não é reembolsável se você já utilizou a plataforma e há registro de uso nos logs do sistema. Reembolsos podem ser considerados apenas em casos excepcionais e dentro de um período de 7 dias após a compra, desde que não haja uso significativo da plataforma.
+                <strong>Cancelamento:</strong> após cancelar a assinatura, você perde o acesso aos benefícios do Plus+ ao fim do período já pago. Nenhum novo valor é cobrado após o cancelamento.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                <strong>Direito de arrependimento (art. 49 do CDC):</strong> você pode desistir da contratação em até 7 dias corridos contados da compra e receber a devolução do valor pago.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                <strong>Limites de uso no período inicial:</strong> como o Plus+ dá acesso imediato a todo o acervo digital, a plataforma aplica limites de download por hora, por dia e um teto total durante os primeiros 7 dias de assinatura. Esses limites são dimensionados para o uso normal de um estudante e existem para proteger o acervo contra extração em massa. Eles são ampliados automaticamente depois desse período, sem qualquer ação sua.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                <strong>Registro de consumo:</strong> todo download é registrado (data, hora, conteúdo e endereço de rede) e cada arquivo entregue leva marca d&apos;água com a identificação da sua conta. Esse registro é usado para apurar o uso efetivo do serviço em caso de solicitação de reembolso ou contestação de cobrança.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                <strong>Reembolso após uso:</strong> passados os 7 dias do direito de arrependimento, o valor não é reembolsável quando há registro de uso efetivo da plataforma. Pedidos fora desse prazo são avaliados caso a caso.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                <strong>Efeitos do reembolso:</strong> aprovado o reembolso ou o estorno, o acesso Plus+ é encerrado imediatamente e a conta retorna ao plano gratuito. Contas que já tiveram uma assinatura reembolsada podem ficar temporariamente impedidas de assinar novamente; nesse caso, fale com o suporte.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-3">
+                <strong>Uso abusivo:</strong> download automatizado, redistribuição de material, remoção de marca d&apos;água ou compartilhamento de conta são violações destes Termos e podem levar à suspensão dos downloads ou ao encerramento da conta, sem direito a reembolso do período já utilizado.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                <strong>Renovação Automática:</strong> As assinaturas são renovadas automaticamente no final de cada período de cobrança, a menos que sejam canceladas antes da data de renovação.
+                <strong>Renovação Automática:</strong> as assinaturas são renovadas automaticamente no final de cada período de cobrança, a menos que sejam canceladas antes da data de renovação.
               </p>
             </section>
 

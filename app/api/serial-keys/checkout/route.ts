@@ -35,6 +35,7 @@ import {
 import type { PaymentOrder, SerialKeyProductType, SerialKeyGrant } from '@/lib/types'
 import type { PaymentOrderType } from '@/lib/payments/types'
 import type { AnalyticsProductType } from '@/lib/analytics'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -61,7 +62,7 @@ const PayerAddressSchema = z.object({
 })
 
 const Schema = z.object({
-  productType: z.enum(['manual_clinico', 'material', 'flashcard', 'package', 'premium', 'essential']),
+  productType: z.enum(['manual_clinico', 'material', 'flashcard', 'package', 'plus', 'premium', 'essential']),
   productId: z.string().max(80).optional(),
   planKey: z.string().max(40).optional(),
   itemType: z.enum(['material', 'package']).optional(),
@@ -107,7 +108,7 @@ const CartSchema = z.object({
 
 /** Mapeia o tipo de produto da serial key para o tipo de order de pagamento. */
 function orderTypeFor(productType: SerialKeyProductType): PaymentOrderType {
-  if (productType === 'premium' || productType === 'essential') return 'plan'
+  if (isPlusAccount(productType)) return 'plan'
   if (productType === 'manual_clinico') return 'product'
   return 'material'
 }

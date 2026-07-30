@@ -337,8 +337,7 @@ const typeOptions = [
 const ACCESS_GROUPS = [
   { id: 'gratuito', label: 'Gratuito', color: '#6b7280', emoji: '🆓' },
   { id: 'trial', label: 'Trial', color: '#3b82f6', emoji: '⏱️' },
-  { id: 'essential', label: 'Essential', color: '#8b5cf6', emoji: '⭐' },
-  { id: 'premium', label: 'Premium', color: '#f59e0b', emoji: '👑' },
+  { id: 'plus', label: 'Plus+', color: '#f59e0b', emoji: '👑' },
   { id: 'monitor', label: 'Monitor', color: '#10b981', emoji: '🎓' },
 ] as const
 
@@ -3231,8 +3230,10 @@ function AdminMateriaisContent() {
                           : <CreditCard className="h-3.5 w-3.5 text-blue-500" />
                       const sourceLabel = p.source === 'manual' ? 'Manual' : p.price === 0 ? 'Grátis' : `R$ ${p.price?.toFixed(2)}`
                       const planBadge = p.userAccountType
-                        ? { premium: { label: 'Premium', color: '#f59e0b', icon: <Crown className="h-3 w-3" /> },
-                            essential: { label: 'Essential', color: '#8b5cf6', icon: <Zap className="h-3 w-3" /> },
+                        ? { plus: { label: 'Plus+', color: '#f59e0b', icon: <Crown className="h-3 w-3" /> },
+                            // Legado — contas ainda não migradas.
+                            premium: { label: 'Plus+', color: '#f59e0b', icon: <Crown className="h-3 w-3" /> },
+                            essential: { label: 'Plus+', color: '#f59e0b', icon: <Crown className="h-3 w-3" /> },
                             trial: { label: 'Trial', color: '#3b82f6', icon: <Clock className="h-3 w-3" /> },
                             gratuito: { label: 'Gratuito', color: '#6b7280', icon: <Gift className="h-3 w-3" /> },
                           }[p.userAccountType as string]

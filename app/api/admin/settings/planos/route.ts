@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig } from '@/lib/types'
+import { normalizeAccountType, PLUS_LABEL, PLUS_TIER } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,12 +12,17 @@ export async function GET() {
     const db = await getDb()
     const settings = await db.collection('admin_settings').findOne({})
 
+    // O Plus+ é cargo único: todo plano libera a plataforma inteira. O que
+    // varia de um plano para outro é só preço e duração.
     const defaultBeneficios = [
-      '400 Questões Pessoais por dia',
-      '500 Flashcards por dia',
-      'Cronogramas ilimitados',
-      'Forum de materiais e discussão premium',
+      'Manual Clínico completo e todas as suas funcionalidades',
+      'Todos os materiais e pacotes da plataforma',
+      'Todos os flashcards — prontos e gerados por IA, sem limite',
+      'Banco de questões completo',
+      'Provas por IA e provas pessoais ilimitadas',
+      'Mapas mentais e cronogramas ilimitados',
       'Aulas ao vivo e vídeo-aulas pós-aula',
+      'Fórum de materiais e discussão',
       'Acesso a grupo de WhatsApp'
     ]
 
@@ -25,7 +31,7 @@ export async function GET() {
       const defaultPlans: PlanConfig[] = [
         {
           tipo: 'mensal',
-          nome: 'DomineAqui PREMIUM',
+          nome: `DomineAqui ${PLUS_LABEL}`,
           periodo: 'Plano Mensal',
           preco: 24.90,
           precoOriginal: 29.90,
@@ -37,7 +43,7 @@ export async function GET() {
         },
         {
           tipo: 'trimestral',
-          nome: 'DomineAqui PREMIUM',
+          nome: `DomineAqui ${PLUS_LABEL}`,
           periodo: 'Plano Trimestral',
           preco: 59.90,
           precoOriginal: 74.70,
@@ -49,7 +55,7 @@ export async function GET() {
         },
         {
           tipo: 'semestral',
-          nome: 'DomineAqui PREMIUM',
+          nome: `DomineAqui ${PLUS_LABEL}`,
           periodo: 'Plano Semestral',
           preco: 99.90,
           precoOriginal: 149.40,
@@ -61,7 +67,7 @@ export async function GET() {
         },
         {
           tipo: 'anual',
-          nome: 'DomineAqui PREMIUM',
+          nome: `DomineAqui ${PLUS_LABEL}`,
           periodo: 'Plano Anual',
           preco: 149.90,
           precoOriginal: 298.80,
@@ -73,7 +79,7 @@ export async function GET() {
         },
         {
           tipo: 'vitalicio',
-          nome: 'DomineAqui PREMIUM',
+          nome: `DomineAqui ${PLUS_LABEL}`,
           periodo: 'Plano Vitalício',
           preco: 299.90,
           precoOriginal: undefined,
@@ -136,7 +142,9 @@ export async function PUT(req: NextRequest) {
       ordem: plan.ordem || 0,
       destaque: plan.destaque || false,
       badge: plan.badge,
-      role: plan.role || 'premium',
+      // Cargos legados (premium/essential) são regravados como 'plus'.
+      // Sem role definida, o plano é pago por padrão.
+      role: plan.role ? normalizeAccountType(plan.role) : PLUS_TIER,
       durationMonths: plan.durationMonths !== undefined ? parseInt(plan.durationMonths) : 0,
       stripePriceId: plan.stripePriceId,
       stripeOneTimePriceId: plan.stripeOneTimePriceId,

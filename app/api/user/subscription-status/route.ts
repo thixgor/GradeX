@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { User } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import type { SubscriptionRecord } from '@/lib/types'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
     const now = new Date()
     let activeSubscription = null
 
-    if (user.accountType === 'premium') {
+    if (isPlusAccount(user.accountType)) {
       let expiresAt: Date | null = null
 
       if (user.premiumExpiresAt && new Date(user.premiumExpiresAt) > now) {

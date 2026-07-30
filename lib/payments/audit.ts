@@ -24,6 +24,7 @@ export type AuditAction =
   | 'raffle_numbers_sold'
   | 'raffle_numbers_released'
   | 'raffle_drawn'
+  | 'plus_guard_action'
 
 export interface AuditLogEntry {
   action: AuditAction

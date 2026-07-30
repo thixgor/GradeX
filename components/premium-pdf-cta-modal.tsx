@@ -50,7 +50,7 @@ export function PremiumPdfCtaModal({ open, onClose, onTakeExam }: PremiumPdfCtaM
                 Download de PDF
               </h2>
               <p className="text-white/80 text-xs mt-0.5">
-                Disponível nos planos <strong className="text-white">Premium</strong> e <strong className="text-white">Essential</strong>
+                Disponível nos planos <strong className="text-white">Plus+</strong> e <strong className="text-white">Plus+</strong>
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export function PremiumPdfCtaModal({ open, onClose, onTakeExam }: PremiumPdfCtaM
           <div className="flex items-start gap-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3 py-2.5">
             <Play className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-emerald-700 dark:text-emerald-300 leading-snug">
-              <strong>Fazer a prova é gratuito!</strong> O plano Premium é necessário apenas para <strong>baixar o PDF</strong>.
+              <strong>Fazer a prova é gratuito!</strong> O plano Plus+ é necessário apenas para <strong>baixar o PDF</strong>.
             </p>
           </div>
 

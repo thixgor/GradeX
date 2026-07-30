@@ -6,6 +6,7 @@ import { getTierLimits } from '@/lib/tier-limits'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { isPlusAccount } from '@/lib/account-tier'
 
 interface LimitItem {
   label: string
@@ -72,7 +73,7 @@ export function PlanLimitsCard({
       <div className={cn('rounded-xl border bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4', className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Crown className={cn('h-4 w-4', accountType === 'premium' || isAdmin ? 'text-yellow-500' : 'text-gray-400')} />
+            <Crown className={cn('h-4 w-4', isPlusAccount(accountType, isAdmin) ? 'text-yellow-500' : 'text-gray-400')} />
             <span className="font-semibold text-sm capitalize">{isAdmin ? 'Admin' : accountType}</span>
           </div>
           {accountType === 'gratuito' && !isAdmin && (
@@ -90,7 +91,7 @@ export function PlanLimitsCard({
       <div className={cn(
         'p-4 border-b',
         isAdmin ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' :
-        accountType === 'premium' ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white' :
+        isPlusAccount(accountType) ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white' :
         accountType === 'trial' ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' :
         'bg-gradient-to-r from-slate-500 to-slate-600 text-white'
       )}>
@@ -102,7 +103,7 @@ export function PlanLimitsCard({
               <Crown className={cn('h-5 w-5', accountType === 'gratuito' && 'opacity-50')} />
             )}
             <span className="font-bold capitalize">
-              {isAdmin ? 'Admin' : accountType === 'gratuito' ? 'Plano Gratuito' : accountType === 'trial' ? 'Plano Trial' : 'Plano Premium'}
+              {isAdmin ? 'Admin' : accountType === 'gratuito' ? 'Plano Gratuito' : accountType === 'trial' ? 'Plano Trial' : 'Plano Plus+'}
             </span>
           </div>
           {accountType === 'gratuito' && !isAdmin && showUpgradeButton && (
@@ -186,12 +187,12 @@ export function PlanLimitsCard({
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
             >
               <Crown className="h-4 w-4 mr-2" />
-              Fazer Upgrade para Premium
+              Fazer Assinar Plus+
             </Button>
           </div>
         )}
 
-        {accountType === 'premium' && !isAdmin && (
+        {isPlusAccount(accountType) && !isAdmin && (
           <div className="pt-3 border-t">
             <div className="flex items-center justify-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 p-3 rounded-lg">
               <CheckCircle2 className="h-4 w-4" />

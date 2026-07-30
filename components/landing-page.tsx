@@ -895,7 +895,7 @@ function PlatformOverview() {
     [<IconCheck key="i" />, 'Provas da Faculdade', 'As provas reais do seu curso, prontas para resolver e treinar.'],
     [<IconCards key="i" />, 'Flashcards próprios', 'Decks feitos por especialistas, com repetição espaçada.'],
     [<IconMap key="i" />, 'Mapas mentais', 'Editor visual para criar, conectar e compartilhar suas ideias.'],
-    [<IconBank key="i" />, 'Banco de Questões', 'Uso ilimitado no Essential e no Premium.'],
+    [<IconBank key="i" />, 'Banco de Questões', 'Uso ilimitado no Plus+.'],
     [<IconPulse key="i" />, 'Manual do Eletro', 'Exclusivo de quem assina o Manual Clínico. Treina o raciocínio do traçado.'],
   ]
   return (
@@ -1166,7 +1166,7 @@ function ManualEletro() {
     <section className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
       <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="Premium" label="Exclusivo de assinante" />
+          <SectionMark n="Plus+" label="Exclusivo de assinante" />
         </Reveal>
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
           <Reveal>
@@ -1263,7 +1263,7 @@ const TOOL_CHANNELS = [
     label: 'Banco de Questões',
     reading: 'USO ILIMITADO',
     title: 'Banco de Questões sem limite',
-    desc: 'Milhares de questões para resolver à vontade, no Essential e no Premium. Errar aqui é de graça. Errar na prova custa o ano inteiro.',
+    desc: 'Milhares de questões para resolver à vontade, no Plus+. Errar aqui é de graça. Errar na prova custa o ano inteiro.',
     img: provas3d,
     cta: 'Entrar no banco',
     stat: 'Ilimitado',
@@ -1472,19 +1472,22 @@ function Differentiators() {
 /* ---------- PLANOS ---------- */
 
 function Plans() {
-  const essential = [
-    'Banco de Questões ilimitado',
-    'Download de todas as provas',
-    '400 provas por IA por dia',
-    '500 flashcards por IA por dia',
-    'Cronogramas ilimitados',
+  // Cargo único: o Plus+ libera a plataforma inteira. A comparação da landing
+  // é contra a conta gratuita, não contra um segundo plano pago.
+  const gratuito = [
+    'Conta grátis, sem cartão',
+    'Provas e flashcards para experimentar',
+    'Amostra do Banco de Questões',
+    'Patologias liberadas do Manual Clínico',
+    'Cronograma básico',
   ]
-  const premium = [
-    'Tudo do Essential, e mais',
-    'Manual Clínico completo e liberado',
+  const plus = [
+    'Manual Clínico completo, com todas as funcionalidades',
+    'Todos os materiais e pacotes da plataforma',
+    'Banco de Questões ilimitado',
+    'Provas por IA e flashcards por IA sem limite',
     'Aulas ao vivo e vídeo-aulas pós-aula',
-    'Todas as provas e flashcards por IA',
-    'Prioridade nas novidades',
+    'Mapas mentais e cronogramas ilimitados',
   ]
   return (
     <section
@@ -1501,10 +1504,10 @@ function Plans() {
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Reveal>
             <div className="flex h-full flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-8">
-              <h3 className="font-da-display text-2xl font-semibold tracking-tight">Essential</h3>
-              <p className="mt-2 text-da-muted">Toda a máquina de estudo ativo. Sem o Manual.</p>
+              <h3 className="font-da-display text-2xl font-semibold tracking-tight">Gratuito</h3>
+              <p className="mt-2 text-da-muted">Para sentir a plataforma antes de pagar.</p>
               <ul className="mt-7 space-y-3">
-                {essential.map((f) => (
+                {gratuito.map((f) => (
                   <li key={f} className="flex items-start gap-3">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-da-amber" />
                     <span>{f}</span>
@@ -1512,7 +1515,7 @@ function Plans() {
                 ))}
               </ul>
               <div className="mt-8">
-                <GhostCTA href={LINKS.buy}>Assinar Essential</GhostCTA>
+                <GhostCTA href={LINKS.buy}>Criar conta grátis</GhostCTA>
               </div>
             </div>
           </Reveal>
@@ -1524,14 +1527,14 @@ function Plans() {
                 style={{ background: 'radial-gradient(circle, rgba(232,118,58,.35), transparent 70%)' }}
               />
               <div className="relative flex items-center gap-3">
-                <h3 className="font-da-display text-2xl font-semibold tracking-tight">Premium</h3>
+                <h3 className="font-da-display text-2xl font-semibold tracking-tight">Plus+</h3>
                 <span className="rounded-full bg-da-amber px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-[#0B1F1A]">
-                  O Manual liberado
+                  Tudo liberado
                 </span>
               </div>
-              <p className="mt-2 text-da-muted">A plataforma inteira, sem trava.</p>
+              <p className="mt-2 text-da-muted">A plataforma inteira, sem trava. Um plano só.</p>
               <ul className="relative mt-7 space-y-3">
-                {premium.map((f) => (
+                {plus.map((f) => (
                   <li key={f} className="flex items-start gap-3">
                     <span className="mt-0.5 shrink-0 text-da-amber">
                       <IconCheck />
@@ -1541,7 +1544,7 @@ function Plans() {
                 ))}
               </ul>
               <div className="relative mt-8">
-                <PrimaryCTA href={LINKS.buy}>Assinar Premium</PrimaryCTA>
+                <PrimaryCTA href={LINKS.buy}>Assinar Plus+</PrimaryCTA>
               </div>
             </div>
           </Reveal>
@@ -1895,7 +1898,7 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
   const faqs = [
     [
       'Preciso pagar para começar?',
-      'Não. Você cria uma conta grátis e já entra usando. Essential e Premium liberam mais quando você quiser, no seu tempo.',
+      'Não. Você cria uma conta grátis e já entra usando. O Plus+ libera o resto quando você quiser, no seu tempo.',
     ],
     [
       'Para quem é o Domine Aqui?',
@@ -1910,8 +1913,8 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
       'Seguem. Você escolhe o conteúdo da ementa e a IA gera em cima do que o seu curso cobra, não um genérico.',
     ],
     [
-      'Qual a diferença entre Essential e Premium?',
-      'Os dois têm Banco de Questões ilimitado, provas e flashcards por IA e cronogramas. O Premium libera o Manual Clínico completo e as aulas.',
+      'O que o Plus+ inclui?',
+      'Tudo. Manual Clínico completo, todos os materiais, todos os flashcards, aulas, mapas mentais, provas por IA, flashcards por IA, cronogramas e Banco de Questões ilimitado. É um plano só, sem níveis.',
     ],
   ]
   return (

@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Send, Trash2, Lock, Globe, Video, Zap, Download, CheckCircle2 } from 'lucide-react'
 import { AulaPostagem, AulaComentario } from '@/lib/types'
 import { VideoWatermark } from '@/components/video-watermark'
+import { isPlusAccount, isPlusOnlyAula } from '@/lib/account-tier'
 
 interface User {
   id: string
@@ -97,8 +98,8 @@ export default function AulaDetalhePage() {
         registrarVisita(aulaId)
 
         // Verificar acesso
-        const isPremium = data.aula.visibilidade === 'premium'
-        const userIsPremium = user?.accountType === 'premium'
+        const isPremium = isPlusOnlyAula(data.aula.visibilidade)
+        const userIsPremium = isPlusAccount(user?.accountType)
         const userIsAdmin = user?.role === 'admin'
         const userIsMonitor = user?.secondaryRole === 'monitor'
 
@@ -263,21 +264,21 @@ export default function AulaDetalhePage() {
 
       {/* Main Content */}
       <main className="relative z-30 container mx-auto px-4 py-8 max-w-5xl">
-        {/* Bloqueio de Acesso Premium */}
+        {/* Bloqueio de Acesso Plus+ */}
         {!temAcesso && (
           <div className="mb-8 bg-red-500/10 border border-red-500/30 rounded-lg p-8 shadow-xl shadow-red-500/10 ">
             <div className="flex items-start gap-4">
               <Lock className="h-8 w-8 text-red-400 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-red-600 dark:text-red-300 mb-2">Aula Premium</h2>
+                <h2 className="text-2xl font-bold text-red-600 dark:text-red-300 mb-2">Aula Plus+</h2>
                 <p className="text-muted-foreground mb-4">
-                  Esta aula é exclusiva para usuários premium. Faça upgrade da sua conta para acessar este conteúdo.
+                  Esta aula é exclusiva para assinantes Plus+. Faça upgrade da sua conta para acessar este conteúdo.
                 </p>
                 <Button
                   onClick={() => router.push('/buy')}
                   className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300"
                 >
-                  Fazer Upgrade para Premium
+                  Fazer Assinar Plus+
                 </Button>
               </div>
             </div>
@@ -348,10 +349,10 @@ export default function AulaDetalhePage() {
                     Gravada
                   </span>
                 )}
-                {aula.visibilidade === 'premium' ? (
+                {isPlusOnlyAula(aula.visibilidade) ? (
                   <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-xs font-semibold border border-yellow-500/30">
                     <Lock className="h-3 w-3" />
-                    Premium
+                    Plus+
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">

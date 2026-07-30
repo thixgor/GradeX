@@ -18,6 +18,7 @@ import { randomBytes, randomInt } from 'crypto'
 import { ObjectId, type Db } from 'mongodb'
 import { getDb } from './mongodb'
 import { audit } from './payments/audit'
+import { isPlusAccount, normalizeAccountType, PLUS_ACCOUNT_TYPES, PLUS_LABEL, PLUS_TIER } from './account-tier'
 import { getPersonalExamsQuota } from './tier-limits'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from './material-cart'
 import {
@@ -37,6 +38,12 @@ import type {
   ManualClinicoPlanKey,
 } from './types'
 
+/** A key libera um cargo de assinatura (Plus+ ou seus legados)? */
+function isPlusProductType(productType?: string | null): boolean {
+  const pt = String(productType || '')
+  return pt === PLUS_TIER || (PLUS_ACCOUNT_TYPES as readonly string[]).includes(pt)
+}
+
 export const SERIAL_KEYS_COLLECTION = 'serial_keys'
 export const SERIAL_KEY_SECURITY_LOGS = 'serial_key_security_logs'
 
@@ -50,6 +57,8 @@ const SERIAL_KEY_PRODUCT_TYPES: SerialKeyProductType[] = [
   'material',
   'flashcard',
   'package',
+  'plus',
+  // Legado — keys antigas ainda carregam esses valores.
   'premium',
   'essential',
 ]
@@ -189,8 +198,10 @@ const PRODUCT_TYPE_LABELS: Record<SerialKeyProductType, string> = {
   material: 'Material',
   flashcard: 'Flashcards',
   package: 'Pacote',
-  premium: 'Assinatura Premium',
-  essential: 'Assinatura Essential',
+  plus: `Assinatura ${PLUS_LABEL}`,
+  // Legado — exibidos com o rótulo novo.
+  premium: `Assinatura ${PLUS_LABEL}`,
+  essential: `Assinatura ${PLUS_LABEL}`,
 }
 
 export function productTypeLabel(pt?: SerialKeyProductType | string): string {
@@ -228,22 +239,23 @@ export async function resolveSerialKeyProduct(
 ): Promise<ResolvedSerialKeyProduct> {
   const { productType } = input
 
-  if (productType === 'premium' || productType === 'essential') {
+  if (isPlusProductType(productType)) {
     const settings = await db.collection('admin_settings').findOne({})
     const planos = (settings?.planos || []) as any[]
     // productId = tipo do plano. Se não informado, tenta o primeiro do cargo pedido.
     let plano = input.productId ? planos.find(p => p.tipo === input.productId) : undefined
     if (!plano) {
-      plano = planos.find(p => (p.role || 'premium') === productType)
+      // Qualquer plano de cargo pago serve — todos concedem Plus+.
+      plano = planos.find(p => isPlusAccount(p.role))
     }
     if (!plano) throw new Error('Plano não encontrado ou indisponível.')
     const amount = Number(plano.preco)
     if (!Number.isFinite(amount) || amount <= 0) throw new Error('Plano sem preço válido.')
-    const role: AccountType = (plano.role as AccountType) || (productType as AccountType)
+    const role: AccountType = normalizeAccountType(plano.role || productType)
     return {
       productType,
       productId: String(plano.tipo),
-      productTitle: plano.nome || (productType === 'premium' ? 'Assinatura Premium' : 'Assinatura Essential'),
+      productTitle: plano.nome || `Assinatura ${PLUS_LABEL}`,
       amount,
       description: `${plano.nome || 'Assinatura'} — ${plano.periodo || 'Plano'}`,
       grant: {
@@ -257,7 +269,7 @@ export async function resolveSerialKeyProduct(
 
   if (productType === 'manual_clinico') {
     const config = await getManualClinicoConfig(db)
-    if (!config.isActive) throw new Error('O Manual Clínico Premium está indisponível no momento.')
+    if (!config.isActive) throw new Error('O Manual Clínico Completo está indisponível no momento.')
     const planKey = (input.planKey as ManualClinicoPlanKey) || 'vitalicio'
     let plan = getManualClinicoPlan(config, planKey)
     // Se o plano pedido/padrão estiver desabilitado, cai para o primeiro habilitado.
@@ -372,7 +384,7 @@ async function insertSerialKeyForItem(
     const activationToken = generateActivationToken()
     const doc: SerialKey = {
       key,
-      type: grant.productType === 'premium' ? 'premium' : 'custom',
+      type: isPlusProductType(grant.productType) ? 'plus' : 'custom',
       used: false,
       generatedBy: order.userId || 'system',
       generatedByName: 'Compra automática',
@@ -502,10 +514,11 @@ export async function grantSerialKeyProduct(
   if (!grant) throw new Error('Serial key sem configuração de produto.')
 
   switch (grant.productType) {
+    case 'plus':
     case 'premium':
     case 'essential': {
       const now = new Date()
-      const role: AccountType = grant.role || (grant.productType as AccountType)
+      const role: AccountType = normalizeAccountType(grant.role || grant.productType)
       let expiresAt: Date | undefined
       if (grant.durationMonths && grant.durationMonths > 0) {
         expiresAt = new Date(now)
@@ -534,7 +547,7 @@ export async function grantSerialKeyProduct(
         metadata: { role, planId: grant.planId, expiresAt, via: 'serial_key' },
       })
       return {
-        productLabel: serial.productTitle || (role === 'premium' ? 'Assinatura Premium' : 'Assinatura Essential'),
+        productLabel: serial.productTitle || `Assinatura ${PLUS_LABEL}`,
         redirectTo: '/dashboard',
       }
     }

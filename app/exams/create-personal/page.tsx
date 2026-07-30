@@ -22,6 +22,7 @@ import {
   Combine,
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
+import { isPlusAccount } from '@/lib/account-tier'
 
 interface User {
   id: string
@@ -99,7 +100,7 @@ export default function CreatePersonalExamPage() {
     const labels = {
       gratuito: { label: 'Gratuito', color: 'text-gray-600 bg-gray-100 dark:bg-gray-800' },
       trial: { label: 'Trial', color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/50' },
-      premium: { label: 'Premium', color: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50' },
+      premium: { label: 'Plus+', color: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50' },
     }
     return labels[accountType]
   }
@@ -170,7 +171,7 @@ export default function CreatePersonalExamPage() {
             </Button>
 
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${accountType.color}`}>
-              {user?.accountType === 'premium' && <Crown className="h-4 w-4" />}
+              {isPlusAccount(user?.accountType) && <Crown className="h-4 w-4" />}
               {accountType.label}
             </div>
           </div>

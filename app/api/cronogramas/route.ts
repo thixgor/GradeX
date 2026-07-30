@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
 
     if (!isAdmin && cronogramasLimit !== Infinity && existingCronogramas >= cronogramasLimit) {
       return NextResponse.json({
-        error: `Limite de cronogramas atingido (${cronogramasLimit} no total). Faça upgrade para Premium para criar mais cronogramas.`,
+        error: `Limite de cronogramas atingido (${cronogramasLimit} no total). Faça para o Plus+ para criar mais cronogramas.`,
         requiresUpgrade: true,
         upgradeUrl: '/buy',
         limit: cronogramasLimit,

@@ -14,6 +14,7 @@ import {
   BarChart3, Eye, Search, ChevronDown, ChevronRight, Activity,
   UserCheck, UserX, Calendar, Zap, Target, Download, BookOpen, Stethoscope
 } from 'lucide-react'
+import { isPlusAccount } from '@/lib/account-tier'
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -58,7 +59,7 @@ interface Stats {
   popularExams: { _id: string; title: string; submissionCount: number; averageScore: number; lastSubmission: string; scoringMethod: string; numberOfQuestions: number }[]
   topUsers: { _id: string; name: string; email: string; submissionCount: number; averageScore: number; lastSubmission: string; bestScore: number; worstScore: number; accountType: string }[]
   recentActivity: { date: string; dateKey: string; examsCreated: number; usersRegistered: number; submissionsCompleted: number }[]
-  accountTypeDistribution: { gratuito: number; trial: number; premium: number; essential: number }
+  accountTypeDistribution: { gratuito: number; trial: number; plus: number }
   examTypeDistribution: { normal: number; tri: number; discursive: number }
   scoreDistribution: { label: string; count: number }[]
   peakHours: { hour: number; count: number }[]
@@ -175,7 +176,7 @@ export default function AdminStatsPage() {
     // Filter
     if (userFilter === 'active') users = users.filter(u => u.totalSubmissions > 0)
     else if (userFilter === 'inactive') users = users.filter(u => u.totalSubmissions === 0)
-    else if (userFilter === 'premium') users = users.filter(u => u.accountType === 'premium')
+    else if (userFilter === 'plus') users = users.filter(u => isPlusAccount(u.accountType))
     else if (userFilter === 'trial') users = users.filter(u => u.accountType === 'trial')
     else if (userFilter === 'gratuito') users = users.filter(u => ['gratuito', undefined].includes(u.accountType))
     else if (userFilter === 'banned') users = users.filter(u => u.banned)
@@ -470,7 +471,7 @@ export default function AdminStatsPage() {
                         <span className="text-sm font-medium capitalize">{key}</span>
                         <span className="text-sm text-muted-foreground">{val} ({stats.totalUsers > 0 ? ((val / stats.totalUsers) * 100).toFixed(1) : 0}%)</span>
                       </div>
-                      <Bar value={val} max={stats.totalUsers} color={key === 'premium' ? 'bg-yellow-500' : key === 'trial' ? 'bg-purple-500' : key === 'essential' ? 'bg-blue-500' : 'bg-gray-400'} />
+                      <Bar value={val} max={stats.totalUsers} color={key === 'plus' ? 'bg-yellow-500' : key === 'trial' ? 'bg-purple-500' : 'bg-gray-400'} />
                     </div>
                   ))}
                 </CardContent>
@@ -557,7 +558,7 @@ export default function AdminStatsPage() {
                       <SelectItem value="all">Todos ({stats.totalUsers})</SelectItem>
                       <SelectItem value="active">Ativos ({stats.totalUsers - stats.inactiveUsers})</SelectItem>
                       <SelectItem value="inactive">Inativos ({stats.inactiveUsers})</SelectItem>
-                      <SelectItem value="premium">Premium ({stats.accountTypeDistribution.premium})</SelectItem>
+                      <SelectItem value="plus">Plus+ ({stats.accountTypeDistribution.plus})</SelectItem>
                       <SelectItem value="trial">Trial ({stats.accountTypeDistribution.trial})</SelectItem>
                       <SelectItem value="gratuito">Gratuito ({stats.accountTypeDistribution.gratuito})</SelectItem>
                       <SelectItem value="banned">Banidos</SelectItem>

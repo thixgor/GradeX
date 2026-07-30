@@ -8,7 +8,7 @@ import { useApi } from './use-api'
 import { CACHE_DURATIONS } from '@/lib/api-client'
 
 export interface TierLimits {
-  tier: 'free' | 'trial' | 'premium'
+  tier: 'free' | 'trial' | 'plus'
   examsPerMonth: number
   questionsPerDay: number
   questionsPerMonth: number
@@ -59,7 +59,7 @@ export interface TierInfo {
  * Usage:
  * ```tsx
  * const { tierInfo, loading } = useUserTier()
- * console.log(tierInfo.limits.tier) // 'premium'
+ * console.log(tierInfo.limits.tier) // 'plus'
  * console.log(tierInfo.usage.examsUsedThisMonth) // 5
  * ```
  */
@@ -87,7 +87,7 @@ export function useUserTier(options: {
     loading,
     error,
     refetch,
-    isPremium: data?.limits.tier === 'premium',
+    isPlus: data?.limits.tier === 'plus',
     isTrial: data?.limits.tier === 'trial',
     isFree: data?.limits.tier === 'free',
   }

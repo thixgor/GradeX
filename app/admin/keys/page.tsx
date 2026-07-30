@@ -178,7 +178,7 @@ export default function AdminKeysPage() {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
           <Crown className="h-3 w-3 mr-1" />
-          Premium ({subtypeLabel}){priceLabel}
+          Plus+ ({subtypeLabel}){priceLabel}
         </span>
       )
     }
@@ -433,7 +433,7 @@ export default function AdminKeysPage() {
                 >
                   <Crown className="h-5 w-5" />
                   <div>
-                    <div className="font-semibold">Premium</div>
+                    <div className="font-semibold">Plus+</div>
                     <div className="text-xs opacity-80">Vários planos</div>
                   </div>
                 </Button>
@@ -471,10 +471,10 @@ export default function AdminKeysPage() {
               </div>
             )}
 
-            {/* Subtipo Premium */}
+            {/* Subtipo da assinatura */}
             {selectedType === 'premium' && (
               <div>
-                <Label className="text-base font-semibold mb-3 block">Subtipo Premium</Label>
+                <Label className="text-base font-semibold mb-3 block">Subtipo da assinatura</Label>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant={selectedPremiumSubtype === 'teste' ? 'default' : 'outline'}

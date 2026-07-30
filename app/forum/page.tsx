@@ -15,6 +15,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
+import { isPlusAccount } from '@/lib/account-tier'
 
 function ForumContent() {
   const router = useRouter()
@@ -73,7 +74,7 @@ function ForumContent() {
       case 'pause_only_free_common_and_monitors':
         return isMonitor || (isCommonUser && accountType === 'gratuito')
       case 'pause_only_free_common_and_premium_common':
-        return isCommonUser && (accountType === 'gratuito' || accountType === 'premium')
+        return isCommonUser && (accountType === 'gratuito' || isPlusAccount(accountType))
       default:
         return false
     }
@@ -236,7 +237,7 @@ function ForumContent() {
     { mode: 'pause_all_except_common_users', title: 'Menos usuarios comuns', description: 'Usuarios comuns (gratuito/trial/premium) conseguem postar.' },
     { mode: 'pause_only_free_common', title: 'Apenas Gratuitos comuns', description: 'Bloqueia usuarios comuns gratuitos.' },
     { mode: 'pause_only_free_common_and_monitors', title: 'Gratuitos + Monitores', description: 'Bloqueia monitores e usuarios comuns gratuitos.' },
-    { mode: 'pause_only_free_common_and_premium_common', title: 'Gratuitos + Premium', description: 'Bloqueia gratuitos e premium comuns.' },
+    { mode: 'pause_only_free_common_and_premium_common', title: 'Gratuitos + Plus+', description: 'Bloqueia gratuitos e assinantes Plus+ comuns.' },
   ]
 
   const hasUnsavedForumSettings = postCreationFreezeMode !== loadedPostCreationFreezeMode
@@ -270,7 +271,7 @@ function ForumContent() {
             {post.premiumOnly && (
               <span className="text-[10px] font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                 <Crown className="h-2.5 w-2.5" />
-                Premium
+                Plus+
               </span>
             )}
             {post.closed && (
@@ -682,16 +683,16 @@ function ForumContent() {
         )}
       </section>
 
-      {/* ====== Premium Modal ====== */}
+      {/* ====== Plus+ Modal ====== */}
       <Dialog open={showPremiumModal} onOpenChange={setShowPremiumModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mb-3">
               <Crown className="h-7 w-7 text-white" />
             </div>
-            <DialogTitle className="text-center text-xl">Conteudo Premium</DialogTitle>
+            <DialogTitle className="text-center text-xl">Conteudo Plus+</DialogTitle>
             <DialogDescription className="text-center text-sm">
-              Este material e exclusivo para usuarios Premium
+              Este material e exclusivo para assinantes Plus+
             </DialogDescription>
           </DialogHeader>
 
@@ -705,7 +706,7 @@ function ForumContent() {
               </div>
 
               <p className="text-xs text-yellow-800 dark:text-yellow-200 bg-yellow-50 dark:bg-yellow-950/50 px-3 py-2 rounded-lg">
-                Faca upgrade para Premium e acesse conteudos exclusivos, materiais avancados e muito mais!
+                Faca para o Plus+ e acesse conteudos exclusivos, materiais avancados e muito mais!
               </p>
 
               <div className="flex gap-2">
@@ -717,7 +718,7 @@ function ForumContent() {
                   className="flex-1 text-xs bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
                 >
                   <Crown className="h-3.5 w-3.5 mr-1.5" />
-                  Premium
+                  Plus+
                 </Button>
               </div>
             </div>

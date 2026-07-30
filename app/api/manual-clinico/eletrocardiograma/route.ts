@@ -29,7 +29,7 @@ const CATALOG_SUMMARY = {
 /**
  * Verificação de acesso ao Manual do Eletrocardiograma.
  * Seção PRIVATIVA: liberada apenas para assinantes do Manual Clínico e planos
- * Premium (mesma regra de `hasFullAccess`, que cobre admin, compra ativa e plano incluso).
+ * Plus+ (mesma regra de `hasFullAccess`, que cobre admin, compra ativa e plano incluso).
  */
 export async function GET() {
   try {

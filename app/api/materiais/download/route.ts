@@ -23,6 +23,9 @@ import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
+import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import { matchesAccessGroups } from '@/lib/account-tier'
+import { emailFingerprint } from '@/lib/watermark-fingerprint'
 
 export const dynamic = 'force-dynamic'
 
@@ -182,10 +185,13 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
             { _id: new ObjectId(session.userId) },
             { projection: { accountType: 1, secondaryRole: 1 } }
           )
-          const userGroups: string[] = []
-          if (user?.accountType) userGroups.push(user.accountType)
-          if (user?.secondaryRole === 'monitor') userGroups.push('monitor')
-          hasAccess = userGroups.some((g) => material.allowedGroups.includes(g))
+          // Um assinante Plus+ satisfaz também os grupos legados
+          // (`premium`/`essential`) marcados em materiais antigos.
+          hasAccess = matchesAccessGroups(
+            material.allowedGroups,
+            user?.accountType,
+            user?.secondaryRole,
+          )
         }
       }
     }
@@ -194,6 +200,25 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       return NextResponse.json(
         { error: 'Acesso negado. Adquira o material para fazer o download.' },
         { status: 403 }
+      )
+    }
+
+    // ── 5b. Plus+ Guard: cota antiabuso ───────────────────────────────────
+    // Ter direito ao material não é o mesmo que poder baixar 300 deles numa
+    // tarde. A cota é apertada na janela de arrependimento e abre depois.
+    const allowance = await checkPlusDownloadAllowance({
+      userId: session.userId,
+      isAdmin,
+      db,
+    })
+    if (!allowance.allowed) {
+      return NextResponse.json(
+        {
+          error: allowance.message || 'Limite de downloads atingido.',
+          reason: allowance.reason,
+          retryAt: allowance.retryAt,
+        },
+        { status: 429 }
       )
     }
 
@@ -238,7 +263,22 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     })
 
     // ── 9. Incrementar contador e logar auditoria (fire-and-forget) ───────
+    // O registro no Plus+ Guard é o que sustenta a cota e serve de prova de
+    // consumo se o usuário abrir uma disputa de estorno depois.
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
     Promise.all([
+      recordPlusDownload({
+        userId: session.userId,
+        userEmail: session.email,
+        userName: session.name,
+        kind: 'material',
+        resourceId: materialId,
+        resourceTitle: material.title,
+        ip,
+        userAgent: request.headers.get('user-agent') || undefined,
+        watermarkFingerprint: emailFingerprint(session.email),
+        db,
+      }),
       db.collection('materials').updateOne(
         { _id: new ObjectId(materialId) },
         { $inc: { downloadCount: 1 } }
@@ -252,7 +292,7 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
         materialTitle: material.title,
         orderId,
         downloadedAt: now,
-        ip: request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown',
+        ip,
       }),
     ]).catch((e) => console.error('[pdf-download] Erro no log/counter:', e))
 

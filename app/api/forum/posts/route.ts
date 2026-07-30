@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { ForumPost, ForumType, ForumPostCreationFreezeMode, ForumSettings, User } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,7 +30,7 @@ function isPostCreationBlocked(params: {
     case 'pause_only_free_common_and_monitors':
       return isMonitor || (isCommonUser && accountType === 'gratuito')
     case 'pause_only_free_common_and_premium_common':
-      return isCommonUser && (accountType === 'gratuito' || accountType === 'premium')
+      return isCommonUser && (accountType === 'gratuito' || isPlusAccount(accountType))
     default:
       return false
   }

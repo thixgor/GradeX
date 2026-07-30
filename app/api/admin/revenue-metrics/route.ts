@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { AdminSettings, PlanConfig, User } from '@/lib/types'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,7 +37,7 @@ function getEstimatedPlanPrice(user: User, plans: PlanConfig[]) {
 
 function isActivePaidUser(user: User, now: Date) {
   if (user.role !== 'user') return false
-  if (!['premium', 'essential'].includes(user.accountType || '')) return false
+  if (!isPlusAccount(user.accountType)) return false
   if (!user.premiumExpiresAt) return true
   return new Date(user.premiumExpiresAt) > now
 }
@@ -68,7 +69,7 @@ export async function GET() {
     const revenueSeries: RevenueBucket[] = monthStarts.map((monthStart) => {
       const nextMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 1)
       const paidUsersInMonth = users.filter((user) => {
-        if (!['premium', 'essential'].includes(user.accountType || '')) return false
+        if (!isPlusAccount(user.accountType)) return false
         if (!user.premiumActivatedAt) return false
         const activatedAt = new Date(user.premiumActivatedAt)
         return activatedAt >= monthStart && activatedAt < nextMonth

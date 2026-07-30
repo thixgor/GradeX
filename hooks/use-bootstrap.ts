@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { fetchWithTimeout, invalidateCache, clearCache } from '@/lib/api-client'
 import { clearPageCache } from '@/lib/page-cache'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
+import { isPlusAccount } from '@/lib/account-tier'
 
 // Types matching the bootstrap endpoint response
 export interface BootstrapUser {
@@ -43,7 +44,7 @@ export interface BootstrapUser {
 }
 
 export interface BootstrapTierLimits {
-  tier: 'free' | 'trial' | 'premium'
+  tier: 'free' | 'trial' | 'plus'
   examsPerMonth: number
   questionsPerDay: number
   questionsPerMonth: number
@@ -401,7 +402,7 @@ export function useBootstrap(options: {
     trialStatus: {
       accountType: data?.user?.accountType ?? 'free',
       isTrialUser: data?.user?.accountType === 'trial',
-      isPremium: data?.user?.accountType === 'premium',
+      isPlus: isPlusAccount(data?.user?.accountType),
       isFree: data?.user?.accountType === 'free',
       trialExpiresAt: data?.user?.trialExpiresAt,
       trialDaysUsed: data?.user?.trialDaysUsed ?? 0,
@@ -470,7 +471,7 @@ export function useBootstrapTier() {
     error,
     refetch,
     tier: tierLimits?.tier ?? 'free',
-    isPremium: tierLimits?.tier === 'premium',
+    isPlus: tierLimits?.tier === 'plus',
     isTrial: tierLimits?.tier === 'trial',
     isFree: tierLimits?.tier === 'free',
     canUseExams,

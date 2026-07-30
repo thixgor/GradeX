@@ -13,6 +13,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { cn } from '@/lib/utils'
 import type { MindMapVisibility } from '@/lib/types'
 import { MINDMAP_TEMPLATES, buildNodes, type MindMapTemplate } from '@/lib/mindmap-templates'
+import { isPlusAccount } from '@/lib/account-tier'
 
 type Tab = 'mine' | 'community' | 'all-admin'
 
@@ -42,7 +43,7 @@ function useDebounce<T>(value: T, delay: number): T {
 function MindMapHome() {
   const router = useRouter()
   const { isAdmin, accountType } = useAppShell()
-  const canUnlimited = isAdmin || accountType === 'premium' || (accountType as string) === 'essential'
+  const canUnlimited = isPlusAccount(accountType, isAdmin)
   const [tab, setTab] = useState<Tab>(() => {
     if (typeof window !== 'undefined') {
       const scope = new URLSearchParams(window.location.search).get('scope')
@@ -265,7 +266,7 @@ function MindMapHome() {
             <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
             <div className="text-sm">
               <p className="font-semibold">Crie mapas mentais ilimitados</p>
-              <p className="text-muted-foreground">No plano gratuito você pode ter <strong>1 mapa mental</strong>. Assine o <strong>Premium</strong> ou <strong>Essential</strong> para criar quantos quiser.</p>
+              <p className="text-muted-foreground">No plano gratuito você pode ter <strong>1 mapa mental</strong>. Assine o <strong>Plus+</strong> ou <strong>Plus+</strong> para criar quantos quiser.</p>
             </div>
           </div>
           <Button onClick={() => router.push('/buy')} className="shrink-0 gap-2 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">

@@ -9,6 +9,7 @@ import type {
   PaymentOrder,
 } from './types'
 import type { CouponValidationResult } from './coupons'
+import { PLUS_TIER, isPlusAccount } from './account-tier'
 
 export const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium' as const
 export const MANUAL_CLINICO_PRODUCT_TYPE = 'manual_clinico' as const
@@ -27,10 +28,10 @@ export const DEFAULT_MANUAL_CLINICO_PLANS: ManualClinicoPlan[] = [
 
 export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_id' | 'createdAt' | 'updatedAt' | 'updatedBy'> = {
   productId: MANUAL_CLINICO_PRODUCT_ID,
-  label: 'Manual Clinico Premium',
+  label: 'Manual Clinico Completo',
   benefitText: 'Desbloqueie 220+ patologias aprofundadas',
   shortDescription: 'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas em um so lugar.',
-  ctaText: 'Desbloquear Manual Clinico Premium',
+  ctaText: 'Desbloquear Manual Clinico Completo',
   coverImageUrl: 'https://i.imgur.com/0JXm4Au.png',
   fullPdfButtonEnabled: true,
   fullPdfExternalUrl: '',
@@ -44,8 +45,10 @@ export const DEFAULT_MANUAL_CLINICO_CONFIG: Omit<ManualClinicoProductConfig, '_i
   freeAccessMode: 'quantity',
   freeQuantity: 5,
   freePathologySlugs: [],
-  includedInPremium: false,
-  includedInEssential: false,
+  // O Plus+ é cargo único e libera a plataforma inteira — o Manual Clínico
+  // entra junto por padrão. O produto avulso segue existindo para quem não
+  // assina.
+  includedInPlus: true,
 }
 
 function planFromInput(input: any, fallback: ManualClinicoPlan): ManualClinicoPlan {
@@ -131,8 +134,8 @@ export interface ManualClinicoAccessState {
   hasFullAccess: boolean
   reason: 'admin' | 'purchased' | 'included_plan' | 'free_pathology' | 'locked' | 'guest'
   purchase?: ManualClinicoPurchase | null
-  /** Quando o acesso vem incluso no plano (premium/essential), indica qual. */
-  includedPlan?: 'premium' | 'essential' | null
+  /** Quando o acesso vem incluso na assinatura, indica o cargo ('plus'). */
+  includedPlan?: string | null
 }
 
 export interface ManualClinicoFreeQuotaState {
@@ -240,8 +243,11 @@ export async function getManualClinicoConfig(db: Db): Promise<ManualClinicoProdu
     freePathologySlugs: Array.isArray(existing?.freePathologySlugs)
       ? uniqueSlugs(existing!.freePathologySlugs)
       : [],
-    includedInPremium: existing?.includedInPremium === true,
-    includedInEssential: existing?.includedInEssential === true,
+    // Registros antigos usavam duas flags separadas; qualquer uma delas
+    // ligada significa "incluso na assinatura".
+    includedInPlus:
+      existing?.includedInPlus ??
+      (existing?.includedInPremium === true || existing?.includedInEssential === true),
     plans: normalizeManualClinicoPlans(existing?.plans),
   }
 }
@@ -271,8 +277,7 @@ export async function upsertManualClinicoConfig(
     freeAccessMode: input.freeAccessMode === 'list' ? 'list' : 'quantity',
     freeQuantity: Math.max(0, Math.floor(Number(input.freeQuantity || 0))),
     freePathologySlugs: uniqueSlugs(input.freePathologySlugs || []),
-    includedInPremium: input.includedInPremium === true,
-    includedInEssential: input.includedInEssential === true,
+    includedInPlus: input.includedInPlus !== false,
     pricingEventId: input.pricingEventId ? String(input.pricingEventId) : null,
     plans: normalizeManualClinicoPlans((input as any).plans),
     updatedAt: now,
@@ -446,9 +451,9 @@ export async function getManualClinicoAccess(
   if (session?.role === 'admin') return { hasFullAccess: true, reason: 'admin' }
   if (!session?.userId) return { hasFullAccess: false, reason: 'guest' }
 
-  // Acesso incluso no plano (Premium/Essential): dispensa compra avulsa.
+  // Acesso incluso na assinatura Plus+: dispensa compra avulsa.
   const resolvedConfig = config || await getManualClinicoConfig(db)
-  if (resolvedConfig.includedInPremium || resolvedConfig.includedInEssential) {
+  if (resolvedConfig.includedInPlus) {
     const includedPlan = await getManualClinicoIncludedPlanFor(db, session, resolvedConfig)
     if (includedPlan) {
       return { hasFullAccess: true, reason: 'included_plan', includedPlan }
@@ -463,15 +468,15 @@ export async function getManualClinicoAccess(
 }
 
 /**
- * Retorna 'premium'/'essential' se a conta do usuário tem o Manual incluso no
- * plano (conforme configuração), ou null caso contrário.
+ * Retorna o cargo ('plus') se a conta tem o Manual incluso na assinatura,
+ * ou null caso contrário.
  */
 async function getManualClinicoIncludedPlanFor(
   db: Db,
   session: Pick<TokenPayload, 'userId'>,
   config: ManualClinicoProductConfig
-): Promise<'premium' | 'essential' | null> {
-  if (!config.includedInPremium && !config.includedInEssential) return null
+): Promise<string | null> {
+  if (!config.includedInPlus) return null
   let accountType: string | null | undefined
   try {
     const user = await db.collection('users').findOne(
@@ -482,8 +487,8 @@ async function getManualClinicoIncludedPlanFor(
   } catch {
     return null
   }
-  if (config.includedInPremium && accountType === 'premium') return 'premium'
-  if (config.includedInEssential && accountType === 'essential') return 'essential'
+  // Cargo único: o Manual Clínico entra junto do Plus+.
+  if (config.includedInPlus && isPlusAccount(accountType)) return PLUS_TIER
   return null
 }
 

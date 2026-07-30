@@ -248,12 +248,12 @@ export async function middleware(request: NextRequest) {
       if (plan) comprarUrl.searchParams.set('planKey', plan)
       return withNoIndex(NextResponse.redirect(comprarUrl))
     }
-    // Plano Premium sem login → mesma ideia: /comprar vende o plano por Serial
+    // Plano Plus+ sem login → mesma ideia: /comprar vende o plano por Serial
     // Key. Sem isto o visitante batia no login, que é justamente o passo que a
     // compra sem conta existe para evitar.
     if (pathname === '/buy/checkout') {
       const comprarUrl = new URL('/comprar', request.url)
-      comprarUrl.searchParams.set('productType', 'premium')
+      comprarUrl.searchParams.set('productType', 'plus')
       const plan = request.nextUrl.searchParams.get('plan')
       if (plan) comprarUrl.searchParams.set('productId', plan)
       return withNoIndex(NextResponse.redirect(comprarUrl))

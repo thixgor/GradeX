@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoQuestao, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,7 @@ export async function GET(
     }
 
     const isAdmin = user.role === 'admin'
-    const isPremiumOrTrial = user.accountType === 'premium' || user.accountType === 'trial'
+    const isPremiumOrTrial = isPlusAccount(user.accountType) || user.accountType === 'trial'
     const isFreeUser = !isAdmin && !isPremiumOrTrial
 
     // Verificar acesso para usuários gratuitos
@@ -44,8 +45,8 @@ export async function GET(
 
       if (!allAllowedQuestionIds.includes(id)) {
         return NextResponse.json({
-          error: 'Acesso restrito a usuários Premium',
-          requiresPremium: true
+          error: 'Acesso restrito a assinantes Plus+',
+          requiresPlus: true
         }, { status: 403 })
       }
     }
