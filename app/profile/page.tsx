@@ -34,6 +34,7 @@ import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { getMissingProfileFields } from '@/lib/profile-completeness'
 import { formatCrmLabel, onlyCrmDigits } from '@/lib/crm'
 import { ShieldCheck } from 'lucide-react'
+import { PLUS_LABEL, isPlusAccount } from '@/lib/account-tier'
 
 const PROFESSION_LABELS: Record<string, string> = {
   medico: 'Médico',
@@ -466,9 +467,11 @@ export default function ProfilePage() {
     if (userRole === 'admin') {
       return { label: 'Admin', colors: 'from-purple-600 to-pink-600', icon: <Crown className="h-3.5 w-3.5" /> }
     }
+    // Cargo único: 'plus' e os legados premium/essential usam o mesmo selo.
+    if (isPlusAccount(accountType)) {
+      return { label: PLUS_LABEL, colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
+    }
     switch (accountType) {
-      case 'premium':
-        return { label: 'Plus+', colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
       case 'trial':
         return { label: `Trial - ${getTrialTimeRemaining()}`, colors: 'from-blue-500 to-cyan-500', icon: <Timer className="h-3.5 w-3.5" /> }
       default:
@@ -1526,7 +1529,7 @@ export default function ProfilePage() {
               </div>
               <DialogTitle className="text-center text-xl">Cancelar Assinatura?</DialogTitle>
               <DialogDescription className="text-center text-sm">
-                Tem certeza que deseja cancelar sua assinatura {accountType === 'premium' ? 'Plus+' : 'Trial'}?
+                Tem certeza que deseja cancelar sua assinatura {isPlusAccount(accountType) ? PLUS_LABEL : 'Trial'}?
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-3">

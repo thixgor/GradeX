@@ -30,6 +30,8 @@ interface TopConsumer {
 
 interface Overview {
   plusUsers: number
+  plusExpiredPending: number
+  plusInRefundWindow: number
   downloads24h: number
   downloads7d: number
   downloadsInRefundWindow: number
@@ -130,19 +132,36 @@ export function PlusGuardPanel() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-            <Stat label={`Assinantes ${PLUS_LABEL}`} value={overview?.plusUsers ?? 0} />
-            <Stat label="Downloads 24h" value={overview?.downloads24h ?? 0} />
-            <Stat label="Downloads 7d" value={overview?.downloads7d ?? 0} />
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <Stat
-              label="Na janela de reembolso"
-              value={overview?.downloadsInRefundWindow ?? 0}
-              tone={overview && overview.downloadsInRefundWindow > overview.downloads7d * 0.5 ? 'warn' : 'default'}
+              label={`Assinantes ${PLUS_LABEL} ativos`}
+              value={overview?.plusUsers ?? 0}
+              hint="Contas de usuário, não banidas, com prazo em dia (vitalício conta)."
+            />
+            <Stat
+              label="Em janela de reembolso"
+              value={overview?.plusInRefundWindow ?? 0}
+              hint="Assinaram há menos dias que a janela — sujeitos às cotas reduzidas."
+            />
+            <Stat
+              label="Vencidos aguardando rebaixe"
+              value={overview?.plusExpiredPending ?? 0}
+              tone={overview && overview.plusExpiredPending > 0 ? 'warn' : 'default'}
+              hint="Prazo já venceu mas o cargo continua. Se não zerar, o cron de assinaturas não está rodando."
             />
             <Stat
               label="Contas sinalizadas"
               value={overview?.flaggedUsers ?? 0}
               tone={overview && overview.flaggedUsers > 0 ? 'warn' : 'default'}
+              hint="Passaram do score de risco e aguardam revisão."
+            />
+            <Stat label="Downloads 24h" value={overview?.downloads24h ?? 0} />
+            <Stat label="Downloads 7d" value={overview?.downloads7d ?? 0} />
+            <Stat
+              label="Downloads na janela (7d)"
+              value={overview?.downloadsInRefundWindow ?? 0}
+              tone={overview && overview.downloadsInRefundWindow > overview.downloads7d * 0.5 ? 'warn' : 'default'}
+              hint="Quanto do consumo veio de quem ainda pode pedir reembolso."
             />
             <Stat
               label="Downloads bloqueados"
@@ -364,10 +383,12 @@ function Stat({
   label,
   value,
   tone = 'default',
+  hint,
 }: {
   label: string
   value: number
   tone?: 'default' | 'warn' | 'danger'
+  hint?: string
 }) {
   const toneClass =
     tone === 'danger'
@@ -376,9 +397,10 @@ function Stat({
         ? 'text-amber-600 dark:text-amber-400'
         : ''
   return (
-    <div className="rounded-lg border bg-muted/30 p-3">
+    <div className="rounded-lg border bg-muted/30 p-3" title={hint}>
       <div className={`text-2xl font-semibold tabular-nums ${toneClass}`}>{value}</div>
       <div className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{label}</div>
+      {hint && <div className="mt-1 text-[10px] leading-tight text-muted-foreground/70">{hint}</div>}
     </div>
   )
 }

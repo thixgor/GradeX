@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   Check,
+  Crown,
   Download,
   Eye,
   File,
@@ -20,6 +21,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
+import { PLUS_LABEL } from '@/lib/account-tier'
 import {
   CardPrice,
   CopyLinkBtn,
@@ -40,6 +42,8 @@ export interface MaterialCardProps {
   copiedId: string | null
   onAddToCart: () => void
   onBuyNow: () => void
+  /** Resgate sem custo pela assinatura Plus+ (item com `_includedInPlus`). */
+  onClaimWithPlus: () => void
   onDownload: () => void
   onViewPdf: () => void
   onCopyLink: () => void
@@ -79,6 +83,7 @@ export const MaterialCard = memo(function MaterialCard({
   copiedId,
   onAddToCart,
   onBuyNow,
+  onClaimWithPlus,
   onDownload,
   onViewPdf,
   onCopyLink,
@@ -96,7 +101,11 @@ export const MaterialCard = memo(function MaterialCard({
   const isEmbed = material.type === 'video_embed'
   const canViewPdf = !!material._hasPdf && material.pdfViewerEnabled === true
   const pdfDownloadBlocked = !!material._hasPdf && material.pdfDownloadEnabled === false
-  const showLocked = !groupAccess && !isPurchased && (material.allowedGroups?.length ?? 0) > 0
+  // Assinante Plus+ leva sem custo, mas precisa resgatar — o botão troca de
+  // "Comprar" para "Resgatar" e o bloqueio por cargo não se aplica.
+  const includedInPlus = material._includedInPlus === true
+  const showLocked =
+    !includedInPlus && !groupAccess && !isPurchased && (material.allowedGroups?.length ?? 0) > 0
   const featured = variant === 'featured'
   const href = `/materiais/${material._id}`
   const hasEvent = !isFree && !!material._pricingEventState?.activeTier && material._pricingEventState.isActive
@@ -322,6 +331,21 @@ export const MaterialCard = memo(function MaterialCard({
                           : <><Download className="mr-1.5 h-3.5 w-3.5" /> Download</>}
                   </Button>
                 )}
+              </>
+            ) : includedInPlus ? (
+              <>
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                  <Crown className="h-3.5 w-3.5" /> Incluído no {PLUS_LABEL}
+                </span>
+                <Button
+                  onClick={onClaimWithPlus}
+                  disabled={loading}
+                  size="sm"
+                  className="cta-raised h-10 w-full text-xs font-semibold"
+                >
+                  {loading ? <InlineSpinner /> : <Gift className="mr-1.5 h-3.5 w-3.5" />}
+                  Resgatar
+                </Button>
               </>
             ) : isFree ? (
               <>

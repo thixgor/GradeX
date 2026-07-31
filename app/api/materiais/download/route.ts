@@ -111,17 +111,16 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     let hasAccess = isAdmin
     let purchaseForAudit: any = null
 
-    // Plus+ libera TODO o acervo de materiais — é conteúdo da própria
-    // plataforma, então a assinatura substitui a compra individual.
+    // Assinante Plus+ precisa ter resgatado o material antes (o resgate grava
+    // a purchase que a checagem abaixo encontra). Sem isso, o download seria
+    // uma segunda porta de entrada para o acervo, fora do ponto onde o
+    // Plus+ Guard contabiliza o consumo.
     const sessionUser = !isAdmin
       ? await db.collection('users').findOne(
           { _id: new ObjectId(session.userId) },
           { projection: { accountType: 1, secondaryRole: 1 } }
         )
       : null
-    if (!hasAccess && isPlusAccount(sessionUser?.accountType)) {
-      hasAccess = true
-    }
 
     if (!hasAccess) {
       if (material.pricing === 'paid') {
@@ -205,6 +204,17 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     }
 
     if (!hasAccess) {
+      // Assinante que ainda não resgatou recebe a orientação certa: resgatar,
+      // não comprar.
+      if (isPlusAccount(sessionUser?.accountType)) {
+        return NextResponse.json(
+          {
+            error: 'Resgate este material com o seu Plus+ para liberar o download.',
+            needsClaim: true,
+          },
+          { status: 403 }
+        )
+      }
       return NextResponse.json(
         { error: 'Acesso negado. Adquira o material para fazer o download.' },
         { status: 403 }
@@ -212,13 +222,14 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     }
 
     // ── 5b. Plus+ Guard: cota antiabuso ───────────────────────────────────
-    // Ter direito ao material não é o mesmo que poder baixar 300 deles numa
-    // tarde. A cota é apertada na janela de arrependimento e abre depois.
-    const allowance = await checkPlusDownloadAllowance({
-      userId: session.userId,
-      isAdmin,
-      db,
-    })
+    // O resgate (POST /api/materiais/resgatar) já consumiu cota ao trazer o
+    // item para a conta. Baixar o que já é seu não consome de novo — a cota
+    // limita quanto do acervo se adquire, não quantas vezes se relê o próprio
+    // material. Materiais liberados por grupo (sem purchase) seguem contando.
+    const ownsItem = !!purchaseForAudit
+    const allowance = ownsItem
+      ? { allowed: true as const, message: undefined, reason: undefined, retryAt: undefined }
+      : await checkPlusDownloadAllowance({ userId: session.userId, user: sessionUser, isAdmin, db })
     if (!allowance.allowed) {
       return NextResponse.json(
         {

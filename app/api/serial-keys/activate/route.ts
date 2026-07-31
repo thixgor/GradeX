@@ -13,6 +13,7 @@ import {
   logSerialKeySecurity,
   maskSerialKey,
 } from '@/lib/serial-keys'
+import { PLUS_TIER } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -174,7 +175,8 @@ export async function POST(request: NextRequest) {
     let durationInMs = 0
 
     if (serialKey.type === 'plus' || serialKey.type === 'premium') {
-      accountType = 'premium'
+      // Keys legadas ('premium') concedem o cargo canônico atual.
+      accountType = PLUS_TIER
       trialExpiresAt = undefined
     } else if (serialKey.type === 'trial') {
       accountType = 'trial'

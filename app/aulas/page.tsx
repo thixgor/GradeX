@@ -11,6 +11,7 @@ import { AppShell, useAppShell } from '@/components/app-shell'
 import { LogoLoading } from '@/components/logo-loading'
 import { useState as useStateDialog } from 'react'
 import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo, AulaPostagem } from '@/lib/types'
+import { isPlusAccount, isPlusOnlyAula } from '@/lib/account-tier'
 
 function AulasPageContent() {
   const router = useRouter()
@@ -710,7 +711,7 @@ function AulasPageContent() {
                       </button>
                     )}
                     {/* Bloqueio Plus+ */}
-                    {aula.visibilidade === 'premium' && user?.accountType !== 'premium' && !isAdmin && user?.secondaryRole !== 'monitor' && (
+                    {isPlusOnlyAula(aula.visibilidade) && !isPlusAccount(user?.accountType) && !isAdmin && user?.secondaryRole !== 'monitor' && (
                       <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center z-10">
                         <div className="text-center">
                           <Lock className="h-8 w-8 text-yellow-300 mx-auto mb-2" />

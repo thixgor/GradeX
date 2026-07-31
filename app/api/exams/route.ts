@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
-import { getPersonalExamsLifetimeLimit } from '@/lib/tier-limits'
+import { getPersonalExamsLifetimeLimit, getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -113,13 +113,10 @@ async function resetDailyLimitsIfNeeded(db: any, userId: string, accountType: st
   if (needsReset) {
     const now = new Date()
 
-    // Determinar limite baseado no tipo de conta
-    const limits: Record<string, number> = {
-      gratuito: 3,
-      trial: 10,
-      premium: 20,
-    }
-    const examsPerDay = limits[accountType] || 3
+    // Limite diário do plano. Vem de lib/tier-limits.ts para o cargo `plus`
+    // não cair no fallback de conta gratuita — era o que acontecia com o
+    // mapa literal antigo, que só conhecia 'premium'.
+    const examsPerDay = getPersonalExamsQuota(accountType)
 
     await usersCollection.updateOne(
       { _id: new ObjectId(userId) },

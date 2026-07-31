@@ -190,7 +190,7 @@ export async function PATCH(
 
       // Se o usuário tem assinatura recorrente ativa e está sendo rebaixado (ou mudando de plano),
       // cancelar o preapproval no MP para evitar cobranças futuras.
-      const isLosingPremium = accountType !== 'premium' && accountType !== 'essential'
+      const isLosingPremium = !isPlusAccount(accountType)
       const isChangingPremiumPlan =
         isPlusAccount(accountType) &&
         user.mercadoPagoPreapprovalId

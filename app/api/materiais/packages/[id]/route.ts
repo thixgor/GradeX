@@ -139,10 +139,11 @@ export async function GET(
       !pkg.allowedGroups?.length ||
       userGroups.some((g: string) => pkg.allowedGroups.includes(g))
 
-    // Plus+ libera TODO o acervo — é conteúdo da própria plataforma.
+    // Plus+ inclui, mas o acesso só vale após o resgate.
     const isPlus = isPlusAccount(userDoc?.accountType)
     const hasAccess =
-      isAuthenticated && (isAdmin || isPlus || isPackagePurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+      isAuthenticated && (isAdmin || isPackagePurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+    const includedInPlus = isPlus && !hasAccess
 
     // ─── Preço efetivo (desconto proporcional anti-burla) ─────
     const pricing = computeEffectivePackagePrice({
@@ -167,7 +168,6 @@ export async function GET(
       const matPurchased = isAdmin || purchasedSet.has(idStr)
       const matHasAccess =
         isAuthenticated && (isAdmin ||
-        isPlus ||
         isPackagePurchased ||
         matPurchased ||
         (matGroupAccess && m.pricing !== 'paid'))
@@ -216,6 +216,7 @@ export async function GET(
         isPurchased: isPackagePurchased,
         hasGroupAccess,
         hasAccess,
+        includedInPlus,
         userGroups,
         isAuthenticated,
       },

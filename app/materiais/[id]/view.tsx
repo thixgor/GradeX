@@ -69,6 +69,7 @@ import { PricingEventCountdown } from '@/components/pricing-events/PricingEventC
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PrintedAddon } from '@/components/shop/printed-addon'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -125,6 +126,8 @@ interface PageData {
   hasAccess: boolean
   isPurchased: boolean
   hasGroupAccess: boolean
+  /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar. */
+  includedInPlus?: boolean
   userGroups: string[]
   isAuthenticated: boolean
   watermark: { name: string; cpf: string }
@@ -421,6 +424,36 @@ export default function MaterialViewPage() {
   // ─── Acquire ──────────────────────────────────────────────
   // Add-to-cart é fluxo leve: sem upsell (sugestões aparecem como banner no checkout).
   // Free vira unlock imediato. Pago vira adição no carrinho.
+  /**
+   * Resgate pela assinatura Plus+ — grava a aquisição direto, sem carrinho
+   * nem checkout. O servidor valida assinatura e cota do Plus+ Guard.
+   */
+  const handleClaimWithPlus = async () => {
+    if (!data?.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/materiais/${id}`)}`)
+      return
+    }
+    setCheckoutLoading(true)
+    try {
+      const res = await fetch('/api/materiais/resgatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType: 'material', itemId: id }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        showCartMessage(json.error || 'Não foi possível resgatar este material.')
+        return
+      }
+      showCartMessage(json.message || 'Material resgatado!')
+      await fetchData()
+    } catch {
+      showCartMessage('Não foi possível resgatar este material.')
+    } finally {
+      setCheckoutLoading(false)
+    }
+  }
+
   const handleAcquire = async () => {
     if (!data) return
     const mat = data.material
@@ -517,6 +550,7 @@ export default function MaterialViewPage() {
   if (error || !data) return <ErrorState message={error} onBack={() => router.push('/materiais')} />
 
   const { material, folderName, hasAccess, hasGroupAccess } = data
+  const includedInPlus = data.includedInPlus === true
   const isEmbed = material.type === 'video_embed'
   const isVideo = material.type === 'video' || isEmbed
   const isFree = material.pricing === 'free'
@@ -1300,6 +1334,25 @@ export default function MaterialViewPage() {
                           )}
                         </>
                       )
+                    ) : includedInPlus ? (
+                      <>
+                        <span className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+                          <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+                        </span>
+                        <Button
+                          onClick={handleClaimWithPlus}
+                          disabled={checkoutLoading}
+                          className="h-11 w-full rounded-lg bg-gradient-to-r from-primary to-primary/80 font-semibold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                        >
+                          {checkoutLoading
+                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            : <Gift className="h-4 w-4 mr-2" />}
+                          Resgatar material
+                        </Button>
+                        <p className="text-center text-[10px] text-muted-foreground/70">
+                          Sem custo — já faz parte da sua assinatura.
+                        </p>
+                      </>
                     ) : (
                       <>
                         {canPreview && (

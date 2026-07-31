@@ -170,7 +170,7 @@ export default function AdminKeysPage() {
   }
 
   function getTypeBadge(key: SerialKey) {
-    if (key.type === 'premium') {
+    if (key.type === 'plus' || key.type === 'premium') {
       const subtypeLabel = key.premiumSubtype === 'vitalicio' ? 'Vitalício' : 
                           key.premiumSubtype === 'teste' ? 'Teste (2 min)' :
                           (key.premiumSubtype || 'mensal').charAt(0).toUpperCase() + (key.premiumSubtype || 'mensal').slice(1)
@@ -427,8 +427,8 @@ export default function AdminKeysPage() {
                   </div>
                 </Button>
                 <Button
-                  variant={selectedType === 'premium' ? 'default' : 'outline'}
-                  onClick={() => setSelectedType('premium')}
+                  variant={selectedType === 'plus' ? 'default' : 'outline'}
+                  onClick={() => setSelectedType('plus')}
                   className="h-auto py-4 flex-col gap-2"
                 >
                   <Crown className="h-5 w-5" />
@@ -472,7 +472,7 @@ export default function AdminKeysPage() {
             )}
 
             {/* Subtipo da assinatura */}
-            {selectedType === 'premium' && (
+            {selectedType === 'plus' && (
               <div>
                 <Label className="text-base font-semibold mb-3 block">Subtipo da assinatura</Label>
                 <div className="grid grid-cols-2 gap-3">

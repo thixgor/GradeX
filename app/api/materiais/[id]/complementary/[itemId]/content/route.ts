@@ -12,9 +12,6 @@ import { getSession } from '@/lib/auth'
 import { validateComplementaryContentAccess, fetchMaterialHtml, buildWatermarkedHtml } from '@/lib/material-complementary-viewer'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
-import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
-import { emailFingerprint } from '@/lib/watermark-fingerprint'
-import { getDb } from '@/lib/mongodb'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -52,33 +49,8 @@ export async function GET(
     const userEmail = user?.email || session?.email || ''
     const userId = session?.userId || ''
 
-    // Plus+ Guard: item complementar entrega arquivo próprio (não é o mesmo
-    // blob do material pai) — sem esta checagem, dava pra contornar a cota
-    // do pai puxando o conteúdo extra sem limite.
-    if (session) {
-      const db = await getDb()
-      const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, isAdmin: access.isAdmin, db })
-      if (!allowance.allowed) {
-        return NextResponse.json(
-          { error: allowance.message || 'Limite de leitura atingido.', reason: allowance.reason, retryAt: allowance.retryAt },
-          { status: 429 },
-        )
-      }
-      recordPlusDownload({
-        userId: session.userId,
-        userEmail,
-        userName,
-        accountType: user?.accountType,
-        kind: 'material',
-        resourceId: `${params.id}:${params.itemId}`,
-        resourceTitle: item.title || material.title,
-        ip: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || undefined,
-        userAgent: request.headers.get('user-agent') || undefined,
-        watermarkFingerprint: emailFingerprint(userEmail),
-        db,
-      }).catch(() => {})
-    }
-
+    // Sem cota do Plus+ Guard: o item complementar acompanha o material pai,
+    // que só é acessível a quem já comprou ou resgatou.
     if (fileKind === 'html') {
       const rawHtml = await fetchMaterialHtml(item.htmlFile.blobUrl)
       const html = buildWatermarkedHtml(rawHtml, {

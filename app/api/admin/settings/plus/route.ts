@@ -6,7 +6,7 @@ import {
   mergePlusGuardSettings,
   sanitizePlusGuardSettings,
 } from '@/lib/plus-guard'
-import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
+import { activePlusUserFilter, expiredPlusUserFilter } from '@/lib/account-tier'
 import type { PlusDownloadLog } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -35,6 +35,13 @@ export async function GET() {
     const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000)
     const since7d = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
+    const now = new Date()
+    // Assinantes dentro da janela de arrependimento: o subconjunto que o
+    // Guard mais protege, e o que explica um pico em `downloadsInRefundWindow`.
+    const refundWindowStart = new Date(
+      now.getTime() - plusGuard.refundWindowDays * 24 * 60 * 60 * 1000,
+    )
+
     const [
       downloads24h,
       downloads7d,
@@ -42,14 +49,28 @@ export async function GET() {
       flaggedUsers,
       blockedUsers,
       plusUsers,
+      plusExpiredPending,
+      plusInRefundWindow,
       topConsumers,
     ] = await Promise.all([
       logs.countDocuments({ createdAt: { $gte: since24h } }),
       logs.countDocuments({ createdAt: { $gte: since7d } }),
       logs.countDocuments({ inRefundWindow: true, createdAt: { $gte: since7d } }),
-      db.collection('users').countDocuments({ plusRiskFlaggedAt: { $exists: true } }),
-      db.collection('users').countDocuments({ plusDownloadsBlocked: true }),
-      db.collection('users').countDocuments({ accountType: { $in: [...PLUS_ACCOUNT_TYPES] } }),
+      // Sinalizados/bloqueados só interessam entre quem ainda é assinante.
+      db.collection('users').countDocuments({
+        ...activePlusUserFilter(now),
+        plusRiskFlaggedAt: { $exists: true },
+      }),
+      db.collection('users').countDocuments({
+        ...activePlusUserFilter(now),
+        plusDownloadsBlocked: true,
+      }),
+      db.collection('users').countDocuments(activePlusUserFilter(now)),
+      db.collection('users').countDocuments(expiredPlusUserFilter(now)),
+      db.collection('users').countDocuments({
+        ...activePlusUserFilter(now),
+        premiumActivatedAt: { $gte: refundWindowStart },
+      }),
       // Quem mais baixou nos últimos 7 dias — é aqui que o abuso aparece antes
       // de virar pedido de reembolso.
       logs
@@ -76,6 +97,8 @@ export async function GET() {
       defaults: DEFAULT_PLUS_GUARD,
       overview: {
         plusUsers,
+        plusExpiredPending,
+        plusInRefundWindow,
         downloads24h,
         downloads7d,
         downloadsInRefundWindow,

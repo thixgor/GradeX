@@ -4,7 +4,7 @@ import { TokenPayload } from './auth'
 import { resolveDeckAccess, getUserGroups } from './flashcard-manual'
 import { FlashcardManualDeck } from './types'
 import { ReviewTargetType } from './reviews'
-import { matchesAccessGroups, isPlusAccount } from './account-tier'
+import { matchesAccessGroups } from './account-tier'
 
 export type AccessReason =
   | 'admin'
@@ -89,12 +89,6 @@ async function checkMaterialAccess(
 
   // Material gratuito + grupo permitido → acesso liberado (não é compra)
   if (material.pricing === 'free' && matchesGroup) {
-    return { allowed: true, reason: 'group_free', isPurchased: false }
-  }
-
-  // Plus+ libera TODO o acervo de materiais — é conteúdo da própria
-  // plataforma, então a assinatura substitui a compra individual.
-  if (isPlusAccount(userDoc?.accountType)) {
     return { allowed: true, reason: 'group_free', isPurchased: false }
   }
 
@@ -193,9 +187,6 @@ async function checkDeckAccess(
   if (result.isPurchased) return { allowed: true, reason: 'purchased', isPurchased: true }
   if (result.hasShareAccess) return { allowed: true, reason: 'shared', isPurchased: false }
   if (result.hasGroupAccess) return { allowed: true, reason: 'group_free', isPurchased: false }
-  if (result.reasons.includes('plus_subscription')) {
-    return { allowed: true, reason: 'group_free', isPurchased: false }
-  }
   if (deck.visibility === 'public') return { allowed: true, reason: 'public_free', isPurchased: false }
   if (deck.visibility === 'unlisted') return { allowed: true, reason: 'unlisted_free', isPurchased: false }
   return { allowed: true, reason: 'no_access', isPurchased: false }

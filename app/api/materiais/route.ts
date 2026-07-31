@@ -362,8 +362,13 @@ export async function GET(request: NextRequest) {
         !m.allowedGroups?.length ||
         userGroups.some((g: string) => m.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
-      // Access = admin OR Plus+ OR purchased/granted OR (group member AND free)
-      const hasAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || (hasGroupAccess && m.pricing !== 'paid'))
+      // Access = admin OR purchased/claimed OR (group member AND free).
+      // O Plus+ NÃO dá acesso implícito: o assinante resgata o item primeiro
+      // (POST /api/materiais/resgatar), o que cria a purchase que cai em
+      // `purchasedSet` — é o resgate que marca o consumo do acervo.
+      const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && m.pricing !== 'paid'))
+      // Assinante pode levar sem custo, mas ainda não resgatou.
+      const includedInPlus = isPlus && !hasAccess
 
       // Strip any real asset URL when no access (security)
       const downloadUrl = hasAccess ? m.downloadUrl : ''
@@ -422,6 +427,7 @@ export async function GET(request: NextRequest) {
         _isPurchased: isPurchased,
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
+        _includedInPlus: includedInPlus,
         _hasPdf: hasPdf,
         _hasHtml: hasHtml,
         pdfViewerEnabled: m.pdfViewerEnabled === true,

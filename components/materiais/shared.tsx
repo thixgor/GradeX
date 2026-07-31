@@ -53,6 +53,8 @@ export interface Material {
   _isPurchased?: boolean
   _hasGroupAccess?: boolean
   _hasAccess?: boolean
+  /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar. */
+  _includedInPlus?: boolean
   _cardCount?: number
   _hasPdf?: boolean
   _pageCount?: number
@@ -92,6 +94,8 @@ export interface MaterialPackage {
   _isPurchased?: boolean
   _hasGroupAccess?: boolean
   _hasAccess?: boolean
+  /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar. */
+  _includedInPlus?: boolean
   _pricing?: {
     originalPackagePrice: number
     effectivePrice: number

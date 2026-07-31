@@ -189,8 +189,9 @@ export async function resolveMaterialCart(
       : Promise.resolve(null),
   ])
   const userGroups = buildUserGroups(userDoc)
-  // Plus+ libera TODO o acervo — é conteúdo da própria plataforma, então a
-  // assinatura substitui a compra individual no carrinho.
+  // Assinante Plus+ leva o item pelo resgate (sem custo), então cobrá-lo no
+  // carrinho seria vender o que já está incluso. O item é recusado aqui com
+  // `already_owned` e a interface oferece "Resgatar" no lugar de "Comprar".
   const isPlus = isPlusAccount((userDoc as any)?.accountType)
 
   const materialsById = new Map(materials.map((material: any) => [String(material._id), material]))

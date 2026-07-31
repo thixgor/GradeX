@@ -110,10 +110,11 @@ export async function GET(
       }
     }
 
-    // Plus+ libera TODO o acervo de materiais — é conteúdo da própria
-    // plataforma (nunca de terceiros), então a assinatura substitui a compra.
+    // O Plus+ inclui o item, mas o acesso só vale após o resgate — que grava
+    // uma purchase e cai em `isPurchased` daqui em diante.
     const isPlus = isPlusAccount(userDoc?.accountType)
-    const canAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || (hasGroupAccess && material.pricing === 'free'))
+    const canAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free'))
+    const includedInPlus = isPlus && !canAccess
 
     // Strip real asset URL if no access
     const safeMaterial =
@@ -264,6 +265,7 @@ export async function GET(
       hasAccess: canAccess,
       isPurchased,
       hasGroupAccess,
+      includedInPlus,
       userGroups,
       isAuthenticated,
       pricingEventState: serializePricingEventState(pricingEventState),

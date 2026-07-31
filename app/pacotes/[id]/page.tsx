@@ -35,6 +35,7 @@ import {
   Clock,
   Download,
 } from 'lucide-react'
+import { PLUS_LABEL } from '@/lib/account-tier'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
 import { useMaterialCart } from '@/context/MaterialCartContext'
@@ -93,6 +94,8 @@ interface AccessInfo {
   isPurchased: boolean
   hasGroupAccess: boolean
   hasAccess: boolean
+  /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar. */
+  includedInPlus?: boolean
   userGroups: string[]
   isAuthenticated: boolean
 }
@@ -193,6 +196,36 @@ export default function PackageDetailPage() {
   }, [])
 
   // ─── Acquire ──────────────────────────────────────────────
+  /**
+   * Resgate do pacote pela assinatura Plus+ — grava a aquisição direto,
+   * sem carrinho nem checkout. Servidor valida assinatura e cota.
+   */
+  const handleClaimWithPlus = async () => {
+    if (!data?.access.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/pacotes/${id}`)}`)
+      return
+    }
+    setCheckoutLoading(true)
+    try {
+      const res = await fetch('/api/materiais/resgatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType: 'package', itemId: id }),
+      })
+      const result = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setCartMessage(result.error || 'Não foi possível resgatar este pacote.')
+        return
+      }
+      setCartMessage(result.message || 'Pacote resgatado!')
+      await fetchData()
+    } catch {
+      setCartMessage('Não foi possível resgatar este pacote.')
+    } finally {
+      setCheckoutLoading(false)
+    }
+  }
+
   const handleAcquire = async () => {
     if (!data) return
     const pkg = data.package
@@ -563,6 +596,22 @@ export default function PackageDetailPage() {
                       <p className="text-center text-[10px] text-muted-foreground/70">
                         Acesse cada material pela lista abaixo.
                       </p>
+                    </>
+                  ) : access.includedInPlus ? (
+                    <>
+                      <span className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+                        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+                      </span>
+                      <Button
+                        onClick={handleClaimWithPlus}
+                        disabled={checkoutLoading}
+                        className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 active:scale-[0.98]"
+                      >
+                        {checkoutLoading
+                          ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          : <Gift className="h-4 w-4 mr-2" />}
+                        Resgatar pacote
+                      </Button>
                     </>
                   ) : (
                     <>

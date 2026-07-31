@@ -123,7 +123,10 @@ export async function GET(request: NextRequest) {
         !pkg.allowedGroups?.length ||
         userGroups.some((g: string) => pkg.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
-      const hasAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+      // Plus+ inclui, mas o acesso só vale após o resgate (ver
+      // POST /api/materiais/resgatar).
+      const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+      const includedInPlus = isPlus && !hasAccess
       const materials = (pkg.materialIds || []).map((id: string) => materialsMap[id]).filter(Boolean)
       const pricing = computeEffectivePackagePrice({
         pkgPrice: Number(pkg.price || 0),
@@ -146,6 +149,7 @@ export async function GET(request: NextRequest) {
         _isPurchased: isPurchased,
         _hasGroupAccess: hasGroupAccess,
         _hasAccess: hasAccess,
+        _includedInPlus: includedInPlus,
         _pricing: pricing,
         _pricingEventState: serializePricingEventState(pricingEventState),
       }

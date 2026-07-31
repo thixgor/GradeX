@@ -163,3 +163,61 @@ export function isPlusOnlyAula(visibilidade?: string | null): boolean {
   const v = String(visibilidade || '').toLowerCase()
   return v === PLUS_TIER || v === 'premium' || v === 'essential'
 }
+
+// ─── Assinantes ativos ────────────────────────────────────────────────────────
+
+/**
+ * Filtro Mongo para "assinante Plus+ ativo agora".
+ *
+ * Ter `accountType: 'plus'` não basta para contar como assinante:
+ *
+ *  - **expirados** mantêm o cargo até o cron noturno ou o próximo login
+ *    rebaixarem a conta, então a janela entre o vencimento e o rebaixamento
+ *    inflaria qualquer contagem que olhasse só o cargo;
+ *  - **admins** podem ter o cargo por conveniência de teste e não são receita;
+ *  - **banidos** não consomem nem renovam.
+ *
+ * `premiumExpiresAt` ausente/nulo significa vitalício — conta como ativo.
+ */
+export function activePlusUserFilter(now: Date = new Date()): Record<string, unknown> {
+  return {
+    role: 'user',
+    banned: { $ne: true },
+    accountType: { $in: [...PLUS_ACCOUNT_TYPES] },
+    $or: [
+      { premiumExpiresAt: { $exists: false } },
+      { premiumExpiresAt: null },
+      { premiumExpiresAt: { $gt: now } },
+    ],
+  }
+}
+
+/**
+ * Contas que ainda carregam o cargo pago mas cujo prazo já venceu — ficam
+ * assim até o cron rebaixar. Número alto aqui indica cron parado.
+ */
+export function expiredPlusUserFilter(now: Date = new Date()): Record<string, unknown> {
+  return {
+    role: 'user',
+    accountType: { $in: [...PLUS_ACCOUNT_TYPES] },
+    premiumExpiresAt: { $lte: now },
+  }
+}
+
+/** Versão em memória de `activePlusUserFilter`, para listas já carregadas. */
+export function isActivePlusUser(
+  user: {
+    role?: string
+    banned?: boolean
+    accountType?: string | null
+    premiumExpiresAt?: Date | string | null
+  } | null | undefined,
+  now: Date = new Date(),
+): boolean {
+  if (!user) return false
+  if (user.role !== 'user') return false
+  if (user.banned) return false
+  if (!isPlusAccount(user.accountType)) return false
+  if (!user.premiumExpiresAt) return true
+  return new Date(user.premiumExpiresAt) > now
+}

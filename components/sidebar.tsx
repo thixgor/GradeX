@@ -30,6 +30,7 @@ import {
   Ticket,
 } from 'lucide-react'
 import type { SidebarSectionKey, SidebarSectionSettings } from '@/lib/sidebar-sections'
+import { isPlusAccount } from '@/lib/account-tier'
 
 interface SidebarProps {
   user: {
@@ -37,7 +38,7 @@ interface SidebarProps {
     email: string
     name: string
     role: 'admin' | 'user'
-    accountType?: 'gratuito' | 'trial' | 'premium'
+    accountType?: 'gratuito' | 'trial' | 'plus' | 'premium' | 'essential'
   } | null
   onCreateExam: () => void
   onLogout: () => void
@@ -337,7 +338,7 @@ export function Sidebar({
       icon: <Database className="h-5 w-5" />,
       label: 'Banco de Questões',
       href: '/banco-questoes',
-      badge: user?.accountType !== 'premium' && !isAdmin ? '5 Questões' : undefined,
+      badge: !isPlusAccount(user?.accountType) && !isAdmin ? '5 Questões' : undefined,
       sectionKey: 'bancoQuestoes',
     },
     { icon: <Video className="h-5 w-5" />, label: 'Aulas', href: '/aulas', sectionKey: 'aulas' },

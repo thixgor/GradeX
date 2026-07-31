@@ -5,6 +5,7 @@ import { getDb } from '@/lib/mongodb'
 import type { AdminSettings, DonationPayment, Material, MaterialPackage, PaymentOrder, SubscriptionRecord, User } from '@/lib/types'
 import type { CheckoutEventRecord } from '@/lib/analytics'
 import type { Coupon, CouponRedemption } from '@/lib/coupons'
+import { isPlusAccount, PLUS_LABEL } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -492,7 +493,7 @@ export async function GET() {
           userName: user?.name || '',
           userEmail: user?.email || '',
           plan: plan?.nome || sub.planId,
-          type: sub.role === 'essential' ? 'Plus+' : 'Plus+',
+          type: PLUS_LABEL,
           cycle: PLAN_CYCLE[sub.billingIntervalMonths] || `${sub.billingIntervalMonths} meses`,
           value: Number(sub.amount || 0),
           purchasedAt: serializeDate(sub.createdAt),
@@ -507,7 +508,7 @@ export async function GET() {
         }
       }),
       ...users
-        .filter((user) => ['premium', 'essential'].includes(user.accountType || '') && !subscriptions.some((sub) => sub.userId === String(user._id)))
+        .filter((user) => isPlusAccount(user.accountType) && !subscriptions.some((sub) => sub.userId === String(user._id)))
         .map((user) => {
           const key = serialByUser.get(String(user._id)) as any
           return {
@@ -515,7 +516,7 @@ export async function GET() {
             userName: user.name || '',
             userEmail: user.email || '',
             plan: user.premiumPlanType || user.accountType || 'manual',
-            type: user.accountType === 'essential' ? 'Plus+' : 'Plus+',
+            type: PLUS_LABEL,
             cycle: user.premiumPlanType === 'vitalicio' ? 'Vitalício' : 'Manual',
             value: Number(user.premiumPrice || key?.price || 0),
             purchasedAt: serializeDate(user.premiumActivatedAt || user.createdAt),

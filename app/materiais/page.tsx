@@ -617,6 +617,42 @@ function MateriaisContent() {
     )
   }, [activeFilter, addItem, currentFolderId, debouncedSearch, fetchData, isAuthenticated, materials, notify, packages, router])
 
+  /**
+   * Resgate sem custo pela assinatura Plus+.
+   *
+   * Diferente de comprar: não passa pelo carrinho nem pelo checkout — grava a
+   * aquisição direto e recarrega a lista para o item aparecer como adquirido.
+   * O servidor é quem valida a assinatura e a cota do Plus+ Guard.
+   */
+  const handleClaimWithPlus = useCallback(async (itemType: 'material' | 'package', itemId: string) => {
+    if (!isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent('/materiais')}`)
+      return
+    }
+    setCheckoutLoading(itemId)
+    try {
+      const res = await fetch('/api/materiais/resgatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType, itemId }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        notify(data.error || 'Não foi possível resgatar este item.', 'error')
+        return
+      }
+      notify(
+        data.alreadyOwned ? 'Você já tem este item na sua conta.' : data.message || 'Resgatado!',
+        'success',
+      )
+      await fetchData(currentFolderId, debouncedSearch, activeFilter, { force: true })
+    } catch {
+      notify('Não foi possível resgatar este item. Tente novamente.', 'error')
+    } finally {
+      setCheckoutLoading(null)
+    }
+  }, [activeFilter, currentFolderId, debouncedSearch, fetchData, isAuthenticated, notify, router])
+
   const handleMaterialAcquire = useCallback((material: Material, mode: 'cart' | 'buy' = 'cart') => {
     // Upsell roda só em buy-now: add-to-cart é fluxo leve de browse, modal
     // cheio quebra o ritmo. No carrinho mostramos sugestões discretas.
@@ -847,6 +883,7 @@ function MateriaisContent() {
         copiedId={copiedId}
         onAddToCart={() => handleMaterialAcquire(material, 'cart')}
         onBuyNow={() => handleMaterialAcquire(material, 'buy')}
+        onClaimWithPlus={() => handleClaimWithPlus('material', material._id)}
         onDownload={() => handleDownload(material)}
         onViewPdf={() => handleOpenPdfViewer(material)}
         onCopyLink={() => copyMaterialLink(material)}
@@ -868,6 +905,7 @@ function MateriaisContent() {
         copiedId={copiedId}
         onAddToCart={() => handleAcquire('package', pkg._id, 'cart')}
         onBuyNow={() => handleAcquire('package', pkg._id, 'buy')}
+        onClaimWithPlus={() => handleClaimWithPlus('package', pkg._id)}
         onCopyLink={() => copyPackageLink(pkg)}
         onPreview={() => setPreviewItem({ type: 'package', data: pkg })}
         loading={checkoutLoading === pkg._id}

@@ -34,7 +34,7 @@ export default function CriarAulaPage() {
   const [titulo, setTitulo] = useState('')
   const [descricao, setDescricao] = useState('')
   const [tipo, setTipo] = useState<AulaType>('gravada')
-  const [visibilidade, setVisibilidade] = useState<AulaVisibility>('premium')
+  const [visibilidade, setVisibilidade] = useState<AulaVisibility>('plus')
   const [topicoId, setTopicoId] = useState('')
   const [subtopicoId, setSubtopicoId] = useState('')
   const [moduloId, setModuloId] = useState('')

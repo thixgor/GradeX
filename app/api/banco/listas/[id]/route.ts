@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +33,7 @@ export async function GET(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (user.role !== 'admin' && user.accountType !== 'premium') {
+    if (user.role !== 'admin' && !isPlusAccount(user.accountType)) {
       return NextResponse.json({
         error: 'Acesso restrito a assinantes Plus+',
         requiresPlus: true
@@ -134,7 +135,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (user.role !== 'admin' && user.accountType !== 'premium') {
+    if (user.role !== 'admin' && !isPlusAccount(user.accountType)) {
       return NextResponse.json({
         error: 'Acesso restrito a assinantes Plus+',
         requiresPlus: true
@@ -225,7 +226,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (user.role !== 'admin' && user.accountType !== 'premium') {
+    if (user.role !== 'admin' && !isPlusAccount(user.accountType)) {
       return NextResponse.json({
         error: 'Acesso restrito a assinantes Plus+',
         requiresPlus: true

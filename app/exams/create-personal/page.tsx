@@ -215,7 +215,7 @@ export default function CreatePersonalExamPage() {
                   <p className="font-semibold">até {limits.aiQuestionsPerExam}</p>
                 </div>
               </div>
-              {user?.accountType !== 'premium' && (
+              {!isPlusAccount(user?.accountType) && (
                 <>
                   <div className="h-8 w-px bg-border hidden sm:block" />
                   <Button

@@ -71,6 +71,7 @@ import {
   BancoQuestaoTipo,
   BancoModoResposta
 } from '@/lib/types/banco-questoes'
+import { isPlusAccount } from '@/lib/account-tier'
 
 interface ListaComContagem extends BancoListaUsuario {
   totalQuestoes?: number
@@ -237,7 +238,7 @@ function BancoQuestoesContent() {
       // Use user data from useAppShell — no extra /api/auth/me call needed
       const currentUserRole = userRole
       const isFreeUser = currentUserRole !== 'admin' &&
-        accountType !== 'premium' &&
+        !isPlusAccount(accountType) &&
         accountType !== 'trial' &&
         accountType !== 'admin'
 
@@ -833,7 +834,7 @@ function BancoQuestoesContent() {
 
 
           {/* ─── Collapsible Filter Panel ─── */}
-          {!(userRole !== 'admin' && accountType !== 'premium' && accountType !== 'trial' && selectedPeriodo) && (
+          {!(userRole !== 'admin' && !isPlusAccount(accountType) && accountType !== 'trial' && selectedPeriodo) && (
             <div className="glass-page-card rounded-2xl overflow-hidden">
               {/* Filter Header — always visible, clickable to toggle */}
               <div className="w-full flex items-center justify-between p-4 sm:p-5">

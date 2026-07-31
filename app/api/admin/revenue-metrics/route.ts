@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { AdminSettings, PlanConfig, User } from '@/lib/types'
-import { isPlusAccount } from '@/lib/account-tier'
+import { isPlusAccount, isActivePlusUser } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,12 +35,9 @@ function getEstimatedPlanPrice(user: User, plans: PlanConfig[]) {
   return typeof plan?.preco === 'number' && Number.isFinite(plan.preco) ? plan.preco : 0
 }
 
-function isActivePaidUser(user: User, now: Date) {
-  if (user.role !== 'user') return false
-  if (!isPlusAccount(user.accountType)) return false
-  if (!user.premiumExpiresAt) return true
-  return new Date(user.premiumExpiresAt) > now
-}
+// Mesma definição usada pelo painel Plus+ em /admin/settings — mantida em
+// lib/account-tier.ts para os dois números nunca divergirem.
+const isActivePaidUser = isActivePlusUser
 
 export async function GET() {
   try {
@@ -85,9 +82,10 @@ export async function GET() {
     const activePaidUsers = users.filter((user) => isActivePaidUser(user, now))
     const totalEstimatedRevenue = activePaidUsers.reduce((sum, user) => sum + getEstimatedPlanPrice(user, plans), 0)
 
+    // Cargo único: `premium`/`essential` sobrevivem apenas como valores legados
+    // no banco, então contá-los separado devolvia zero. Todos somam em `plus`.
     const subscriberBreakdown = {
-      premium: activePaidUsers.filter((user) => user.accountType === 'premium').length,
-      essential: activePaidUsers.filter((user) => user.accountType === 'essential').length,
+      plus: activePaidUsers.length,
       trial: users.filter((user) => user.accountType === 'trial' && (!user.trialExpiresAt || new Date(user.trialExpiresAt) > now)).length,
       free: users.filter((user) => !user.accountType || user.accountType === 'gratuito').length,
     }

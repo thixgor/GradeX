@@ -380,7 +380,7 @@ function BuyContent() {
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-foreground">Você já tem um plano ativo</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                {sub.type === 'premium' ? 'Plus+' : 'Trial'}
+                {sub.type === 'trial' ? 'Trial' : 'Plus+'}
                 {sub.planType ? ` (${sub.planType})` : ''}
                 {' · '}
                 {new Date(sub.expiresAt).getFullYear() >= 9999 ? (

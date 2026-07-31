@@ -42,7 +42,7 @@ interface User {
   email: string
   name: string
   role: 'admin' | 'user'
-  accountType?: 'gratuito' | 'trial' | 'premium'
+  accountType?: 'gratuito' | 'trial' | 'plus' | 'premium' | 'essential'
   secondaryRole?: string
   emailVerified?: boolean
 }
@@ -58,7 +58,7 @@ interface AppShellContextType {
   refetchBootstrap: () => void
   // Extended user info for child pages (avoid extra /api/auth/me calls)
   isAdmin: boolean
-  accountType: 'gratuito' | 'trial' | 'premium'
+  accountType: 'gratuito' | 'trial' | 'plus' | 'premium' | 'essential'
   secondaryRole?: string
   loading: boolean
   sidebarCollapsed: boolean

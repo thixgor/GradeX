@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   Check,
+  Crown,
   File,
   Gift,
   Info,
@@ -16,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
+import { PLUS_LABEL } from '@/lib/account-tier'
 import {
   CardPrice,
   CopyLinkBtn,
@@ -39,6 +41,7 @@ export const PackageCard = memo(function PackageCard({
   copiedId,
   onAddToCart,
   onBuyNow,
+  onClaimWithPlus,
   onCopyLink,
   onPreview,
   loading,
@@ -51,6 +54,8 @@ export const PackageCard = memo(function PackageCard({
   copiedId: string | null
   onAddToCart: () => void
   onBuyNow: () => void
+  /** Resgate sem custo pela assinatura Plus+ (pacote com `_includedInPlus`). */
+  onClaimWithPlus: () => void
   onCopyLink: () => void
   onPreview: () => void
   loading: boolean
@@ -70,7 +75,10 @@ export const PackageCard = memo(function PackageCard({
     ? pkg._hasAccess
     : isPurchased || (groupAccess && isFree)
   const showFreeAcquire = isFree || effectivePrice <= 0
-  const showLocked = !groupAccess && !isPurchased && (pkg.allowedGroups?.length ?? 0) > 0
+  // Assinante Plus+ leva sem custo, mas precisa resgatar.
+  const includedInPlus = pkg._includedInPlus === true
+  const showLocked =
+    !includedInPlus && !groupAccess && !isPurchased && (pkg.allowedGroups?.length ?? 0) > 0
   const hasEvent = !isFree && !!pkg._pricingEventState?.activeTier && pkg._pricingEventState.isActive
   const href = `/pacotes/${pkg._id}`
 
@@ -219,6 +227,18 @@ export const PackageCard = memo(function PackageCard({
               <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
                 <Check className="h-4 w-4" /> Adquirido
               </span>
+            ) : includedInPlus ? (
+              <>
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+                  <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+                </span>
+                <Button onClick={onClaimWithPlus} disabled={loading} size="sm" className="cta-raised h-11 w-full font-semibold">
+                  {loading
+                    ? <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-t-current" />
+                    : <Gift className="mr-2 h-4 w-4 shrink-0" />}
+                  Resgatar pacote
+                </Button>
+              </>
             ) : showFreeAcquire ? (
               <>
                 <CardPrice price={effectivePrice} isFree crossedPrice={crossedPrice} />

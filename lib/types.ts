@@ -1632,6 +1632,15 @@ export interface MaterialPurchase {
   status: 'pending' | 'completed' | 'refunded'
   purchasedAt: Date
   refundedAt?: Date
+  /**
+   * Origem da aquisição. Ausente = compra paga (comportamento histórico).
+   * `'plus'` = resgatado sem custo pela assinatura Plus+ — o registro existe
+   * para o item aparecer em "Meus materiais" e para o resgate ser auditável,
+   * mas não representa receita e é revogado se a assinatura cair.
+   */
+  source?: 'purchase' | 'plus'
+  /** Quando o item foi resgatado pela assinatura (source = 'plus'). */
+  claimedAt?: Date
 }
 
 // ─── Loja física (produtos físicos / impressos) ──────────────────
