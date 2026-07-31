@@ -8,7 +8,6 @@ export interface MissingProfileField {
 type ProfileFieldsInput = Pick<
   User,
   | 'cpf'
-  | 'dateOfBirth'
   | 'phone'
   | 'state'
   | 'profession'
@@ -59,8 +58,9 @@ export function getMissingProfileFields(
     if (!user.periodoBase) missing.push({ key: 'periodo', label: 'Seu período' })
   }
 
+  // Só o CPF. Data de nascimento saiu de propósito: é mais um campo chato de
+  // preencher e o nome da conta já identifica o titular na conferência.
   if (!user.cpf) missing.push({ key: 'cpf', label: 'CPF' })
-  if (!user.dateOfBirth) missing.push({ key: 'dateOfBirth', label: 'Data de nascimento' })
 
   return missing
 }

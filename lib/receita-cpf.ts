@@ -20,8 +20,10 @@ import { isValidCpf, onlyCpfDigits } from '@/lib/cpf'
  *                               como não verificado, para não perder o cadastro
  *                               por causa de uma API de terceiro).
  *
- * Desde a Portaria RFB nº 667/2026 a consulta exige a data de nascimento junto
- * do CPF, então ela é obrigatória aqui também.
+ * Desde a Portaria RFB nº 667/2026 a consulta oficial exige a data de
+ * nascimento junto do CPF. Como o modal não pede mais esse dado, a conferência
+ * online só roda em provedores que aceitam busca só por CPF (cpfhub) ou para
+ * usuários que já tinham a data no cadastro.
  */
 
 export type CpfVerificationStatus =
@@ -56,9 +58,17 @@ export interface CpfVerificationResult {
 
 export interface CpfVerificationInput {
   cpf: string
-  /** Data de nascimento em ISO (YYYY-MM-DD). */
-  birthDate: string
-  /** Nome completo como o usuário digitou. */
+  /**
+   * Data de nascimento em ISO (YYYY-MM-DD), quando existir no cadastro.
+   *
+   * O modal não pede mais esse dado — é fricção demais para o retorno. Sem
+   * ele, só dá para consultar em provedores que aceitam busca só por CPF
+   * (cpfhub). Infosimples e Hub do Desenvolvedor exigem a data desde a
+   * Portaria RFB nº 667/2026, então nesses a conferência é pulada (o CPF
+   * ainda passa pela validação offline dos dígitos verificadores).
+   */
+  birthDate?: string
+  /** Nome do titular como consta na conta. */
   name: string
 }
 
@@ -286,14 +296,19 @@ export async function verifyCpfWithReceita(
 
   const timeoutMs = Number(process.env.CPF_VERIFICATION_TIMEOUT_MS) || 8000
 
+  // Provedores que consultam por CPF + data de nascimento não têm como rodar
+  // sem a data. Melhor pular a conferência do que reprovar um CPF válido.
+  const needsBirthDate = provider === 'infosimples' || provider === 'hubdev'
+  if (needsBirthDate && !input.birthDate) return result('skipped')
+
   let lookup: ProviderLookup | null = null
   try {
     if (provider === 'infosimples') {
-      lookup = await lookupInfosimples(cpf, input.birthDate, token, timeoutMs)
+      lookup = await lookupInfosimples(cpf, input.birthDate!, token, timeoutMs)
     } else if (provider === 'cpfhub') {
       lookup = await lookupCpfHub(cpf, token, timeoutMs)
     } else if (provider === 'hubdev') {
-      lookup = await lookupHubDev(cpf, input.birthDate, token, timeoutMs)
+      lookup = await lookupHubDev(cpf, input.birthDate!, token, timeoutMs)
     } else {
       console.error(`[receita-cpf] provedor desconhecido: ${provider}`)
       return result('skipped')

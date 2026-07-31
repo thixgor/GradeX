@@ -58,7 +58,6 @@ type ProfileFormState = {
    *  na Receita Federal, e não pode ser reescrito aqui à mão. */
   cpf: string
   cpfVerified: boolean
-  dateOfBirth: string
 }
 
 const EMPTY_PROFILE_FORM: ProfileFormState = {
@@ -76,7 +75,6 @@ const EMPTY_PROFILE_FORM: ProfileFormState = {
   periodo: '',
   cpf: '',
   cpfVerified: false,
-  dateOfBirth: '',
 }
 
 interface UserSubmission {
@@ -203,7 +201,6 @@ export default function ProfilePage() {
           periodo: p.periodo || '',
           cpf: p.cpf || '',
           cpfVerified: !!p.cpfVerified,
-          dateOfBirth: p.dateOfBirth || '',
         })
         setProfileEmailVerified(!!p.emailVerified)
       }
@@ -299,7 +296,6 @@ export default function ProfilePage() {
       periodoBase: profileForm.periodo ? Number(profileForm.periodo) : undefined,
       // `cpf` aqui é a máscara vinda do servidor — só serve para saber se existe.
       cpf: profileForm.cpf || undefined,
-      dateOfBirth: profileForm.dateOfBirth ? new Date(profileForm.dateOfBirth) : undefined,
     }),
     [profileForm]
   )
