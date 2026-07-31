@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
+import { ProfileCompletionGate } from '@/components/profile-completion-gate'
 import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
@@ -14,7 +15,7 @@ import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
 import { MaterialCartButton } from '@/components/materiais/material-cart-button'
 import { cn } from '@/lib/utils'
-import { LogIn, Menu, RefreshCw, ShieldAlert, WifiOff } from 'lucide-react'
+import { LogIn, Menu, RefreshCw, ShieldAlert, WifiOff, X } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
@@ -81,13 +82,16 @@ export function useAppShell() {
  */
 function skeletonVariantForPath(
   pathname: string | null,
-): 'cards' | 'list' | 'dashboard' {
+): 'cards' | 'catalog' | 'list' | 'dashboard' {
   if (!pathname) return 'cards'
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/profile')) {
     return 'dashboard'
   }
   if (pathname.startsWith('/banco-questoes') || pathname.startsWith('/forum')) {
     return 'list'
+  }
+  if (pathname.startsWith('/materiais')) {
+    return 'catalog'
   }
   return 'cards'
 }
@@ -339,6 +343,8 @@ export function AppShell({
       <FocusSessionProvider>
       <div className="min-h-screen surface-page">
         <BanChecker />
+        {/* Pede os dados que faltam no perfil (progressive profiling) */}
+        <ProfileCompletionGate />
 
         {/* Sidebar */}
         <Sidebar
@@ -483,16 +489,33 @@ function BootstrapErrorState({
   )
 }
 
+const GUEST_NOTICE_DISMISS_KEY = 'guest-notice-dismissed-at'
+const GUEST_NOTICE_DISMISS_TTL_MS = 1000 * 60 * 60 * 12 // 12h
+
 function GuestAccessNotice() {
   const [mounted, setMounted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
   const [position, setPosition] = useState({ x: 18, y: 18 })
   const [dragging, setDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
     setMounted(true)
+    try {
+      const dismissedAt = Number(sessionStorage.getItem(GUEST_NOTICE_DISMISS_KEY) || 0)
+      if (dismissedAt && Date.now() - dismissedAt < GUEST_NOTICE_DISMISS_TTL_MS) {
+        setDismissed(true)
+      }
+    } catch {
+      // ignore storage access errors
+    }
+
     const setInitialPosition = () => {
-      const width = Math.min(320, window.innerWidth - 32)
+      const mobile = window.innerWidth < 640
+      setIsMobile(mobile)
+      if (mobile) return
+      const width = 320
       setPosition({
         x: Math.max(12, window.innerWidth - width - 18),
         y: Math.max(12, window.innerHeight - 174),
@@ -504,10 +527,10 @@ function GuestAccessNotice() {
   }, [])
 
   useEffect(() => {
-    if (!dragging) return
+    if (!dragging || isMobile) return
 
     function onPointerMove(event: PointerEvent) {
-      const width = Math.min(320, window.innerWidth - 32)
+      const width = 320
       const height = 142
       setPosition({
         x: Math.min(Math.max(12, event.clientX - dragOffset.x), window.innerWidth - width - 12),
@@ -525,11 +548,50 @@ function GuestAccessNotice() {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
     }
-  }, [dragOffset.x, dragOffset.y, dragging])
+  }, [dragOffset.x, dragOffset.y, dragging, isMobile])
 
-  if (!mounted) return null
+  if (!mounted || dismissed) return null
 
   const loginHref = `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+
+  const dismiss = () => {
+    try {
+      sessionStorage.setItem(GUEST_NOTICE_DISMISS_KEY, String(Date.now()))
+    } catch {
+      // ignore storage access errors
+    }
+    setDismissed(true)
+  }
+
+  if (isMobile) {
+    return (
+      <div
+        className="pwa-safe-bottom fixed inset-x-2 bottom-2 z-[60] flex items-center gap-2 rounded-xl border border-white/35 bg-white/85 px-3 py-2 text-slate-900 shadow-lg shadow-emerald-900/15 backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/85 dark:text-white"
+        role="status"
+        aria-live="polite"
+      >
+        <ShieldAlert className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300" />
+        <p className="min-w-0 flex-1 truncate text-[11px] font-semibold leading-tight">
+          Você está vendo como visitante
+        </p>
+        <a
+          href={loginHref}
+          className="inline-flex h-7 shrink-0 items-center gap-1 rounded-lg bg-emerald-700 px-2.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-emerald-600"
+        >
+          <LogIn className="h-3 w-3" />
+          Entrar
+        </a>
+        <button
+          type="button"
+          onClick={dismiss}
+          aria-label="Fechar aviso"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-black/5 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -545,7 +607,16 @@ function GuestAccessNotice() {
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(22,163,74,0.22),rgba(255,255,255,0.20)_38%,rgba(245,158,11,0.18)_68%,rgba(20,184,166,0.18))] dark:bg-[linear-gradient(135deg,rgba(22,163,74,0.22),rgba(15,23,42,0.25)_40%,rgba(245,158,11,0.14)_70%,rgba(20,184,166,0.16))]" />
       <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 h-28 w-28 rounded-full bg-emerald-300/30 blur-2xl" />
-      <div className="relative flex items-start gap-3">
+      <button
+        type="button"
+        onClick={dismiss}
+        onPointerDown={(event) => event.stopPropagation()}
+        aria-label="Fechar aviso"
+        className="absolute right-2.5 top-2.5 z-10 flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 transition hover:bg-black/5 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+      <div className="relative flex items-start gap-3 pr-5">
         <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-300/35 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200">
           <ShieldAlert className="h-4 w-4" />
         </div>

@@ -8,10 +8,10 @@ import { Label } from '@/components/ui/label'
 import { X } from 'lucide-react'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { BRAZIL_STATES } from '@/lib/brazil-states'
-import { MEDICAL_SPECIALTIES } from '@/lib/medical-specialties'
+import { MEDICAL_SPECIALTIES, RESIDENCY_AREAS } from '@/lib/medical-specialties'
 import { RESIDENCY_YEARS } from '@/lib/residency-years'
-import { getMedicalSchoolsByState } from '@/lib/medical-schools-brazil'
-import { getResidencyHospitalsByState } from '@/lib/residency-hospitals-brazil'
+import { getMedicalSchoolsByState, OTHER_SCHOOL_OPTION } from '@/lib/medical-schools-brazil'
+import { getResidencyHospitalsByState, OTHER_HOSPITAL_OPTION } from '@/lib/residency-hospitals-brazil'
 import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 
@@ -321,7 +321,7 @@ export function GoogleProfileSetupDialog({
                       id="residencySpecialty"
                       value={residencySpecialty}
                       onChange={setResidencySpecialty}
-                      options={MEDICAL_SPECIALTIES}
+                      options={RESIDENCY_AREAS}
                       placeholder="Selecione a área..."
                       searchPlaceholder="Buscar área da residência..."
                       className={selectCls}
@@ -356,6 +356,8 @@ export function GoogleProfileSetupDialog({
                       options={getResidencyHospitalsByState(state)}
                       placeholder="Selecione o hospital..."
                       searchPlaceholder="Buscar hospital..."
+                      customOption={OTHER_HOSPITAL_OPTION}
+                      customPlaceholder="Digite o nome do hospital"
                       className={selectCls}
                       disabled={isLoading || !state}
                     />
@@ -376,6 +378,8 @@ export function GoogleProfileSetupDialog({
                     options={getMedicalSchoolsByState(state)}
                     placeholder="Selecione sua instituição..."
                     searchPlaceholder="Buscar sua instituição..."
+                    customOption={OTHER_SCHOOL_OPTION}
+                    customPlaceholder="Digite o nome da sua instituição"
                     className={selectCls}
                     disabled={isLoading || !state}
                   />

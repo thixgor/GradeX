@@ -17,6 +17,7 @@ import { EcgLeadCanvas, type Fiducial } from './ecg-lead-canvas'
 import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
 import { EcgClinicalPanel } from './ecg-clinical-panel'
+import { EcgDeepDive } from './ecg-deep-dive'
 import { EcgReport } from './ecg-report'
 import { EcgPlayground } from './ecg-playground'
 import { EcgQuiz } from './ecg-quiz'
@@ -447,6 +448,9 @@ export function EcgSimulator() {
               </div>
               <EcgClinicalPanel entry={entry} />
             </div>
+
+            {/* ── EXPLICAÇÃO APROFUNDADA DO TRAÇADO ── */}
+            <EcgDeepDive entry={entry} />
           </div>
         </div>
       )}
