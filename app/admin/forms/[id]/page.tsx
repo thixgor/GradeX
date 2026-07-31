@@ -27,7 +27,10 @@ import {
     TextCursorInput,
     AtSign,
     AlertTriangle,
-    Users
+    Users,
+    Lock,
+    Gift,
+    KeyRound
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -63,11 +66,31 @@ export default function FormEditorPage() {
         }
     })
 
+    const [materials, setMaterials] = useState<Array<{ _id: string; title: string; pricing?: string }>>([])
+
     useEffect(() => {
         if (id !== 'new') {
             fetchForm()
         }
     }, [id])
+
+    useEffect(() => {
+        fetchMaterials()
+    }, [])
+
+    async function fetchMaterials() {
+        try {
+            const res = await fetch('/api/materiais')
+            const data = await res.json()
+            if (Array.isArray(data?.materials)) {
+                setMaterials(
+                    data.materials.map((m: any) => ({ _id: String(m._id), title: m.title, pricing: m.pricing }))
+                )
+            }
+        } catch (error) {
+            console.error('Error fetching materials:', error)
+        }
+    }
 
     async function fetchForm() {
         try {
@@ -412,6 +435,19 @@ export default function FormEditorPage() {
                                     />
                                 </div>
 
+                                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                                    <div className="space-y-0.5">
+                                        <Label className="text-base font-bold flex items-center gap-2">
+                                            <Lock className="h-4 w-4" /> Exigir Login
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">O usuário precisa estar logado para acessar e responder o formulário.</p>
+                                    </div>
+                                    <Switch
+                                        checked={form.settings?.requireLogin ?? false}
+                                        onCheckedChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings!, requireLogin: val } }))}
+                                    />
+                                </div>
+
                                 <div className="space-y-2">
                                     <Label className="flex items-center gap-2">
                                         <Clock className="h-4 w-4" /> Prazo de Encerramento (Opcional)
@@ -481,6 +517,73 @@ export default function FormEditorPage() {
                                             </SelectContent>
                                         </Select>
                                         <p className="text-xs text-muted-foreground">Precisamos saber para qual e-mail enviar a confirmação.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-primary/20 bg-primary/5">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Gift className="h-5 w-5 text-primary" /> Entregar Material por E-mail
+                                </CardTitle>
+                                <CardDescription>
+                                    Após enviar o formulário, o usuário recebe por e-mail um material de /materiais com serial key e link de ativação.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="flex items-center justify-between p-4 bg-background rounded-lg border">
+                                    <div className="space-y-0.5">
+                                        <Label className="text-base font-bold">Entregar Material</Label>
+                                        <p className="text-sm text-muted-foreground">Gera e envia uma serial key de ativação para a conta do usuário.</p>
+                                    </div>
+                                    <Switch
+                                        checked={form.settings?.deliverMaterial ?? false}
+                                        onCheckedChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings!, deliverMaterial: val } }))}
+                                    />
+                                </div>
+
+                                {form.settings?.deliverMaterial && (
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                                        <div className="space-y-2">
+                                            <Label className="flex items-center gap-2">
+                                                <KeyRound className="h-4 w-4" /> Material a entregar
+                                            </Label>
+                                            <Select
+                                                value={form.settings?.deliverMaterialId}
+                                                onValueChange={(val) => {
+                                                    const mat = materials.find(m => m._id === val)
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        settings: {
+                                                            ...prev.settings!,
+                                                            deliverMaterialId: val,
+                                                            deliverMaterialTitle: mat?.title
+                                                        }
+                                                    }))
+                                                }}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Selecione o material..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {materials.map(m => (
+                                                        <SelectItem key={m._id} value={m._id}>
+                                                            {m.title}{m.pricing === 'free' ? ' (Grátis)' : ''}
+                                                        </SelectItem>
+                                                    ))}
+                                                    {materials.length === 0 && (
+                                                        <div className="p-2 text-xs text-muted-foreground flex items-center gap-1">
+                                                            <AlertTriangle className="h-3 w-3" />
+                                                            Nenhum material encontrado.
+                                                        </div>
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                            <p className="text-xs text-muted-foreground">
+                                                A entrega exige login: o material vai para o e-mail da conta do usuário. O login será ativado automaticamente.
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
                             </CardContent>

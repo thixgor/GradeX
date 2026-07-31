@@ -20,11 +20,18 @@ import {
     ExternalLink,
     ChevronRight,
     AtSign,
-    Phone
+    Phone,
+    Lock,
+    LogIn,
+    Mail,
+    KeyRound,
+    Sparkles,
+    PartyPopper
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAuthUser } from '@/hooks/use-auth-user'
 
 export default function PublicFormPage() {
     const params = useParams()
@@ -35,6 +42,17 @@ export default function PublicFormPage() {
     const [answers, setAnswers] = useState<Record<string, any>>({})
     const [submitting, setSubmitting] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const [deliveryResult, setDeliveryResult] = useState<
+        | { delivered: true; title: string; email: string }
+        | { delivered: false; reason: string }
+        | null
+    >(null)
+
+    const { user, loading: authLoading } = useAuthUser()
+
+    // Login é exigido quando o formulário pede login OU quando há entrega de
+    // material (a serial key vai para o e-mail da conta).
+    const needsLogin = !!(form?.settings.requireLogin || form?.settings.deliverMaterial)
 
     useEffect(() => {
         fetchForm()
@@ -74,8 +92,11 @@ export default function PublicFormPage() {
 
             const data = await res.json()
             if (res.ok) {
+                setDeliveryResult(data.materialDelivery ?? null)
                 setSubmitted(true)
                 window.scrollTo({ top: 0, behavior: 'smooth' })
+            } else if (res.status === 401 || data.code === 'LOGIN_REQUIRED') {
+                window.location.href = `/auth/login?redirect=/forms/${id}`
             } else {
                 setError(data.error || 'Erro ao enviar resposta')
             }
@@ -109,10 +130,11 @@ export default function PublicFormPage() {
         )
     }
 
-    if (submitted) {
+    // Portão de login: quando o formulário exige login (ou entrega material) e o
+    // usuário ainda não está autenticado, bloqueia o acesso às perguntas.
+    if (needsLogin && !authLoading && !user && !submitted) {
         return (
             <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
-                {/* Ambient blobs */}
                 <div className="pointer-events-none fixed inset-0 overflow-hidden">
                     <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
                     <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
@@ -121,27 +143,209 @@ export default function PublicFormPage() {
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="auth-glass-card max-w-lg w-full rounded-2xl p-0 relative z-10"
+                    className="auth-glass-card max-w-md w-full rounded-2xl p-0 relative z-10 text-center"
+                >
+                    <div className="p-8 space-y-4">
+                        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                            <Lock className="h-10 w-10 text-primary" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-foreground">Faça login para continuar</h2>
+                        <p className="text-muted-foreground">
+                            {form?.title
+                                ? <>Para responder <span className="font-semibold text-foreground">“{form.title}”</span> você precisa estar logado na sua conta.</>
+                                : 'Você precisa estar logado para responder este formulário.'}
+                            {form?.settings.deliverMaterial && ' Assim conseguimos enviar o material para o e-mail da sua conta.'}
+                        </p>
+                        <div className="flex flex-col gap-2 pt-2">
+                            <Button
+                                className="btn-brand-glow text-white rounded-xl h-12 text-base font-bold"
+                                onClick={() => window.location.href = `/auth/login?redirect=/forms/${id}`}
+                            >
+                                <LogIn className="mr-2 h-5 w-5" /> Entrar na minha conta
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="rounded-xl h-11"
+                                onClick={() => window.location.href = `/auth/login?mode=register&redirect=/forms/${id}`}
+                            >
+                                Criar uma conta
+                            </Button>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+        )
+    }
+
+    if (submitted) {
+        const materialDelivered = deliveryResult?.delivered === true
+        const deliveryFailed = deliveryResult?.delivered === false
+        // Passos confirmados em sequência (efeito de "check em cascata").
+        const steps: Array<{ icon: any; title: string; desc: string; tone: 'ok' | 'warn' }> = [
+            {
+                icon: CheckCircle2,
+                title: 'Respostas recebidas',
+                desc: 'Registramos o seu formulário com sucesso.',
+                tone: 'ok',
+            },
+        ]
+        if (form?.settings.sendConfirmationEmail) {
+            steps.push({
+                icon: Mail,
+                title: 'Resumo enviado por e-mail',
+                desc: 'Você receberá um PDF com um resumo das suas respostas.',
+                tone: 'ok',
+            })
+        }
+        if (materialDelivered && deliveryResult?.delivered) {
+            steps.push({
+                icon: KeyRound,
+                title: 'Material a caminho!',
+                desc: `Enviamos “${deliveryResult.title}” com a sua serial key e o link de ativação para ${deliveryResult.email}.`,
+                tone: 'ok',
+            })
+        } else if (deliveryFailed) {
+            steps.push({
+                icon: AlertCircle,
+                title: 'Não foi possível enviar o material',
+                desc: 'Suas respostas foram salvas. Se o material não chegar, fale com o suporte.',
+                tone: 'warn',
+            })
+        }
+
+        return (
+            <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
+                {/* Ambient blobs */}
+                <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                    <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
+                    <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+                </div>
+
+                {/* Confetes sutis quando há entrega de material */}
+                {materialDelivered && (
+                    <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                        {Array.from({ length: 18 }).map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="absolute top-0 w-2 h-2 rounded-sm"
+                                style={{
+                                    left: `${(i * 5.5 + 6) % 100}%`,
+                                    background: i % 3 === 0 ? 'hsl(var(--primary))' : i % 3 === 1 ? '#22c55e' : '#f59e0b',
+                                }}
+                                initial={{ y: -40, opacity: 0, rotate: 0 }}
+                                animate={{ y: '110vh', opacity: [0, 1, 1, 0], rotate: 360 }}
+                                transition={{ duration: 2.6 + (i % 5) * 0.35, delay: 0.4 + (i % 6) * 0.12, ease: 'easeIn' }}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="auth-glass-card max-w-lg w-full rounded-2xl p-0 relative z-10 overflow-hidden"
                 >
                     <div className="text-center p-8 pb-6 border-b border-white/10">
-                        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle2 className="h-12 w-12 text-primary" />
-                        </div>
-                        <h2 className="text-3xl font-bold text-primary">Sucesso!</h2>
-                        <p className="text-lg mt-2 text-muted-foreground">
-                            Obrigado por sua participação. Suas respostas foram enviadas com sucesso.
-                        </p>
+                        <motion.div
+                            className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}
+                        >
+                            <motion.div
+                                className="absolute inset-0 rounded-full border-2 border-primary/30"
+                                initial={{ scale: 1, opacity: 0.8 }}
+                                animate={{ scale: 1.6, opacity: 0 }}
+                                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
+                            />
+                            <motion.div
+                                initial={{ scale: 0, rotate: -30 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.35 }}
+                            >
+                                {materialDelivered
+                                    ? <PartyPopper className="h-12 w-12 text-primary" />
+                                    : <CheckCircle2 className="h-12 w-12 text-primary" />}
+                            </motion.div>
+                        </motion.div>
+                        <motion.h2
+                            className="text-3xl font-black text-primary flex items-center justify-center gap-2"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.45 }}
+                        >
+                            {materialDelivered ? <>Tudo certo! <Sparkles className="h-6 w-6" /></> : 'Sucesso!'}
+                        </motion.h2>
+                        <motion.p
+                            className="text-lg mt-2 text-muted-foreground"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.55 }}
+                        >
+                            {materialDelivered
+                                ? 'Recebemos suas respostas e o seu material já está a caminho.'
+                                : 'Obrigado por sua participação. Suas respostas foram enviadas com sucesso.'}
+                        </motion.p>
                     </div>
-                    <div className="py-8 text-center space-y-4 px-8">
-                        <p className="text-muted-foreground">
-                            {form?.settings.sendConfirmationEmail
-                                ? "Você receberá um e-mail com o resumo das suas respostas em instantes."
-                                : "Deseja conhecer mais sobre nosso trabalho?"}
-                        </p>
-                        <Button variant="outline" className="group" onClick={() => window.location.href = 'https://domineaqui.com.br'}>
-                            Visitar Site <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                        </Button>
+
+                    {/* Checklist em cascata */}
+                    <div className="p-6 space-y-3">
+                        <AnimatePresence>
+                            {steps.map((step, i) => {
+                                const Icon = step.icon
+                                return (
+                                    <motion.div
+                                        key={step.title}
+                                        initial={{ opacity: 0, x: -16 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.7 + i * 0.35, duration: 0.4 }}
+                                        className={`flex items-start gap-3 p-4 rounded-xl border ${
+                                            step.tone === 'warn'
+                                                ? 'bg-amber-500/10 border-amber-500/30'
+                                                : 'bg-background/40 border-white/10'
+                                        }`}
+                                    >
+                                        <motion.div
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            transition={{ type: 'spring', stiffness: 320, damping: 16, delay: 0.8 + i * 0.35 }}
+                                            className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${
+                                                step.tone === 'warn' ? 'bg-amber-500/20 text-amber-500' : 'bg-primary/15 text-primary'
+                                            }`}
+                                        >
+                                            <Icon className="h-5 w-5" />
+                                        </motion.div>
+                                        <div className="text-left">
+                                            <p className="font-bold text-foreground leading-snug">{step.title}</p>
+                                            <p className="text-sm text-muted-foreground mt-0.5">{step.desc}</p>
+                                        </div>
+                                    </motion.div>
+                                )
+                            })}
+                        </AnimatePresence>
                     </div>
+
+                    <motion.div
+                        className="pb-8 px-8 text-center space-y-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.9 + steps.length * 0.35 }}
+                    >
+                        {materialDelivered && deliveryResult?.delivered && (
+                            <Button
+                                className="btn-brand-glow text-white rounded-xl w-full h-12 text-base font-bold group"
+                                onClick={() => window.location.href = '/materiais?tab=mine'}
+                            >
+                                Ativar meu material <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                            {materialDelivered
+                                ? 'Confira também a sua caixa de entrada (e o spam) para o e-mail de ativação.'
+                                : 'Sua privacidade é importante. Seus dados estão protegidos.'}
+                        </p>
+                    </motion.div>
                 </motion.div>
             </div>
         )

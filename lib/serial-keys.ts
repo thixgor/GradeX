@@ -488,6 +488,111 @@ export async function createSerialKeysForOrder(
   return keys
 }
 
+// ── Concessão avulsa de material (brindes / entregas por e-mail) ─────────────
+
+export interface GrantedMaterialSerialKey {
+  serial: SerialKey
+  materialTitle: string
+  activationUrl: string
+}
+
+/**
+ * Gera uma serial key AVULSA (origin === 'admin') que concede um material de
+ * /materiais ao ser ativada. Diferente de `createSerialKeysForOrder`, não exige
+ * pagamento e aceita materiais gratuitos — usada para entregas por e-mail
+ * disparadas por outras features (ex.: formulários). O caller é responsável por
+ * enviar o e-mail (ver `sendSerialKeyEmail`).
+ */
+export async function createGrantedMaterialSerialKey(
+  db: Db,
+  input: {
+    materialId: string
+    email: string
+    name?: string
+    generatedBy?: string
+    generatedByName?: string
+    source?: string
+  }
+): Promise<GrantedMaterialSerialKey> {
+  await ensureSerialKeyIndexes(db)
+
+  if (!input.materialId || !ObjectId.isValid(input.materialId)) {
+    throw new Error('Material inválido.')
+  }
+  if (!isValidEmail(String(input.email || '').toLowerCase())) {
+    throw new Error('E-mail inválido para entrega do material.')
+  }
+
+  const material = await db.collection('materials').findOne({ _id: new ObjectId(input.materialId) })
+  if (!material) throw new Error('Material não encontrado.')
+
+  const isFlashcard =
+    material.type === 'flashcard_deck' || Boolean(material.linkedDeckSlug)
+  const productType: SerialKeyProductType = isFlashcard ? 'flashcard' : 'material'
+  const itemTitle = String(material.title || 'Material')
+
+  const grant: SerialKeyGrant = {
+    productType,
+    itemType: 'material',
+    itemId: String(input.materialId),
+    itemTitle,
+    ...(material.linkedDeckSlug ? { linkedDeckSlug: String(material.linkedDeckSlug) } : {}),
+  }
+
+  const col = db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
+  const now = new Date()
+  const buyerName = sanitizeName(input.name || '')
+
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const key = generateSecureSerialKey()
+    const activationToken = generateActivationToken()
+    const doc: SerialKey = {
+      key,
+      type: 'custom',
+      used: false,
+      generatedBy: input.generatedBy || 'system',
+      generatedByName: input.generatedByName || 'Entrega automática',
+      generatedAt: now,
+      origin: 'admin',
+      status: 'unactivated',
+      grant,
+      productType,
+      productId: String(input.materialId),
+      productTitle: itemTitle,
+      activationToken,
+      paymentStatus: 'approved',
+      amount: 0,
+      price: 0,
+      buyerName,
+      buyerFirstName: firstNameOf(buyerName),
+      buyerEmail: String(input.email).toLowerCase(),
+      source: input.source || 'grant',
+      emailHistory: [],
+    }
+
+    try {
+      const res = await col.insertOne(doc as any)
+      doc._id = res.insertedId
+      await audit({
+        action: 'material_unlocked',
+        actorUserId: input.generatedBy,
+        resourceType: 'serial_key',
+        resourceId: String(res.insertedId),
+        metadata: { serialKeyId: String(res.insertedId), productType, itemId: String(input.materialId), origin: 'admin', source: doc.source },
+      })
+      return {
+        serial: doc,
+        materialTitle: itemTitle,
+        activationUrl: getActivationUrl(activationToken),
+      }
+    } catch (err: any) {
+      if (err?.code === 11000) continue // colisão de key → tenta outra
+      throw err
+    }
+  }
+  throw new Error('Não foi possível gerar a serial key do material.')
+}
+
 // ── Concessão do produto na ativação ─────────────────────────────────────────
 
 export interface ActivationTarget {

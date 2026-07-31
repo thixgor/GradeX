@@ -1226,6 +1226,17 @@ export interface FormSettings {
   sendConfirmationEmail: boolean
   emailQuestionId?: string // ID da pergunta que coleta o e-mail para envio da confirmação
   responseLimit?: number // Limite total de respostas
+
+  // Exige que o usuário esteja logado para acessar e responder o formulário.
+  // Quando ativo, o e-mail de destino de entregas passa a ser o da conta logada.
+  requireLogin?: boolean
+
+  // Entrega de material por e-mail após o envio das respostas. Gera uma serial
+  // key (com link de ativação) para um material de /materiais e envia ao e-mail
+  // do usuário. Requer login (para conhecermos o e-mail com segurança).
+  deliverMaterial?: boolean
+  deliverMaterialId?: string // ID do material (coleção materials) a ser entregue
+  deliverMaterialTitle?: string // Cache do título do material (exibição/admin)
 }
 
 export interface Form {
