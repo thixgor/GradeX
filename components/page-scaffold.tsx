@@ -135,6 +135,11 @@ export function MetricTile({
 export type Crumb = {
   label: string
   href?: string
+  /**
+   * Quando vem junto de `href`, intercepta o clique simples para permitir
+   * navegação client-side instantânea — o `href` continua valendo para clique
+   * do meio, "abrir em nova aba" e leitores de tela.
+   */
   onClick?: () => void
 }
 
@@ -168,6 +173,14 @@ export function Breadcrumbs({
             ) : item.href ? (
               <Link
                 href={item.href}
+                onClick={(e) => {
+                  if (!item.onClick) return
+                  // Deixa passar clique do meio / com modificador para o
+                  // comportamento nativo do navegador.
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+                  e.preventDefault()
+                  item.onClick()
+                }}
                 className="truncate font-medium text-muted-foreground hover:text-primary transition-colors"
               >
                 {item.label}
