@@ -237,14 +237,20 @@ export interface User {
   lastLoginAt?: Date
   // Cargo secundário (independente do plano)
   secondaryRole?: 'monitor' // Monitor pode gerenciar aulas, tópicos, etc
-  // Informações pessoais obrigatórias
-  cpf?: string // CPF do usuário (único, obrigatório no cadastro)
-  dateOfBirth?: Date // Data de nascimento (obrigatória no cadastro)
+  // Informações pessoais. Nenhuma é exigida no cadastro (que pede só nome,
+  // e-mail e senha) — são coletadas depois pelo modal de completar perfil.
+  cpf?: string // Só os 11 dígitos, sem pontuação. Único entre os usuários.
+  cpfVerified?: boolean // true quando a Receita Federal confirmou CPF + nome + nascimento
+  cpfVerifiedAt?: Date
+  fullName?: string // Nome civil completo (o `name` acima é o nome de exibição)
+  dateOfBirth?: Date
   // Perfil profissional coletado no cadastro
   profession?: 'medico' | 'academico' | 'residente'
   state?: string // Estado (UF) do usuário, ex.: "SP"
   phone?: string // Telefone com DDD
   specialty?: string // Especialidade médica (profession = 'medico')
+  crm?: string // Número do CRM (profession = 'medico' ou 'residente')
+  crmUf?: string // UF de inscrição do CRM
   residencySpecialty?: string // Área da residência (profession = 'residente')
   residencyHospital?: string // Hospital/instituição da residência (profession = 'residente')
   residencyYear?: string // Ano da residência: R1, R2, ... (profession = 'residente')
@@ -259,6 +265,10 @@ export interface User {
   periodoBaseRef?: string // Semestre-âncora "AAAA.S" de quando periodoBase foi definido
   // Lembrete de perfil incompleto (cron /api/cron/profile-reminder)
   profileReminderLastSentAt?: Date
+  // Modal de completar perfil: quando o usuário concluiu, e até quando ele
+  // pediu para não ser incomodado ("Agora não"). Ver /api/user/complete-profile.
+  profileCompletedAt?: Date
+  profilePromptSnoozedUntil?: Date
   // Campos de banimento
   banned?: boolean
   banReason?: BanReason

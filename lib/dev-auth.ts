@@ -56,6 +56,11 @@ export function getDevMockBootstrap() {
       accountType: 'premium' as const,
       isBanned: false,
     },
+    // Perfil completo: o modal de completar perfil não incomoda o dev local.
+    profile: {
+      missingFields: [] as string[],
+      hasCpf: true,
+    },
     tierLimits: {
       tier: 'premium' as const,
       examsPerMonth: 999,

@@ -18,6 +18,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { normalizeSidebarSections, type SidebarSectionSettings } from '@/lib/sidebar-sections'
 import { normalizeAccountType } from '@/lib/account-tier'
+import { getMissingProfileFields } from '@/lib/profile-completeness'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,24 @@ interface BootstrapResponse {
     bannedAt?: string
     subscriptionStartDate?: string
     subscriptionEndDate?: string
+  }
+  /** Estado do perfil, para o modal de completar perfil decidir se abre. */
+  profile: {
+    missingFields: string[]
+    promptSnoozedUntil?: string
+    hasCpf: boolean
+    fullName?: string
+    phone?: string
+    state?: string
+    profession?: 'medico' | 'academico' | 'residente'
+    specialty?: string
+    crm?: string
+    crmUf?: string
+    residencySpecialty?: string
+    residencyHospital?: string
+    residencyYear?: string
+    afyaUnit?: string
+    periodo?: number
   }
   tierLimits: {
     tier: 'free' | 'trial' | 'plus'
@@ -154,6 +173,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             accountType: 1, trialExpiresAt: 1, trialDaysUsed: 1, trialDaysRemaining: 1,
             isBanned: 1, banReason: 1, banDetails: 1, bannedAt: 1,
             subscriptionStartDate: 1, subscriptionEndDate: 1,
+            // Perfil: alimenta o modal de completar perfil sem custar uma
+            // segunda ida ao banco (a projeção já está aqui de qualquer jeito).
+            cpf: 1, dateOfBirth: 1, fullName: 1, phone: 1, state: 1, profession: 1,
+            specialty: 1, crm: 1, crmUf: 1,
+            residencySpecialty: 1, residencyHospital: 1, residencyYear: 1,
+            afyaUnit: 1, periodoBase: 1, profilePromptSnoozedUntil: 1,
           },
         }
       ),
@@ -218,6 +243,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         bannedAt: userDoc.bannedAt,
         subscriptionStartDate: userDoc.subscriptionStartDate,
         subscriptionEndDate: userDoc.subscriptionEndDate,
+      },
+      profile: {
+        missingFields: getMissingProfileFields(userDoc as any).map((field) => field.key),
+        promptSnoozedUntil: userDoc.profilePromptSnoozedUntil
+          ? new Date(userDoc.profilePromptSnoozedUntil).toISOString()
+          : undefined,
+        // O CPF em si nunca sai do servidor — a UI só precisa saber se existe.
+        hasCpf: !!userDoc.cpf,
+        fullName: userDoc.fullName,
+        phone: userDoc.phone,
+        state: userDoc.state,
+        profession: userDoc.profession,
+        specialty: userDoc.specialty,
+        crm: userDoc.crm,
+        crmUf: userDoc.crmUf,
+        residencySpecialty: userDoc.residencySpecialty,
+        residencyHospital: userDoc.residencyHospital,
+        residencyYear: userDoc.residencyYear,
+        afyaUnit: userDoc.afyaUnit,
+        periodo: userDoc.periodoBase,
       },
       tierLimits,
       tierUsage: {

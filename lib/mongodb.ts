@@ -38,6 +38,11 @@ if (process.env.NODE_ENV === 'development') {
         // de negócio e falharia se já existir e-mail duplicado — o ganho de
         // performance da busca é o mesmo.
         db.collection('users').createIndex({ email: 1 }),
+        // CPF: sustenta a checagem de duplicidade em /api/user/complete-profile.
+        // Esparso e não-único pelo mesmo motivo do e-mail — impor unicidade em
+        // base já povoada quebraria a criação do índice se houver duplicata; a
+        // API já rejeita CPF repetido antes de gravar.
+        db.collection('users').createIndex({ cpf: 1 }, { sparse: true }),
         db.collection('submissions').createIndex({ userId: 1 }),
         db.collection('exam_submissions').createIndex({ userId: 1 }),
         db.collection('notifications').createIndex({ userId: 1, read: 1 }),
