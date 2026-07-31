@@ -77,8 +77,32 @@ export interface BootstrapTierUsage {
   storageUsedGB: number
 }
 
+/**
+ * Estado do perfil, para o modal de completar perfil decidir se abre e já
+ * chegar preenchido com o que o usuário respondeu antes. O CPF nunca vem —
+ * só `hasCpf`.
+ */
+export interface BootstrapProfile {
+  missingFields: string[]
+  promptSnoozedUntil?: string
+  hasCpf: boolean
+  fullName?: string
+  phone?: string
+  state?: string
+  profession?: 'medico' | 'academico' | 'residente'
+  specialty?: string
+  crm?: string
+  crmUf?: string
+  residencySpecialty?: string
+  residencyHospital?: string
+  residencyYear?: string
+  afyaUnit?: string
+  periodo?: number
+}
+
 export interface BootstrapResponse {
   user: BootstrapUser
+  profile?: BootstrapProfile
   tierLimits: BootstrapTierLimits
   tierUsage: BootstrapTierUsage
   percentageUsed: {
@@ -389,6 +413,9 @@ export function useBootstrap(options: {
     user: data?.user ?? null,
     isAuthenticated: !!data?.user,
     isAdmin: data?.user?.role === 'admin',
+
+    // Perfil (modal de completar perfil)
+    profile: data?.profile ?? null,
 
     // Ban status
     banStatus: {

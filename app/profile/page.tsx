@@ -25,13 +25,15 @@ import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { Heart, Music, MessageCircle } from 'lucide-react'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { BRAZIL_STATES, formatStateLabel } from '@/lib/brazil-states'
-import { MEDICAL_SPECIALTIES } from '@/lib/medical-specialties'
+import { MEDICAL_SPECIALTIES, RESIDENCY_AREAS } from '@/lib/medical-specialties'
 import { RESIDENCY_YEARS } from '@/lib/residency-years'
-import { getMedicalSchoolsByState } from '@/lib/medical-schools-brazil'
-import { getResidencyHospitalsByState } from '@/lib/residency-hospitals-brazil'
+import { getMedicalSchoolsByState, OTHER_SCHOOL_OPTION } from '@/lib/medical-schools-brazil'
+import { getResidencyHospitalsByState, OTHER_HOSPITAL_OPTION } from '@/lib/residency-hospitals-brazil'
 import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { getMissingProfileFields } from '@/lib/profile-completeness'
+import { formatCrmLabel, onlyCrmDigits } from '@/lib/crm'
+import { ShieldCheck } from 'lucide-react'
 
 const PROFESSION_LABELS: Record<string, string> = {
   medico: 'Médico',
@@ -45,11 +47,18 @@ type ProfileFormState = {
   state: string
   profession: '' | 'medico' | 'academico' | 'residente'
   specialty: string
+  crm: string
+  crmUf: string
   residencySpecialty: string
   residencyHospital: string
   residencyYear: string
   afyaUnit: string
   periodo: string
+  /** Só leitura: o CPF é definido no modal de completar perfil, com conferência
+   *  na Receita Federal, e não pode ser reescrito aqui à mão. */
+  cpf: string
+  cpfVerified: boolean
+  dateOfBirth: string
 }
 
 const EMPTY_PROFILE_FORM: ProfileFormState = {
@@ -58,11 +67,16 @@ const EMPTY_PROFILE_FORM: ProfileFormState = {
   state: '',
   profession: '',
   specialty: '',
+  crm: '',
+  crmUf: '',
   residencySpecialty: '',
   residencyHospital: '',
   residencyYear: '',
   afyaUnit: '',
   periodo: '',
+  cpf: '',
+  cpfVerified: false,
+  dateOfBirth: '',
 }
 
 interface UserSubmission {
@@ -180,11 +194,16 @@ export default function ProfilePage() {
           state: p.state || '',
           profession: p.profession || '',
           specialty: p.specialty || '',
+          crm: p.crm || '',
+          crmUf: p.crmUf || '',
           residencySpecialty: p.residencySpecialty || '',
           residencyHospital: p.residencyHospital || '',
           residencyYear: p.residencyYear || '',
           afyaUnit: p.afyaUnit || '',
           periodo: p.periodo || '',
+          cpf: p.cpf || '',
+          cpfVerified: !!p.cpfVerified,
+          dateOfBirth: p.dateOfBirth || '',
         })
         setProfileEmailVerified(!!p.emailVerified)
       }
@@ -217,6 +236,8 @@ export default function ProfilePage() {
           state: profileForm.state,
           profession: profileForm.profession,
           specialty: profileForm.specialty,
+          crm: profileForm.crm,
+          crmUf: profileForm.crmUf || profileForm.state,
           residencySpecialty: profileForm.residencySpecialty,
           residencyHospital: profileForm.residencyHospital,
           residencyYear: profileForm.residencyYear,
@@ -270,10 +291,15 @@ export default function ProfilePage() {
       state: profileForm.state || undefined,
       profession: (profileForm.profession || undefined) as 'medico' | 'academico' | 'residente' | undefined,
       specialty: profileForm.specialty || undefined,
+      crm: profileForm.crm || undefined,
       residencySpecialty: profileForm.residencySpecialty || undefined,
       residencyHospital: profileForm.residencyHospital || undefined,
       residencyYear: profileForm.residencyYear || undefined,
       afyaUnit: profileForm.afyaUnit || undefined,
+      periodoBase: profileForm.periodo ? Number(profileForm.periodo) : undefined,
+      // `cpf` aqui é a máscara vinda do servidor — só serve para saber se existe.
+      cpf: profileForm.cpf || undefined,
+      dateOfBirth: profileForm.dateOfBirth ? new Date(profileForm.dateOfBirth) : undefined,
     }),
     [profileForm]
   )
@@ -690,14 +716,39 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {profileForm.profession === 'medico' && (
-                  <div className="flex items-start gap-2.5 sm:col-span-2">
-                    <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <div className="min-w-0">
-                      <p className="text-xs text-muted-foreground">Especialidade</p>
-                      <p className="font-medium">{profileForm.specialty || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
-                    </div>
+                <div className="flex items-start gap-2.5">
+                  <ShieldCheck className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">CPF</p>
+                    <p className="font-medium flex items-center gap-1.5">
+                      {profileForm.cpf || <span className="text-muted-foreground italic font-normal">Não informado</span>}
+                      {profileForm.cpfVerified && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                          <ShieldCheck className="h-3 w-3" />
+                          Verificado
+                        </span>
+                      )}
+                    </p>
                   </div>
+                </div>
+
+                {profileForm.profession === 'medico' && (
+                  <>
+                    <div className="flex items-start gap-2.5">
+                      <GraduationCap className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">Especialidade</p>
+                        <p className="font-medium">{profileForm.specialty || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <Stethoscope className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">CRM</p>
+                        <p className="font-medium">{formatCrmLabel(profileForm.crm, profileForm.crmUf) || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                  </>
                 )}
 
                 {profileForm.profession === 'residente' && (
@@ -721,6 +772,13 @@ export default function ProfilePage() {
                       <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Hospital da residência</p>
                         <p className="font-medium">{profileForm.residencyHospital || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <Stethoscope className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">CRM</p>
+                        <p className="font-medium">{formatCrmLabel(profileForm.crm, profileForm.crmUf) || <span className="text-muted-foreground italic font-normal">Não informado</span>}</p>
                       </div>
                     </div>
                   </>
@@ -822,17 +880,20 @@ export default function ProfilePage() {
                 </div>
 
                 {profileForm.profession === 'medico' && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">Sua especialidade</Label>
-                    <SearchableSelect
-                      value={profileForm.specialty}
-                      onChange={(v) => setProfileForm({ ...profileForm, specialty: v })}
-                      options={MEDICAL_SPECIALTIES}
-                      placeholder="Selecione sua especialidade..."
-                      searchPlaceholder="Buscar especialidade..."
-                      className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
-                    />
-                  </div>
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">Sua especialidade</Label>
+                      <SearchableSelect
+                        value={profileForm.specialty}
+                        onChange={(v) => setProfileForm({ ...profileForm, specialty: v })}
+                        options={MEDICAL_SPECIALTIES}
+                        placeholder="Selecione sua especialidade..."
+                        searchPlaceholder="Buscar especialidade..."
+                        className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <CrmInputs profileForm={profileForm} setProfileForm={setProfileForm} />
+                  </>
                 )}
 
                 {profileForm.profession === 'residente' && (
@@ -842,7 +903,7 @@ export default function ProfilePage() {
                       <SearchableSelect
                         value={profileForm.residencySpecialty}
                         onChange={(v) => setProfileForm({ ...profileForm, residencySpecialty: v })}
-                        options={MEDICAL_SPECIALTIES}
+                        options={RESIDENCY_AREAS}
                         placeholder="Selecione a área..."
                         searchPlaceholder="Buscar área da residência..."
                         className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
@@ -858,6 +919,8 @@ export default function ProfilePage() {
                         options={getResidencyHospitalsByState(profileForm.state)}
                         placeholder="Selecione o hospital..."
                         searchPlaceholder="Buscar hospital..."
+                        customOption={OTHER_HOSPITAL_OPTION}
+                        customPlaceholder="Digite o nome do hospital"
                         className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
                         disabled={!profileForm.state}
                       />
@@ -875,6 +938,7 @@ export default function ProfilePage() {
                         ))}
                       </select>
                     </div>
+                    <CrmInputs profileForm={profileForm} setProfileForm={setProfileForm} />
                   </>
                 )}
 
@@ -890,6 +954,8 @@ export default function ProfilePage() {
                         options={getMedicalSchoolsByState(profileForm.state)}
                         placeholder="Selecione sua instituição..."
                         searchPlaceholder="Buscar sua instituição..."
+                        customOption={OTHER_SCHOOL_OPTION}
+                        customPlaceholder="Digite o nome da sua instituição"
                         className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm"
                         disabled={!profileForm.state}
                       />
@@ -1583,6 +1649,50 @@ function PreferenceToggle({
           )}
         />
       </button>
+    </div>
+  )
+}
+
+/**
+ * CRM + UF. O mesmo par serve para médico e residente, e a UF cai no estado do
+ * usuário por padrão — só quem migrou de estado precisa trocar.
+ */
+function CrmInputs({
+  profileForm,
+  setProfileForm,
+}: {
+  profileForm: ProfileFormState
+  setProfileForm: (form: ProfileFormState) => void
+}) {
+  const controlClass =
+    'flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:[color-scheme:dark]'
+
+  return (
+    <div className="grid grid-cols-[1fr_6rem] gap-3">
+      <div className="space-y-1.5">
+        <Label htmlFor="profileCrm" className="text-xs font-medium text-muted-foreground">CRM</Label>
+        <Input
+          id="profileCrm"
+          inputMode="numeric"
+          placeholder="123456"
+          value={profileForm.crm}
+          onChange={(e) => setProfileForm({ ...profileForm, crm: onlyCrmDigits(e.target.value) })}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="profileCrmUf" className="text-xs font-medium text-muted-foreground">UF</Label>
+        <select
+          id="profileCrmUf"
+          className={controlClass}
+          value={profileForm.crmUf || profileForm.state}
+          onChange={(e) => setProfileForm({ ...profileForm, crmUf: e.target.value })}
+        >
+          <option value="">--</option>
+          {BRAZIL_STATES.map((s) => (
+            <option key={s.uf} value={s.uf}>{s.uf}</option>
+          ))}
+        </select>
+      </div>
     </div>
   )
 }
