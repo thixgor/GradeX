@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
+import { ProfileCompletionGate } from '@/components/profile-completion-gate'
 import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
@@ -342,6 +343,8 @@ export function AppShell({
       <FocusSessionProvider>
       <div className="min-h-screen surface-page">
         <BanChecker />
+        {/* Pede os dados que faltam no perfil (progressive profiling) */}
+        <ProfileCompletionGate />
 
         {/* Sidebar */}
         <Sidebar

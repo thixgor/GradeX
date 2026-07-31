@@ -68,6 +68,9 @@ export async function GET(request: NextRequest) {
         ],
       },
       {
+        // Precisa trazer TODO campo que getMissingProfileFields lê: um campo
+        // fora da projeção chega como ausente e o usuário é cobrado por um
+        // dado que já preencheu.
         projection: {
           email: 1,
           name: 1,
@@ -75,10 +78,14 @@ export async function GET(request: NextRequest) {
           state: 1,
           profession: 1,
           specialty: 1,
+          crm: 1,
           residencySpecialty: 1,
           residencyHospital: 1,
           residencyYear: 1,
           afyaUnit: 1,
+          periodoBase: 1,
+          cpf: 1,
+          dateOfBirth: 1,
           emailVerified: 1,
         },
       }

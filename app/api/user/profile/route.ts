@@ -7,6 +7,8 @@ import { sendVerificationEmail } from '@/lib/mail'
 import { isValidStateUf } from '@/lib/brazil-states'
 import { isValidBrazilPhone } from '@/lib/phone'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
+import { maskCpf } from '@/lib/cpf'
+import { isValidCrmNumber, onlyCrmDigits } from '@/lib/crm'
 import { User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -18,6 +20,8 @@ const PROFILE_PROJECTION = {
   state: 1,
   profession: 1,
   specialty: 1,
+  crm: 1,
+  crmUf: 1,
   residencySpecialty: 1,
   residencyHospital: 1,
   residencyYear: 1,
@@ -25,6 +29,10 @@ const PROFILE_PROJECTION = {
   periodoBase: 1,
   periodoBaseRef: 1,
   emailVerified: 1,
+  cpf: 1,
+  cpfVerified: 1,
+  fullName: 1,
+  dateOfBirth: 1,
 } as const
 
 // Dados de perfil que o próprio usuário pode ver/editar em /profile.
@@ -53,11 +61,22 @@ export async function GET() {
       state: user.state || '',
       profession: user.profession || '',
       specialty: user.specialty || '',
+      crm: user.crm || '',
+      crmUf: user.crmUf || '',
       residencySpecialty: user.residencySpecialty || '',
       residencyHospital: user.residencyHospital || '',
       residencyYear: user.residencyYear || '',
       afyaUnit: user.afyaUnit || '',
       periodo: user.periodoBase ? String(user.periodoBase) : '',
+      fullName: user.fullName || '',
+      dateOfBirth: user.dateOfBirth
+        ? new Date(user.dateOfBirth).toISOString().slice(0, 10)
+        : '',
+      // O CPF em si não volta para o cliente — só o que a tela precisa mostrar:
+      // que existe e se a Receita confirmou.
+      cpf: maskCpf(user.cpf),
+      hasCpf: !!user.cpf,
+      cpfVerified: !!user.cpfVerified,
     },
   })
 }
@@ -80,7 +99,7 @@ export async function PUT(request: NextRequest) {
 
   const {
     name, phone, state, profession,
-    specialty, residencySpecialty, residencyHospital, residencyYear,
+    specialty, crm, crmUf, residencySpecialty, residencyHospital, residencyYear,
     afyaUnit, periodo,
     email, currentPassword,
   } = body
@@ -127,9 +146,19 @@ export async function PUT(request: NextRequest) {
   // completo de campos "específicos da profissão" a partir da profissão
   // final, descartando o que sobrou de uma profissão anterior (ex.: trocar
   // de médico pra acadêmico não deve deixar `specialty` órfão no banco).
+  if (crm !== undefined && crm !== '' && !isValidCrmNumber(crm)) {
+    return NextResponse.json({ error: 'O CRM deve ter entre 4 e 7 dígitos' }, { status: 400 })
+  }
+
+  if (crmUf !== undefined && crmUf !== '' && !isValidStateUf(crmUf)) {
+    return NextResponse.json({ error: 'Selecione uma UF válida para o CRM' }, { status: 400 })
+  }
+
   const touchesProfessionFields =
     profession !== undefined ||
     specialty !== undefined ||
+    crm !== undefined ||
+    crmUf !== undefined ||
     residencySpecialty !== undefined ||
     residencyHospital !== undefined ||
     residencyYear !== undefined ||
@@ -138,6 +167,13 @@ export async function PUT(request: NextRequest) {
   if (touchesProfessionFields) {
     const resolvedProfession = profession !== undefined ? (profession || undefined) : currentUser.profession
     assign('profession', resolvedProfession)
+
+    // CRM só faz sentido para quem já tem registro: médico e residente.
+    const holdsCrm = resolvedProfession === 'medico' || resolvedProfession === 'residente'
+    const finalCrm = crm !== undefined ? onlyCrmDigits(crm) : currentUser.crm
+    const finalCrmUf = crmUf !== undefined ? crmUf : currentUser.crmUf
+    assign('crm', holdsCrm ? (finalCrm || undefined) : undefined)
+    assign('crmUf', holdsCrm && finalCrm ? (finalCrmUf || undefined) : undefined)
 
     const finalSpecialty = specialty !== undefined ? specialty : currentUser.specialty
     const finalResidencySpecialty = residencySpecialty !== undefined ? residencySpecialty : currentUser.residencySpecialty

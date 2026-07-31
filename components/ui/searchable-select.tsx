@@ -13,6 +13,15 @@ interface SearchableSelectProps {
   searchPlaceholder?: string
   disabled?: boolean
   className?: string
+  /**
+   * Opção de escape ("Não encontro minha instituição na lista"). Ao escolhê-la,
+   * o select vira um campo de texto livre e `onChange` passa a receber o que o
+   * usuário digitar — assim nenhum dado se perde quando a lista não cobre o
+   * caso dele. A própria opção de escape nunca é gravada como valor.
+   */
+  customOption?: string
+  /** Placeholder do campo de texto livre. */
+  customPlaceholder?: string
 }
 
 interface Position {
@@ -36,9 +45,12 @@ export function SearchableSelect({
   searchPlaceholder = 'Buscar...',
   disabled,
   className = '',
+  customOption,
+  customPlaceholder = 'Digite aqui',
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [custom, setCustom] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [position, setPosition] = useState<Position | null>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -122,6 +134,21 @@ export function SearchableSelect({
     return options.filter((opt) => opt.toLowerCase().includes(q))
   }, [options, query])
 
+  if (customOption && custom) {
+    return (
+      <input
+        id={id}
+        type="text"
+        autoFocus
+        disabled={disabled}
+        value={value}
+        placeholder={customPlaceholder}
+        onChange={(e) => onChange(e.target.value)}
+        className={className}
+      />
+    )
+  }
+
   return (
     <>
       <button
@@ -161,7 +188,12 @@ export function SearchableSelect({
                 key={opt}
                 type="button"
                 onClick={() => {
-                  onChange(opt)
+                  if (customOption && opt === customOption) {
+                    setCustom(true)
+                    onChange('')
+                  } else {
+                    onChange(opt)
+                  }
                   setOpen(false)
                   setQuery('')
                 }}
