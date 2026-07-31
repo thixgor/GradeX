@@ -1,11 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Share, Plus, X } from 'lucide-react'
 
 const DISMISS_KEY = 'ios-install-dismissed-at'
 // Não reaparecer por 14 dias depois que o usuário fecha.
 const DISMISS_DAYS = 14
+
+// Publica a própria altura como variável CSS global, para que outros
+// elementos flutuantes (ex.: o botão "Voltar") possam subir e não ficar
+// tampados por este banner enquanto ele estiver na tela.
+const HEIGHT_VAR = '--gx-install-prompt-h'
 
 function isIosSafariBrowser(): boolean {
   if (typeof navigator === 'undefined') return false
@@ -56,6 +61,7 @@ function wasRecentlyDismissed(): boolean {
 export function IosInstallPrompt() {
   const [show, setShow] = useState(false)
   const [entered, setEntered] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!isIosSafariBrowser()) return
@@ -69,6 +75,21 @@ export function IosInstallPrompt() {
     }, 1200)
     return () => clearTimeout(t)
   }, [])
+
+  useEffect(() => {
+    if (!show || !rootRef.current) return
+    const el = rootRef.current
+    const publish = () => {
+      document.documentElement.style.setProperty(HEIGHT_VAR, `${el.offsetHeight}px`)
+    }
+    publish()
+    const observer = new ResizeObserver(publish)
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      document.documentElement.style.setProperty(HEIGHT_VAR, '0px')
+    }
+  }, [show])
 
   if (!show) return null
 
@@ -84,6 +105,7 @@ export function IosInstallPrompt() {
 
   return (
     <div
+      ref={rootRef}
       role="dialog"
       aria-label="Instalar o app na tela de início"
       className="fixed inset-x-0 bottom-0 z-[100] px-3 pointer-events-none"

@@ -147,17 +147,23 @@ function isIosDevice(): boolean {
 }
 
 /**
- * Páginas onde o botão não deve aparecer:
+ * Páginas onde o botão não deve aparecer — todas já têm uma saída própria (ou
+ * não deveriam ter uma saída acidental) bem no canto onde o nosso ficaria:
  *  - landing e dashboard: são o destino do "voltar", não a origem;
  *  - prova em andamento: sair sem querer no meio de uma prova (com proctoring)
  *    é pior do que o problema que estamos resolvendo — a tela já tem sua
  *    própria saída controlada;
- *  - leitor de PDF: já tem um "Voltar" dedicado na barra fixa do rodapé.
+ *  - leitor de PDF: já tem um "Voltar" dedicado na barra fixa do rodapé;
+ *  - deck de flashcards em estudo: barra inferior própria ocupa a tela toda;
+ *  - editor de mapa mental: tela cheia com gestos de toque (pan/zoom) e um
+ *    "Voltar" próprio no canto — nosso botão só atrapalharia o gesto.
  */
 function isHiddenRoute(pathname: string): boolean {
   if (pathname === '/' || pathname === '/dashboard') return true
   if (/^\/exam\/[^/]+$/.test(pathname)) return true
   if (pathname.includes('/viewer')) return true
+  if (/^\/flashcards\/d\/[^/]+$/.test(pathname)) return true
+  if (/^\/mapa-mental\/[^/]+$/.test(pathname)) return true
   return false
 }
 
@@ -240,21 +246,27 @@ export function MobileBackButton() {
       type="button"
       onClick={goBack}
       aria-label="Voltar"
-      // Grudado na borda esquerda, um pouco abaixo do meio: é a borda do gesto
-      // de voltar do iOS e é o único ponto livre da tela — os quatro cantos já
-      // são ocupados por menu, tema, FAB de ações, barra do leitor de PDF e o
-      // aviso de instalação do PWA.
+      // Círculo discreto no canto inferior esquerdo — mesma linguagem visual
+      // do FAB de ações (canto inferior direito), então os dois convivem sem
+      // se atropelar. Nunca fica "pendurado" no meio do conteúdo: um ícone
+      // pequeno inteiramente dentro da tela, sem texto, sem cortar borda.
+      // O deslocamento soma a safe-area (indicador de home) e, quando
+      // presente, a altura do banner de instalação do PWA — para nunca ficar
+      // tampado por ele. `bottom` (não padding) para não espremer o ícone
+      // dentro da altura fixa do círculo.
+      style={{
+        bottom:
+          'calc(1.25rem + env(safe-area-inset-bottom) + var(--gx-install-prompt-h, 0px))',
+      }}
       className={cn(
-        'fixed left-0 top-[56%] -translate-y-1/2 z-30 lg:hidden',
-        'flex items-center gap-1 rounded-r-full py-2.5 pl-2 pr-3.5',
-        'border border-l-0 border-border/70 bg-card/90 backdrop-blur-xl',
-        'text-xs font-medium text-foreground/85',
-        'shadow-lg shadow-black/10 dark:shadow-black/40',
-        'transition-transform duration-100 ease-out active:scale-95',
+        'fixed left-4 z-30 lg:hidden',
+        'flex h-11 w-11 items-center justify-center rounded-full',
+        'border border-border/70 bg-card/90 backdrop-blur-xl',
+        'text-foreground/80 shadow-lg shadow-black/10 dark:shadow-black/40',
+        'transition-[bottom,transform] duration-200 ease-out active:scale-90',
       )}
     >
-      <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
-      Voltar
+      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
     </button>
   )
 }
