@@ -16,8 +16,8 @@ export const dynamic = 'force-dynamic'
 const SNOOZE_DAYS = 3
 
 /** Erro de campo: a UI destaca o input em vez de mostrar um alerta genérico. */
-function fieldError(field: string, error: string) {
-  return NextResponse.json({ field, error }, { status: 400 })
+function fieldError(field: string, error: string, extra: Record<string, unknown> = {}) {
+  return NextResponse.json({ field, error, ...extra }, { status: 400 })
 }
 
 /**
@@ -151,31 +151,37 @@ export async function POST(request: NextRequest) {
       return fieldError('cpf', 'Este CPF já está cadastrado em outra conta.')
     }
 
+    // O nome de conferência sai do que o usuário já deu: o nome civil, se ele
+    // tiver preenchido, senão o nome da conta. Só pedimos o nome completo de
+    // novo quando esse não bate com o titular do CPF.
     const nameForCheck = set.fullName || currentUser.fullName || currentUser.name
     const birthForCheck = birthDateIso
       || (currentUser.dateOfBirth ? new Date(currentUser.dateOfBirth).toISOString().slice(0, 10) : '')
 
-    if (!birthForCheck) {
-      return fieldError('dateOfBirth', 'Informe a data de nascimento para conferirmos o CPF.')
-    }
-
     cpfVerification = await verifyCpfWithReceita({
       cpf: digits,
-      birthDate: birthForCheck,
+      birthDate: birthForCheck || undefined,
       name: nameForCheck,
     })
 
+    if (cpfVerification.status === 'name_mismatch') {
+      // `needsFullName` faz a UI revelar o campo de nome completo em vez de só
+      // mostrar um erro sem saída.
+      return fieldError(
+        'fullName',
+        set.fullName
+          ? 'Esse nome não corresponde ao titular do CPF.'
+          : 'O nome da sua conta não bate com esse CPF. Digite seu nome completo, como está no CPF.',
+        { needsFullName: true }
+      )
+    }
+
     if (
       cpfVerification.status === 'not_found' ||
-      cpfVerification.status === 'name_mismatch' ||
       cpfVerification.status === 'birthdate_mismatch' ||
       cpfVerification.status === 'irregular'
     ) {
-      const field =
-        cpfVerification.status === 'name_mismatch' ? 'fullName' :
-        cpfVerification.status === 'birthdate_mismatch' ? 'dateOfBirth' :
-        'cpf'
-      return fieldError(field, cpfVerification.message || 'Não foi possível confirmar seu CPF.')
+      return fieldError('cpf', cpfVerification.message || 'Não foi possível confirmar seu CPF.')
     }
 
     if (cpfVerification.status === 'unavailable' && isCpfVerificationRequired()) {

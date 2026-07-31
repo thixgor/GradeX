@@ -34,7 +34,6 @@ export interface CompleteProfileValues {
   residencyYear?: string
   fullName?: string
   cpf?: string
-  dateOfBirth?: string
 }
 
 interface SaveResult {
@@ -43,6 +42,8 @@ interface SaveResult {
   field?: string
   error?: string
   officialName?: string
+  /** O nome da conta não bate com o CPF: pedir o nome completo. */
+  needsFullName?: boolean
 }
 
 interface CompleteProfileModalProps {
@@ -93,7 +94,7 @@ function buildSteps(missingFields: string[]): StepId[] {
   if (missing.has('profession') || CONTEXT_FIELDS.some((field) => missing.has(field))) {
     steps.push('context')
   }
-  if (missing.has('cpf') || missing.has('dateOfBirth')) steps.push('identity')
+  if (missing.has('cpf')) steps.push('identity')
 
   return steps.length > 0 ? steps : ['identity']
 }
@@ -112,6 +113,9 @@ export function CompleteProfileModal({
   const [error, setError] = useState('')
   const [errorField, setErrorField] = useState('')
   const [officialName, setOfficialName] = useState('')
+  // Só entra em cena quando a Receita diz que o nome da conta não é o do
+  // titular do CPF — aí o campo de nome completo aparece.
+  const [needsFullName, setNeedsFullName] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -200,15 +204,16 @@ export function CompleteProfileModal({
     }
 
     if (currentStep === 'identity') {
-      const nameWords = (values.fullName || '').trim().split(/\s+/).filter(Boolean)
-      if (nameWords.length < 2) {
-        return { message: 'Digite seu nome completo, como está no CPF.', field: 'fullName' }
-      }
       if (!isValidCpf(values.cpf || '')) {
         return { message: 'CPF inválido. Confira os números.', field: 'cpf' }
       }
-      if (!values.dateOfBirth) {
-        return { message: 'Informe sua data de nascimento.', field: 'dateOfBirth' }
+      // O nome completo só é exigido depois que o servidor avisa que o nome da
+      // conta não bate com o titular do CPF (ver `needsFullName`).
+      if (needsFullName) {
+        const nameWords = (values.fullName || '').trim().split(/\s+/).filter(Boolean)
+        if (nameWords.length < 2) {
+          return { message: 'Digite seu nome completo, como está no CPF.', field: 'fullName' }
+        }
       }
     }
 
@@ -233,9 +238,8 @@ export function CompleteProfileModal({
       }
     }
     return {
-      fullName: values.fullName,
       cpf: onlyCpfDigits(values.cpf || ''),
-      dateOfBirth: values.dateOfBirth,
+      ...(needsFullName ? { fullName: values.fullName } : {}),
     }
   }
 
@@ -257,6 +261,7 @@ export function CompleteProfileModal({
     if (!result.ok) {
       setError(result.error || 'Não conseguimos salvar. Tente de novo.')
       setErrorField(result.field || '')
+      if (result.needsFullName) setNeedsFullName(true)
       return
     }
 
@@ -516,29 +521,12 @@ export function CompleteProfileModal({
 
               {currentStep === 'identity' && (
                 <div className="space-y-4">
-                  <Field
-                    label="Nome completo"
-                    icon={<UserRound className="h-4 w-4" />}
-                    htmlFor="fullName"
-                    hint="Igual ao que está no seu CPF."
-                  >
-                    <input
-                      id="fullName"
-                      type="text"
-                      autoComplete="name"
-                      placeholder="Maria Aparecida de Souza"
-                      className={fieldClass('fullName')}
-                      value={values.fullName || ''}
-                      onChange={(event) => update({ fullName: event.target.value })}
-                      disabled={saving}
-                    />
-                  </Field>
-
-                  <Field label="CPF" htmlFor="cpf">
+                  <Field label="Seu CPF" icon={<UserRound className="h-4 w-4" />} htmlFor="cpf">
                     <input
                       id="cpf"
                       type="text"
                       inputMode="numeric"
+                      autoFocus
                       placeholder="000.000.000-00"
                       className={fieldClass('cpf')}
                       value={values.cpf || ''}
@@ -547,22 +535,35 @@ export function CompleteProfileModal({
                     />
                   </Field>
 
-                  <Field label="Data de nascimento" htmlFor="dateOfBirth">
-                    <input
-                      id="dateOfBirth"
-                      type="date"
-                      className={fieldClass('dateOfBirth')}
-                      value={values.dateOfBirth || ''}
-                      onChange={(event) => update({ dateOfBirth: event.target.value })}
-                      disabled={saving}
-                    />
-                  </Field>
+                  {needsFullName && (
+                    <Field
+                      label="Nome completo"
+                      htmlFor="fullName"
+                      hint="Escreva igual ao que está no seu CPF."
+                    >
+                      <input
+                        id="fullName"
+                        type="text"
+                        autoComplete="name"
+                        autoFocus
+                        placeholder="Maria Aparecida de Souza"
+                        className={fieldClass('fullName')}
+                        value={values.fullName || ''}
+                        onChange={(event) => update({ fullName: event.target.value })}
+                        disabled={saving}
+                      />
+                    </Field>
+                  )}
 
-                  <p className="flex items-start gap-2 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                    Conferimos esses dados direto na Receita Federal. Servem para emitir
-                    seus certificados e notas — não aparecem para outros usuários.
-                  </p>
+                  {/* Escondido quando o nome é pedido: aí o espaço é do erro,
+                      que precisa ficar colado no campo que falhou. */}
+                  {!needsFullName && (
+                    <p className="flex items-start gap-2 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
+                      <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                      Conferimos na Receita Federal só para confirmar que é você. Seu CPF
+                      fica com a gente e não aparece para outros usuários.
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -643,8 +644,8 @@ const STEP_TITLES: Record<StepId, { title: string; subtitle: string }> = {
     subtitle: 'Últimos detalhes do seu perfil acadêmico.',
   },
   identity: {
-    title: 'Confirme quem é você',
-    subtitle: 'Precisamos disso para emitir certificados no seu nome.',
+    title: 'Falta só o seu CPF',
+    subtitle: 'É exigência do cadastro da plataforma. Um campo e acabou.',
   },
   done: { title: 'Pronto!', subtitle: '' },
 }

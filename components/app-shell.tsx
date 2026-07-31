@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
-import { ProfileCompletionGate } from '@/components/profile-completion-gate'
+import { ProfileCompletionGate, resetProfilePromptDismissal } from '@/components/profile-completion-gate'
 import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
@@ -177,6 +177,7 @@ export function AppShell({
     // há motivo para bloquear o redirect por isso (especialmente em mobile com
     // rede lenta). A página de login rejeitaria uma sessão válida de qualquer forma.
     clearBootstrapCache()
+    resetProfilePromptDismissal()
     fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' }).catch(() => {})
     router.replace('/auth/login')
   }
