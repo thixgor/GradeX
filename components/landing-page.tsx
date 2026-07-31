@@ -481,6 +481,8 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
     >
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} />
+      <Testimonials />
+      <Plans />
       <Marquee />
       <SampleBand />
       <PlatformOverview />
@@ -489,7 +491,6 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
       <ManualEletro />
       <ToolsConsole />
       <Differentiators />
-      <Plans />
       <Prescricao />
       <InstallApp />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
@@ -1469,6 +1470,129 @@ function Differentiators() {
   )
 }
 
+/* ---------- DEPOIMENTOS EM VÍDEO ---------- */
+
+interface Testimonial {
+  _id: string
+  embedUrl: string
+  videoId: string
+  vertical: boolean
+  name: string
+  description: string
+}
+
+function TestimonialCard({ t }: { t: Testimonial }) {
+  const [play, setPlay] = useState(false)
+  // Autoplay só depois do clique — o iframe do YouTube (~1MB) nunca entra no DOM
+  // de quem não aperta o play, seguindo o mesmo cuidado do Manual do Eletro.
+  const src = `${t.embedUrl}${t.embedUrl.includes('?') ? '&' : '?'}autoplay=1`
+  const aspect = t.vertical ? '9 / 16' : '16 / 9'
+
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground">
+      <div
+        className="relative w-full overflow-hidden bg-black"
+        style={{ aspectRatio: aspect }}
+      >
+        {play ? (
+          <iframe
+            src={src}
+            title={t.name ? `Depoimento de ${t.name}` : 'Depoimento de aluno'}
+            className="absolute inset-0 h-full w-full"
+            style={{ border: 0 }}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setPlay(true)}
+            className="group absolute inset-0 flex items-center justify-center"
+            aria-label={t.name ? `Reproduzir depoimento de ${t.name}` : 'Reproduzir depoimento'}
+          >
+            <img
+              src={`https://i.ytimg.com/vi/${t.videoId}/hqdefault.jpg`}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+            />
+            <span
+              aria-hidden
+              className="absolute inset-0"
+              style={{ background: 'radial-gradient(120% 90% at 50% 30%, transparent, rgba(5,16,13,.55))' }}
+            />
+            <span className="relative z-10 grid h-16 w-16 place-items-center rounded-full bg-da-amber text-[#0B1F1A] shadow-lg transition-transform duration-300 group-hover:scale-110">
+              <svg viewBox="0 0 24 24" className="h-7 w-7 translate-x-0.5" fill="currentColor" aria-hidden>
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </button>
+        )}
+      </div>
+      {(t.name || t.description) && (
+        <div className="flex flex-col gap-1 p-5">
+          {t.name && (
+            <span className="font-da-display text-lg font-semibold tracking-tight">{t.name}</span>
+          )}
+          {t.description && (
+            <p className="whitespace-pre-line text-sm leading-relaxed text-da-muted">
+              {t.description}
+            </p>
+          )}
+        </div>
+      )}
+    </article>
+  )
+}
+
+function Testimonials() {
+  const [items, setItems] = useState<Testimonial[] | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/testimonials', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : { testimonials: [] }))
+      .then((json) => {
+        if (!cancelled) setItems(Array.isArray(json?.testimonials) ? json.testimonials : [])
+      })
+      .catch(() => {
+        if (!cancelled) setItems([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Sem depoimentos cadastrados (ou ainda carregando) a seção nem aparece —
+  // nada de buraco vazio na landing enquanto o admin não sobe os vídeos.
+  if (!items || items.length === 0) return null
+
+  return (
+    <section
+      id="depoimentos"
+      className="relative border-t border-[color:var(--da-neutral-line)]"
+    >
+      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="Alunos" label="Depoimentos" />
+          <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+            Quem já estuda com a plataforma conta como foi
+          </h2>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((t, i) => (
+            <Reveal key={t._id} delay={(i % 3) * 90}>
+              <TestimonialCard t={t} />
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ---------- PLANOS ---------- */
 
 function Plans() {
@@ -1496,7 +1620,7 @@ function Plans() {
     >
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="05 / 06" label="Planos" />
+          <SectionMark n="Oferta" label="Planos" />
           <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
             Comece de graça. Suba de nível quando a prova apertar.
           </h2>

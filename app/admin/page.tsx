@@ -34,6 +34,7 @@ import {
   Network,
   Ticket,
   MessagesSquare,
+  MessageSquareQuote,
 } from 'lucide-react'
 
 interface User {
@@ -251,6 +252,13 @@ export default function AdminDashboard() {
       icon: Network,
       href: '/mapa-mental?scope=all-admin',
       color: 'from-emerald-500 to-green-600'
+    },
+    {
+      title: 'Depoimentos',
+      description: 'Cadastrar vídeos de depoimentos de alunos (YouTube não listado) que aparecem na landing page. Nome e descrição opcionais, com ordenação.',
+      icon: MessageSquareQuote,
+      href: '/admin/depoimentos',
+      color: 'from-amber-500 to-orange-600'
     }
   ]
 
