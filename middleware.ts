@@ -56,6 +56,10 @@ const publicRoutes = [
   // GET não exige login; POST/PATCH/DELETE continuam validando a sessão
   // internamente no handler (retornam 401 para quem não está logado).
   '/api/reviews',
+  // Depoimentos em vídeo da landing (prova social) — precisam aparecer para
+  // visitante deslogado. Só GET é exposto por essa rota; o CRUD de admin vive
+  // em /api/admin/testimonials, que já exige sessão de admin internamente.
+  '/api/testimonials',
 ]
 
 // Prefixos públicos
