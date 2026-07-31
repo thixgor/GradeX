@@ -106,6 +106,13 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/access$/.test(pathname)) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/page$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  // Formulários públicos: a página e o GET/submit são acessíveis sem login por
+  // padrão. Formulários com "Exigir Login" ou "Entregar Material" validam a
+  // sessão internamente (page + /api/forms/[id]/submit) e retornam o portão de
+  // login ou 401 LOGIN_REQUIRED quando necessário.
+  if (/^\/forms\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/api\/forms\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  if (/^\/api\/forms\/[a-fA-F0-9]{24}\/submit$/.test(pathname)) return true
   // Loja física: página do produto e leitura de um produto (público).
   if (/^\/loja\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/loja\/produtos\/[a-fA-F0-9]{24}$/.test(pathname)) return true
