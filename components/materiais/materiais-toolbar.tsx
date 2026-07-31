@@ -134,7 +134,7 @@ export function MateriaisToolbar({
           type="button"
           onClick={() => onSearchChange('')}
           aria-label="Limpar busca"
-          className="absolute right-1 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground active:scale-95"
+          className="absolute right-1 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
         >
           <X className="h-4 w-4" />
         </button>
@@ -143,7 +143,11 @@ export function MateriaisToolbar({
   )
 
   return (
-    <div className="sticky top-14 z-20 mb-4 rounded-lg border border-border bg-card/95 p-2.5 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-card/85 sm:top-16 sm:p-3">
+    // Camada de material flutuante: o conteúdo rola POR BAIXO dela em vez de
+    // ser cortado por uma faixa opaca. O desfoque e a sombra são mais fortes
+    // que os dos chips porque a superfície é maior — material maior lê como
+    // material mais grosso.
+    <div className="material-chrome sticky top-14 z-20 mb-4 rounded-xl p-2.5 sm:top-16 sm:p-3">
       {/* Uma linha só, que reflui. No mobile a busca é um botão que expande no
           lugar dos chips — a barra fica grudada no topo o tempo todo, e uma
           segunda linha permanente comeria uma faixa preciosa de tela pequena.
@@ -158,7 +162,7 @@ export function MateriaisToolbar({
             type="button"
             onClick={() => { onSearchChange(''); setSearchOpen(false) }}
             aria-label="Limpar e fechar busca"
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition active:scale-95"
+            className="press-scale inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -170,7 +174,7 @@ export function MateriaisToolbar({
             onClick={() => setSearchOpen(true)}
             aria-label="Buscar materiais"
             className={cn(
-              'relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border transition active:scale-95 lg:hidden',
+              'press-scale relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border transition-colors lg:hidden',
               search ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground'
             )}
             style={{ touchAction: 'manipulation' }}
@@ -202,7 +206,7 @@ export function MateriaisToolbar({
                   aria-pressed={priceFilter === f.id}
                   onClick={() => onPriceFilterChange(f.id)}
                   className={cn(
-                    'inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors active:scale-[0.97]',
+                    'press-scale inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors',
                     priceFilter === f.id
                       ? 'border-primary/40 bg-primary/10 text-primary'
                       : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
@@ -275,9 +279,9 @@ function SectionChip({
       onClick={onClick}
       className={cn(
         // h-10 no toque (alvo confortável), h-9 no ponteiro.
-        'inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors active:scale-[0.97] sm:h-9',
+        'press-scale inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors sm:h-9',
         active
-          ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+          ? 'cta-raised border-primary bg-primary text-primary-foreground'
           : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
       )}
       style={{ touchAction: 'manipulation' }}

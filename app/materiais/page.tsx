@@ -876,12 +876,12 @@ function MateriaisContent() {
   ), [checkoutLoading, copiedId, copyPackageLink, handleAcquire, hasGroupAccess, highlightedPackageId, isPurchased])
 
   const browseErrorState = (
-    <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-10 text-center sm:p-12">
+    <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-10 text-center sm:p-12">
       <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-destructive/25 bg-destructive/10 text-destructive">
         <WifiOff className="h-6 w-6" />
       </div>
-      <h3 className="font-heading text-base font-semibold text-foreground">Não foi possível carregar os materiais</h3>
-      <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+      <h3 className="font-heading text-base font-semibold tracking-[-0.01em] text-foreground">Não foi possível carregar os materiais</h3>
+      <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">
         Verifique sua conexão e tente novamente. Seus materiais adquiridos continuam disponíveis.
       </p>
       <Button
@@ -994,7 +994,7 @@ function MateriaisContent() {
 
             {!loading && !browseError && featuredMaterials.length > 0 && !currentFolderId && (
               <section className="mb-8" style={{ contentVisibility: 'auto', containIntrinsicSize: '600px' }}>
-                <h2 className="mb-3 font-heading text-lg font-bold">Destaques</h2>
+                <h2 className="mb-3 font-heading text-lg font-bold tracking-[-0.02em]">Destaques</h2>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                   {featuredMaterials.map((material, idx) => renderMaterial(material, idx, 'featured'))}
                 </div>
@@ -1075,7 +1075,7 @@ function MateriaisContent() {
               <>
                 {featuredPackages.length > 0 && (
                   <section className="mb-8">
-                    <h2 className="mb-3 font-heading text-lg font-bold">Pacotes em destaque</h2>
+                    <h2 className="mb-3 font-heading text-lg font-bold tracking-[-0.02em]">Pacotes em destaque</h2>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {featuredPackages.map((pkg, idx) => renderPackage(pkg, idx))}
                     </div>
@@ -1136,12 +1136,12 @@ function MateriaisContent() {
         {/* ─── Aba Loja (produtos físicos) ─── */}
         {activeTab === 'loja' && (
           <>
-            <div className="mb-5 flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+            <div className="mb-5 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
                 <ShoppingBag className="h-5 w-5 text-primary" />
               </span>
               <div>
-                <h2 className="text-sm font-bold">Materiais impressos & produtos físicos</h2>
+                <h2 className="font-heading text-sm font-bold tracking-[-0.01em]">Materiais impressos &amp; produtos físicos</h2>
                 <p className="text-xs text-muted-foreground">
                   Receba em casa ou retire na Afya Unigranrio Barra. Entregue por DomineAqui LTDA.
                 </p>

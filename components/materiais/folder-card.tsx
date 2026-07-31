@@ -43,7 +43,7 @@ export const FolderCard = memo(function FolderCard({
         onMouseEnter={onPrefetch}
         onPointerEnter={onPrefetch}
         onFocus={onPrefetch}
-        className="block h-full overflow-hidden rounded-lg border border-border bg-card p-3 shadow-sm transition-colors hover:border-primary/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:p-4"
+        className="surface-lift block h-full overflow-hidden rounded-xl border border-border bg-card p-3 hover:border-primary/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:p-4"
         style={{ touchAction: 'manipulation' }}
       >
         {folder.coverImage ? (
@@ -64,9 +64,9 @@ export const FolderCard = memo(function FolderCard({
             {folder.icon || '📁'}
           </div>
         )}
-        <h4 className="truncate text-sm font-semibold text-foreground">{folder.name}</h4>
+        <h4 className="truncate font-heading text-sm font-semibold tracking-[-0.01em] text-foreground">{folder.name}</h4>
         {folder.description && (
-          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{folder.description}</p>
+          <p className="mt-1 line-clamp-2 text-xs leading-relaxed tracking-[0.005em] text-muted-foreground">{folder.description}</p>
         )}
         {/* Espaço reservado para o botão de compartilhar, que fica fora da
             âncora (botão dentro de link é HTML inválido). */}

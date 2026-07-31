@@ -197,7 +197,7 @@ export function CopyLinkBtn({
       title={copied ? 'Link copiado!' : 'Copiar link'}
       aria-label={copied ? 'Link copiado' : 'Copiar link para compartilhar'}
       className={cn(
-        'inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold transition-colors',
+        'press-scale inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold transition-colors',
         copied
           ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
           : 'border-border bg-card/95 text-muted-foreground hover:border-primary/40 hover:text-primary',
@@ -231,12 +231,12 @@ export function LockedGroupOverlay({
       type="button"
       onClick={onPreview}
       aria-label={`Conteúdo restrito${labels ? ` a ${labels}` : ''}. Ver detalhes.`}
-      className="group/locked absolute inset-0 z-10 flex w-full flex-col items-center justify-center rounded-lg bg-background/70 p-4 text-center backdrop-blur-md"
+      className="group/locked absolute inset-0 z-10 flex w-full flex-col items-center justify-center rounded-xl bg-background/70 p-4 text-center backdrop-blur-md"
     >
       <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 transition-transform group-hover/locked:scale-110">
         <Lock className="h-6 w-6 text-primary" />
       </span>
-      <span className="font-heading text-sm font-bold text-foreground">Acesso restrito</span>
+      <span className="font-heading text-sm font-bold tracking-[-0.01em] text-foreground">Acesso restrito</span>
       <span className="mb-3 mt-0.5 text-xs text-muted-foreground">Este conteúdo é exclusivo para:</span>
       <span className="mb-3 flex flex-wrap justify-center gap-1.5">
         {allowedGroups.map(g => {
@@ -324,12 +324,12 @@ export function EmptyCallout({
   cta?: React.ReactNode
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-10 text-center sm:p-12">
+    <div className="rounded-xl border border-dashed border-border bg-muted/30 px-4 py-10 text-center sm:p-12">
       <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
         {icon || <Sparkles className="h-6 w-6" />}
       </div>
-      <h3 className="font-heading text-base font-semibold text-foreground">{title}</h3>
-      <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{hint}</p>
+      <h3 className="font-heading text-base font-semibold tracking-[-0.01em] text-foreground">{title}</h3>
+      <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">{hint}</p>
       {cta && <div className="mt-4 flex flex-wrap justify-center gap-2">{cta}</div>}
     </div>
   )
@@ -355,7 +355,7 @@ export function MaterialGridSkeleton({
   return (
     <div className={grid} aria-hidden>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+        <div key={i} className="surface-lift overflow-hidden rounded-xl border border-border bg-card">
           <div className="aspect-[16/10] skeleton-pulse" />
           <div className="space-y-2 p-3 sm:p-4">
             <div className="h-4 w-4/5 rounded skeleton-pulse" />

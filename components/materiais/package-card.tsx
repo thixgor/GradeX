@@ -86,13 +86,17 @@ export const PackageCard = memo(function PackageCard({
           priority={priority}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-muted">
-          <Package className="h-12 w-12 text-primary" />
+        <div className="cover-plate flex h-full w-full items-center justify-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-lg border border-border bg-card/80 text-primary shadow-sm">
+            <Package className="h-8 w-8" />
+          </span>
         </div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+      {pkg.coverImage && (
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+      )}
 
-      <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-black/60 px-2 py-1 text-[10px] font-semibold text-white">
+      <span className="cover-chip absolute left-3 top-3 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold text-white">
         <Package className="h-3 w-3" /> {pkg.materialIds?.length || 0} materiais
       </span>
 
@@ -104,7 +108,7 @@ export const PackageCard = memo(function PackageCard({
             </span>
           )}
           {pkg.allowedGroups?.length > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-violet-200">
+            <span className="cover-chip inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold text-violet-200">
               <ShieldAlert className="h-3 w-3" />
               {pkg.allowedGroups.map(g => GROUP_META[g]?.label).filter(Boolean).join(' / ')}
             </span>
@@ -126,7 +130,7 @@ export const PackageCard = memo(function PackageCard({
 
       <div
         className={cn(
-          'flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors hover:border-primary/35',
+          'surface-lift flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-primary/35',
           showLocked && 'select-none'
         )}
       >
@@ -154,18 +158,18 @@ export const PackageCard = memo(function PackageCard({
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
           {showLocked ? (
-            <h3 className="mb-1 line-clamp-2 font-heading text-base font-bold text-foreground">{pkg.title}</h3>
+            <h3 className="mb-1 line-clamp-2 font-heading text-base font-bold leading-snug tracking-[-0.015em] text-foreground">{pkg.title}</h3>
           ) : (
             <Link
               href={href}
-              className="mb-1 line-clamp-2 font-heading text-base font-bold text-foreground transition-colors hover:text-primary hover:underline"
+              className="mb-1 line-clamp-2 font-heading text-base font-bold leading-snug tracking-[-0.015em] text-foreground transition-colors hover:text-primary hover:underline"
             >
               {pkg.title}
             </Link>
           )}
 
           {pkg.description && (
-            <p className="mb-3 line-clamp-2 text-sm text-muted-foreground" title={pkg.description}>
+            <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground" title={pkg.description}>
               {pkg.description}
             </p>
           )}
@@ -218,7 +222,7 @@ export const PackageCard = memo(function PackageCard({
             ) : showFreeAcquire ? (
               <>
                 <CardPrice price={effectivePrice} isFree crossedPrice={crossedPrice} />
-                <Button onClick={onAddToCart} disabled={loading} size="sm" className="h-11 w-full font-semibold">
+                <Button onClick={onAddToCart} disabled={loading} size="sm" className="cta-raised h-11 w-full font-semibold">
                   {loading
                     ? <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-t-current" />
                     : <Gift className="mr-2 h-4 w-4 shrink-0" />}
@@ -234,7 +238,7 @@ export const PackageCard = memo(function PackageCard({
                   crossedPrice={crossedPrice}
                 />
                 <div className="flex gap-2">
-                  <Button onClick={onBuyNow} disabled={loading} size="sm" className="h-11 flex-1 font-semibold">
+                  <Button onClick={onBuyNow} disabled={loading} size="sm" className="cta-raised h-11 flex-1 font-semibold">
                     {loading
                       ? <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-t-current" />
                       : null}

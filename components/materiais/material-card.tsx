@@ -101,6 +101,26 @@ export const MaterialCard = memo(function MaterialCard({
   const href = `/materiais/${material._id}`
   const hasEvent = !isFree && !!material._pricingEventState?.activeTier && material._pricingEventState.isActive
 
+  const metrics: { key: string; node: React.ReactNode }[] = []
+  if (metricSettings.showDownloads) {
+    metrics.push({ key: 'dl', node: <><Download className="h-3 w-3" /> {material.downloadCount}</> })
+  }
+  if (metricSettings.showViews) {
+    metrics.push({ key: 'views', node: <><Eye className="h-3 w-3" /> {material.viewCount}</> })
+  }
+  if ((material.type === 'video' || isEmbed) && material.videoDuration) {
+    metrics.push({ key: 'dur', node: <><Play className="h-3 w-3 fill-white/80" /> {formatDuration(material.videoDuration)}</> })
+  }
+  if (material.type === 'flashcard_deck' && material._cardCount != null) {
+    metrics.push({ key: 'cards', node: <><Sparkles className="h-3 w-3" /> {material._cardCount} cards</> })
+  }
+  if (material.type === 'pdf' && material._hasPdf && material._pageCount) {
+    metrics.push({
+      key: 'pages',
+      node: <><FileText className="h-3 w-3" /> {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}</>,
+    })
+  }
+
   const cover = (
     <>
       {material.coverImage ? (
@@ -115,16 +135,22 @@ export const MaterialCard = memo(function MaterialCard({
           priority={priority}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-muted">
-          <span className="flex h-16 w-16 items-center justify-center rounded-lg border border-border bg-card text-primary">
+        <div className="cover-plate flex h-full w-full items-center justify-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-lg border border-border bg-card/80 text-primary shadow-sm">
             {typeIcons[material.type] || <File className="h-8 w-8" />}
           </span>
         </div>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+      {/* Véu só quando há foto de verdade, e leve: as etiquetas carregam a
+          própria legibilidade (material escuro), então o véu serve apenas
+          para assentar a imagem, não para viabilizar o texto. Sobre a placa
+          clara ele virava uma lavagem cinza suja na metade de baixo. */}
+      {material.coverImage && (
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+      )}
 
       {/* Tipo do arquivo */}
-      <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-md bg-black/60 px-2 py-1 text-[10px] font-semibold text-white sm:left-3 sm:top-3">
+      <span className="cover-chip absolute left-2 top-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold text-white sm:left-3 sm:top-3">
         {isEmbed && <Play className="h-3 w-3 fill-white" />}
         {typeLabels[material.type] || 'Arquivo'}
       </span>
@@ -133,7 +159,7 @@ export const MaterialCard = memo(function MaterialCard({
       {(material.allowedGroups?.length > 0 || hasEvent) && (
         <span className="absolute right-2 top-2 flex flex-col items-end gap-1 sm:right-3 sm:top-3">
           {material.allowedGroups?.length > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold text-violet-200">
+            <span className="cover-chip inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold text-violet-200">
               <ShieldAlert className="h-3 w-3" />
               {material.allowedGroups.map(g => GROUP_META[g]?.label).filter(Boolean).join(' / ')}
             </span>
@@ -142,35 +168,17 @@ export const MaterialCard = memo(function MaterialCard({
         </span>
       )}
 
-      {/* Métricas — o `right-*` maior no desktop abre espaço para o botão de
-          compartilhar, que aparece no hover. */}
-      <span className="absolute bottom-2 left-2 right-2 flex flex-wrap items-center gap-x-3 gap-y-1 sm:bottom-3 sm:left-3 sm:right-32">
-        {metricSettings.showDownloads && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-white/90">
-            <Download className="h-3 w-3" /> {material.downloadCount}
-          </span>
-        )}
-        {metricSettings.showViews && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-white/90">
-            <Eye className="h-3 w-3" /> {material.viewCount}
-          </span>
-        )}
-        {(material.type === 'video' || isEmbed) && material.videoDuration ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-white/90">
-            <Play className="h-3 w-3 fill-white/70" /> {formatDuration(material.videoDuration)}
-          </span>
-        ) : null}
-        {material.type === 'flashcard_deck' && material._cardCount != null ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-white/90">
-            <Sparkles className="h-3 w-3" /> {material._cardCount} cards
-          </span>
-        ) : null}
-        {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-white/90">
-            <FileText className="h-3 w-3" /> {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
-          </span>
-        ) : null}
-      </span>
+      {/* Métricas numa etiqueta própria. Antes eram texto branco solto, que só
+          era legível graças a um véu escuro cobrindo a capa inteira — o
+          material carrega a legibilidade sozinho, e a imagem fica limpa.
+          O `max-w` no desktop reserva o canto do botão de compartilhar. */}
+      {metrics.length > 0 && (
+        <span className="cover-chip absolute bottom-2 left-2 inline-flex max-w-[calc(100%-1rem)] flex-wrap items-center gap-x-2.5 gap-y-0.5 rounded-md px-2 py-1 text-[10px] font-medium text-white sm:bottom-3 sm:left-3 sm:max-w-[calc(100%-9rem)]">
+          {metrics.map(m => (
+            <span key={m.key} className="inline-flex items-center gap-1">{m.node}</span>
+          ))}
+        </span>
+      )}
     </>
   )
 
@@ -185,7 +193,7 @@ export const MaterialCard = memo(function MaterialCard({
 
       <div
         className={cn(
-          'flex h-full flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition-colors',
+          'surface-lift flex h-full flex-col overflow-hidden rounded-xl border bg-card',
           featured ? 'border-primary/25 hover:border-primary/45' : 'border-border hover:border-primary/35',
           // Com o overlay ativo nenhum link interno é renderizado, então nada
           // do conteúdo bloqueado entra na ordem de tabulação.
@@ -237,14 +245,20 @@ export const MaterialCard = memo(function MaterialCard({
         </div>
 
         <div className="flex flex-1 flex-col p-3 sm:p-4">
+          {/* Tracking é específico do tamanho: o título maior do destaque fecha
+              mais que o da grade, e a descrição miúda abre um fio — texto
+              pequeno precisa de mais ar entre as letras, grande precisa de
+              menos. Um `letter-spacing` único estaria errado em algum lugar. */}
           {showLocked ? (
-            <h3 className="mb-1 line-clamp-2 font-heading text-sm font-bold text-foreground">{material.title}</h3>
+            <h3 className="mb-1 line-clamp-2 font-heading text-sm font-bold leading-snug tracking-[-0.01em] text-foreground">
+              {material.title}
+            </h3>
           ) : (
             <Link
               href={href}
               className={cn(
-                'mb-1 line-clamp-2 font-heading font-bold text-foreground transition-colors hover:text-primary hover:underline',
-                featured ? 'text-base' : 'text-sm'
+                'mb-1 line-clamp-2 font-heading font-bold leading-snug text-foreground transition-colors hover:text-primary hover:underline',
+                featured ? 'text-base tracking-[-0.015em]' : 'text-sm tracking-[-0.01em]'
               )}
             >
               {material.title}
@@ -254,7 +268,7 @@ export const MaterialCard = memo(function MaterialCard({
           {material.description && (
             <p
               className={cn(
-                'mb-3 line-clamp-2 text-xs text-muted-foreground',
+                'mb-3 line-clamp-2 text-xs leading-relaxed tracking-[0.005em] text-muted-foreground',
                 // No celular a grade tem 2 colunas: descrição espremida em
                 // ~160px vira ruído, o título já identifica o material.
                 !featured && 'hidden sm:block'
@@ -298,7 +312,7 @@ export const MaterialCard = memo(function MaterialCard({
                   </Button>
                 )}
                 {(!canViewPdf || !pdfDownloadBlocked) && (
-                  <Button onClick={onDownload} size="sm" className="h-10 w-full text-xs font-semibold">
+                  <Button onClick={onDownload} size="sm" className="cta-raised h-10 w-full text-xs font-semibold">
                     {isEmbed
                       ? <><Play className="mr-1.5 h-3.5 w-3.5 fill-current" /> Assistir</>
                       : material.type === 'flashcard_deck'
@@ -312,7 +326,7 @@ export const MaterialCard = memo(function MaterialCard({
             ) : isFree ? (
               <>
                 <CardPrice price={material.price} isFree state={material._pricingEventState} />
-                <Button onClick={onAddToCart} disabled={loading} size="sm" className="h-10 w-full text-xs font-semibold">
+                <Button onClick={onAddToCart} disabled={loading} size="sm" className="cta-raised h-10 w-full text-xs font-semibold">
                   {loading ? <InlineSpinner /> : <Gift className="mr-1.5 h-3.5 w-3.5" />}
                   Adquirir grátis
                 </Button>
@@ -321,7 +335,7 @@ export const MaterialCard = memo(function MaterialCard({
               <>
                 <CardPrice price={material.price} isFree={false} state={material._pricingEventState} />
                 <div className="flex gap-2">
-                  <Button onClick={onBuyNow} disabled={loading} size="sm" className="h-10 flex-1 text-xs font-semibold">
+                  <Button onClick={onBuyNow} disabled={loading} size="sm" className="cta-raised h-10 flex-1 text-xs font-semibold">
                     {loading ? <InlineSpinner /> : null}
                     Comprar
                   </Button>

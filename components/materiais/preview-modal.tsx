@@ -68,20 +68,29 @@ export function PreviewModal({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      // "Materializar, não só aparecer": o desfoque do fundo cresce junto com
+      // a opacidade, então o véu chega como um material de verdade em vez de
+      // um retângulo preto surgindo do nada.
+      initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+      animate={{ opacity: 1, backdropFilter: 'blur(4px)' }}
+      exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       onClick={onClose}
     >
       <motion.div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        initial={{ scale: 0.92, opacity: 0, y: 20 }}
+        // Entra e sai pelo mesmo caminho — o que some por um lado precisa
+        // voltar por ele, senão a relação espacial se perde.
+        initial={{ scale: 0.94, opacity: 0, y: 16 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.92, opacity: 0, y: 20 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        exit={{ scale: 0.94, opacity: 0, y: 16 }}
+        // Mola criticamente amortecida (damping 1.0 / response 0.35 no
+        // vocabulário da Apple): chega rápido e assenta sem repique. Repique
+        // só se o gesto tivesse trazido momento — aqui foi um toque simples.
+        transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
         className="relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
