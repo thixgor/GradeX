@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
 import { normalizePreviewRanges } from '@/lib/material-pdf-viewer'
-import { expandUserAccessGroups } from '@/lib/account-tier'
+import { expandUserAccessGroups, isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -179,6 +179,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch user groups for access control
     let userGroups: string[] = []
+    let isPlus = false
     if (session && !isAdmin) {
       const user = await db.collection('users').findOne(
         { _id: new ObjectId(session.userId) },
@@ -188,6 +189,9 @@ export async function GET(request: NextRequest) {
         // Inclui os aliases legados para que um assinante Plus+ continue
         // enxergando itens marcados como premium/essential.
         userGroups = expandUserAccessGroups(user.accountType, user.secondaryRole)
+        // Plus+ libera TODO o acervo de materiais (pago ou gratuito) — é
+        // conteúdo da própria plataforma, nunca de terceiros.
+        isPlus = isPlusAccount(user.accountType)
       }
     }
 
@@ -358,8 +362,8 @@ export async function GET(request: NextRequest) {
         !m.allowedGroups?.length ||
         userGroups.some((g: string) => m.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
-      // Access = admin OR purchased/granted OR (group member AND free)
-      const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && m.pricing !== 'paid'))
+      // Access = admin OR Plus+ OR purchased/granted OR (group member AND free)
+      const hasAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || (hasGroupAccess && m.pricing !== 'paid'))
 
       // Strip any real asset URL when no access (security)
       const downloadUrl = hasAccess ? m.downloadUrl : ''

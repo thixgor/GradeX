@@ -24,7 +24,7 @@ import { isValidObjectId } from '@/lib/api-security'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
-import { matchesAccessGroups } from '@/lib/account-tier'
+import { matchesAccessGroups, isPlusAccount } from '@/lib/account-tier'
 import { emailFingerprint } from '@/lib/watermark-fingerprint'
 
 export const dynamic = 'force-dynamic'
@@ -111,6 +111,18 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     let hasAccess = isAdmin
     let purchaseForAudit: any = null
 
+    // Plus+ libera TODO o acervo de materiais — é conteúdo da própria
+    // plataforma, então a assinatura substitui a compra individual.
+    const sessionUser = !isAdmin
+      ? await db.collection('users').findOne(
+          { _id: new ObjectId(session.userId) },
+          { projection: { accountType: 1, secondaryRole: 1 } }
+        )
+      : null
+    if (!hasAccess && isPlusAccount(sessionUser?.accountType)) {
+      hasAccess = true
+    }
+
     if (!hasAccess) {
       if (material.pricing === 'paid') {
         // Exige compra aprovada
@@ -181,16 +193,12 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
           // Sem restrição de grupo — qualquer usuário autenticado tem acesso
           hasAccess = true
         } else {
-          const user = await db.collection('users').findOne(
-            { _id: new ObjectId(session.userId) },
-            { projection: { accountType: 1, secondaryRole: 1 } }
-          )
           // Um assinante Plus+ satisfaz também os grupos legados
           // (`premium`/`essential`) marcados em materiais antigos.
           hasAccess = matchesAccessGroups(
             material.allowedGroups,
-            user?.accountType,
-            user?.secondaryRole,
+            sessionUser?.accountType,
+            sessionUser?.secondaryRole,
           )
         }
       }
@@ -233,9 +241,12 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
         },
         { projection: { _id: 1, providerPaymentId: 1, providerOrderId: 1 } }
       )
+      // `String(undefined)` vira a string "undefined" (truthy) — sem essa
+      // guarda, quem acessa sem registro de compra (Plus+, grupo gratuito)
+      // ganhava um orderId literalmente igual a "undefined" na marca d'água.
       orderId = purchase?.providerPaymentId
         || purchase?.providerOrderId
-        || String(purchase?._id)
+        || (purchase?._id ? String(purchase._id) : null)
         || session.userId
     }
 

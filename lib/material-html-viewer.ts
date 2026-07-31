@@ -18,6 +18,7 @@ import { Db, ObjectId } from 'mongodb'
 import { TokenPayload } from './auth'
 import { getDb } from './mongodb'
 import { emailFingerprint } from './watermark-fingerprint'
+import { isPlusAccount } from './account-tier'
 
 export type MaterialHtmlAccessResult =
   | {
@@ -88,7 +89,11 @@ export async function validateMaterialHtmlAccess(
     if (user?.accountType) userGroups.push(user.accountType)
     if (user?.secondaryRole === 'monitor') userGroups.push('monitor')
 
-    if (material.pricing === 'paid') {
+    // Plus+ libera TODO o acervo — é conteúdo da própria plataforma, nunca
+    // de terceiros, então a assinatura substitui a compra individual.
+    if (isPlusAccount(user?.accountType)) {
+      hasAccess = true
+    } else if (material.pricing === 'paid') {
       const baseFilter = { itemId: materialId, itemType: 'material', status: 'completed' }
       const emailRegex = session.email
         ? new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')

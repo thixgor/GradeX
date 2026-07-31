@@ -54,6 +54,7 @@ export type DeckAccessReason =
   | 'purchased'
   | 'group'
   | 'free_admin_deck'
+  | 'plus_subscription'
 
 export interface DeckAccessResult {
   hasAccess: boolean
@@ -86,6 +87,14 @@ export async function resolveDeckAccess({
   const isOwner = !!userId && deck.ownerId === userId
   if (isOwner) reasons.push('owner')
   if (isAdmin) reasons.push('admin')
+
+  // Só admin (a própria plataforma) pode marcar um deck como pago — nunca há
+  // conteúdo de terceiros aqui. Um assinante Plus+ libera todo deck pago do
+  // acervo, publicado, sem precisar de compra individual.
+  const isPlusSubscriber = userGroups.includes('plus')
+  if (isPlusSubscriber && deck.ownerType === 'admin' && deck.isPublished) {
+    reasons.push('plus_subscription')
+  }
 
   // Compras (apenas decks de admin com pricing=paid e linkedMaterialId)
   let isPurchased = false
@@ -159,6 +168,7 @@ export async function resolveDeckAccess({
     isAdmin ||
     isPurchased ||
     hasShareAccess ||
+    reasons.includes('plus_subscription') ||
     // Admin free decks: requires isPublished to prevent access to private/draft decks
     (deck.ownerType === 'admin' && deck.pricing === 'free' && hasGroupAccess && !!deck.isPublished) ||
     ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished && deck.pricing !== 'paid')

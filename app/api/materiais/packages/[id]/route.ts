@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -138,8 +139,10 @@ export async function GET(
       !pkg.allowedGroups?.length ||
       userGroups.some((g: string) => pkg.allowedGroups.includes(g))
 
+    // Plus+ libera TODO o acervo — é conteúdo da própria plataforma.
+    const isPlus = isPlusAccount(userDoc?.accountType)
     const hasAccess =
-      isAuthenticated && (isAdmin || isPackagePurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+      isAuthenticated && (isAdmin || isPlus || isPackagePurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
 
     // ─── Preço efetivo (desconto proporcional anti-burla) ─────
     const pricing = computeEffectivePackagePrice({
@@ -164,6 +167,7 @@ export async function GET(
       const matPurchased = isAdmin || purchasedSet.has(idStr)
       const matHasAccess =
         isAuthenticated && (isAdmin ||
+        isPlus ||
         isPackagePurchased ||
         matPurchased ||
         (matGroupAccess && m.pricing !== 'paid'))

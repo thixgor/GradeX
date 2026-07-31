@@ -74,12 +74,16 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Todo deck aqui é 'ownerType: admin' (só admin pode marcar pricing='paid')
+    // — nunca há conteúdo de terceiros neste catálogo. Plus+ libera tudo.
+    const isPlus = userGroups.includes('plus')
+
     const enriched = decks.map(d => {
       const allowedGroups = (d.allowedGroups || []) as string[]
       const hasGroupAccess = allowedGroups.length === 0 || userGroups.some(g => allowedGroups.includes(g))
       const isPurchased = isAdmin || (!!d.linkedMaterialId && purchasedSet.has(d.linkedMaterialId))
       const isFreeForUser = d.pricing === 'free' && hasGroupAccess
-      const hasAccess = isAuthenticated && (isAdmin || isPurchased || isFreeForUser)
+      const hasAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || isFreeForUser)
       return {
         ...normalizeDeckForResponse(d),
         _isPurchased: isPurchased,

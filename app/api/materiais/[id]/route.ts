@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -109,7 +110,10 @@ export async function GET(
       }
     }
 
-    const canAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && material.pricing === 'free'))
+    // Plus+ libera TODO o acervo de materiais — é conteúdo da própria
+    // plataforma (nunca de terceiros), então a assinatura substitui a compra.
+    const isPlus = isPlusAccount(userDoc?.accountType)
+    const canAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || (hasGroupAccess && material.pricing === 'free'))
 
     // Strip real asset URL if no access
     const safeMaterial =

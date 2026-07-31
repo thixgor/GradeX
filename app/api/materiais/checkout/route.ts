@@ -33,6 +33,7 @@ import {
 } from '@/lib/pricing-events'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 import { buildPhysicalShopOrder } from '@/lib/shop-order'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -127,6 +128,22 @@ export async function POST(request: NextRequest) {
       alreadyOwned: true,
       redirectTo: alreadyOwnedRedirect,
     }, { status: 409 })
+  }
+
+  // Plus+ já libera todo o acervo — cobrar de novo por um item incluso na
+  // assinatura seria dupla cobrança pelo mesmo conteúdo.
+  if (ObjectId.isValid(session.userId)) {
+    const sessionUser = await db.collection('users').findOne(
+      { _id: new ObjectId(session.userId) },
+      { projection: { accountType: 1 } },
+    )
+    if (isPlusAccount(sessionUser?.accountType)) {
+      return NextResponse.json({
+        error: `Este ${data.itemType === 'package' ? 'pacote' : 'material'} já está incluso na sua assinatura Plus+.`,
+        alreadyOwned: true,
+        redirectTo: alreadyOwnedRedirect,
+      }, { status: 409 })
+    }
   }
 
   // Bloqueia recompra

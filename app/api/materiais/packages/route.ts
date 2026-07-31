@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
-import { expandUserAccessGroups } from '@/lib/account-tier'
+import { expandUserAccessGroups, isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch user groups for access control
     let userGroups: string[] = []
+    let isPlus = false
     if (session && !isAdmin) {
       const user = await db.collection('users').findOne(
         { _id: new ObjectId(session.userId) },
@@ -28,6 +29,7 @@ export async function GET(request: NextRequest) {
         // Inclui os aliases legados para que um assinante Plus+ continue
         // enxergando itens marcados como premium/essential.
         userGroups = expandUserAccessGroups(user.accountType, user.secondaryRole)
+        isPlus = isPlusAccount(user.accountType)
       }
     }
 
@@ -121,7 +123,7 @@ export async function GET(request: NextRequest) {
         !pkg.allowedGroups?.length ||
         userGroups.some((g: string) => pkg.allowedGroups.includes(g))
       const isPurchased = isAdmin || purchasedSet.has(idStr)
-      const hasAccess = isAuthenticated && (isAdmin || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
+      const hasAccess = isAuthenticated && (isAdmin || isPlus || isPurchased || (hasGroupAccess && pkg.pricing !== 'paid'))
       const materials = (pkg.materialIds || []).map((id: string) => materialsMap[id]).filter(Boolean)
       const pricing = computeEffectivePackagePrice({
         pkgPrice: Number(pkg.price || 0),
