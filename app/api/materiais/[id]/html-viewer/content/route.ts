@@ -20,6 +20,8 @@ import {
   buildWatermarkedHtml,
   logHtmlViewerAccess,
 } from '@/lib/material-html-viewer'
+import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import { emailFingerprint } from '@/lib/watermark-fingerprint'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -57,6 +59,20 @@ export async function GET(
 
     const { db, material, user, materialId } = access
 
+    // Plus+ Guard: este leitor não tem modo prévia — todo acesso aqui é
+    // pleno. Servir o HTML completo sem checar a cota seria a mesma brecha
+    // do leitor de PDF: dá pra ler (e extrair) o material inteiro sem nunca
+    // passar pelo endpoint de download.
+    if (session) {
+      const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, isAdmin: access.isAdmin, db })
+      if (!allowance.allowed) {
+        return NextResponse.json(
+          { error: allowance.message || 'Limite de leitura atingido.', reason: allowance.reason, retryAt: allowance.retryAt },
+          { status: 429 },
+        )
+      }
+    }
+
     const rawHtml = await fetchMaterialHtml(material.htmlFile.blobUrl)
 
     const html = buildWatermarkedHtml(rawHtml, {
@@ -69,15 +85,32 @@ export async function GET(
     })
 
     // Log de acesso (fire-and-forget) para rastreabilidade.
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || ''
     logHtmlViewerAccess(db, {
       userId: session?.userId || '',
       userName: user?.name || session?.name || '',
       userEmail: user?.email || session?.email || '',
       materialId,
       materialTitle: material.title,
-      ip: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '',
+      ip,
       userAgent: request.headers.get('user-agent') || '',
     })
+
+    if (session) {
+      recordPlusDownload({
+        userId: session.userId,
+        userEmail: user?.email || session.email,
+        userName: user?.name || session.name,
+        accountType: user?.accountType,
+        kind: 'material',
+        resourceId: materialId,
+        resourceTitle: material.title,
+        ip,
+        userAgent: request.headers.get('user-agent') || undefined,
+        watermarkFingerprint: emailFingerprint(user?.email || session.email),
+        db,
+      }).catch(() => {})
+    }
 
     return new NextResponse(html, {
       status: 200,

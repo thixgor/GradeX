@@ -6,6 +6,8 @@ import {
   getClientIp,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
+import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import { emailFingerprint } from '@/lib/watermark-fingerprint'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -54,6 +56,26 @@ export async function GET(
 
     if (!access.ok) {
       return NextResponse.json({ error: access.error }, { status: access.status })
+    }
+
+    // Plus+ Guard: abrir o leitor em modo pleno (não-prévia) é o equivalente,
+    // para efeito de cota, a baixar o material — o conteúdo inteiro é servido
+    // por aqui mesmo sem um botão de "download". Sem esta checagem, alguém
+    // podia abrir centenas de materiais no leitor sem nunca bater na cota
+    // aplicada em /api/materiais/download.
+    if (access.accessLevel === 'full' && session) {
+      const allowance = await checkPlusDownloadAllowance({
+        userId: session.userId,
+        user: access.user,
+        isAdmin: access.isAdmin,
+        db: access.db,
+      })
+      if (!allowance.allowed) {
+        return NextResponse.json(
+          { error: allowance.message || 'Limite de leitura atingido.', reason: allowance.reason, retryAt: allowance.retryAt },
+          { status: 429 },
+        )
+      }
     }
 
     const cachedPageCount = Number(access.material.pdfFile?.pageCount || 0)
@@ -140,6 +162,22 @@ export async function GET(
       userAgent: request.headers.get('user-agent') || 'unknown',
       createdAt: now,
     }).catch((error) => console.error('[pdf-viewer/access] Falha ao logar abertura:', error))
+
+    if (access.accessLevel === 'full' && session) {
+      recordPlusDownload({
+        userId: session.userId,
+        userEmail: session.email,
+        userName: session.name,
+        accountType: access.user?.accountType,
+        kind: 'material',
+        resourceId: access.materialId,
+        resourceTitle: access.material.title,
+        ip,
+        userAgent: request.headers.get('user-agent') || undefined,
+        watermarkFingerprint: emailFingerprint(session.email),
+        db: access.db,
+      }).catch(() => {})
+    }
 
     return NextResponse.json(
       {
