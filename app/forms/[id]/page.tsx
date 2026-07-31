@@ -49,6 +49,7 @@ export default function PublicFormPage() {
     >(null)
 
     const { user, loading: authLoading } = useAuthUser()
+    const [isMobile, setIsMobile] = useState(false)
 
     // Login é exigido quando o formulário pede login OU quando há entrega de
     // material (a serial key vai para o e-mail da conta).
@@ -57,6 +58,14 @@ export default function PublicFormPage() {
     useEffect(() => {
         fetchForm()
     }, [id])
+
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 640px)')
+        setIsMobile(mq.matches)
+        const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+        mq.addEventListener('change', onChange)
+        return () => mq.removeEventListener('change', onChange)
+    }, [])
 
     async function fetchForm() {
         try {
@@ -135,7 +144,7 @@ export default function PublicFormPage() {
     if (needsLogin && !authLoading && !user && !submitted) {
         return (
             <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
-                <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                <div className="pointer-events-none fixed inset-0 overflow-hidden hidden sm:block">
                     <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
                     <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
                 </div>
@@ -216,15 +225,15 @@ export default function PublicFormPage() {
         return (
             <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
                 {/* Ambient blobs */}
-                <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                <div className="pointer-events-none fixed inset-0 overflow-hidden hidden sm:block">
                     <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
                     <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
                 </div>
 
-                {/* Confetes sutis quando há entrega de material */}
+                {/* Confetes sutis quando há entrega de material (reduzido no mobile p/ evitar jank) */}
                 {materialDelivered && (
                     <div className="pointer-events-none fixed inset-0 overflow-hidden">
-                        {Array.from({ length: 18 }).map((_, i) => (
+                        {Array.from({ length: isMobile ? 8 : 18 }).map((_, i) => (
                             <motion.div
                                 key={i}
                                 className="absolute top-0 w-2 h-2 rounded-sm"
@@ -353,8 +362,8 @@ export default function PublicFormPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-            {/* Ambient blobs */}
-            <div className="pointer-events-none fixed inset-0 overflow-hidden">
+            {/* Ambient blobs (decorativos apenas — ocultos no mobile pra não pesar o scroll) */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden hidden sm:block">
                 <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
                 <div className="absolute top-1/3 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute -bottom-40 left-1/3 w-72 h-72 bg-primary/6 rounded-full blur-3xl" />
@@ -400,8 +409,9 @@ export default function PublicFormPage() {
                             <motion.div
                                 key={block.id}
                                 initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: '0px 0px -80px 0px' }}
+                                transition={{ duration: 0.4, delay: Math.min(index, 4) * 0.08 }}
                             >
                                 {/* BLoco de Conteúdo */}
                                 {block.type === 'text' && (
@@ -420,6 +430,8 @@ export default function PublicFormPage() {
                                         <img
                                             src={block.content}
                                             alt={block.title}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="w-full h-auto max-h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
                                         />
                                         {(block.title || block.description) && (
@@ -437,6 +449,7 @@ export default function PublicFormPage() {
                                             <iframe
                                                 src={block.content}
                                                 className="w-full h-full"
+                                                loading="lazy"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                 allowFullScreen
                                             />
@@ -545,7 +558,7 @@ export default function PublicFormPage() {
                                                     required={block.required}
                                                 >
                                                     {block.options?.map((option, i) => (
-                                                        <div key={i} className="flex items-center space-x-3 rounded-xl bg-background/30 backdrop-blur-sm border border-white/20 dark:border-white/5 p-4 hover:soul-light transition-all cursor-pointer group">
+                                                        <div key={i} className="flex items-center space-x-3 rounded-xl bg-background/60 border border-white/20 dark:border-white/5 p-4 hover:soul-light transition-all cursor-pointer group">
                                                             <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary" />
                                                             <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-foreground">{option}</Label>
                                                             <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
@@ -560,7 +573,7 @@ export default function PublicFormPage() {
                                                         const current = answers[block.id] || []
                                                         const isChecked = current.includes(option)
                                                         return (
-                                                            <div key={i} className={`flex items-center space-x-3 p-4 rounded-xl backdrop-blur-sm border transition-all cursor-pointer group ${isChecked ? 'bg-primary/10 border-primary/30 shadow-sm' : 'bg-background/30 border-white/20 dark:border-white/5 hover:border-primary/30'}`}>
+                                                            <div key={i} className={`flex items-center space-x-3 p-4 rounded-xl border transition-all cursor-pointer group ${isChecked ? 'bg-primary/10 border-primary/30 shadow-sm' : 'bg-background/60 border-white/20 dark:border-white/5 hover:border-primary/30'}`}>
                                                                 <Checkbox
                                                                     id={`${block.id}-${i}`}
                                                                     checked={isChecked}
@@ -586,8 +599,9 @@ export default function PublicFormPage() {
 
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: (form?.blocks.length || 0) * 0.1 + 0.2 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '0px 0px -80px 0px' }}
+                        transition={{ duration: 0.4 }}
                         className="pt-8"
                     >
                         <Button

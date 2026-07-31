@@ -1686,6 +1686,16 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* Mobile: blur(24px) por card empilhado é o maior custo de composição em
+   telas de formulário longas — reduz o raio pra manter o efeito sem travar
+   o scroll em GPUs de celular. */
+@media (max-width: 640px) {
+  .form-glass-card {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
 /* ==========================================
    LITE MODE — Performance optimizations
    ========================================== */
