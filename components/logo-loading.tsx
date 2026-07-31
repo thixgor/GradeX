@@ -68,6 +68,8 @@ export function LogoLoading({
               width={sizes[size].logo}
               height={sizes[size].logo}
               className="object-contain"
+              unoptimized
+              priority
             />
           </div>
         </div>
@@ -127,6 +129,7 @@ export function LogoSpinnerInline({ size = 24 }: { size?: number }) {
         width={size}
         height={size}
         className="object-contain"
+        unoptimized
       />
     </div>
   )

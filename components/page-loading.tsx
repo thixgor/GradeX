@@ -66,6 +66,8 @@ export function PageLoading({
               width={logoSize}
               height={logoSize}
               className="object-contain"
+              unoptimized
+              priority
             />
           </div>
         </div>
@@ -178,6 +180,7 @@ export function LogoSpinner({
         width={sizes[size].logo}
         height={sizes[size].logo}
         className="object-contain"
+        unoptimized
       />
       <style jsx>{`
         @keyframes page-loading-spin {
