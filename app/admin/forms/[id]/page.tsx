@@ -150,6 +150,21 @@ export default function FormEditorPage() {
             return
         }
 
+        if (form.settings?.deliverMaterial) {
+            if (!form.settings?.deliverMaterialId) {
+                alert('Selecione o material que será entregue.')
+                return
+            }
+            if (!form.settings?.emailQuestionId) {
+                alert('Para entregar material, adicione uma pergunta do tipo "E-mail" ao formulário e selecione-a em "Pergunta de E-mail". Ela é usada para enviar o material a quem responder sem estar logado.')
+                return
+            }
+        }
+        if (form.settings?.sendConfirmationEmail && !form.settings?.emailQuestionId) {
+            alert('Para enviar a confirmação por e-mail, selecione a pergunta que coleta o e-mail.')
+            return
+        }
+
         setSaving(true)
         try {
             const url = id === 'new' ? '/api/admin/forms' : `/api/admin/forms/${id}`
@@ -493,32 +508,6 @@ export default function FormEditorPage() {
                                         onCheckedChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings!, sendConfirmationEmail: val } }))}
                                     />
                                 </div>
-
-                                {form.settings?.sendConfirmationEmail && (
-                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                        <Label>Pergunta que solicita o e-mail</Label>
-                                        <Select
-                                            value={form.settings?.emailQuestionId}
-                                            onValueChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings!, emailQuestionId: val } }))}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Selecione a pergunta..." />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {form.blocks?.filter(b => b.type === 'question' && b.questionType === 'email').map(b => (
-                                                    <SelectItem key={b.id} value={b.id}>{b.title}</SelectItem>
-                                                ))}
-                                                {form.blocks?.filter(b => b.type === 'question' && b.questionType === 'email').length === 0 && (
-                                                    <div className="p-2 text-xs text-destructive flex items-center gap-1">
-                                                        <AlertTriangle className="h-3 w-3" />
-                                                        Você precisa adicionar uma pergunta do tipo "E-mail" primeiro.
-                                                    </div>
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                        <p className="text-xs text-muted-foreground">Precisamos saber para qual e-mail enviar a confirmação.</p>
-                                    </div>
-                                )}
                             </CardContent>
                         </Card>
 
@@ -535,7 +524,7 @@ export default function FormEditorPage() {
                                 <div className="flex items-center justify-between p-4 bg-background rounded-lg border">
                                     <div className="space-y-0.5">
                                         <Label className="text-base font-bold">Entregar Material</Label>
-                                        <p className="text-sm text-muted-foreground">Gera e envia uma serial key de ativação para a conta do usuário.</p>
+                                        <p className="text-sm text-muted-foreground">Gera e envia uma serial key de ativação por e-mail.</p>
                                     </div>
                                     <Switch
                                         checked={form.settings?.deliverMaterial ?? false}
@@ -580,14 +569,56 @@ export default function FormEditorPage() {
                                                     )}
                                                 </SelectContent>
                                             </Select>
-                                            <p className="text-xs text-muted-foreground">
-                                                A entrega exige login: o material vai para o e-mail da conta do usuário. O login será ativado automaticamente.
-                                            </p>
                                         </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Não exige login: se o usuário estiver logado, enviamos para o e-mail da conta; se não, usamos a
+                                            resposta da <strong>pergunta de e-mail</strong> configurada abaixo — por isso ela é obrigatória
+                                            para quem responde sem estar logado.
+                                        </p>
                                     </div>
                                 )}
                             </CardContent>
                         </Card>
+
+                        {(form.settings?.sendConfirmationEmail || form.settings?.deliverMaterial) && (
+                            <Card className="border-primary/20 bg-primary/5 animate-in fade-in slide-in-from-top-2">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <AtSign className="h-5 w-5 text-primary" /> Pergunta de E-mail
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Usada para a confirmação por e-mail e/ou para entregar o material a quem responde sem login.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <Label>Pergunta que solicita o e-mail</Label>
+                                    <Select
+                                        value={form.settings?.emailQuestionId}
+                                        onValueChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings!, emailQuestionId: val } }))}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecione a pergunta..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {form.blocks?.filter(b => b.type === 'question' && b.questionType === 'email').map(b => (
+                                                <SelectItem key={b.id} value={b.id}>{b.title}</SelectItem>
+                                            ))}
+                                            {form.blocks?.filter(b => b.type === 'question' && b.questionType === 'email').length === 0 && (
+                                                <div className="p-2 text-xs text-destructive flex items-center gap-1">
+                                                    <AlertTriangle className="h-3 w-3" />
+                                                    Você precisa adicionar uma pergunta do tipo "E-mail" primeiro.
+                                                </div>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                    {form.settings?.deliverMaterial && (
+                                        <p className="text-xs text-muted-foreground">
+                                            Obrigatória: sem ela, quem responder deslogado não poderá receber o material.
+                                        </p>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )}
                     </TabsContent>
                 </Tabs>
             </div>

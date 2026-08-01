@@ -63,10 +63,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ error: 'Limite de respostas atingido.' }, { status: 403 })
     }
 
-    // A entrega de material depende de um e-mail confiável (o da conta), então
-    // exige login mesmo que o formulário não o exija explicitamente.
-    const loginRequired = form.settings.requireLogin === true || form.settings.deliverMaterial === true
-    if (loginRequired && !session) {
+    if (form.settings.requireLogin === true && !session) {
       return NextResponse.json(
         { error: 'Você precisa estar logado para responder este formulário.', code: 'LOGIN_REQUIRED' },
         { status: 401 }
@@ -108,6 +105,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const accountEmail = session?.email ? String(session.email).toLowerCase() : undefined
     const deliveryEmail = accountEmail || userEmail
 
+    // Entrega de material não exige mais login: se logado, vai para o e-mail da
+    // conta; se não, precisa vir de uma pergunta de e-mail respondida (o admin
+    // é obrigado a configurar essa pergunta quando ativa a entrega — ver editor).
+    if (form.settings.deliverMaterial && !deliveryEmail) {
+      return NextResponse.json(
+        { error: 'Informe um e-mail válido para receber o material.' },
+        { status: 400 }
+      )
+    }
+
     const response: FormResponse = {
       formId: params.id,
       answers: sanitizedAnswers,
@@ -141,49 +148,45 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       | { delivered: false; reason: string }
       | null = null
 
-    if (form.settings.deliverMaterial && form.settings.deliverMaterialId) {
-      if (!deliveryEmail) {
-        materialDelivery = { delivered: false, reason: 'no_email' }
-      } else {
-        try {
-          // Idempotência: se este e-mail já recebeu uma key deste material por
-          // este formulário e ainda não a ativou, reaproveita (reenvia) em vez
-          // de gerar chaves infinitas a cada reenvio/refresh.
-          const existing = await db.collection('serial_keys').findOne({
+    if (form.settings.deliverMaterial && form.settings.deliverMaterialId && deliveryEmail) {
+      try {
+        // Idempotência: se este e-mail já recebeu uma key deste material por
+        // este formulário e ainda não a ativou, reaproveita (reenvia) em vez
+        // de gerar chaves infinitas a cada reenvio/refresh.
+        const existing = await db.collection('serial_keys').findOne({
+          source: 'form',
+          buyerEmail: deliveryEmail,
+          productId: form.settings.deliverMaterialId,
+          status: 'unactivated',
+        })
+
+        let serial: any
+        let materialTitle: string
+        let kind: 'purchase' | 'resend' = 'purchase'
+        if (existing && existing.activationToken) {
+          serial = existing
+          materialTitle = existing.productTitle || 'Material'
+          kind = 'resend'
+        } else {
+          const created = await createGrantedMaterialSerialKey(db, {
+            materialId: form.settings.deliverMaterialId,
+            email: deliveryEmail,
+            name: session?.name,
+            generatedBy: session?.userId || 'system',
+            generatedByName: `Formulário: ${form.title}`,
             source: 'form',
-            buyerEmail: deliveryEmail,
-            productId: form.settings.deliverMaterialId,
-            status: 'unactivated',
           })
-
-          let serial: any
-          let materialTitle: string
-          let kind: 'purchase' | 'resend' = 'purchase'
-          if (existing && existing.activationToken) {
-            serial = existing
-            materialTitle = existing.productTitle || 'Material'
-            kind = 'resend'
-          } else {
-            const created = await createGrantedMaterialSerialKey(db, {
-              materialId: form.settings.deliverMaterialId,
-              email: deliveryEmail,
-              name: session?.name,
-              generatedBy: session?.userId || 'system',
-              generatedByName: `Formulário: ${form.title}`,
-              source: 'form',
-            })
-            serial = created.serial
-            materialTitle = created.materialTitle
-          }
-
-          const sent = await sendSerialKeyEmail(db, serial, { kind })
-          materialDelivery = sent
-            ? { delivered: true, title: materialTitle, email: deliveryEmail }
-            : { delivered: false, reason: 'email_failed' }
-        } catch (materialError) {
-          console.error('Failed to deliver material:', materialError)
-          materialDelivery = { delivered: false, reason: 'error' }
+          serial = created.serial
+          materialTitle = created.materialTitle
         }
+
+        const sent = await sendSerialKeyEmail(db, serial, { kind })
+        materialDelivery = sent
+          ? { delivered: true, title: materialTitle, email: deliveryEmail }
+          : { delivered: false, reason: 'email_failed' }
+      } catch (materialError) {
+        console.error('Failed to deliver material:', materialError)
+        materialDelivery = { delivered: false, reason: 'error' }
       }
     }
 

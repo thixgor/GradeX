@@ -51,9 +51,10 @@ export default function PublicFormPage() {
     const { user, loading: authLoading } = useAuthUser()
     const [isMobile, setIsMobile] = useState(false)
 
-    // Login é exigido quando o formulário pede login OU quando há entrega de
-    // material (a serial key vai para o e-mail da conta).
-    const needsLogin = !!(form?.settings.requireLogin || form?.settings.deliverMaterial)
+    // Login só é exigido quando o admin liga "Exigir Login" explicitamente. A
+    // entrega de material NÃO exige login: se logado, vai para o e-mail da
+    // conta; se não, usa a resposta da pergunta de e-mail do formulário.
+    const needsLogin = !!form?.settings.requireLogin
 
     useEffect(() => {
         fetchForm()
@@ -87,10 +88,24 @@ export default function PublicFormPage() {
         setAnswers(prev => ({ ...prev, [blockId]: value }))
     }
 
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        setSubmitting(true)
         setError(null)
+
+        // Entrega de material sem login depende da pergunta de e-mail: valida
+        // antes de enviar para não perder a resposta por um e-mail ausente.
+        if (form?.settings.deliverMaterial && !user && form.settings.emailQuestionId) {
+            const emailAnswer = answers[form.settings.emailQuestionId]
+            if (typeof emailAnswer !== 'string' || !EMAIL_RE.test(emailAnswer.trim())) {
+                setError('Informe um e-mail válido para receber o material.')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+                return
+            }
+        }
+
+        setSubmitting(true)
 
         try {
             const res = await fetch(`/api/forms/${id}/submit`, {
@@ -524,16 +539,23 @@ export default function PublicFormPage() {
                                             )}
 
                                             {block.questionType === 'email' && (
-                                                <div className="relative">
-                                                    <Input
-                                                        type="email"
-                                                        placeholder="exemplo@email.com"
-                                                        className="auth-glass-input rounded-xl h-12 text-lg pl-10 transition-all"
-                                                        value={answers[block.id] || ''}
-                                                        onChange={e => handleAnswer(block.id, e.target.value)}
-                                                        required={block.required}
-                                                    />
-                                                    <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                                <div className="space-y-1.5">
+                                                    <div className="relative">
+                                                        <Input
+                                                            type="email"
+                                                            placeholder="exemplo@email.com"
+                                                            className="auth-glass-input rounded-xl h-12 text-lg pl-10 transition-all"
+                                                            value={answers[block.id] || ''}
+                                                            onChange={e => handleAnswer(block.id, e.target.value)}
+                                                            required={block.required || (form?.settings.deliverMaterial && !user && form.settings.emailQuestionId === block.id)}
+                                                        />
+                                                        <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                                    </div>
+                                                    {form?.settings.deliverMaterial && !user && form.settings.emailQuestionId === block.id && (
+                                                        <p className="text-xs font-medium text-primary flex items-center gap-1.5">
+                                                            <KeyRound className="h-3.5 w-3.5" /> É para este e-mail que enviaremos o material.
+                                                        </p>
+                                                    )}
                                                 </div>
                                             )}
 
