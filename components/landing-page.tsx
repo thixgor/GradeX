@@ -387,21 +387,7 @@ function GhostCTA({
   )
 }
 
-function TextLink({ children, href }: { children: ReactNode; href: string }) {
-  return (
-    <SmartLink
-      href={href}
-      className="group inline-flex items-center gap-1.5 font-da-mono text-sm text-da-amber"
-    >
-      <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-300 group-hover:bg-[length:100%_1px]">
-        {children}
-      </span>
-      <span aria-hidden>→</span>
-    </SmartLink>
-  )
-}
-
-/** Marcador editorial de seção: 01 / 06 com a régua. */
+/** Marcador editorial de seção: 01 / 05 com a régua. */
 function SectionMark({ n, label }: { n: string; label: string }) {
   return (
     <div className="mb-6 flex items-center gap-4">
@@ -410,6 +396,199 @@ function SectionMark({ n, label }: { n: string; label: string }) {
       <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
         {label}
       </span>
+    </div>
+  )
+}
+
+/* =================== PROVA SOCIAL (DADOS) =================== */
+
+/** Avaliação de um material/deck, vinda de /api/reviews/showcase. */
+interface ShowcaseReview {
+  _id: string
+  rating: number
+  comment: string
+  displayName: string
+  isVerified: boolean
+  isFeatured: boolean
+  createdAt: string
+  sourceTitle: string | null
+}
+
+interface ReviewsSummary {
+  count: number
+  avg: number
+}
+
+interface ShowcaseData {
+  reviews: ShowcaseReview[]
+  summary: ReviewsSummary
+}
+
+/**
+ * Busca UMA vez as avaliações de todos os materiais da plataforma. O resultado
+ * alimenta dois lugares (o selo de nota no hero e a esteira abaixo dos
+ * depoimentos), então o fetch mora no componente-pai em vez de duplicar.
+ * Sem `no-store` de propósito: a rota já manda Cache-Control, e a landing se
+ * beneficia do cache de borda/navegador.
+ */
+function usePlatformReviews(): ShowcaseData | null {
+  const [data, setData] = useState<ShowcaseData | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/reviews/showcase?limit=40')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (cancelled || !json) return
+        setData({
+          reviews: Array.isArray(json.reviews) ? json.reviews : [],
+          summary: {
+            count: Number(json?.summary?.count) || 0,
+            avg: Number(json?.summary?.avg) || 0,
+          },
+        })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return data
+}
+
+/** Cinco estrelas preenchidas até `value` (arredondado para meia estrela). */
+function Stars({ value, className = 'h-4 w-4' }: { value: number; className?: string }) {
+  return (
+    <span className="inline-flex items-center gap-0.5" aria-hidden>
+      {[1, 2, 3, 4, 5].map((i) => {
+        const fill = Math.max(0, Math.min(1, value - i + 1))
+        return (
+          <svg key={i} viewBox="0 0 24 24" className={className}>
+            <defs>
+              <linearGradient id={`da-star-${i}-${Math.round(fill * 100)}`}>
+                <stop offset={`${fill * 100}%`} stopColor="rgb(var(--da-amber))" />
+                <stop offset={`${fill * 100}%`} stopColor="transparent" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95L12 2.6Z"
+              fill={`url(#da-star-${i}-${Math.round(fill * 100)})`}
+              stroke="rgb(var(--da-amber))"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )
+      })}
+    </span>
+  )
+}
+
+/* =================== CARROSSEL LATERAL =================== */
+
+/**
+ * Rolagem horizontal com encaixe: setas, teclado e swipe nativo. Muito
+ * depoimento em pilha vertical vira uma landing infinita — de lado, cabe
+ * quantos o admin quiser sem alongar a página.
+ *
+ * A barra de progresso é escrita direto no DOM (ref), não em state: durante o
+ * scroll o evento dispara dezenas de vezes por segundo e um setState por
+ * disparo re-renderizaria todos os cards do trilho.
+ */
+function useHorizontalRail<T extends HTMLElement>() {
+  const trackRef = useRef<T>(null)
+  const barRef = useRef<HTMLSpanElement>(null)
+  const [edges, setEdges] = useState({ start: true, end: false })
+
+  useEffect(() => {
+    const el = trackRef.current
+    if (!el) return
+
+    let ticking = false
+    const measure = () => {
+      ticking = false
+      const max = el.scrollWidth - el.clientWidth
+      const x = el.scrollLeft
+      const ratio = max > 8 ? Math.min(1, Math.max(0, x / max)) : 1
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${0.18 + ratio * 0.82})`
+      }
+      const next = { start: x <= 8, end: max <= 8 || x >= max - 8 }
+      setEdges((prev) => (prev.start === next.start && prev.end === next.end ? prev : next))
+    }
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(measure)
+    }
+
+    measure()
+    el.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
+  const nudge = useCallback((dir: 1 | -1) => {
+    const el = trackRef.current
+    if (!el) return
+    const slide = el.querySelector<HTMLElement>('[data-slide]')
+    const step = slide ? slide.offsetWidth + 20 : el.clientWidth * 0.85
+    el.scrollBy({ left: dir * step, behavior: 'smooth' })
+  }, [])
+
+  return { trackRef, barRef, edges, nudge }
+}
+
+function RailControls({
+  edges,
+  nudge,
+  barRef,
+  label,
+}: {
+  edges: { start: boolean; end: boolean }
+  nudge: (dir: 1 | -1) => void
+  barRef: React.RefObject<HTMLSpanElement>
+  label: string
+}) {
+  const btn =
+    'grid h-11 w-11 place-items-center rounded-full border border-[color:var(--da-neutral-line)] text-da-paper transition hover:border-da-amber/60 hover:text-da-amber disabled:pointer-events-none disabled:opacity-30'
+  return (
+    <div className="mt-8 flex items-center gap-5">
+      <div className="h-px flex-1 overflow-hidden bg-[color:var(--da-neutral-line)]">
+        <span
+          ref={barRef}
+          className="block h-px origin-left bg-da-amber transition-transform duration-200 ease-out"
+          style={{ transform: 'scaleX(0.18)' }}
+        />
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          className={btn}
+          onClick={() => nudge(-1)}
+          disabled={edges.start}
+          aria-label={`${label}: anterior`}
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          className={btn}
+          onClick={() => nudge(1)}
+          disabled={edges.end}
+          aria-label={`${label}: próximo`}
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </button>
+      </div>
     </div>
   )
 }
@@ -424,6 +603,7 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
   const router = useRouter()
   const rootRef = useParallaxVars<HTMLDivElement>()
   const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
+  const showcase = usePlatformReviews()
 
   // Ao voltar pelo botão do navegador, a landing pode ser restaurada do
   // back-forward cache (bfcache) com o estado congelado em "deslogado"
@@ -480,18 +660,17 @@ export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
       className="da-landing relative overflow-x-clip bg-da-ground font-da-body text-da-paper"
     >
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
-      <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} />
+      <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} summary={showcase?.summary} />
+      {/* Prova social primeiro, oferta logo em seguida: é o que o visitante de
+          anúncio precisa ver antes de qualquer explicação de produto. */}
       <Testimonials />
+      <PlatformReviews data={showcase} />
       <Plans />
       <Marquee />
-      <SampleBand />
-      <PlatformOverview />
       <ProblemBand />
-      <ManualClinico />
-      <ManualEletro />
-      <ToolsConsole />
+      <ProductsExplorer />
+      <SampleBand />
       <Differentiators />
-      <Prescricao />
       <InstallApp />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
@@ -522,10 +701,10 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
   }, [menuOpen])
 
   const navLinks = [
-    { label: 'Plataforma', href: '#plataforma' },
-    { label: 'Manual Clínico', href: '#manual' },
-    { label: 'Materiais', href: LINKS.materiais },
+    { label: 'Depoimentos', href: '#depoimentos' },
     { label: 'Planos', href: '#planos' },
+    { label: 'Produtos', href: '#produtos' },
+    { label: 'Materiais', href: LINKS.materiais },
     { label: 'App', href: '#app' },
   ]
 
@@ -644,7 +823,16 @@ const heroFrontStyle: CSSProperties = {
     'translate3d(calc(var(--da-mx, 0) * 42px), calc(var(--da-my, 0) * 30px - var(--da-sy, 0) * 0.1px), 0)',
 }
 
-function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
+function Hero({
+  signupHref,
+  isLoggedIn,
+  summary,
+}: {
+  signupHref: string
+  isLoggedIn: boolean
+  summary?: ReviewsSummary
+}) {
+  const hasRating = !!summary && summary.count >= 3 && summary.avg > 0
   return (
     <section id="top" className="pwa-safe-hero da-scene relative min-h-dvh overflow-hidden pt-[72px]">
       <div className="pointer-events-none absolute inset-0" style={heroBgStyle}>
@@ -695,21 +883,32 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
         <div className="relative z-10 max-w-2xl">
           <Reveal>
             <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
-              Feito pra quem não tem tempo a perder
+              Pare de estudar espalhado
             </p>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-5 font-da-display text-[2.7rem] font-semibold leading-[0.98] tracking-tighter md:text-[4.4rem]">
-              Tudo pra passar
+              Você não estuda mal.
               <br />
-              na prova. Num lugar só.
+              Você estuda espalhado.
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-da-muted">
-              Você abre e o próximo passo já está na sua frente. Manual Clínico, questões,
-              flashcards e cronograma prontos — sem decidir por onde começar, sem dez abas
-              abertas, sem aquela sensação de que não vai dar conta.
+              Quatorze abas abertas. Três PDFs pela metade. O resumo que alguém jogou no grupo.
+              O livro que você abriu uma vez. E a prova em cinco dias. O problema nunca foi
+              falta de material —{' '}
+              <span className="text-da-paper">foi material espalhado em lugar nenhum.</span>
+            </p>
+          </Reveal>
+          <Reveal delay={200}>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-da-muted">
+              Aqui, Manual Clínico, as provas da sua faculdade, banco de questões, flashcards,
+              mapas mentais e cronograma vivem no mesmo lugar. Você abre e já sabe o que estudar
+              agora.
+            </p>
+            <p className="mt-5 font-da-display text-xl font-semibold tracking-tight text-da-amber">
+              Uma conta. Uma aba. Tudo que a prova cobra.
             </p>
           </Reveal>
           <Reveal delay={240}>
@@ -734,6 +933,20 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
             <p className="mt-4 font-da-mono text-xs text-da-muted">
               Leva 10 segundos. Sem cartão. Sem pegadinha.
             </p>
+            {/* Nota real, calculada sobre as avaliações dos materiais. Só entra
+                depois do fetch e com amostra mínima — número inventado no hero
+                é o jeito mais rápido de perder a confiança do visitante. */}
+            {hasRating && (
+              <div className="mt-6 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-2 backdrop-blur-sm">
+                <Stars value={summary!.avg} />
+                <span className="font-da-display text-sm font-semibold">
+                  {summary!.avg.toFixed(1).replace('.', ',')}
+                </span>
+                <span className="font-da-mono text-[11px] text-da-muted">
+                  {summary!.count} avaliações de quem já comprou
+                </span>
+              </div>
+            )}
           </Reveal>
         </div>
 
@@ -815,12 +1028,12 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
           num toque) resolve sem exigir que ele "descubra" o scroll. */}
       <div className="relative mx-auto mb-2 mt-4 flex max-w-7xl justify-center px-5 md:px-8">
         <a
-          href="#plataforma"
-          aria-label="Ver a plataforma"
+          href="#depoimentos"
+          aria-label="Ver os depoimentos de alunos"
           className="group inline-flex flex-col items-center gap-1 text-da-muted transition hover:text-da-amber"
         >
           <span className="font-da-mono text-[10px] uppercase tracking-[0.3em]">
-            Role para ver tudo
+            Veja quem já estuda aqui
           </span>
           <svg
             viewBox="0 0 24 24"
@@ -841,8 +1054,8 @@ function Hero({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: bool
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] sm:grid-cols-4">
           {[
-            ['300+', 'patologias no Manual'],
-            ['6', 'produtos integrados'],
+            ['300+', 'patologias no Manual Clínico'],
+            ['1 aba', 'no lugar das suas quatorze'],
             ['Provas', 'reais da sua faculdade'],
             ['Grátis', 'para começar hoje'],
           ].map(([n, l]) => (
@@ -888,44 +1101,339 @@ function Marquee() {
   )
 }
 
-/* ---------- PLATAFORMA ---------- */
+/* ---------- PRODUTOS (LISTA EXPANSÍVEL) ---------- */
 
-function PlatformOverview() {
-  const modules: [ReactNode, string, string][] = [
-    [<IconManual key="i" />, 'Manual Clínico', '300+ patologias com imagem, áudio e referência. Com teste grátis.'],
-    [<IconCheck key="i" />, 'Provas da Faculdade', 'As provas reais do seu curso, prontas para resolver e treinar.'],
-    [<IconCards key="i" />, 'Flashcards próprios', 'Decks feitos por especialistas, com repetição espaçada.'],
-    [<IconMap key="i" />, 'Mapas mentais', 'Editor visual para criar, conectar e compartilhar suas ideias.'],
-    [<IconBank key="i" />, 'Banco de Questões', 'Uso ilimitado no Plus+.'],
-    [<IconPulse key="i" />, 'Manual do Eletro', 'Exclusivo de quem assina o Manual Clínico. Treina o raciocínio do traçado.'],
-  ]
+interface Product {
+  key: string
+  icon: ReactNode
+  name: string
+  teaser: string
+  badge?: string
+  headline: string
+  body: string[]
+  bullets?: string[]
+  cta: { label: string; href: string }
+  note?: string
+  /** Só é montada quando a linha abre — imagem fechada nem chega a baixar. */
+  media: () => ReactNode
+}
+
+function ProductImage({ src, alt }: { src: typeof provas3d; alt: string }) {
   return (
-    <section id="plataforma" className="relative border-t border-[color:var(--da-neutral-line)]">
-      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+    <div className="relative flex items-center justify-center py-4">
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(60% 55% at 50% 50%, rgba(232,118,58,.18), transparent 70%)',
+        }}
+      />
+      <Image
+        src={src}
+        alt={alt}
+        sizes="(max-width: 1024px) 60vw, 300px"
+        className="relative z-10 max-h-[280px] w-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,.5)]"
+      />
+    </div>
+  )
+}
+
+const PRODUCTS: Product[] = [
+  {
+    key: 'manual',
+    icon: <IconManual />,
+    name: 'Manual Clínico',
+    teaser: '300+ patologias com som, foto clínica e referência — o carro-chefe.',
+    badge: 'Carro-chefe',
+    headline: 'Cinco livros abertos. Uma busca só.',
+    body: [
+      'Mais de 300 patologias destrinchadas na profundidade que a prova e o plantão exigem. Você digita a doença e vê tudo, do mecanismo à conduta. O aluno que precisava de cinco livros na mesa agora precisa de uma busca.',
+    ],
+    bullets: [
+      'Classificação, etiologia, fisiopatologia e farmacologia, aprofundadas sem lacuna',
+      'Os sopros cardíacos e a ausculta pulmonar tocam de verdade, dentro do card',
+      'As lesões você vê em foto clínica, da erisipela à dermatologia, com referência',
+      'Atualizado de momento em momento, sem tópico raso com cara de IA',
+    ],
+    cta: { label: 'Abrir o Manual Clínico', href: LINKS.manual },
+    note: 'Teste grátis disponível',
+    media: () => (
+      <TiltCard intensity={5}>
+        <Image src={logoManual} alt="Manual Clínico" sizes="140px" className="mb-5 h-12 w-auto" />
+        <figure className="relative">
+          <div
+            aria-hidden
+            className="absolute -inset-4 rounded-[2rem]"
+            style={{
+              background: 'radial-gradient(60% 60% at 50% 50%, rgba(232,118,58,.18), transparent 70%)',
+            }}
+          />
+          <Image
+            src={manualImg}
+            alt="Camadas de vidro do dossiê clínico com lesão, pulmão e miniaturas de patologia"
+            placeholder="blur"
+            sizes="(max-width: 1024px) 90vw, 40vw"
+            className="relative w-full rounded-2xl border border-[color:var(--da-amber-line)]"
+          />
+        </figure>
+      </TiltCard>
+    ),
+  },
+  {
+    key: 'eletro',
+    icon: <IconPulse />,
+    name: 'Manual do Eletrocardiograma',
+    teaser: 'Do ritmo normal à emergência. Exclusivo de quem assina o Manual.',
+    badge: 'Só no Manual Clínico',
+    headline: 'O que esse traçado está te dizendo?',
+    body: [
+      'Tem uma pergunta que todo preceptor faz e que a maioria trava na resposta. Não é sobre decorar o nome da arritmia. É sobre entender a história que o coração está contando ali no papel. Isso não se decora, se treina.',
+      'O Manual do Eletrocardiograma treina exatamente esse raciocínio. Ele é exclusivo de quem assina o Manual Clínico, então não entra no teste grátis. É o que separa quem lê ECG de quem adivinha.',
+    ],
+    cta: { label: 'Assinar o Manual Clínico', href: LINKS.manual },
+    media: () => <PhoneMockup />,
+  },
+  {
+    key: 'provas-fac',
+    icon: <IconCheck />,
+    name: 'Provas da Faculdade',
+    teaser: 'As provas que o seu curso já aplicou, prontas para resolver.',
+    headline: 'Treine na prova de verdade, não em simulado genérico.',
+    body: [
+      'As provas que a sua faculdade já aplicou, prontas para você resolver do jeito que cai. Faça quantas quiser. Baixe em PDF sendo assinante.',
+    ],
+    cta: { label: 'Resolver provas', href: LINKS.provas },
+    note: 'Provas oficiais',
+    media: () => <ProductImage src={provas3d} alt="Provas da faculdade na plataforma" />,
+  },
+  {
+    key: 'banco',
+    icon: <IconBank />,
+    name: 'Banco de Questões',
+    teaser: 'Milhares de questões, uso ilimitado no Plus+.',
+    badge: 'Ilimitado no Plus+',
+    headline: 'Errar aqui é de graça. Errar na prova custa o ano.',
+    body: [
+      'Milhares de questões para resolver à vontade, com gabarito e comentário. Você descobre o buraco do seu conteúdo aqui dentro, antes de descobrir na hora que vale nota.',
+    ],
+    cta: { label: 'Entrar no banco', href: LINKS.bancoQuestoes },
+    media: () => <ProductImage src={provas3d} alt="Banco de questões da plataforma" />,
+  },
+  {
+    key: 'flashcards',
+    icon: <IconCards />,
+    name: 'Flashcards',
+    teaser: 'Decks de anatomia e além, com repetição espaçada.',
+    headline: 'O conteúdo volta na hora certa, até virar seu.',
+    body: [
+      'Decks criados e revisados por quem entende, com repetição espaçada: o card reaparece exatamente quando você estaria prestes a esquecer. É assim que conteúdo sai da memória de véspera e entra na de longo prazo.',
+    ],
+    cta: { label: 'Ver os flashcards', href: LINKS.flashcards },
+    note: 'Feitos por especialistas',
+    media: () => <ProductImage src={flashcards3d} alt="Flashcards do Domine Aqui" />,
+  },
+  {
+    key: 'ia',
+    icon: <IconLayers />,
+    name: 'Provas e Flashcards por IA',
+    teaser: 'Gerados em cima da ementa exata do seu curso.',
+    badge: 'Já no plano grátis',
+    headline: 'Sob medida para o que a SUA faculdade cobra.',
+    body: [
+      'Cola a ementa, escolhe o assunto e a IA monta a prova ou o baralho em cima do que o seu curso cobra de verdade — não um genérico que serve para todo mundo e para ninguém. Está liberado já no acesso gratuito.',
+    ],
+    cta: { label: 'Testar de graça', href: LINKS.amostra },
+    media: () => <ProductImage src={flashcards3d} alt="Provas e flashcards gerados por IA" />,
+  },
+  {
+    key: 'mapas',
+    icon: <IconMap />,
+    name: 'Mapas mentais',
+    teaser: 'Editor visual para pensar em rede, não em lista.',
+    headline: 'A anatomia do seu raciocínio, desenhada.',
+    body: [
+      'Um editor visual rápido para criar, conectar e compartilhar ideias. Deixe público, envie por link ou proteja com senha. Dá para testar um mapa de graça.',
+    ],
+    cta: { label: 'Testar um mapa grátis', href: LINKS.mapaMental },
+    note: 'Público, link ou senha',
+    media: () => <ProductImage src={flashcards3d} alt="Editor de mapas mentais" />,
+  },
+  {
+    key: 'cronograma',
+    icon: <IconCheck />,
+    name: 'Cronograma',
+    teaser: 'Plano de estudo vinculado ao ritmo real do seu curso.',
+    headline: 'Abra e saiba o que estudar hoje. Só isso.',
+    body: [
+      'A pior meia hora do dia é a que você gasta decidindo por onde começar. O cronograma acompanha o ritmo real do seu curso e já chega com a resposta pronta.',
+    ],
+    cta: { label: 'Montar cronograma', href: LINKS.cronogramas },
+    media: () => <ProductImage src={flashcards3d} alt="Cronograma de estudos" />,
+  },
+  {
+    key: 'sus',
+    icon: <IconManual />,
+    name: 'Prescrição Real no SUS',
+    teaser: '330 páginas de conduta com o que existe na prateleira do posto.',
+    badge: 'Ebook · R$47',
+    headline: 'O único material que você vai querer que seja um PDF.',
+    body: [
+      'Sentiu aquela sensação de abrir o guideline e ver um remédio que não existe na farmácia do posto? Ela some quando você tem um manual escrito para a realidade do SUS, não para a prova. Este não morre na pasta de Downloads: ele vive no bolso do jaleco, aberto às três da manhã na UPA lotada.',
+      'As 50 queixas mais comuns, os medicamentos reais da REMUME, as doses e o plano B para quando falta o ideal. 330 páginas, 100% REMUME e SUS. De colega para colega.',
+    ],
+    cta: { label: 'Conhecer o Ebook', href: LINKS.sus },
+    note: 'R$147 R$47 · pagamento único · seu para sempre',
+    media: () => <Book3D />,
+  },
+]
+
+function ProductRow({
+  product,
+  index,
+  open,
+  onToggle,
+}: {
+  product: Product
+  index: number
+  open: boolean
+  onToggle: () => void
+}) {
+  const panelId = `produto-${product.key}`
+  return (
+    <div className="border-b border-[color:var(--da-neutral-line)]">
+      <h3>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className={
+            'group flex w-full items-start gap-4 px-1 py-6 text-left transition-colors md:gap-6 md:px-4 ' +
+            (open ? 'text-da-paper' : 'hover:bg-da-panel/40')
+          }
+        >
+          <span className="w-6 shrink-0 pt-1.5 font-da-mono text-xs text-da-amber">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <span
+            className={
+              'hidden shrink-0 pt-0.5 transition-colors sm:block ' +
+              (open ? 'text-da-amber' : 'text-da-muted group-hover:text-da-amber')
+            }
+          >
+            {product.icon}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="font-da-display text-xl font-semibold tracking-tight md:text-2xl">
+                {product.name}
+              </span>
+              {product.badge && (
+                <span className="rounded-full border border-[color:var(--da-amber-line)] px-2.5 py-0.5 font-da-mono text-[9px] uppercase tracking-widest text-da-amber">
+                  {product.badge}
+                </span>
+              )}
+            </span>
+            <span className="mt-1.5 block text-sm leading-snug text-da-muted">
+              {product.teaser}
+            </span>
+          </span>
+          <span
+            className="shrink-0 text-da-amber transition-transform duration-300"
+            style={{ transform: open ? 'rotate(45deg)' : 'rotate(0)' }}
+            aria-hidden
+          >
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </span>
+        </button>
+      </h3>
+
+      {/* Colapso por grid-template-rows (mesma técnica do FAQ): anima altura
+          desconhecida sem medir nada em JS. `visibility` entra na transição só
+          para o conteúdo fechado sair da ordem de tabulação — e, como o
+          navegador segura o valor `visible` até o fim, o fechamento continua
+          suave em vez de sumir de uma vez. */}
+      <div
+        id={panelId}
+        className="grid"
+        style={{
+          gridTemplateRows: open ? '1fr' : '0fr',
+          visibility: open ? 'visible' : 'hidden',
+          transition: 'grid-template-rows .45s cubic-bezier(.2,.7,.2,1), visibility .45s',
+        }}
+      >
+        <div className="overflow-hidden">
+          <div className="grid grid-cols-1 items-center gap-8 px-1 pb-12 md:px-4 lg:grid-cols-[1.15fr_.85fr]">
+            <div>
+              <h4 className="font-da-display text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
+                {product.headline}
+              </h4>
+              {product.body.map((p) => (
+                <p key={p} className="mt-4 max-w-xl leading-relaxed text-da-muted">
+                  {p}
+                </p>
+              ))}
+              {product.bullets && (
+                <ul className="mt-6 space-y-3">
+                  {product.bullets.map((b) => (
+                    <li key={b} className="flex items-start gap-3">
+                      <span className="mt-0.5 shrink-0 text-da-amber">
+                        <IconLayers />
+                      </span>
+                      <span className="text-sm leading-relaxed">{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <GhostCTA href={product.cta.href}>{product.cta.label}</GhostCTA>
+                {product.note && (
+                  <span className="font-da-mono text-xs text-da-muted">{product.note}</span>
+                )}
+              </div>
+            </div>
+            {/* A mídia só existe no DOM com a linha aberta: nenhuma imagem 3D,
+                mockup ou capa é baixada por quem nunca abriu aquele produto. */}
+            <div>{open && product.media()}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProductsExplorer() {
+  const [openKey, setOpenKey] = useState<string | null>(PRODUCTS[0].key)
+
+  return (
+    <section id="produtos" className="relative border-t border-[color:var(--da-neutral-line)]">
+      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="01 / 06" label="A plataforma" />
+          <SectionMark n="04 / 05" label="Os produtos" />
           <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-            Seis ferramentas. Um lugar. Zero abas perdidas.
+            Nove ferramentas. Uma conta. Abra a que te interessa.
           </h2>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
-            Cada produto resolve um buraco que a faculdade deixa. Juntos, viram um ecossistema que
-            você não consegue mais largar.
+            Cada uma resolve um buraco que a faculdade deixa. Toque no nome para ver o que
+            aquela ferramenta faz por você — sem rolar página atrás do que importa.
           </p>
         </Reveal>
-        <div className="mt-12 grid grid-cols-1 divide-y divide-[color:var(--da-neutral-line)] border-y border-[color:var(--da-neutral-line)] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-3">
-          {modules.map(([icon, title, desc], i) => (
-            <Reveal key={title} delay={i * 50}>
-              <article className="group flex h-full flex-col border-[color:var(--da-neutral-line)] p-7 transition-colors hover:bg-da-panel/40 sm:min-h-[220px] sm:[&:nth-child(odd)]:border-r lg:[&:not(:nth-child(3n))]:border-r">
-                <div className="flex items-center justify-between">
-                  <span className="text-da-amber">{icon}</span>
-                  <span className="font-da-mono text-[10px] text-da-muted">0{i + 1}</span>
-                </div>
-                <h3 className="mt-5 font-da-display text-xl font-semibold tracking-tight">{title}</h3>
-                <p className="mt-2 text-da-muted">{desc}</p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
+
+        <Reveal delay={80}>
+          <div className="mt-12 border-t border-[color:var(--da-neutral-line)]">
+            {PRODUCTS.map((p, i) => (
+              <ProductRow
+                key={p.key}
+                product={p}
+                index={i}
+                open={openKey === p.key}
+                onToggle={() => setOpenKey((cur) => (cur === p.key ? null : p.key))}
+              />
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   )
@@ -968,78 +1476,6 @@ function ProblemBand() {
   )
 }
 
-/* ---------- MANUAL CLÍNICO ---------- */
-
-function ManualClinico() {
-  const features = [
-    'Classificação, etiologia, fisiopatologia e farmacologia, aprofundadas sem lacuna',
-    'Os sopros cardíacos e a ausculta pulmonar tocam de verdade, dentro do card',
-    'As lesões você vê em foto clínica, da erisipela à dermatologia, com referência',
-    'Atualizado de momento em momento, sem aquele tópico raso com pontinho de IA',
-  ]
-  return (
-    <section id="manual" className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-      <Reveal>
-        <SectionMark n="02 / 06" label="Carro-chefe" />
-      </Reveal>
-      <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-        <Reveal className="order-2 lg:order-1">
-          <Image
-            src={logoManual}
-            alt="Manual Clínico"
-            sizes="160px"
-            className="mb-6 h-16 w-auto"
-          />
-          <h2 className="font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-            Cinco livros abertos. Uma busca só.
-          </h2>
-          <p className="mt-5 max-w-lg text-lg leading-relaxed text-da-muted">
-            Mais de 300 patologias, cada uma destrinchada na profundidade que a prova e o plantão
-            exigem. Você digita a doença e vê tudo, do mecanismo à conduta. O aluno que precisava de
-            cinco livros na mesa agora precisa de uma aba. E dá para experimentar com o teste grátis
-            antes de assinar.
-          </p>
-          <ul className="mt-8 space-y-4">
-            {features.map((f) => (
-              <li key={f} className="flex items-start gap-3">
-                <span className="mt-0.5 shrink-0 text-da-amber">
-                  <IconLayers />
-                </span>
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            <GhostCTA href={LINKS.manual}>Abrir o Manual Clínico</GhostCTA>
-            <span className="font-da-mono text-xs text-da-muted">Teste grátis disponível</span>
-          </div>
-        </Reveal>
-        <Reveal delay={120} className="order-1 lg:order-2">
-          <TiltCard intensity={5}>
-            <figure className="relative">
-              <div
-                aria-hidden
-                className="absolute -inset-4 rounded-[2rem]"
-                style={{
-                  background:
-                    'radial-gradient(60% 60% at 50% 50%, rgba(232,118,58,.18), transparent 70%)',
-                }}
-              />
-              <Image
-                src={manualImg}
-                alt="Camadas de vidro do dossiê clínico com lesão, pulmão e miniaturas de patologia"
-                placeholder="blur"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="relative w-full rounded-2xl border border-[color:var(--da-amber-line)]"
-              />
-            </figure>
-          </TiltCard>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
 /* ---------- AMOSTRA GRÁTIS ---------- */
 
 function SampleBand() {
@@ -1076,7 +1512,7 @@ function SampleBand() {
   )
 }
 
-/* ---------- MANUAL DO ELETRO ---------- */
+/* ---------- MOCKUP DE CELULAR (usado no produto Manual do Eletro) ---------- */
 
 const phoneStyle: CSSProperties = {
   width: 'clamp(230px, 30vw, 300px)',
@@ -1162,268 +1598,6 @@ function PhoneMockup() {
   )
 }
 
-function ManualEletro() {
-  return (
-    <section className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
-      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-        <Reveal>
-          <SectionMark n="Plus+" label="Exclusivo de assinante" />
-        </Reveal>
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-          <Reveal>
-            <>
-              {/* Bem abaixo da dobra: `lazy` evita que estas duas artes
-                  (~250KB somadas) disputem banda com o hero na primeira
-                  pintura. Continuam trocando por CSS conforme o tema. */}
-              <img
-                src="/img/eletro/manual-eletrocardiograma-light.webp"
-                alt="Manual do Eletrocardiograma"
-                width={958}
-                height={461}
-                loading="lazy"
-                decoding="async"
-                className="mb-6 block h-auto w-full max-w-[300px] dark:hidden md:max-w-[360px]"
-              />
-              <img
-                src="/img/eletro/manual-eletrocardiograma-dark.webp"
-                alt="Manual do Eletrocardiograma"
-                width={958}
-                height={461}
-                loading="lazy"
-                decoding="async"
-                className="mb-6 hidden h-auto w-full max-w-[300px] dark:block md:max-w-[360px]"
-              />
-            </>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-line)] px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
-              <IconPulse /> Incluso só no Manual Clínico
-            </span>
-            <h2 className="mt-5 font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-              O que esse traçado está te dizendo?
-            </h2>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-da-muted">
-              Tem uma pergunta que todo preceptor faz e que a maioria trava na resposta. Não é sobre
-              decorar o nome da arritmia. É sobre entender a história que o coração está contando ali
-              no papel. Isso não se decora, se treina.
-            </p>
-            <p className="mt-4 max-w-xl leading-relaxed text-da-muted">
-              O Manual do Eletrocardiograma treina exatamente esse raciocínio, do ritmo normal à
-              emergência. Ele é exclusivo de quem assina o Manual Clínico, então não entra no teste
-              grátis. É o tipo de conteúdo que separa quem lê ECG de quem adivinha.
-            </p>
-            <div className="mt-9">
-              <PrimaryCTA href={LINKS.manual}>Assinar o Manual Clínico</PrimaryCTA>
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <PhoneMockup />
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ---------- CONSOLE DE FERRAMENTAS ---------- */
-
-const TOOL_CHANNELS = [
-  {
-    key: 'provas-fac',
-    label: 'Provas da Faculdade',
-    reading: 'PROVAS REAIS',
-    title: 'As provas da sua faculdade, no site',
-    desc: 'As provas que a sua faculdade já aplicou, prontas para você resolver e treinar do jeito que cai de verdade. Faça quantas quiser. Baixe em PDF sendo assinante.',
-    img: provas3d,
-    cta: 'Resolver provas',
-    stat: 'Provas oficiais',
-    href: LINKS.provas,
-  },
-  {
-    key: 'flashcards',
-    label: 'Flashcards',
-    reading: 'REPETIÇÃO ESPAÇADA',
-    title: 'Flashcards próprios do Domine Aqui',
-    desc: 'Decks de anatomia e além, criados e revisados por quem entende, com repetição espaçada que finca o conteúdo na memória de longo prazo. À venda no site, prontos para usar.',
-    img: flashcards3d,
-    cta: 'Ver os flashcards',
-    stat: 'Feitos por especialistas',
-    href: LINKS.flashcards,
-  },
-  {
-    key: 'mapas',
-    label: 'Mapas mentais',
-    reading: 'EDITOR VISUAL',
-    title: 'Pense em rede, não em lista',
-    desc: 'Um editor visual rápido para criar, conectar e compartilhar suas ideias. Deixe públicos, envie por link ou proteja com senha. A anatomia do seu raciocínio, desenhada. Teste um mapa de graça.',
-    img: flashcards3d,
-    cta: 'Testar um mapa grátis',
-    stat: 'Público, link ou senha',
-    href: LINKS.mapaMental,
-  },
-  {
-    key: 'banco',
-    label: 'Banco de Questões',
-    reading: 'USO ILIMITADO',
-    title: 'Banco de Questões sem limite',
-    desc: 'Milhares de questões para resolver à vontade, no Plus+. Errar aqui é de graça. Errar na prova custa o ano inteiro.',
-    img: provas3d,
-    cta: 'Entrar no banco',
-    stat: 'Ilimitado',
-    href: LINKS.bancoQuestoes,
-  },
-  {
-    key: 'ia',
-    label: 'Provas e Flashcards por IA',
-    reading: 'NO TESTE GRÁTIS',
-    title: 'Gerados por IA na sua ementa',
-    desc: 'Precisa de algo sob medida? A IA monta provas e flashcards a partir do conteúdo exato do seu curso. Disponível já no acesso gratuito, para você experimentar antes de assinar.',
-    img: flashcards3d,
-    cta: 'Testar de graça',
-    stat: 'Incluso no grátis',
-    href: LINKS.amostra,
-  },
-  {
-    key: 'cronograma',
-    label: 'Cronograma',
-    reading: 'VINCULADO AO CURSO',
-    title: 'Cronograma da sua faculdade',
-    desc: 'Um plano de estudo vinculado ao ritmo real do seu curso. Você abre e sabe exatamente o que estudar hoje, sem perder tempo decidindo por onde começar.',
-    img: flashcards3d,
-    cta: 'Montar cronograma',
-    stat: 'No seu ritmo',
-    href: LINKS.cronogramas,
-  },
-]
-
-function ToolsConsole() {
-  const [active, setActive] = useState(0)
-  const ch = TOOL_CHANNELS[active]
-  return (
-    <section
-      id="ferramentas"
-      className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
-    >
-      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-        <Reveal>
-          <SectionMark n="03 / 06" label="Estudo ativo" />
-          <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-            Treine nas provas de verdade. Não em simulado genérico.
-          </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
-            Sintonize o canal e veja o que cada instrumento faz por você.
-          </p>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <div className="mt-12 overflow-hidden rounded-2xl border border-[color:var(--da-amber-line)] bg-da-ground">
-            <div className="flex items-center gap-3 border-b border-[color:var(--da-neutral-line)] px-5 py-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-da-amber" />
-              <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
-                Domine Aqui · console de ferramentas
-              </span>
-              <span className="ml-auto hidden font-da-mono text-[10px] text-da-amber sm:block">
-                {ch.reading}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr]">
-              <div className="flex flex-row overflow-x-auto border-b border-[color:var(--da-neutral-line)] [scrollbar-width:none] lg:flex-col lg:border-b-0 lg:border-r [&::-webkit-scrollbar]:hidden">
-                {TOOL_CHANNELS.map((c, i) => {
-                  const on = i === active
-                  return (
-                    <button
-                      key={c.key}
-                      type="button"
-                      onMouseEnter={() => setActive(i)}
-                      onClick={() => setActive(i)}
-                      className={
-                        'group flex shrink-0 items-center gap-3 px-5 py-4 text-left transition-colors lg:border-b lg:border-[color:var(--da-neutral-line)] ' +
-                        (on ? 'bg-da-panel/60' : 'hover:bg-da-panel/30')
-                      }
-                    >
-                      <span className={'font-da-mono text-xs ' + (on ? 'text-da-amber' : 'text-da-muted')}>
-                        0{i + 1}
-                      </span>
-                      <span
-                        className={
-                          'whitespace-nowrap font-da-display text-sm font-medium ' +
-                          (on ? 'text-da-paper' : 'text-da-muted')
-                        }
-                      >
-                        {c.label}
-                      </span>
-                      <span
-                        className={
-                          'ml-auto hidden transition-transform lg:block ' +
-                          (on ? 'translate-x-0 text-da-amber opacity-100' : '-translate-x-1 opacity-0')
-                        }
-                        aria-hidden
-                      >
-                        →
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-
-              <div
-                key={ch.key}
-                className="da-panel-fade relative grid grid-cols-1 gap-6 p-7 md:grid-cols-[1fr_240px] md:p-9"
-              >
-                <div className="flex flex-col justify-center">
-                  <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-amber">
-                    {ch.reading}
-                  </span>
-                  <h3 className="mt-3 font-da-display text-2xl font-semibold tracking-tight md:text-3xl">
-                    {ch.title}
-                  </h3>
-                  <p className="mt-3 max-w-md leading-relaxed text-da-muted">{ch.desc}</p>
-                  <div className="mt-6 flex items-center gap-5">
-                    <TextLink href={ch.href}>{ch.cta}</TextLink>
-                    <span className="font-da-mono text-xs text-da-muted">· {ch.stat}</span>
-                  </div>
-                </div>
-                <div className="relative flex items-center justify-center">
-                  <div
-                    aria-hidden
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        'radial-gradient(60% 55% at 50% 50%, rgba(232,118,58,.16), transparent 70%)',
-                    }}
-                  />
-                  <Image
-                    src={ch.img}
-                    alt={ch.title}
-                    sizes="240px"
-                    className="relative z-10 max-h-[240px] w-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,.5)]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-[color:var(--da-neutral-line)] px-5 py-3">
-              <svg
-                viewBox="0 0 1200 24"
-                className="h-5 w-full"
-                preserveAspectRatio="none"
-                fill="none"
-                stroke="#E8763A"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                opacity="0.55"
-                aria-hidden
-              >
-                <path d="M0 12h420l10-8 12 16 10-8h30l8-10 10 20 8-10h520l10-6 12 12 10-6h108" />
-              </svg>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
 /* ---------- DIFERENCIAIS ---------- */
 
 function Differentiators() {
@@ -1448,7 +1622,7 @@ function Differentiators() {
   return (
     <section className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
       <Reveal>
-        <SectionMark n="04 / 06" label="Diferencial" />
+        <SectionMark n="05 / 05" label="Diferencial" />
         <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
           O que uma plataforma viva faz e um arquivo morto nunca vai fazer
         </h2>
@@ -1486,14 +1660,13 @@ function TestimonialCard({ t }: { t: Testimonial }) {
   // Autoplay só depois do clique — o iframe do YouTube (~1MB) nunca entra no DOM
   // de quem não aperta o play, seguindo o mesmo cuidado do Manual do Eletro.
   const src = `${t.embedUrl}${t.embedUrl.includes('?') ? '&' : '?'}autoplay=1`
-  const aspect = t.vertical ? '9 / 16' : '16 / 9'
-
+  // Todos os slides usam a MESMA caixa 4:5, independente de o vídeo ser
+  // vertical ou horizontal. No trilho lateral, card de altura variável quebra o
+  // alinhamento e a rolagem com encaixe fica torta; a miniatura entra em
+  // object-cover e o player letterboxa sozinho o que não couber.
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground">
-      <div
-        className="relative w-full overflow-hidden bg-black"
-        style={{ aspectRatio: aspect }}
-      >
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground transition-colors hover:border-da-amber/40">
+      <div className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: '4 / 5' }}>
         {play ? (
           <iframe
             src={src}
@@ -1532,12 +1705,14 @@ function TestimonialCard({ t }: { t: Testimonial }) {
         )}
       </div>
       {(t.name || t.description) && (
-        <div className="flex flex-col gap-1 p-5">
+        <div className="flex min-h-[104px] flex-col gap-1 p-5">
           {t.name && (
-            <span className="font-da-display text-lg font-semibold tracking-tight">{t.name}</span>
+            <span className="font-da-display text-base font-semibold tracking-tight">{t.name}</span>
           )}
           {t.description && (
-            <p className="whitespace-pre-line text-sm leading-relaxed text-da-muted">
+            // Clamp em 3 linhas: mantém todos os cards do trilho com a mesma
+            // altura, mesmo quando um depoimento tem legenda gigante.
+            <p className="line-clamp-3 whitespace-pre-line text-sm leading-relaxed text-da-muted">
               {t.description}
             </p>
           )}
@@ -1567,27 +1742,208 @@ function Testimonials() {
 
   // Sem depoimentos cadastrados (ou ainda carregando) a seção nem aparece —
   // nada de buraco vazio na landing enquanto o admin não sobe os vídeos.
+  // O trilho fica num componente separado de propósito: o efeito que mede a
+  // rolagem roda uma vez na montagem, então ele só pode montar quando os cards
+  // já existem no DOM. Montado antes, mediria um trilho vazio, concluiria "não
+  // tem overflow" e as setas ficariam desabilitadas para sempre.
   if (!items || items.length === 0) return null
+
+  return <TestimonialsRail items={items} />
+}
+
+function TestimonialsRail({ items }: { items: Testimonial[] }) {
+  const { trackRef, barRef, edges, nudge } = useHorizontalRail<HTMLDivElement>()
 
   return (
     <section
       id="depoimentos"
-      className="relative border-t border-[color:var(--da-neutral-line)]"
+      className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)]"
     >
-      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'radial-gradient(900px 500px at 15% 0%, rgba(232,118,58,.12), transparent 60%)',
+        }}
+      />
+      <div className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="Alunos" label="Depoimentos" />
+          <SectionMark n="01 / 05" label="Quem já usa" />
           <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-            Quem já estuda com a plataforma conta como foi
+            Não acredite em mim. Escute eles.
           </h2>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
+            Alunos que estavam exatamente onde você está agora — véspera de prova, material
+            espalhado, tempo curto. Arraste para o lado e escolha um para ouvir.
+          </p>
         </Reveal>
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((t, i) => (
-            <Reveal key={t._id} delay={(i % 3) * 90}>
-              <TestimonialCard t={t} />
-            </Reveal>
-          ))}
+      </div>
+
+      {/* O trilho sangra até a borda da tela (fora do container) para o card
+          seguinte ficar sempre "cortado" na lateral — a dica visual que faz o
+          visitante entender que dá para arrastar, sem precisar de instrução. */}
+      <div
+        ref={trackRef}
+        className="da-track flex snap-x gap-5 overflow-x-auto px-5 pb-2 md:px-8"
+        role="region"
+        aria-label="Depoimentos de alunos em vídeo"
+        tabIndex={0}
+      >
+        {items.map((t) => (
+          <div key={t._id} data-slide className="w-[76vw] shrink-0 sm:w-[300px]">
+            <TestimonialCard t={t} />
+          </div>
+        ))}
+        {/* Cartão final: quem chegou ao fim do trilho já está convencido. */}
+        <div data-slide className="w-[76vw] shrink-0 sm:w-[300px]">
+          <div className="flex h-full flex-col justify-center rounded-2xl border border-da-amber/50 bg-da-tint/40 p-7">
+            <p className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-amber">
+              Próximo depoimento
+            </p>
+            <p className="mt-4 font-da-display text-2xl font-semibold leading-tight tracking-tight">
+              O próximo aqui pode ser o seu.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-da-muted">
+              Cria a conta grátis, usa por uma semana e vê se a sua rotina muda.
+            </p>
+            <div className="mt-6">
+              <GhostCTA href="/auth/login?mode=register" className="!px-5 !py-2.5 text-sm">
+                Criar conta grátis
+              </GhostCTA>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-5 pb-16 md:px-8 md:pb-20">
+        <RailControls edges={edges} nudge={nudge} barRef={barRef} label="Depoimentos" />
+      </div>
+    </section>
+  )
+}
+
+/* ---------- AVALIAÇÕES DOS MATERIAIS ---------- */
+
+function ReviewChip({ r }: { r: ShowcaseReview }) {
+  return (
+    <article className="mr-4 flex w-[290px] shrink-0 flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-5 sm:w-[330px]">
+      <div className="flex items-center gap-3">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[color:var(--da-amber-line)] bg-da-amber/10 font-da-display text-sm font-semibold text-da-amber">
+          {(r.displayName || '?').charAt(0).toUpperCase()}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate font-da-display text-sm font-semibold tracking-tight">
+            {r.displayName}
+          </p>
+          <Stars value={r.rating} className="h-3.5 w-3.5" />
+        </div>
+        {r.isVerified && (
+          <span className="ml-auto shrink-0 font-da-mono text-[9px] uppercase tracking-widest text-da-amber">
+            Verificado
+          </span>
+        )}
+      </div>
+      <p className="mt-4 line-clamp-5 text-sm leading-relaxed text-da-muted">{r.comment}</p>
+      {r.sourceTitle && (
+        <p className="mt-4 truncate border-t border-[color:var(--da-neutral-line)] pt-3 font-da-mono text-[10px] uppercase tracking-widest text-da-muted">
+          {r.sourceTitle}
+        </p>
+      )}
+    </article>
+  )
+}
+
+/**
+ * Esteira de avaliações reais dos materiais, logo abaixo dos depoimentos.
+ * Duas fileiras deslizando em sentidos opostos: cabe dezenas de avaliações em
+ * pouco mais de 400px de altura, contra a página infinita que uma grade daria.
+ * O conteúdo é duplicado no JSX porque o keyframe anda -50% do track.
+ */
+function PlatformReviews({ data }: { data: ShowcaseData | null }) {
+  if (!data || data.reviews.length === 0) return null
+
+  const { reviews, summary } = data
+  // Com poucas avaliações a esteira dá volta rápido demais e fica óbvio que é
+  // a mesma coisa repetindo — nesse caso vira uma faixa estática.
+  const animate = reviews.length >= 6
+  const half = Math.ceil(reviews.length / 2)
+  const rows = [reviews.slice(0, half), reviews.slice(half)]
+  // O keyframe anda -50% do track, então o conteúdo precisa estar duplicado um
+  // número PAR de vezes para o loop fechar sem salto. Em fileira curta, duas
+  // cópias podem não cobrir a largura de um monitor grande e apareceria um
+  // vazio no fim da volta — daí quatro.
+  const repeat = (row: ShowcaseReview[]) => (row.length < 6 ? 4 : 2)
+
+  return (
+    <section className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
+      <div className="mx-auto max-w-7xl px-5 pb-10 pt-20 md:px-8 md:pb-12 md:pt-24">
+        <Reveal>
+          <SectionMark n="02 / 05" label="Avaliações dos materiais" />
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+                Cada material daqui tem nota. Todas estão aqui.
+              </h2>
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
+                Nada de depoimento escolhido a dedo: o que passa abaixo é o que os alunos
+                escreveram dentro da plataforma, sobre os materiais que compraram.
+              </p>
+            </div>
+            {summary.count > 0 && (
+              <div className="shrink-0 rounded-2xl border border-[color:var(--da-amber-line)] bg-da-ground px-6 py-5">
+                <div className="flex items-end gap-2">
+                  <span className="font-da-display text-4xl font-semibold tracking-tighter text-da-amber">
+                    {summary.avg.toFixed(1).replace('.', ',')}
+                  </span>
+                  <span className="pb-1 font-da-mono text-xs text-da-muted">/ 5</span>
+                </div>
+                <Stars value={summary.avg} className="mt-2 h-4 w-4" />
+                <p className="mt-2 font-da-mono text-[11px] text-da-muted">
+                  {summary.count} {summary.count === 1 ? 'avaliação' : 'avaliações'} na plataforma
+                </p>
+              </div>
+            )}
+          </div>
+        </Reveal>
+      </div>
+
+      <div
+        className="relative pb-20 md:pb-24"
+        style={{
+          // Apaga as pontas para os cards entrarem e saírem de cena sem corte
+          // seco na borda da tela.
+          maskImage:
+            'linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)',
+          WebkitMaskImage:
+            'linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)',
+        }}
+      >
+        {animate ? (
+          rows.map((row, rowIndex) => {
+            const copies = repeat(row)
+            // A volta percorre metade do track: velocidade constante = duração
+            // proporcional ao número de cards atravessados nessa metade.
+            const seconds = Math.max(28, ((row.length * copies) / 2) * 9)
+            return (
+              <div key={rowIndex} className="da-rail-wrap overflow-hidden py-2">
+                <div
+                  className={'da-rail' + (rowIndex % 2 === 1 ? ' da-rail-reverse' : '')}
+                  style={{ '--da-rail-duration': `${seconds}s` } as CSSProperties}
+                >
+                  {Array.from({ length: copies }).flatMap((_, c) =>
+                    row.map((r) => <ReviewChip key={`${r._id}-${c}`} r={r} />),
+                  )}
+                </div>
+              </div>
+            )
+          })
+        ) : (
+          <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-y-4 px-5 md:px-8">
+            {reviews.map((r) => (
+              <ReviewChip key={r._id} r={r} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
@@ -1620,7 +1976,7 @@ function Plans() {
     >
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="Oferta" label="Planos" />
+          <SectionMark n="03 / 05" label="A oferta" />
           <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
             Comece de graça. Suba de nível quando a prova apertar.
           </h2>
@@ -1687,7 +2043,7 @@ function Plans() {
   )
 }
 
-/* ---------- PRESCRIÇÃO NO SUS ---------- */
+/* ---------- LIVRO 3D (usado no produto Prescrição Real no SUS) ---------- */
 
 const bookStyle: CSSProperties = {
   width: 'clamp(200px, 26vw, 300px)',
@@ -1748,59 +2104,6 @@ function Book3D() {
         />
       </div>
     </div>
-  )
-}
-
-function Prescricao() {
-  return (
-    <section id="sus" className="relative border-t border-[color:var(--da-neutral-line)]">
-      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-        <Reveal>
-          <SectionMark n="Bônus" label="Manual de guerra" />
-        </Reveal>
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
-          <Reveal className="order-2 lg:order-1">
-            <Book3D />
-            <div className="mt-6 text-center">
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-da-mono text-lg text-da-muted line-through">R$147</span>
-                <span className="font-da-display text-4xl font-semibold tracking-tighter text-da-amber">
-                  R$47
-                </span>
-              </div>
-              <p className="mt-2 font-da-mono text-xs text-da-muted">
-                330 páginas · pagamento único · seu para sempre
-              </p>
-              <div className="mt-6 flex justify-center">
-                <GhostCTA href={LINKS.sus}>Conhecer o Ebook</GhostCTA>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={120} className="order-1 lg:order-2">
-            <h2 className="font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-              O único material que você vai querer que seja um PDF.
-            </h2>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-da-muted">
-              Sentiu aquela sensação de abrir o guideline e ver um remédio que não existe na farmácia
-              do posto? Ela some quando você tem um manual escrito para a realidade do SUS, não para
-              a prova. Este não morre na pasta de Downloads. Ele vive no bolso do seu jaleco, aberto
-              às três da manhã na UPA lotada.
-            </p>
-            <p className="mt-4 max-w-xl leading-relaxed text-da-muted">
-              Prescrição Real traz as 50 queixas mais comuns, os medicamentos reais da REMUME, as
-              doses e o plano B para quando falta o ideal. Do soro na diarreia à manobra de Epley na
-              vertigem, do captopril que se engole e nunca é sublingual à adrenalina que muda o
-              desfecho. 330 páginas, 100% REMUME e SUS. Prescrever bem não é saber o melhor remédio
-              do mundo. É saber o melhor que existe na prateleira hoje, e o que fazer quando nem esse
-              existe.
-            </p>
-            <p className="mt-6 font-da-display text-lg font-medium text-da-amber">
-              De colega para colega.
-            </p>
-          </Reveal>
-        </div>
-      </div>
-    </section>
   )
 }
 

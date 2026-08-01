@@ -2134,10 +2134,49 @@
   animation: da-panel-fade 0.4s ease;
 }
 
+/* --------------------------------------------------------------------------
+   ESTEIRA DE AVALIAÇÕES (prova social da landing)
+   Duas fileiras que deslizam sozinhas em sentidos opostos. O conteúdo é
+   duplicado no JSX e o track anda -50%, então o loop é contínuo e sem salto.
+   Pausa no hover/foco para o visitante conseguir ler um card específico.
+   -------------------------------------------------------------------------- */
+.da-rail {
+  display: flex;
+  width: max-content;
+  animation: da-marquee var(--da-rail-duration, 60s) linear infinite;
+  will-change: transform;
+}
+.da-rail-reverse {
+  animation-direction: reverse;
+}
+.da-rail-wrap:hover .da-rail,
+.da-rail-wrap:focus-within .da-rail {
+  animation-play-state: paused;
+}
+
+/* Carrossel de depoimentos: rolagem lateral com encaixe, sem barra visível. */
+.da-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+}
+.da-track::-webkit-scrollbar {
+  display: none;
+}
+.da-track > * {
+  scroll-snap-align: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .da-marquee-track,
+  .da-rail,
   .da-panel-fade {
     animation: none !important;
+  }
+  /* Sem animação, a esteira vira uma faixa rolável na mão. */
+  .da-rail-wrap {
+    overflow-x: auto !important;
   }
 }
 

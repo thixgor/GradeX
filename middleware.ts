@@ -56,6 +56,9 @@ const publicRoutes = [
   // GET não exige login; POST/PATCH/DELETE continuam validando a sessão
   // internamente no handler (retornam 401 para quem não está logado).
   '/api/reviews',
+  // Vitrine agregada de avaliações (todos os materiais/decks visíveis) que
+  // alimenta a esteira de prova social da landing. Só GET, sem dado de sessão.
+  '/api/reviews/showcase',
   // Depoimentos em vídeo da landing (prova social) — precisam aparecer para
   // visitante deslogado. Só GET é exposto por essa rota; o CRUD de admin vive
   // em /api/admin/testimonials, que já exige sessão de admin internamente.
