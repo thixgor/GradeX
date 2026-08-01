@@ -31,9 +31,17 @@ import {
 import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
 import { QuestaoDoDiaCard } from '@/components/retencao/questao-do-dia-card'
 import { ExperienceCarousel } from '@/components/dashboard/experience-carousel'
+import { TourTrigger } from '@/components/dashboard/tour-trigger'
+import { usePlatformTour } from '@/hooks/use-platform-tour'
 
 // O overlay carrega o acervo completo de frases; fora do chunk inicial.
 const PhrasesOverlay = dynamic(() => import('@/components/dashboard/phrases-overlay'), { ssr: false })
+
+// O tour só é baixado quando abre de fato — quem já fez nunca paga por ele.
+const PlatformTour = dynamic(
+  () => import('@/components/dashboard/platform-tour').then(m => m.PlatformTour),
+  { ssr: false },
+)
 
 // ─── Circular Progress Ring ─────────────────────────────────────
 function ProgressRing({
@@ -117,7 +125,7 @@ const PHRASE_SEED = [
 // ─── Dashboard Content ──────────────────────────────────────────
 function DashboardContent() {
   const router = useRouter()
-  const { user, isAdmin, accountType } = useAppShell()
+  const { user, isAdmin, accountType, setSidebarOpen } = useAppShell()
 
   const [stats, setStats] = useState({
     questionsAnswered: 0,
@@ -223,6 +231,22 @@ function DashboardContent() {
   }, [])
 
   const firstName = user?.name?.split(' ')[0] || ''
+
+  // ─── Tour interativo ───────────────────────────────────────────
+  // Só arma a abertura automática depois que os dados chegam: o tour resolve
+  // os passos contra o DOM, e disparar com a dashboard ainda em esqueleto
+  // apagaria metade do roteiro por "alvo inexistente".
+  const tour = usePlatformTour({ userId: user?.id, autoStart: !loading, autoStartDelayMs: 1200 })
+
+  // O menu lateral é overlay no celular: os passos que falam dele precisam
+  // abri-lo antes de medir o alvo.
+  const handleTourSidebar = useCallback(
+    (open: boolean) => {
+      if (typeof window === 'undefined' || window.innerWidth >= 1024) return
+      setSidebarOpen(open)
+    },
+    [setSidebarOpen],
+  )
 
   // ─── Stats Config ──────────────────────────────────────────────
   // `ring` só onde a porcentagem é real: para contagens não existe teto, e o
@@ -331,6 +355,23 @@ function DashboardContent() {
         />
       )}
 
+      {/* Tour guiado da plataforma */}
+      {tour.open && (
+        <PlatformTour
+          open={tour.open}
+          initialStep={tour.initialStep}
+          firstName={firstName}
+          stats={{
+            questionsAnswered: stats.questionsAnswered,
+            examsCompleted: stats.examsCompleted,
+            cronogramasCreated: userStats.cronogramasCreated,
+          }}
+          onSidebarRequest={handleTourSidebar}
+          onDismiss={tour.dismiss}
+          onFinish={tour.finish}
+        />
+      )}
+
       <div className="mx-auto max-w-7xl space-y-5 p-4 pb-24 sm:space-y-6 sm:p-6 sm:pb-8 lg:p-8 lg:pb-10">
 
         {/* ═══════════════════════════════════════════════════════
@@ -386,6 +427,7 @@ function DashboardContent() {
               {/* Direita: ação principal */}
               <div className="flex flex-col items-stretch gap-3 sm:items-end">
                 <Button
+                  data-tour="hero-cta"
                   onClick={() => router.push('/provas')}
                   className="group h-11 rounded-md border-0 bg-[#CE5929] px-5 text-sm font-semibold text-white shadow-[0_8px_20px_-10px_rgba(206,89,41,0.6)] hover:bg-[#CE5929]/90"
                 >
@@ -393,6 +435,17 @@ function DashboardContent() {
                   Continuar estudando
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Button>
+
+                {/* Saída de emergência: quem não sabe o que fazer não precisa
+                    descobrir sozinho. Fica colado na ação principal, na
+                    primeira dobra, em todas as visitas. */}
+                {tour.ready && (
+                  <TourTrigger
+                    status={tour.status}
+                    pausedStep={tour.pausedStep}
+                    onStart={() => tour.start(tour.initialStep)}
+                  />
+                )}
 
                 {stats.streakDays > 0 && (
                   <div className="flex items-center gap-2 text-sm text-white/50 sm:justify-end">
@@ -426,7 +479,7 @@ function DashboardContent() {
         {/* ═══════════════════════════════════════════════════════
             2. PERFORMANCE OVERVIEW CARDS
            ═══════════════════════════════════════════════════════ */}
-        <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <section data-tour="stats" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {quickStats.map((stat, index) => {
             const Icon = stat.icon
             return (

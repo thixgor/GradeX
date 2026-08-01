@@ -1069,6 +1069,81 @@
   }
 }
 
+/* ============================================
+   Tour interativo da dashboard
+   ============================================ */
+
+/* O recorte persegue o alvo por transição, não por animação JS: a cada troca
+   de passo só mudam as medidas dos mesmos elementos. */
+.tour-spotlight,
+.tour-mask {
+  transition:
+    top 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    right 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    bottom 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Halo que respira em volta do recorte: leva o olho ao elemento antes do
+   cartão ser lido. Anima só opacity/transform — fica no compositor. */
+@keyframes tour-halo {
+  0%   { opacity: 0.55; transform: scale(1); }
+  70%  { opacity: 0;    transform: scale(1.045); }
+  100% { opacity: 0;    transform: scale(1.045); }
+}
+
+.tour-halo {
+  animation: tour-halo 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  transition:
+    top 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes tour-card-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+.tour-card-in {
+  animation: tour-card-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Órbita da ilustração de abertura. O contêiner gira e cada ícone gira ao
+   contrário na mesma cadência — assim eles orbitam sem virar de cabeça pra
+   baixo no caminho. */
+@keyframes tour-orbit-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.tour-orbit {
+  animation: tour-orbit-spin 22s linear infinite;
+}
+
+.tour-orbit-counter {
+  display: block;
+  animation: tour-orbit-spin 22s linear infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight,
+  .tour-mask,
+  .tour-halo,
+  .tour-card-in,
+  .tour-orbit,
+  .tour-orbit-counter {
+    animation: none;
+    transition: none;
+  }
+  .tour-halo {
+    opacity: 0;
+  }
+}
+
 /* Solid brand CTA — no neon dual-gradient */
 .btn-brand-glow {
   background: hsl(var(--secondary));

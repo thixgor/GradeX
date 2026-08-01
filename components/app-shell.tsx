@@ -423,7 +423,7 @@ export function AppShell({
                   </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                <div data-tour="header-tools" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                   <MaterialCartButton isAuthenticated={!!user} />
                   <FocusSessionButton />
                   <NotificationsBell />
