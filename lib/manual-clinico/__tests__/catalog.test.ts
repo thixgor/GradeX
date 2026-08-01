@@ -4,13 +4,17 @@ import assert from 'node:assert/strict'
 import {
   DRUG_COMPLETENESS_FIELDS,
   PATHOLOGY_COMPLETENESS_FIELDS,
+  buildCatalogNameIndex,
   buildCatalogResponse,
   checkCatalogNames,
   computeCompleteness,
+  isFieldFilled,
   parseCatalogCheckKind,
   parseCatalogKind,
   parseIncludeCompleteness,
   resolveAdminAccess,
+  sortCatalogDrugs,
+  sortCatalogPathologies,
   toCatalogDrug,
   toCatalogPathology,
   validateCatalogCheckNames,
@@ -140,6 +144,32 @@ test('updatedAt e serializado em ISO e tolera ausencia', () => {
   assert.equal(toCatalogPathology({ ...HAS, updatedAt: undefined }, false).updatedAt, null)
 })
 
+test('updatedAt aceita timestamp numerico e string ISO', () => {
+  // Regressao: String(1700000000000) vira "1700000000000", que o
+  // parser de data rejeita — o valor sumia silenciosamente.
+  assert.equal(
+    toCatalogPathology({ ...HAS, updatedAt: 1700000000000 }, false).updatedAt,
+    '2023-11-14T22:13:20.000Z',
+  )
+  assert.equal(
+    toCatalogPathology({ ...HAS, updatedAt: '2026-02-20T08:30:00.000Z' }, false).updatedAt,
+    '2026-02-20T08:30:00.000Z',
+  )
+})
+
+test('updatedAt invalido vira null em vez de quebrar', () => {
+  assert.equal(toCatalogPathology({ ...HAS, updatedAt: 'nao é data' }, false).updatedAt, null)
+  assert.equal(toCatalogPathology({ ...HAS, updatedAt: new Date('x') }, false).updatedAt, null)
+  assert.equal(toCatalogPathology({ ...HAS, updatedAt: { a: 1 } }, false).updatedAt, null)
+})
+
+test('uma data valida conta como campo preenchido', () => {
+  // Object.keys(new Date()) e [], entao o caso generico de objeto
+  // classificaria uma data como vazia.
+  assert.equal(isFieldFilled(new Date('2026-01-01')), true)
+  assert.equal(isFieldFilled(new Date('invalida')), false)
+})
+
 test('entrada de farmaco expoe classe e subclasse', () => {
   const entry = toCatalogDrug(PARACETAMOL, false)
   assert.equal(entry.classe, 'Analgésicos, Anti-inflamatórios e Antitérmicos')
@@ -218,7 +248,7 @@ test('kind=all devolve patologias e farmacos com resumo correto', () => {
 test('kind=pathology zera a secao de farmacos', () => {
   const res = buildCatalogResponse({
     kind: 'pathology',
-    includeCompleteness: false,
+    includeCompleteness: true,
     pathologyDocs: [HAS],
     drugDocs: [],
   })
@@ -240,15 +270,36 @@ test('kind=drug zera a secao de patologias', () => {
   assert.equal(res.drugs.length, 1)
 })
 
-test('resumo continua correto mesmo com includeCompleteness=false', () => {
+test('includeCompleteness=false reporta contadores como null, nunca zero falso', () => {
+  // Nesse modo a rota nao le os campos de conteudo, entao contar
+  // incompletos seria impossivel — null diz isso, 0 mentiria.
   const res = buildCatalogResponse({
     kind: 'all',
     includeCompleteness: false,
     pathologyDocs: [HAS, AVC],
-    drugDocs: [],
+    drugDocs: [PARACETAMOL],
+  })
+  assert.equal(res.summary.pathologies, 2)
+  assert.equal(res.summary.drugs, 1)
+  assert.equal(res.summary.incompletePathologies, null)
+  assert.equal(res.summary.incompleteDrugs, null)
+  assert.equal('completeness' in res.pathologies[0], false)
+})
+
+test('includeCompleteness=true conta incompletos sem recalcular', () => {
+  const res = buildCatalogResponse({
+    kind: 'all',
+    includeCompleteness: true,
+    pathologyDocs: [HAS, AVC],
+    drugDocs: [PARACETAMOL],
   })
   assert.equal(res.summary.incompletePathologies, 1)
-  assert.equal('completeness' in res.pathologies[0], false)
+  assert.equal(res.summary.incompleteDrugs, 1)
+  // O contador tem que bater com o que foi exposto por item.
+  assert.equal(
+    res.pathologies.filter(p => (p.missingFields?.length ?? 0) > 0).length,
+    res.summary.incompletePathologies,
+  )
 })
 
 test('catalogo vazio devolve a forma esperada', () => {
@@ -263,6 +314,77 @@ test('catalogo vazio devolve a forma esperada', () => {
     pathologies: [],
     drugs: [],
   })
+})
+
+// ── Ordenacao (feita em JS, nao no Mongo) ─────────────────────
+
+test('patologias saem ordenadas por nome, ignorando acento e caixa', () => {
+  const docs = [
+    { _id: '1', nome: 'Zika', slug: 'zika' },
+    { _id: '2', nome: 'Édema Agudo', slug: 'edema-agudo' },
+    { _id: '3', nome: 'asma', slug: 'asma' },
+    { _id: '4', nome: 'Acidente Vascular Cerebral', slug: 'avc' },
+  ]
+  const res = buildCatalogResponse({
+    kind: 'pathology',
+    includeCompleteness: false,
+    pathologyDocs: docs,
+    drugDocs: [],
+  })
+  assert.deepEqual(
+    res.pathologies.map(p => p.name),
+    ['Acidente Vascular Cerebral', 'asma', 'Édema Agudo', 'Zika'],
+  )
+})
+
+test('farmacos saem ordenados por classe, subclasse e nome', () => {
+  const docs = [
+    { _id: '1', nome: 'Vancomicina', classe_principal: 'Antimicrobianos', subclasse: 'Glicopeptídeos' },
+    { _id: '2', nome: 'Amoxicilina', classe_principal: 'Antimicrobianos', subclasse: 'Penicilinas' },
+    { _id: '3', nome: 'Losartana', classe_principal: 'Sistema Cardiovascular', subclasse: 'BRA' },
+    { _id: '4', nome: 'Azitromicina', classe_principal: 'Antimicrobianos', subclasse: 'Glicopeptídeos' },
+  ]
+  const res = buildCatalogResponse({
+    kind: 'drug',
+    includeCompleteness: false,
+    pathologyDocs: [],
+    drugDocs: docs,
+  })
+  assert.deepEqual(
+    res.drugs.map(d => d.name),
+    ['Azitromicina', 'Vancomicina', 'Amoxicilina', 'Losartana'],
+  )
+})
+
+test('ordenacao e estavel e nao quebra com campos ausentes', () => {
+  const entries = sortCatalogPathologies([
+    toCatalogPathology({ _id: 'b', nome: 'Asma' }, false),
+    toCatalogPathology({ _id: 'a', nome: 'Asma' }, false),
+    toCatalogPathology({ _id: 'c' }, false),
+  ])
+  assert.deepEqual(entries.map(e => e.id), ['c', 'a', 'b'])
+
+  assert.doesNotThrow(() => sortCatalogDrugs([toCatalogDrug({ _id: 'x' }, false)]))
+})
+
+// ── Indice de comparacao ──────────────────────────────────────
+
+test('buildCatalogNameIndex normaliza cada documento uma unica vez', () => {
+  const index = buildCatalogNameIndex([AVC, HAS])
+  assert.equal(index.docs.length, 2)
+  assert.ok(index.byNormalizedName.has('acidente vascular cerebral'))
+  assert.ok(index.byNormalizedSynonym.has('avc'))
+  assert.ok(index.byNormalizedSynonym.has('pressao alta'))
+  assert.ok(index.bySlug.has('hipertensao-arterial-sistemica'))
+})
+
+test('checkCatalogNames aceita um indice pronto e da o mesmo resultado', () => {
+  const index = buildCatalogNameIndex([AVC, HAS])
+  const nomes = ['AVC', 'Miastenia Gravis', 'Hipertensao Arterial Sistemica']
+  assert.deepEqual(
+    checkCatalogNames(nomes, index),
+    checkCatalogNames(nomes, [AVC, HAS]),
+  )
 })
 
 // ── check: nome com e sem acento ──────────────────────────────

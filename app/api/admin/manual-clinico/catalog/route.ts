@@ -34,17 +34,26 @@ const DRUG_IDENTITY_FIELDS = [
 ]
 
 /**
- * Projecao = identidade + campos usados no calculo de completude.
- * Os campos de conteudo sao lidos apenas para verificar se estao
- * preenchidos; nenhum deles vai para a resposta (a serializacao em
- * lib/manual-clinico/catalog monta a saida campo a campo).
+ * Projecao = identidade, mais os campos de conteudo SO quando a
+ * completude foi pedida.
+ *
+ * Os campos de completude sao os maiores do schema (fisiopatologia,
+ * mecanismo_acao_detalhado, tratamento...). Le-los sempre significaria
+ * transferir alguns MB do Atlas em toda chamada, inclusive quando o
+ * chamador so quer a lista de nomes para deduplicar. Eles continuam
+ * servindo apenas para checar se estao preenchidos — nenhum deles vai
+ * para a resposta, que e montada campo a campo em lib/manual-clinico.
  */
 function buildProjection(
   identityFields: string[],
   completenessFields: readonly string[],
+  includeCompleteness: boolean,
 ): Record<string, 1> {
   const projection: Record<string, 1> = { _id: 1 }
-  for (const field of [...identityFields, ...completenessFields]) {
+  const fields = includeCompleteness
+    ? [...identityFields, ...completenessFields]
+    : identityFields
+  for (const field of fields) {
     projection[field] = 1
   }
   return projection
@@ -83,6 +92,12 @@ export async function GET(request: NextRequest) {
     const wantsPathologies = kind === 'all' || kind === 'pathology'
     const wantsDrugs = kind === 'all' || kind === 'drug'
 
+    // Sem .sort() no Mongo de proposito: nao ha indice em
+    // `patologias.nome` e o indice composto de `medicamentos` so e
+    // criado no ramo de desenvolvimento de lib/mongodb.ts. Um sort nao
+    // indexado e sem limit e um blocking sort com teto de 32 MB, que
+    // derruba a query conforme a colecao cresce. A ordenacao acontece
+    // em JS, sobre documentos que ja estao em memoria.
     const [pathologyDocs, drugDocs] = await Promise.all([
       wantsPathologies
         ? db
@@ -93,10 +108,10 @@ export async function GET(request: NextRequest) {
                 projection: buildProjection(
                   PATHOLOGY_IDENTITY_FIELDS,
                   PATHOLOGY_COMPLETENESS_FIELDS,
+                  includeCompleteness,
                 ),
               },
             )
-            .sort({ nome: 1 })
             .toArray()
         : Promise.resolve([]),
       wantsDrugs
@@ -108,10 +123,10 @@ export async function GET(request: NextRequest) {
                 projection: buildProjection(
                   DRUG_IDENTITY_FIELDS,
                   DRUG_COMPLETENESS_FIELDS,
+                  includeCompleteness,
                 ),
               },
             )
-            .sort({ classe_principal: 1, subclasse: 1, nome: 1 })
             .toArray()
         : Promise.resolve([]),
     ])

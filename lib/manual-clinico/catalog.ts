@@ -94,8 +94,10 @@ export interface CatalogDrugEntry extends CatalogEntryBase {
 export interface CatalogSummary {
   pathologies: number
   drugs: number
-  incompletePathologies: number
-  incompleteDrugs: number
+  // null quando includeCompleteness=false: a rota nao le os campos de
+  // conteudo nesse modo, entao nao teria como contar sem mentir.
+  incompletePathologies: number | null
+  incompleteDrugs: number | null
 }
 
 export interface CatalogResponse {
@@ -129,6 +131,9 @@ export function isFieldFilled(value: unknown, field?: string): boolean {
   if (Array.isArray(value)) return value.length > 0
   if (typeof value === 'number') return Number.isFinite(value)
   if (typeof value === 'boolean') return true
+  // Antes do caso generico: Object.keys(new Date()) e [], o que faria
+  // uma data valida contar como campo vazio.
+  if (value instanceof Date) return !Number.isNaN(value.getTime())
   if (typeof value === 'object') return Object.keys(value as object).length > 0
   return false
 }
@@ -156,7 +161,13 @@ function toStringOrNull(value: unknown): string | null {
 
 function toIsoOrNull(value: unknown): string | null {
   if (value == null) return null
-  const date = value instanceof Date ? value : new Date(String(value))
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value.toISOString()
+  }
+  // Nao passar por String(): `new Date(String(1700000000000))` e
+  // Invalid Date, enquanto `new Date(1700000000000)` e valido.
+  if (typeof value !== 'string' && typeof value !== 'number') return null
+  const date = new Date(value)
   return Number.isNaN(date.getTime()) ? null : date.toISOString()
 }
 
@@ -225,6 +236,46 @@ export function toCatalogDrug(
   return entry
 }
 
+// ── Ordenacao ─────────────────────────────────────────────────
+// Feita aqui, e nao com .sort() no Mongo, de proposito: nao existe
+// indice em `patologias.nome`, e o indice composto de `medicamentos`
+// so e criado no ramo de desenvolvimento de lib/mongodb.ts. Sem
+// indice e sem limit, o Mongo faz um blocking sort em memoria com
+// teto de 32 MB e derruba a query quando a colecao cresce. Os
+// documentos ja estao todos em memoria do processo aqui, entao
+// ordenar em JS custa praticamente nada e remove esse risco.
+
+/** Ordena por chaves ja calculadas (decorate-sort-undecorate). */
+function sortByKeys<T>(entries: T[], keysOf: (entry: T) => string[]): T[] {
+  return entries
+    .map(entry => ({ entry, keys: keysOf(entry) }))
+    .sort((a, b) => {
+      for (let i = 0; i < a.keys.length; i++) {
+        if (a.keys[i] < b.keys[i]) return -1
+        if (a.keys[i] > b.keys[i]) return 1
+      }
+      return 0
+    })
+    .map(item => item.entry)
+}
+
+/** Patologias por nome (sem acento/caixa), id como desempate estavel. */
+export function sortCatalogPathologies(
+  entries: CatalogPathologyEntry[],
+): CatalogPathologyEntry[] {
+  return sortByKeys(entries, entry => [entry.normalizedName, entry.id])
+}
+
+/** Farmacos por classe, subclasse e nome — mesma ordem do painel. */
+export function sortCatalogDrugs(entries: CatalogDrugEntry[]): CatalogDrugEntry[] {
+  return sortByKeys(entries, entry => [
+    normalizeManualContentName(entry.classe),
+    normalizeManualContentName(entry.subclasse),
+    entry.normalizedName,
+    entry.id,
+  ])
+}
+
 export function buildCatalogResponse(options: {
   kind: CatalogKind
   includeCompleteness: boolean
@@ -235,36 +286,33 @@ export function buildCatalogResponse(options: {
   const wantsPathologies = kind === 'all' || kind === 'pathology'
   const wantsDrugs = kind === 'all' || kind === 'drug'
 
+  // A completude e calculada uma unica vez por documento, dentro de
+  // toCatalogX, e os contadores do resumo saem dai — nada de um
+  // segundo passe recalculando tudo.
   const pathologies = wantsPathologies
-    ? pathologyDocs.map(doc => toCatalogPathology(doc, includeCompleteness))
+    ? sortCatalogPathologies(
+        pathologyDocs.map(doc => toCatalogPathology(doc, includeCompleteness)),
+      )
     : []
   const drugs = wantsDrugs
-    ? drugDocs.map(doc => toCatalogDrug(doc, includeCompleteness))
+    ? sortCatalogDrugs(drugDocs.map(doc => toCatalogDrug(doc, includeCompleteness)))
     : []
 
-  // A completude do resumo e sempre calculada, mesmo quando nao e
-  // exposta por item — senao os contadores mentiriam.
-  const incompletePathologies = wantsPathologies
-    ? pathologyDocs.filter(
-        doc =>
-          computeCompleteness(doc, PATHOLOGY_COMPLETENESS_FIELDS).missingFields
-            .length > 0,
-      ).length
-    : 0
-  const incompleteDrugs = wantsDrugs
-    ? drugDocs.filter(
-        doc =>
-          computeCompleteness(doc, DRUG_COMPLETENESS_FIELDS).missingFields
-            .length > 0,
-      ).length
-    : 0
+  const countIncomplete = (
+    entries: CatalogEntryBase[],
+    wanted: boolean,
+  ): number | null => {
+    if (!includeCompleteness) return null
+    if (!wanted) return 0
+    return entries.filter(entry => (entry.missingFields?.length ?? 0) > 0).length
+  }
 
   return {
     summary: {
       pathologies: wantsPathologies ? pathologyDocs.length : 0,
       drugs: wantsDrugs ? drugDocs.length : 0,
-      incompletePathologies,
-      incompleteDrugs,
+      incompletePathologies: countIncomplete(pathologies, wantsPathologies),
+      incompleteDrugs: countIncomplete(drugs, wantsDrugs),
     },
     pathologies,
     drugs,
@@ -305,40 +353,108 @@ export interface CatalogCheckResult {
   ambiguous: CatalogCheckAmbiguous[]
 }
 
+/** Documento com as chaves de comparacao ja normalizadas uma vez. */
+interface IndexedCatalogDoc {
+  key: string
+  id: string
+  name: string
+  slug: string
+  trimmedName: string
+  normalizedName: string
+  synonyms: { raw: string; normalized: string }[]
+}
+
+export interface CatalogNameIndex {
+  docs: IndexedCatalogDoc[]
+  byTrimmedName: Map<string, IndexedCatalogDoc[]>
+  byNormalizedName: Map<string, IndexedCatalogDoc[]>
+  bySlug: Map<string, IndexedCatalogDoc[]>
+  byNormalizedSynonym: Map<string, IndexedCatalogDoc[]>
+}
+
+function pushTo(
+  map: Map<string, IndexedCatalogDoc[]>,
+  key: string,
+  doc: IndexedCatalogDoc,
+): void {
+  if (!key) return
+  const bucket = map.get(key)
+  if (bucket) bucket.push(doc)
+  else map.set(key, [doc])
+}
+
 /**
- * Casa um nome consultado contra um documento. Devolve null quando
- * nao ha correspondencia. A ordem das checagens define o matchedBy
- * reportado: nome original > nome normalizado > slug > sinonimo.
+ * Normaliza cada documento UMA vez e monta os indices de busca.
+ *
+ * Sem isso, casar N nomes contra M documentos renormalizaria o nome e
+ * os sinonimos de cada documento N vezes (O(N x M) normalizacoes).
+ * Com os indices, cada nome consultado vira lookup O(1).
  */
-function matchDoc(
-  rawInput: string,
+export function buildCatalogNameIndex(
+  docs: Record<string, any>[],
+): CatalogNameIndex {
+  const index: CatalogNameIndex = {
+    docs: [],
+    byTrimmedName: new Map(),
+    byNormalizedName: new Map(),
+    bySlug: new Map(),
+    byNormalizedSynonym: new Map(),
+  }
+
+  for (const doc of docs) {
+    const id = String(doc._id ?? '')
+    const name = String(doc.nome ?? '')
+    const slug = String(doc.slug ?? '')
+    const indexed: IndexedCatalogDoc = {
+      key: id || `${slug}|${name}`,
+      id,
+      name,
+      slug,
+      trimmedName: name.trim(),
+      normalizedName: normalizeManualContentName(name),
+      synonyms: toStringList(doc.sinonimos).map(raw => ({
+        raw,
+        normalized: normalizeManualContentName(raw),
+      })),
+    }
+
+    index.docs.push(indexed)
+    pushTo(index.byTrimmedName, indexed.trimmedName, indexed)
+    pushTo(index.byNormalizedName, indexed.normalizedName, indexed)
+    pushTo(index.bySlug, indexed.slug, indexed)
+    for (const synonym of indexed.synonyms) {
+      pushTo(index.byNormalizedSynonym, synonym.normalized, indexed)
+    }
+  }
+
+  return index
+}
+
+/**
+ * Motivo pelo qual um documento ja identificado como candidato casou.
+ * A prioridade e por documento: nome original > nome normalizado >
+ * slug > sinonimo. Comparacoes O(1) sobre valores pre-normalizados.
+ */
+function resolveMatchedBy(
+  trimmedInput: string,
   normalizedInput: string,
   slugInput: string,
-  doc: Record<string, any>,
+  doc: IndexedCatalogDoc,
 ): CatalogCheckCandidate | null {
-  const id = String(doc._id ?? '')
-  const name = String(doc.nome ?? '')
-  const slug = String(doc.slug ?? '')
-  const base = { id, name, slug }
+  const base = { id: doc.id, name: doc.name, slug: doc.slug }
 
-  if (name.trim().length > 0 && name.trim() === rawInput.trim()) {
+  if (doc.trimmedName.length > 0 && doc.trimmedName === trimmedInput) {
     return { ...base, matchedBy: 'name' }
   }
-  if (
-    normalizedInput.length > 0 &&
-    normalizeManualContentName(name) === normalizedInput
-  ) {
+  if (normalizedInput.length > 0 && doc.normalizedName === normalizedInput) {
     return { ...base, matchedBy: 'normalizedName' }
   }
-  if (slug.length > 0 && slugInput.length > 0 && slug === slugInput) {
+  if (doc.slug.length > 0 && slugInput.length > 0 && doc.slug === slugInput) {
     return { ...base, matchedBy: 'slug' }
   }
-  for (const synonym of toStringList(doc.sinonimos)) {
-    if (
-      normalizedInput.length > 0 &&
-      normalizeManualContentName(synonym) === normalizedInput
-    ) {
-      return { ...base, matchedBy: 'synonym', matchedSynonym: synonym }
+  for (const synonym of doc.synonyms) {
+    if (normalizedInput.length > 0 && synonym.normalized === normalizedInput) {
+      return { ...base, matchedBy: 'synonym', matchedSynonym: synonym.raw }
     }
   }
   return null
@@ -350,28 +466,46 @@ function matchDoc(
  * Quando mais de um documento distinto casa com o mesmo nome, o
  * resultado vai para `ambiguous` com todos os candidatos — nunca se
  * escolhe um silenciosamente.
+ *
+ * Aceita um indice ja pronto (buildCatalogNameIndex) para quem for
+ * consultar varias vezes a mesma lista de documentos.
  */
 export function checkCatalogNames(
   names: string[],
-  docs: Record<string, any>[],
+  docsOrIndex: Record<string, any>[] | CatalogNameIndex,
 ): CatalogCheckResult {
+  const index = Array.isArray(docsOrIndex)
+    ? buildCatalogNameIndex(docsOrIndex)
+    : docsOrIndex
   const result: CatalogCheckResult = { existing: [], missing: [], ambiguous: [] }
 
   for (const rawInput of names) {
+    const trimmedInput = rawInput.trim()
     const normalizedInput = normalizeManualContentName(rawInput)
     const slugInput = generateSlug(rawInput)
 
-    const byId = new Map<string, CatalogCheckCandidate>()
-    for (const doc of docs) {
-      const candidate = matchDoc(rawInput, normalizedInput, slugInput, doc)
-      if (!candidate) continue
-      // Um mesmo documento pode casar por mais de um criterio; vale o
-      // primeiro (ordem de prioridade em matchDoc).
-      const key = candidate.id || `${candidate.slug}|${candidate.name}`
-      if (!byId.has(key)) byId.set(key, candidate)
+    // Só os documentos que algum indice apontou entram na avaliacao.
+    const hits = new Map<string, IndexedCatalogDoc>()
+    const collect = (bucket: IndexedCatalogDoc[] | undefined) => {
+      if (!bucket) return
+      for (const doc of bucket) if (!hits.has(doc.key)) hits.set(doc.key, doc)
+    }
+    collect(index.byTrimmedName.get(trimmedInput))
+    collect(index.byNormalizedName.get(normalizedInput))
+    collect(index.bySlug.get(slugInput))
+    collect(index.byNormalizedSynonym.get(normalizedInput))
+
+    const candidates: CatalogCheckCandidate[] = []
+    for (const doc of hits.values()) {
+      const candidate = resolveMatchedBy(
+        trimmedInput,
+        normalizedInput,
+        slugInput,
+        doc,
+      )
+      if (candidate) candidates.push(candidate)
     }
 
-    const candidates = [...byId.values()]
     if (candidates.length === 0) {
       result.missing.push({ input: rawInput, normalizedInput })
     } else if (candidates.length === 1) {
