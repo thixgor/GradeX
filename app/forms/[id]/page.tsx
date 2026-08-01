@@ -60,6 +60,17 @@ export default function PublicFormPage() {
         fetchForm()
     }, [id])
 
+    // O scroll para o topo precisa rodar DEPOIS do React trocar o formulário
+    // (longo) pela tela de sucesso (curta) — senão o navegador começa a animar
+    // o "smooth scroll" ainda com a altura antiga e trava na altura nova, que
+    // cai bem em cima do rodapé (WhatsApp/Discord) por causa da colisão de
+    // layout. Rodar no useEffect garante que o DOM já encolheu antes de rolar.
+    useEffect(() => {
+        if (submitted) {
+            window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+        }
+    }, [submitted])
+
     useEffect(() => {
         const mq = window.matchMedia('(max-width: 640px)')
         setIsMobile(mq.matches)
@@ -118,7 +129,6 @@ export default function PublicFormPage() {
             if (res.ok) {
                 setDeliveryResult(data.materialDelivery ?? null)
                 setSubmitted(true)
-                window.scrollTo({ top: 0, behavior: 'smooth' })
             } else if (res.status === 401 || data.code === 'LOGIN_REQUIRED') {
                 window.location.href = `/auth/login?redirect=/forms/${id}`
             } else {
