@@ -603,7 +603,7 @@ export function Sidebar({
         </AnimatePresence>
 
         {/* Create Exam Button */}
-        <div className="p-3 border-b shrink-0 overflow-hidden">
+        <div data-tour="sidebar-new-exam" className="p-3 border-b shrink-0 overflow-hidden">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
@@ -663,6 +663,7 @@ export function Sidebar({
         {/* ─── Navigation ─── */}
         <nav
           ref={navRef}
+          data-tour="sidebar-nav"
           className="flex-1 min-h-0 px-3 py-2 overflow-y-auto overscroll-contain relative select-none [-webkit-overflow-scrolling:touch]"
           style={{ touchAction: 'pan-y' }}
           onMouseEnter={handleNavMouseEnter}

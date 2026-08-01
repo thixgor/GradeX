@@ -137,7 +137,7 @@ export function ExperienceCarousel({ stats }: { stats?: ExperienceStats }) {
   if (sections.length === 0) return null
 
   return (
-    <section aria-labelledby="experiencias-titulo">
+    <section aria-labelledby="experiencias-titulo" data-tour="experiences">
       <div className="mb-3 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <h2 id="experiencias-titulo" className="font-heading text-lg font-semibold tracking-tight sm:text-xl">

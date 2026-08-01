@@ -69,7 +69,7 @@ export function QuestaoDoDiaCard() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+    <motion.div data-tour="questao-do-dia" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
       <TiltCard maxTilt={2} scale={1.004} className="rounded-2xl">
         <div className="glass-irish relative isolate overflow-hidden rounded-2xl">
           <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-amber-300/20 blur-3xl" />
