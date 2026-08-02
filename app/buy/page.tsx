@@ -548,9 +548,7 @@ function BuyContent() {
                             'inline-flex w-full items-center justify-center gap-1.5 rounded-xl py-3.5 text-sm font-bold transition active:scale-[0.98] disabled:opacity-60',
                             isGold
                               ? 'bg-amber-600 text-white shadow-md shadow-amber-600/25 hover:bg-amber-500'
-                              : isHighlight
-                                ? 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/30 hover:bg-secondary/90'
-                                : 'border border-border bg-muted/70 text-foreground hover:bg-muted'
+                              : 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/30 hover:bg-secondary/90'
                           )}
                         >
                           {isSelecting ? (
