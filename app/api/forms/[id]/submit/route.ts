@@ -5,7 +5,7 @@ import { Form, FormResponse } from '@/lib/types'
 import { sendFormSubmissionEmail } from '@/lib/mail'
 import { generateFormResponsePDF } from '@/lib/pdf-generator'
 import { getSession } from '@/lib/auth'
-import { createGrantedMaterialSerialKey } from '@/lib/serial-keys'
+import { createGrantedMaterialSerialKey, getActivationUrl } from '@/lib/serial-keys'
 import { sendSerialKeyEmail } from '@/lib/serial-key-fulfillment'
 import {
   secureApiEndpoint,
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     // Entrega de material por e-mail (serial key + link de ativação).
     let materialDelivery:
-      | { delivered: true; title: string; email: string }
+      | { delivered: true; title: string; email: string; serialKey: string; activationUrl: string }
       | { delivered: false; reason: string }
       | null = null
 
@@ -182,7 +182,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
         const sent = await sendSerialKeyEmail(db, serial, { kind })
         materialDelivery = sent
-          ? { delivered: true, title: materialTitle, email: deliveryEmail }
+          ? {
+              delivered: true,
+              title: materialTitle,
+              email: deliveryEmail,
+              serialKey: serial.key,
+              activationUrl: serial.activationToken ? getActivationUrl(serial.activationToken) : '',
+            }
           : { delivered: false, reason: 'email_failed' }
       } catch (materialError) {
         console.error('Failed to deliver material:', materialError)

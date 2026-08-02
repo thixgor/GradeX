@@ -26,7 +26,9 @@ import {
     Mail,
     KeyRound,
     Sparkles,
-    PartyPopper
+    PartyPopper,
+    Copy,
+    Check
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
@@ -44,7 +46,7 @@ export default function PublicFormPage() {
     const [submitting, setSubmitting] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [deliveryResult, setDeliveryResult] = useState<
-        | { delivered: true; title: string; email: string }
+        | { delivered: true; title: string; email: string; serialKey: string; activationUrl: string }
         | { delivered: false; reason: string }
         | null
     >(null)
@@ -53,6 +55,15 @@ export default function PublicFormPage() {
     const [isMobile, setIsMobile] = useState(false)
     const [missingBlockId, setMissingBlockId] = useState<string | null>(null)
     const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
+    const [keyCopied, setKeyCopied] = useState(false)
+
+    async function copySerialKey(key: string) {
+        try {
+            await navigator.clipboard.writeText(key)
+            setKeyCopied(true)
+            setTimeout(() => setKeyCopied(false), 1500)
+        } catch {}
+    }
 
     // Login só é exigido quando o admin liga "Exigir Login" explicitamente. A
     // entrega de material NÃO exige login: se logado, vai para o e-mail da
@@ -405,12 +416,27 @@ export default function PublicFormPage() {
                         transition={{ delay: 0.9 + steps.length * 0.35 }}
                     >
                         {materialDelivered && deliveryResult?.delivered && (
-                            <Button
-                                className="btn-brand-glow text-white rounded-xl w-full h-12 text-base font-bold group"
-                                onClick={() => window.location.href = '/materiais?tab=mine'}
-                            >
-                                Ativar meu material <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                            </Button>
+                            <>
+                                {deliveryResult.serialKey && (
+                                    <button
+                                        type="button"
+                                        onClick={() => copySerialKey(deliveryResult.serialKey)}
+                                        className="w-full flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-background/40 px-4 py-3 text-left transition-colors hover:border-primary/40"
+                                    >
+                                        <span className="min-w-0">
+                                            <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Sua serial key</span>
+                                            <span className="block font-mono text-sm font-bold text-foreground truncate">{deliveryResult.serialKey}</span>
+                                        </span>
+                                        {keyCopied ? <Check className="h-4 w-4 shrink-0 text-primary" /> : <Copy className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                                    </button>
+                                )}
+                                <Button
+                                    className="btn-brand-glow text-white rounded-xl w-full h-12 text-base font-bold group"
+                                    onClick={() => window.location.href = deliveryResult.activationUrl || '/ativar'}
+                                >
+                                    Ativar meu material <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                            </>
                         )}
                         <p className="text-xs text-muted-foreground">
                             {materialDelivered
