@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 
 interface PageLoadingProps {
@@ -36,6 +37,7 @@ export function PageLoading({
 
   const logoSize = logoSizes[variant]
   const ringSize = logoSize + 38
+  const [logoFailed, setLogoFailed] = useState(false)
 
   return (
     <div
@@ -60,15 +62,26 @@ export function PageLoading({
             className="absolute left-1/2 top-1/2 z-10 rounded-2xl border border-border/60 bg-background/85 p-2.5 shadow-lg shadow-primary/10"
             style={{ transform: 'translate(-50%, -50%)' }}
           >
-            <Image
-              src="/logo-icon.webp"
-              alt=""
-              width={logoSize}
-              height={logoSize}
-              className="object-contain"
-              unoptimized
-              priority
-            />
+            {logoFailed ? (
+              <div
+                className="flex items-center justify-center rounded-lg bg-primary font-heading font-semibold text-primary-foreground"
+                style={{ width: logoSize, height: logoSize, fontSize: logoSize * 0.5 }}
+                aria-hidden="true"
+              >
+                D
+              </div>
+            ) : (
+              <Image
+                src="/logo-icon.webp"
+                alt=""
+                width={logoSize}
+                height={logoSize}
+                className="object-contain"
+                unoptimized
+                priority
+                onError={() => setLogoFailed(true)}
+              />
+            )}
           </div>
         </div>
 
@@ -166,6 +179,7 @@ export function LogoSpinner({
     md: { wrapper: 48, logo: 36 },
     lg: { wrapper: 64, logo: 48 },
   }
+  const [logoFailed, setLogoFailed] = useState(false)
 
   return (
     <span
@@ -174,14 +188,24 @@ export function LogoSpinner({
       aria-hidden="true"
     >
       <span className="absolute inset-0 rounded-full border-2 border-primary/30 border-t-primary page-loading-spin" />
-      <Image
-        src="/logo-icon.webp"
-        alt=""
-        width={sizes[size].logo}
-        height={sizes[size].logo}
-        className="object-contain"
-        unoptimized
-      />
+      {logoFailed ? (
+        <span
+          className="flex items-center justify-center rounded-md bg-primary font-heading font-semibold text-primary-foreground"
+          style={{ width: sizes[size].logo, height: sizes[size].logo, fontSize: sizes[size].logo * 0.5 }}
+        >
+          D
+        </span>
+      ) : (
+        <Image
+          src="/logo-icon.webp"
+          alt=""
+          width={sizes[size].logo}
+          height={sizes[size].logo}
+          className="object-contain"
+          unoptimized
+          onError={() => setLogoFailed(true)}
+        />
+      )}
       <style jsx>{`
         @keyframes page-loading-spin {
           to {
