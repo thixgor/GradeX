@@ -202,25 +202,48 @@ export async function POST(request: NextRequest) {
     const blocos = texto.split('---NOVA_PATOLOGIA---').map(b => b.trim()).filter(Boolean)
     const resultados = blocos.map(bloco => parsePatologiaText(bloco))
 
-    // Se não é para confirmar, retorna preview
+    const db = await getDb()
+
+    // Se não é para confirmar, retorna preview (já sinalizando duplicatas)
     if (!confirmar) {
-      return NextResponse.json({
-        preview: true,
-        patologias: resultados.map((r, i) => ({
+      const seenSlugs = new Set<string>()
+      const patologias = []
+      for (let i = 0; i < resultados.length; i++) {
+        const r = resultados[i]
+        let duplicado = false
+        let duplicadoMsg = ''
+        if (r.errors.length === 0 && r.data.nome) {
+          const slug = generateSlug(r.data.nome)
+          if (seenSlugs.has(slug)) {
+            duplicado = true
+            duplicadoMsg = `Já existe "${r.data.nome}" nesta mesma importação.`
+          } else {
+            const existing = await db.collection('patologias').findOne({ slug })
+            if (existing) {
+              duplicado = true
+              duplicadoMsg = `Já existe uma patologia com o nome "${r.data.nome}" no banco de dados.`
+            }
+          }
+          seenSlugs.add(slug)
+        }
+        patologias.push({
           index: i,
           nome: r.data.nome || `Patologia ${i + 1}`,
           data: r.data,
           errors: r.errors,
           warnings: r.warnings,
-          valid: r.errors.length === 0
-        }))
-      })
+          duplicado,
+          duplicadoMsg,
+          valid: r.errors.length === 0 && !duplicado
+        })
+      }
+      return NextResponse.json({ preview: true, patologias })
     }
 
-    // Confirmar importação — salvar apenas as válidas
-    const db = await getDb()
+    // Confirmar importação — salvar apenas as válidas e não-duplicadas
     const salvas: { nome: string; slug: string }[] = []
     const erros: { nome: string; errors: ParseError[] }[] = []
+    const duplicados: { nome: string }[] = []
 
     for (const resultado of resultados) {
       if (resultado.errors.length > 0) {
@@ -228,9 +251,12 @@ export async function POST(request: NextRequest) {
         continue
       }
 
-      let slug = generateSlug(resultado.data.nome!)
+      const slug = generateSlug(resultado.data.nome!)
       const existing = await db.collection('patologias').findOne({ slug })
-      if (existing) slug = `${slug}-${Date.now()}`
+      if (existing) {
+        duplicados.push({ nome: resultado.data.nome! })
+        continue
+      }
 
       // Strip _id (tipo string no schema de API) para o driver do Mongo criar um ObjectId
       const { _id: _ignored, ...rest } = resultado.data
@@ -249,8 +275,10 @@ export async function POST(request: NextRequest) {
       success: true,
       salvas,
       erros,
+      duplicados,
       totalSalvas: salvas.length,
-      totalErros: erros.length
+      totalErros: erros.length,
+      totalDuplicados: duplicados.length
     })
   } catch (error) {
     console.error('Erro ao importar patologias:', error)

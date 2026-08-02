@@ -289,23 +289,46 @@ export async function POST(request: NextRequest) {
       .filter(Boolean)
     const resultados = blocos.map(parseMedicamentoText)
 
+    const db = await getDb()
+
     if (!confirmar) {
-      return NextResponse.json({
-        preview: true,
-        medicamentos: resultados.map((r, i) => ({
+      const seenSlugs = new Set<string>()
+      const medicamentos = []
+      for (let i = 0; i < resultados.length; i++) {
+        const r = resultados[i]
+        let duplicado = false
+        let duplicadoMsg = ''
+        if (r.errors.length === 0 && r.data.nome) {
+          const slug = generateSlug(r.data.nome)
+          if (seenSlugs.has(slug)) {
+            duplicado = true
+            duplicadoMsg = `Já existe "${r.data.nome}" nesta mesma importação.`
+          } else {
+            const existing = await db.collection('medicamentos').findOne({ slug })
+            if (existing) {
+              duplicado = true
+              duplicadoMsg = `Já existe um fármaco com o nome "${r.data.nome}" no banco de dados.`
+            }
+          }
+          seenSlugs.add(slug)
+        }
+        medicamentos.push({
           index: i,
           nome: r.data.nome || `Fármaco ${i + 1}`,
           data: r.data,
           errors: r.errors,
           warnings: r.warnings,
-          valid: r.errors.length === 0,
-        })),
-      })
+          duplicado,
+          duplicadoMsg,
+          valid: r.errors.length === 0 && !duplicado,
+        })
+      }
+      return NextResponse.json({ preview: true, medicamentos })
     }
 
-    const db = await getDb()
     const salvas: { nome: string; slug: string }[] = []
     const erros: { nome: string; errors: ParseError[] }[] = []
+    const duplicados: { nome: string }[] = []
 
     for (const resultado of resultados) {
       if (resultado.errors.length > 0) {
@@ -313,9 +336,12 @@ export async function POST(request: NextRequest) {
         continue
       }
 
-      let slug = generateSlug(resultado.data.nome!)
+      const slug = generateSlug(resultado.data.nome!)
       const existing = await db.collection('medicamentos').findOne({ slug })
-      if (existing) slug = `${slug}-${Date.now()}`
+      if (existing) {
+        duplicados.push({ nome: resultado.data.nome! })
+        continue
+      }
 
       const { _id: _ignored, ...rest } = resultado.data
       const medicamento = {
@@ -333,8 +359,10 @@ export async function POST(request: NextRequest) {
       success: true,
       salvas,
       erros,
+      duplicados,
       totalSalvas: salvas.length,
       totalErros: erros.length,
+      totalDuplicados: duplicados.length,
     })
   } catch (error) {
     console.error('Erro ao importar medicamentos:', error)

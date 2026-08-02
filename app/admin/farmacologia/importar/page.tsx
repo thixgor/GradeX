@@ -25,6 +25,8 @@ interface PreviewItem {
   data: any
   errors: { field: string; message: string }[]
   warnings: string[]
+  duplicado?: boolean
+  duplicadoMsg?: string
   valid: boolean
 }
 
@@ -98,7 +100,8 @@ export default function ImportarFarmacologiaPage() {
   }
 
   const validCount = preview?.filter(p => p.valid).length || 0
-  const invalidCount = preview?.filter(p => !p.valid).length || 0
+  const duplicadoCount = preview?.filter(p => p.duplicado).length || 0
+  const invalidCount = preview?.filter(p => !p.valid && !p.duplicado).length || 0
 
   return (
     <AppShell headerTitle="Importar Farmacologia" headerSubtitle="Importação de fármacos por TXT ou texto colado">
@@ -122,10 +125,25 @@ export default function ImportarFarmacologiaPage() {
               </div>
               <p className="text-sm mb-2">
                 <span className="font-semibold text-green-600">{result.totalSalvas}</span> fármacos salvos com sucesso.
+                {result.totalDuplicados > 0 && (
+                  <span className="ml-2 text-orange-600">
+                    {result.totalDuplicados} já existiam (não importados).
+                  </span>
+                )}
                 {result.totalErros > 0 && (
                   <span className="ml-2 text-yellow-600">{result.totalErros} com erros (não salvos).</span>
                 )}
               </p>
+              {result.duplicados?.length > 0 && (
+                <div className="space-y-1 mt-3 mb-3 p-3 rounded-md bg-orange-500/10 border border-orange-500/30">
+                  <p className="text-sm font-medium text-orange-600 flex items-center gap-1">
+                    <AlertTriangle className="h-3.5 w-3.5" /> Já existiam no banco (não foram importados):
+                  </p>
+                  {result.duplicados.map((d: any, i: number) => (
+                    <p key={i} className="text-sm text-orange-700 pl-5">• {d.nome}</p>
+                  ))}
+                </div>
+              )}
               {result.salvas?.length > 0 && (
                 <div className="space-y-1 mt-3">
                   {result.salvas.map((s: any, i: number) => (
@@ -207,6 +225,11 @@ export default function ImportarFarmacologiaPage() {
                   <div className="flex items-center gap-3">
                     <h3 className="font-semibold text-lg">Pré-visualização</h3>
                     <Badge variant="success">{validCount} válidos</Badge>
+                    {duplicadoCount > 0 && (
+                      <Badge className="bg-orange-500/15 text-orange-600 border-orange-500/30 hover:bg-orange-500/15">
+                        {duplicadoCount} já {duplicadoCount > 1 ? 'existem' : 'existe'}
+                      </Badge>
+                    )}
                     {invalidCount > 0 && <Badge variant="destructive">{invalidCount} com erros</Badge>}
                   </div>
                   <div className="flex gap-2">
@@ -223,10 +246,16 @@ export default function ImportarFarmacologiaPage() {
                 </div>
 
                 {preview.map((item, i) => (
-                  <Card key={i} className={`${item.valid ? 'border-green-500/30' : 'border-red-500/30'}`}>
+                  <Card key={i} className={`${item.duplicado ? 'border-orange-500/40' : item.valid ? 'border-green-500/30' : 'border-red-500/30'}`}>
                     <CardHeader className="py-3 px-4">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {item.valid ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />}
+                        {item.duplicado ? (
+                          <AlertTriangle className="h-4 w-4 text-orange-500" />
+                        ) : item.valid ? (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        )}
                         <CardTitle className="text-base">{item.nome || `Fármaco ${i + 1}`}</CardTitle>
                         {item.data?.classe_principal && (
                           <Badge variant="outline" className="text-xs">{item.data.classe_principal}</Badge>
@@ -237,6 +266,11 @@ export default function ImportarFarmacologiaPage() {
                       </div>
                     </CardHeader>
                     <CardContent className="px-4 pb-4 pt-0">
+                      {item.duplicado && (
+                        <p className="text-sm text-orange-600 flex items-center gap-1 mb-3">
+                          <AlertTriangle className="h-3 w-3" /> {item.duplicadoMsg || 'Já existe um fármaco com esse nome.'}
+                        </p>
+                      )}
                       {item.errors.length > 0 && (
                         <div className="space-y-1 mb-3">
                           {item.errors.map((err, j) => (
