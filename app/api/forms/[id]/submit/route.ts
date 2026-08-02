@@ -152,12 +152,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       try {
         // Idempotência: se este e-mail já recebeu uma key deste material por
         // este formulário e ainda não a ativou, reaproveita (reenvia) em vez
-        // de gerar chaves infinitas a cada reenvio/refresh.
+        // de gerar chaves infinitas a cada reenvio/refresh. `used: { $ne: true }`
+        // evita reaproveitar uma key deixada em estado inconsistente (ex.: por
+        // um bug de roteamento já corrigido que marcava `used` sem nunca
+        // ativar de fato) — nesse caso é melhor gerar uma key nova e limpa.
         const existing = await db.collection('serial_keys').findOne({
           source: 'form',
           buyerEmail: deliveryEmail,
           productId: form.settings.deliverMaterialId,
           status: 'unactivated',
+          used: { $ne: true },
         })
 
         let serial: any
