@@ -61,6 +61,8 @@ export interface DeckAccessResult {
   isPurchased: boolean
   hasGroupAccess: boolean
   hasShareAccess: boolean
+  /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar (ver /api/materiais/resgatar). */
+  includedInPlus: boolean
   reason: DeckAccessReason | null
   reasons: DeckAccessReason[]
 }
@@ -72,6 +74,8 @@ interface ResolveDeckAccessParams {
   userEmail: string | null
   userGroups: string[]
   isAdmin: boolean
+  /** Assinante Plus+ — decks pagos com material vinculado ficam resgatáveis. */
+  isPlus?: boolean
 }
 
 export async function resolveDeckAccess({
@@ -81,6 +85,7 @@ export async function resolveDeckAccess({
   userEmail,
   userGroups,
   isAdmin,
+  isPlus = false,
 }: ResolveDeckAccessParams): Promise<DeckAccessResult> {
   const reasons: DeckAccessReason[] = []
   const isOwner = !!userId && deck.ownerId === userId
@@ -163,12 +168,17 @@ export async function resolveDeckAccess({
     (deck.ownerType === 'admin' && deck.pricing === 'free' && hasGroupAccess && !!deck.isPublished) ||
     ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished && deck.pricing !== 'paid')
 
+  // Espelha a lógica de /materiais e /pacotes: o acervo Plus+ inclui o deck,
+  // mas o acesso só é concedido depois do resgate explícito.
+  const includedInPlus = isPlus && deck.pricing === 'paid' && !!deck.linkedMaterialId && !hasAccess
+
   return {
     hasAccess,
     isOwner,
     isPurchased,
     hasGroupAccess,
     hasShareAccess,
+    includedInPlus,
     reason: reasons[0] || null,
     reasons,
   }

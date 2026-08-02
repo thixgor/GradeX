@@ -46,6 +46,7 @@ import {
   Mic,
   MicOff,
   Undo2,
+  Gift,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Logo } from '@/components/logo'
@@ -77,6 +78,7 @@ import {
   type PricingEventStatePayload,
 } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -84,6 +86,8 @@ interface AccessFlags {
   isPurchased: boolean
   hasGroupAccess: boolean
   hasShareAccess: boolean
+  /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar. */
+  includedInPlus: boolean
   reasons: string[]
 }
 
@@ -220,6 +224,7 @@ export default function DeckPage() {
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
   const [shareOpen, setShareOpen] = useState(false)
   const [purchasing, setPurchasing] = useState(false)
+  const [claimingPlus, setClaimingPlus] = useState(false)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [folderPath, setFolderPath] = useState<string | null>(null)
   const [upsellPkg, setUpsellPkg] = useState<UpsellPackage | null>(null)
@@ -690,6 +695,38 @@ export default function DeckPage() {
         setLikeCount(json.likeCount ?? likeCount + (liked ? -1 : 1))
       }
     } catch {}
+  }
+
+  /**
+   * Resgate do deck pela assinatura Plus+ — mesmo endpoint usado em
+   * /materiais e /pacotes. Não passa por carrinho nem checkout: grava a
+   * aquisição do material vinculado direto e recarrega o deck.
+   */
+  async function claimWithPlus() {
+    if (!data?.deck.linkedMaterialId) return
+    if (!data.viewer.isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${slug}`)}`)
+      return
+    }
+    setClaimingPlus(true)
+    try {
+      const res = await fetch('/api/materiais/resgatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType: 'material', itemId: data.deck.linkedMaterialId }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setToast({ open: true, message: json.error || 'Não foi possível resgatar este deck.', type: 'error' })
+        return
+      }
+      setToast({ open: true, message: json.message || 'Deck resgatado!', type: 'success' })
+      await load()
+    } catch {
+      setToast({ open: true, message: 'Não foi possível resgatar este deck. Tente novamente.', type: 'error' })
+    } finally {
+      setClaimingPlus(false)
+    }
   }
 
   async function buy(skipUpsell = false) {
@@ -1212,7 +1249,11 @@ export default function DeckPage() {
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5"><Crown className="h-3 w-3" /> Oficial</span>
                 )}
                 {isPaid && !access.isPurchased && !access.isOwner && (
-                  hasTier ? (
+                  access.includedInPlus ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5">
+                      <Crown className="h-3 w-3" /> Incluído no {PLUS_LABEL}
+                    </span>
+                  ) : hasTier ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 px-2.5 py-0.5">
                       <Lock className="h-3 w-3" />
                       <span className="line-through opacity-70">R$ {originalDeckPrice.toFixed(2)}</span>
@@ -1222,7 +1263,7 @@ export default function DeckPage() {
                     <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/90 px-2.5 py-0.5"><Lock className="h-3 w-3" /> R$ {deck.price?.toFixed(2)}</span>
                   )
                 )}
-                {hasTier && !access.isPurchased && !access.isOwner && (
+                {hasTier && !access.includedInPlus && !access.isPurchased && !access.isOwner && (
                   <PricingEventBadge state={eventState} size="xs" />
                 )}
                 {access.isPurchased && (
@@ -1295,7 +1336,24 @@ export default function DeckPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              {isLocked && isPaid ? (
+              {isLocked && isPaid && access.includedInPlus ? (
+                <button
+                  onClick={() => claimWithPlus()}
+                  disabled={claimingPlus}
+                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(180,83,9,0.97) 0%, rgba(217,119,6,0.93) 50%, rgba(245,158,11,0.88) 100%)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(253,230,138,0.45)',
+                    boxShadow: '0 0 28px rgba(217,119,6,0.45), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.20)',
+                  }}
+                >
+                  <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
+                  {claimingPlus ? <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" /> : <Gift className="h-4 w-4 flex-shrink-0" />}
+                  Resgatar com o {PLUS_LABEL}
+                </button>
+              ) : isLocked && isPaid ? (
                 <button
                   onClick={() => buy()}
                   disabled={purchasing}
@@ -1427,7 +1485,7 @@ export default function DeckPage() {
           </div>
         </div>
 
-        {hasTier && isLocked && eventState && (
+        {hasTier && !access.includedInPlus && isLocked && eventState && (
           <div className="mb-4">
             <PricingEventCountdown state={eventState} />
           </div>
@@ -1442,7 +1500,7 @@ export default function DeckPage() {
             <div className="mt-4">
               <FlashcardTour
                 variant="locked"
-                onBuyClick={isPaid ? () => buy() : undefined}
+                onBuyClick={isPaid ? (access.includedInPlus ? () => claimWithPlus() : () => buy()) : undefined}
               />
             </div>
           </>
@@ -2064,7 +2122,9 @@ function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
       </div>
       <h2 className="text-xl font-semibold text-slate-800 dark:text-foreground">Conteúdo restrito</h2>
       <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-        {deck.pricing === 'paid'
+        {access.includedInPlus
+          ? `Este deck está incluído no ${PLUS_LABEL}. Resgate para acessar todos os cartões.`
+          : deck.pricing === 'paid'
           ? 'Adquira este deck para acessar todos os cartões.'
           : (deck.allowedGroups?.length ? 'Este deck é restrito a grupos específicos.' : 'Você ainda não tem acesso a este deck.')}
       </p>

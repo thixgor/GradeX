@@ -23,6 +23,7 @@ import {
 import { syncMaterialForFlashcardDeck } from '@/lib/flashcard-material-sync'
 import type { FlashcardManualDeck, FlashcardManualCard, FlashcardSpacedProgress } from '@/lib/types'
 import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
+import { isPlusAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -50,6 +51,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       { projection: { accountType: 1, secondaryRole: 1, email: 1, name: 1, emailVerified: 1 } }
     ) : null
     const userGroups = getUserGroups(userDoc as any)
+    const isPlus = isPlusAccount((userDoc as any)?.accountType)
 
     const resolvedAccess = await resolveDeckAccess({
       db,
@@ -58,6 +60,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       userEmail: userDoc?.email || session?.email || null,
       userGroups,
       isAdmin,
+      isPlus,
     })
     const access = isAuthenticated
       ? resolvedAccess
@@ -67,6 +70,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
           isOwner: false,
           isPurchased: false,
           hasShareAccess: false,
+          includedInPlus: false,
           reasons: resolvedAccess.reasons.filter(reason => reason === 'public' || reason === 'unlisted' || reason === 'free_admin_deck'),
           reason: null,
         }
