@@ -45,22 +45,26 @@ export function ToastAlert({
   }
 
   return (
-    <div className="fixed top-4 right-4 z-[100] animate-in slide-in-from-top-5 fade-in duration-300">
+    // No mobile o toast ocupa a largura da tela com margem dos dois lados: com
+    // `min-w-[300px]` fixo ele estourava a viewport de celulares estreitos.
+    <div className="fixed top-4 left-4 right-4 sm:left-auto z-[100] animate-in slide-in-from-top-5 fade-in duration-300">
       <div className={cn(
-        "rounded-lg border p-4 shadow-lg max-w-md min-w-[300px]",
+        "rounded-lg border p-4 shadow-lg sm:max-w-md sm:min-w-[300px] ml-auto",
         colors[type]
       )}>
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
             {icons[type]}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {title && (
               <h3 className="font-semibold mb-1">{title}</h3>
             )}
-            <p className="text-sm">{message}</p>
+            <p className="text-sm break-words">{message}</p>
           </div>
           <button
+            type="button"
+            aria-label="Fechar aviso"
             onClick={() => onOpenChange(false)}
             className="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
           >

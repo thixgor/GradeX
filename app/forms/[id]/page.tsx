@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Form, FormBlock } from '@/lib/types'
 import { Input } from '@/components/ui/input'
@@ -28,13 +27,29 @@ import {
     Sparkles,
     PartyPopper,
     Copy,
-    Check
+    Check,
+    Clock,
+    ArrowUp,
+    RotateCcw
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useAuthUser } from '@/hooks/use-auth-user'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { checkTextAnswer, isFreeTextQuestion } from '@/lib/answer-quality'
+import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
+
+const SHORT_TEXT_MAX = 200
+const LONG_TEXT_MAX = 5000
+/**
+ * Espaço reservado no topo ao rolar até uma pergunta com erro. No mobile o
+ * toast de aviso é bem mais alto (ele ocupa a largura da tela e quebra em
+ * várias linhas), então precisa de folga extra pra não cobrir o enunciado.
+ */
+const stickyOffset = () => (window.innerWidth < 640 ? 190 : 96)
+
+const draftKey = (formId: string) => `gradex:form-draft:${formId}`
 
 export default function PublicFormPage() {
     const params = useParams()
@@ -53,9 +68,18 @@ export default function PublicFormPage() {
 
     const { user, loading: authLoading } = useAuthUser()
     const [isMobile, setIsMobile] = useState(false)
-    const [missingBlockId, setMissingBlockId] = useState<string | null>(null)
+    const reduceMotion = useReducedMotion()
+    // Erros por pergunta: aparecem no próprio card em vez de só num toast solto.
+    const [blockErrors, setBlockErrors] = useState<Record<string, string>>({})
+    const [focusedBlockId, setFocusedBlockId] = useState<string | null>(null)
     const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
     const [keyCopied, setKeyCopied] = useState(false)
+    const [draftRestored, setDraftRestored] = useState(false)
+    const [scrolled, setScrolled] = useState(false)
+    const [submitInView, setSubmitInView] = useState(true)
+
+    const submitRef = useRef<HTMLDivElement | null>(null)
+    const draftLoaded = useRef(false)
 
     async function copySerialKey(key: string) {
         try {
@@ -93,6 +117,28 @@ export default function PublicFormPage() {
         return () => mq.removeEventListener('change', onChange)
     }, [])
 
+    // Só mostra a barra compacta depois que o cabeçalho do formulário sai de
+    // vista — antes disso ela só roubaria espaço da dobra, ainda mais no mobile.
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 140)
+        onScroll()
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
+
+    // A barra fixa de envio no mobile só aparece enquanto o botão real está
+    // fora da tela, pra não duplicar o mesmo CTA duas vezes na mesma dobra.
+    useEffect(() => {
+        const el = submitRef.current
+        if (!el || submitted) return
+        const observer = new IntersectionObserver(
+            ([entry]) => setSubmitInView(entry.isIntersecting),
+            { rootMargin: '0px 0px -40px 0px' }
+        )
+        observer.observe(el)
+        return () => observer.disconnect()
+    }, [form, submitted])
+
     async function fetchForm() {
         try {
             const res = await fetch(`/api/forms/${id}`)
@@ -109,11 +155,57 @@ export default function PublicFormPage() {
         }
     }
 
-    const handleAnswer = (blockId: string, value: any) => {
-        setAnswers(prev => ({ ...prev, [blockId]: value }))
-        // A pessoa acabou de responder — some com o destaque de "faltando".
-        if (blockId === missingBlockId) setMissingBlockId(null)
+    // === Rascunho local ==================================================
+    // Formulário longo + celular = uma ligação, uma aba trocada ou um refresh
+    // sem querer apagavam tudo. Guardamos as respostas localmente e
+    // devolvemos quando a pessoa volta.
+    useEffect(() => {
+        if (!form || draftLoaded.current) return
+        draftLoaded.current = true
+        try {
+            const stored = localStorage.getItem(draftKey(id))
+            if (!stored) return
+            const parsed = JSON.parse(stored)
+            const valid = form.blocks.some(b => b.type === 'question' && parsed?.[b.id] != null)
+            if (valid) {
+                setAnswers(parsed)
+                setDraftRestored(true)
+            }
+        } catch {}
+    }, [form, id])
+
+    useEffect(() => {
+        if (!form || !draftLoaded.current || submitted) return
+        const timer = setTimeout(() => {
+            try {
+                if (Object.keys(answers).length === 0) localStorage.removeItem(draftKey(id))
+                else localStorage.setItem(draftKey(id), JSON.stringify(answers))
+            } catch {}
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [answers, form, id, submitted])
+
+    function discardDraft() {
+        setAnswers({})
+        setBlockErrors({})
+        setDraftRestored(false)
+        try { localStorage.removeItem(draftKey(id)) } catch {}
     }
+
+    // Avisa antes de fechar a aba com respostas não enviadas.
+    useEffect(() => {
+        if (submitted || submitting) return
+        const hasAnswers = Object.values(answers).some(v => !isAnswerEmpty(v))
+        if (!hasAnswers) return
+        const handler = (e: BeforeUnloadEvent) => {
+            e.preventDefault()
+            e.returnValue = ''
+        }
+        window.addEventListener('beforeunload', handler)
+        return () => window.removeEventListener('beforeunload', handler)
+    }, [answers, submitted, submitting])
+
+    // === Validação ========================================================
 
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -121,50 +213,127 @@ export default function PublicFormPage() {
         return !value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && !value.trim())
     }
 
-    // Acha a primeira pergunta com problema (obrigatória vazia, ou o e-mail de
-    // entrega do material quando não logado) para levar a pessoa até ela em
-    // vez de só recusar o envio sem dizer onde está o problema.
-    function findFirstInvalidBlock(): { blockId: string; message: string } | null {
-        if (!form) return null
-        for (const block of form.blocks) {
-            if (block.type !== 'question') continue
-            const answer = answers[block.id]
+    const isDeliveryEmailBlock = useCallback(
+        (block: FormBlock) =>
+            !!form?.settings.deliverMaterial && !user && form.settings.emailQuestionId === block.id,
+        [form, user]
+    )
 
-            if (block.required && isAnswerEmpty(answer)) {
-                return { blockId: block.id, message: `Preencha "${block.title}" para continuar.` }
-            }
+    /**
+     * Valida uma pergunta e devolve a mensagem de erro (ou null). Além do
+     * obrigatório/e-mail, roda a checagem anti-texto-aleatório nos campos de
+     * texto livre — o mesmo módulo que a API usa, então cliente e servidor
+     * concordam sempre.
+     */
+    const validateBlock = useCallback((block: FormBlock): string | null => {
+        if (block.type !== 'question') return null
+        const answer = answers[block.id]
 
-            if (
-                form.settings.deliverMaterial &&
-                !user &&
-                form.settings.emailQuestionId === block.id &&
-                (isAnswerEmpty(answer) || !EMAIL_RE.test(String(answer).trim()))
-            ) {
-                return { blockId: block.id, message: 'Informe um e-mail válido para receber o material.' }
-            }
+        if (block.required && isAnswerEmpty(answer)) {
+            return `Preencha "${block.title}" para continuar.`
         }
+
+        if (block.questionType === 'email' && !isAnswerEmpty(answer) && !EMAIL_RE.test(String(answer).trim())) {
+            return 'Confira o e-mail: parece que falta algo (ex.: nome@email.com).'
+        }
+
+        if (isDeliveryEmailBlock(block) && (isAnswerEmpty(answer) || !EMAIL_RE.test(String(answer).trim()))) {
+            return 'Informe um e-mail válido para receber o material.'
+        }
+
+        if (block.questionType === 'phone' && !isAnswerEmpty(answer) && !isValidBrazilPhone(String(answer))) {
+            return 'Telefone incompleto. Use DDD + número, ex.: (81) 99999-9999.'
+        }
+
+        if (isFreeTextQuestion(block.questionType) && !isAnswerEmpty(answer)) {
+            const quality = checkTextAnswer(answer)
+            if (!quality.ok && quality.message) return quality.message
+        }
+
         return null
+    }, [answers, isDeliveryEmailBlock])
+
+    const handleAnswer = (blockId: string, value: any) => {
+        setAnswers(prev => ({ ...prev, [blockId]: value }))
+        // A pessoa está corrigindo — tira o erro na hora em vez de deixá-lo
+        // piscando vermelho enquanto ela digita. Ele volta no blur/envio.
+        setBlockErrors(prev => {
+            if (!prev[blockId]) return prev
+            const next = { ...prev }
+            delete next[blockId]
+            return next
+        })
     }
 
-    function scrollToBlock(blockId: string) {
-        const el = document.getElementById(`form-block-${blockId}`)
-        if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
+    const handleBlur = (block: FormBlock) => {
+        setFocusedBlockId(null)
+        // Não cobra campo vazio no blur (a pessoa pode só ter passado por ele);
+        // só sinaliza conteúdo problemático de fato.
+        if (isAnswerEmpty(answers[block.id])) return
+        const message = validateBlock(block)
+        if (message) setBlockErrors(prev => ({ ...prev, [block.id]: message }))
     }
+
+    /**
+     * Rolar precisa acontecer DEPOIS do React inserir as mensagens de erro: elas
+     * mudam a altura dos cards acima e o navegador reajusta o scroll sozinho
+     * (scroll anchoring), o que jogava a pessoa de volta pro fim da página. Dois
+     * requestAnimationFrame garantem que o layout já está estável. O blur tira o
+     * foco do botão de envio, que o navegador também tenta manter visível.
+     */
+    function scrollToBlock(blockId: string) {
+        (document.activeElement as HTMLElement | null)?.blur?.()
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            const el = document.getElementById(`form-block-${blockId}`)
+            if (!el) return
+            const top = el.getBoundingClientRect().top + window.scrollY - stickyOffset()
+            window.scrollTo({ top: Math.max(top, 0), behavior: reduceMotion ? 'auto' : 'smooth' })
+        }))
+    }
+
+    const questionBlocks = useMemo(
+        () => (form?.blocks || []).filter(b => b.type === 'question'),
+        [form]
+    )
+
+    const answeredCount = useMemo(
+        () => questionBlocks.filter(b => !isAnswerEmpty(answers[b.id])).length,
+        [questionBlocks, answers]
+    )
+
+    const progress = questionBlocks.length ? Math.round((answeredCount / questionBlocks.length) * 100) : 0
+
+    const deadlineLabel = useMemo(() => {
+        if (!form?.settings.deadline) return null
+        const date = new Date(form.settings.deadline)
+        if (Number.isNaN(date.getTime())) return null
+        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+    }, [form])
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         setError(null)
 
-        const invalid = findFirstInvalidBlock()
-        if (invalid) {
-            setMissingBlockId(invalid.blockId)
-            setToast({ open: true, message: invalid.message })
-            scrollToBlock(invalid.blockId)
+        // Valida tudo de uma vez: a pessoa vê todos os pontos que faltam em vez
+        // de descobrir um por vez a cada tentativa de envio.
+        const errors: Record<string, string> = {}
+        let firstInvalid: string | null = null
+        for (const block of form?.blocks || []) {
+            const message = validateBlock(block)
+            if (message) {
+                errors[block.id] = message
+                if (!firstInvalid) firstInvalid = block.id
+            }
+        }
+
+        if (firstInvalid) {
+            setBlockErrors(errors)
+            setToast({ open: true, message: errors[firstInvalid] })
+            scrollToBlock(firstInvalid)
             return
         }
 
+        setBlockErrors({})
         setSubmitting(true)
 
         try {
@@ -176,12 +345,21 @@ export default function PublicFormPage() {
 
             const data = await res.json()
             if (res.ok) {
+                try { localStorage.removeItem(draftKey(id)) } catch {}
                 setDeliveryResult(data.materialDelivery ?? null)
                 setSubmitted(true)
             } else if (res.status === 401 || data.code === 'LOGIN_REQUIRED') {
                 window.location.href = `/auth/login?redirect=/forms/${id}`
             } else {
-                setError(data.error || 'Erro ao enviar resposta')
+                // A API devolve qual pergunta reprovou quando o motivo é o
+                // conteúdo da resposta — leva a pessoa direto até ela.
+                if (data.blockId) {
+                    setBlockErrors(prev => ({ ...prev, [data.blockId]: data.error }))
+                    scrollToBlock(data.blockId)
+                    setToast({ open: true, message: data.error })
+                } else {
+                    setError(data.error || 'Erro ao enviar resposta')
+                }
             }
         } catch (error) {
             setError('Erro ao enviar resposta. Verifique sua conexão.')
@@ -223,12 +401,12 @@ export default function PublicFormPage() {
                     <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
                 </div>
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    initial={reduceMotion ? false : { opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                     className="auth-glass-card max-w-md w-full rounded-2xl p-0 relative z-10 text-center"
                 >
-                    <div className="p-8 space-y-4">
+                    <div className="p-6 sm:p-8 space-y-4">
                         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                             <Lock className="h-10 w-10 text-primary" />
                         </div>
@@ -296,6 +474,8 @@ export default function PublicFormPage() {
             })
         }
 
+        const stepDelay = (i: number) => (reduceMotion ? 0 : 0.7 + i * 0.35)
+
         return (
             <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
                 {/* Ambient blobs */}
@@ -305,7 +485,7 @@ export default function PublicFormPage() {
                 </div>
 
                 {/* Confetes sutis quando há entrega de material (reduzido no mobile p/ evitar jank) */}
-                {materialDelivered && (
+                {materialDelivered && !reduceMotion && (
                     <div className="pointer-events-none fixed inset-0 overflow-hidden">
                         {Array.from({ length: isMobile ? 8 : 18 }).map((_, i) => (
                             <motion.div
@@ -324,47 +504,49 @@ export default function PublicFormPage() {
                 )}
 
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    initial={reduceMotion ? false : { opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                     className="auth-glass-card max-w-lg w-full rounded-2xl p-0 relative z-10 overflow-hidden"
                 >
-                    <div className="text-center p-8 pb-6 border-b border-white/10">
+                    <div className="text-center p-6 sm:p-8 pb-6 border-b border-white/10">
                         <motion.div
-                            className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative"
-                            initial={{ scale: 0 }}
+                            className="w-20 h-20 sm:w-24 sm:h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 relative"
+                            initial={reduceMotion ? false : { scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}
                         >
+                            {!reduceMotion && (
+                                <motion.div
+                                    className="absolute inset-0 rounded-full border-2 border-primary/30"
+                                    initial={{ scale: 1, opacity: 0.8 }}
+                                    animate={{ scale: 1.6, opacity: 0 }}
+                                    transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
+                                />
+                            )}
                             <motion.div
-                                className="absolute inset-0 rounded-full border-2 border-primary/30"
-                                initial={{ scale: 1, opacity: 0.8 }}
-                                animate={{ scale: 1.6, opacity: 0 }}
-                                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
-                            />
-                            <motion.div
-                                initial={{ scale: 0, rotate: -30 }}
+                                initial={reduceMotion ? false : { scale: 0, rotate: -30 }}
                                 animate={{ scale: 1, rotate: 0 }}
                                 transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.35 }}
                             >
                                 {materialDelivered
-                                    ? <PartyPopper className="h-12 w-12 text-primary" />
-                                    : <CheckCircle2 className="h-12 w-12 text-primary" />}
+                                    ? <PartyPopper className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
+                                    : <CheckCircle2 className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />}
                             </motion.div>
                         </motion.div>
                         <motion.h2
-                            className="text-3xl font-black text-primary flex items-center justify-center gap-2"
-                            initial={{ opacity: 0, y: 10 }}
+                            className="text-2xl sm:text-3xl font-black text-primary flex items-center justify-center gap-2"
+                            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.45 }}
+                            transition={{ delay: reduceMotion ? 0 : 0.45 }}
                         >
                             {materialDelivered ? <>Tudo certo! <Sparkles className="h-6 w-6" /></> : 'Sucesso!'}
                         </motion.h2>
                         <motion.p
-                            className="text-lg mt-2 text-muted-foreground"
-                            initial={{ opacity: 0 }}
+                            className="text-base sm:text-lg mt-2 text-muted-foreground"
+                            initial={reduceMotion ? false : { opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.55 }}
+                            transition={{ delay: reduceMotion ? 0 : 0.55 }}
                         >
                             {materialDelivered
                                 ? 'Recebemos suas respostas e o seu material já está a caminho.'
@@ -373,16 +555,16 @@ export default function PublicFormPage() {
                     </div>
 
                     {/* Checklist em cascata */}
-                    <div className="p-6 space-y-3">
+                    <div className="p-4 sm:p-6 space-y-3">
                         <AnimatePresence>
                             {steps.map((step, i) => {
                                 const Icon = step.icon
                                 return (
                                     <motion.div
                                         key={step.title}
-                                        initial={{ opacity: 0, x: -16 }}
+                                        initial={reduceMotion ? false : { opacity: 0, x: -16 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.7 + i * 0.35, duration: 0.4 }}
+                                        transition={{ delay: stepDelay(i), duration: 0.4 }}
                                         className={`flex items-start gap-3 p-4 rounded-xl border ${
                                             step.tone === 'warn'
                                                 ? 'bg-amber-500/10 border-amber-500/30'
@@ -390,18 +572,18 @@ export default function PublicFormPage() {
                                         }`}
                                     >
                                         <motion.div
-                                            initial={{ scale: 0 }}
+                                            initial={reduceMotion ? false : { scale: 0 }}
                                             animate={{ scale: 1 }}
-                                            transition={{ type: 'spring', stiffness: 320, damping: 16, delay: 0.8 + i * 0.35 }}
+                                            transition={{ type: 'spring', stiffness: 320, damping: 16, delay: stepDelay(i) + 0.1 }}
                                             className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${
                                                 step.tone === 'warn' ? 'bg-amber-500/20 text-amber-500' : 'bg-primary/15 text-primary'
                                             }`}
                                         >
                                             <Icon className="h-5 w-5" />
                                         </motion.div>
-                                        <div className="text-left">
+                                        <div className="text-left min-w-0">
                                             <p className="font-bold text-foreground leading-snug">{step.title}</p>
-                                            <p className="text-sm text-muted-foreground mt-0.5">{step.desc}</p>
+                                            <p className="text-sm text-muted-foreground mt-0.5 break-words">{step.desc}</p>
                                         </div>
                                     </motion.div>
                                 )
@@ -410,10 +592,10 @@ export default function PublicFormPage() {
                     </div>
 
                     <motion.div
-                        className="pb-8 px-8 text-center space-y-3"
-                        initial={{ opacity: 0 }}
+                        className="pb-8 px-5 sm:px-8 text-center space-y-3"
+                        initial={reduceMotion ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.9 + steps.length * 0.35 }}
+                        transition={{ delay: reduceMotion ? 0 : 0.9 + steps.length * 0.35 }}
                     >
                         {materialDelivered && deliveryResult?.delivered && (
                             <>
@@ -424,7 +606,9 @@ export default function PublicFormPage() {
                                         className="w-full flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-background/40 px-4 py-3 text-left transition-colors hover:border-primary/40"
                                     >
                                         <span className="min-w-0">
-                                            <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Sua serial key</span>
+                                            <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                                {keyCopied ? 'Copiada!' : 'Sua serial key (toque para copiar)'}
+                                            </span>
                                             <span className="block font-mono text-sm font-bold text-foreground truncate">{deliveryResult.serialKey}</span>
                                         </span>
                                         {keyCopied ? <Check className="h-4 w-4 shrink-0 text-primary" /> : <Copy className="h-4 w-4 shrink-0 text-muted-foreground" />}
@@ -449,15 +633,58 @@ export default function PublicFormPage() {
         )
     }
 
+    let questionNumber = 0
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 pt-8 pb-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
             <ToastAlert
                 open={toast.open}
                 onOpenChange={(open) => setToast(prev => ({ ...prev, open }))}
                 type="error"
-                title="Falta preencher"
+                title="Falta ajustar"
                 message={toast.message}
             />
+
+            {/* Barra de progresso fixa: mostra o quanto falta sem ocupar espaço
+                útil da tela — vira o único ponto de referência no mobile, onde
+                não dá pra ver o formulário inteiro de uma vez. */}
+            <div className="fixed top-0 inset-x-0 z-40 pointer-events-none">
+                <div className="h-1 w-full bg-primary/10">
+                    <div
+                        className="h-full bg-primary transition-[width] duration-300 ease-out"
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+                <AnimatePresence>
+                    {scrolled && (
+                        <motion.div
+                            initial={reduceMotion ? false : { y: -40, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={reduceMotion ? undefined : { y: -40, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="pointer-events-auto border-b border-border/50 bg-background/85 backdrop-blur-md"
+                        >
+                            <div className="max-w-3xl mx-auto flex items-center gap-3 px-4 sm:px-6 py-2.5">
+                                <p className="flex-1 min-w-0 truncate text-sm font-semibold text-foreground">
+                                    {form?.title}
+                                </p>
+                                <span className="shrink-0 text-xs font-bold text-muted-foreground tabular-nums">
+                                    {answeredCount}/{questionBlocks.length}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })}
+                                    aria-label="Voltar ao topo"
+                                    className="shrink-0 h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                                >
+                                    <ArrowUp className="h-4 w-4" />
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
             {/* Ambient blobs (decorativos apenas — ocultos no mobile pra não pesar o scroll) */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden hidden sm:block">
                 <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
@@ -465,59 +692,99 @@ export default function PublicFormPage() {
                 <div className="absolute -bottom-40 left-1/3 w-72 h-72 bg-primary/6 rounded-full blur-3xl" />
             </div>
 
-            <div className="max-w-3xl mx-auto space-y-8 relative z-10">
+            <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8 relative z-10">
                 {/* Header Section */}
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={reduceMotion ? false : { opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="text-center space-y-4 mb-12"
+                    className="text-center space-y-4 mb-8 sm:mb-12"
                 >
-                    <Badge variant="outline" className="px-4 py-1 border-white/20 dark:border-white/10 text-primary bg-background/50 backdrop-blur-sm">
-                        {form?.settings.isActive ? "Pesquisa Disponível" : "Inativo"}
-                    </Badge>
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground leading-tight">
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                        <Badge variant="outline" className="px-4 py-1 border-white/20 dark:border-white/10 text-primary bg-background/50 backdrop-blur-sm">
+                            {form?.settings.isActive ? "Pesquisa Disponível" : "Inativo"}
+                        </Badge>
+                        {deadlineLabel && (
+                            <Badge variant="outline" className="px-3 py-1 border-white/20 dark:border-white/10 text-muted-foreground bg-background/50 backdrop-blur-sm gap-1.5">
+                                <Clock className="h-3.5 w-3.5" /> Até {deadlineLabel}
+                            </Badge>
+                        )}
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground leading-tight text-balance">
                         {form?.title}
                     </h1>
                     {form?.description && (
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto balance leading-relaxed">
+                        <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty leading-relaxed">
                             {form.description}
+                        </p>
+                    )}
+                    {questionBlocks.length > 0 && (
+                        <p className="text-sm font-medium text-muted-foreground">
+                            {questionBlocks.length} {questionBlocks.length === 1 ? 'pergunta' : 'perguntas'}
+                            {answeredCount > 0 && <> · <span className="text-primary">{answeredCount} respondida{answeredCount === 1 ? '' : 's'}</span></>}
                         </p>
                     )}
                 </motion.div>
 
+                {draftRestored && (
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl border border-primary/25 bg-primary/5">
+                        <RotateCcw className="h-5 w-5 shrink-0 text-primary" />
+                        <p className="flex-1 text-sm text-foreground">
+                            Recuperamos as respostas que você já tinha começado neste aparelho.
+                        </p>
+                        <div className="flex gap-2 shrink-0">
+                            <Button type="button" variant="ghost" size="sm" className="rounded-lg" onClick={discardDraft}>
+                                Começar do zero
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" className="rounded-lg" onClick={() => setDraftRestored(false)}>
+                                Continuar
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
                 {error && (
                     <motion.div
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={reduceMotion ? false : { opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl flex items-center gap-3"
+                        role="alert"
                     >
                         <AlertCircle className="h-5 w-5 flex-shrink-0" />
                         <p className="text-sm font-medium">{error}</p>
                     </motion.div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8" noValidate>
                     {form?.blocks.map((block, index) => {
                         const isQuestion = block.type === 'question'
+                        if (isQuestion) questionNumber++
+                        const currentNumber = questionNumber
+                        const blockError = blockErrors[block.id]
+                        const isAnswered = isQuestion && !isAnswerEmpty(answers[block.id])
+                        const errorId = `form-error-${block.id}`
+                        const isFocused = focusedBlockId === block.id
+                        const value = answers[block.id]
+                        const charCount = typeof value === 'string' ? value.length : 0
 
                         return (
                             <motion.div
                                 key={block.id}
                                 id={`form-block-${block.id}`}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={reduceMotion ? false : { opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: '0px 0px -80px 0px' }}
                                 transition={{ duration: 0.4, delay: Math.min(index, 4) * 0.08 }}
+                                className="scroll-mt-24"
                             >
                                 {/* BLoco de Conteúdo */}
                                 {block.type === 'text' && (
                                     <div className="form-glass-card rounded-2xl overflow-hidden relative">
                                         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/70 dark:from-primary/80 dark:to-primary/60" />
-                                        <div className="relative z-10 p-6">
-                                            <h3 className="text-2xl font-semibold text-white">{block.title}</h3>
+                                        <div className="relative z-10 p-5 sm:p-6">
+                                            <h3 className="text-xl sm:text-2xl font-semibold text-white">{block.title}</h3>
                                             {block.description && <p className="text-white/80 text-sm mt-1">{block.description}</p>}
-                                            <p className="whitespace-pre-wrap text-lg text-white/90 mt-4">{block.content}</p>
+                                            <p className="whitespace-pre-wrap text-base sm:text-lg text-white/90 mt-4">{block.content}</p>
                                         </div>
                                     </div>
                                 )}
@@ -529,11 +796,11 @@ export default function PublicFormPage() {
                                             alt={block.title}
                                             loading="lazy"
                                             decoding="async"
-                                            className="w-full h-auto max-h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
+                                            className="w-full h-auto max-h-[500px] object-cover sm:group-hover:scale-105 transition-transform duration-700"
                                         />
                                         {(block.title || block.description) && (
-                                            <div className="p-6 bg-background/50 backdrop-blur-sm">
-                                                <h3 className="text-xl font-semibold text-foreground">{block.title}</h3>
+                                            <div className="p-5 sm:p-6 bg-background/50 backdrop-blur-sm">
+                                                <h3 className="text-lg sm:text-xl font-semibold text-foreground">{block.title}</h3>
                                                 <p className="text-sm text-muted-foreground mt-1">{block.description}</p>
                                             </div>
                                         )}
@@ -545,6 +812,7 @@ export default function PublicFormPage() {
                                         <div className="aspect-video">
                                             <iframe
                                                 src={block.content}
+                                                title={block.title || 'Vídeo'}
                                                 className="w-full h-full"
                                                 loading="lazy"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -552,9 +820,9 @@ export default function PublicFormPage() {
                                             />
                                         </div>
                                         {(block.title || block.description) && (
-                                            <div className="p-6">
-                                                <h3 className="flex items-center gap-2 text-xl font-semibold text-foreground">
-                                                    <Video className="h-5 w-5 text-primary" /> {block.title}
+                                            <div className="p-5 sm:p-6">
+                                                <h3 className="flex items-center gap-2 text-lg sm:text-xl font-semibold text-foreground">
+                                                    <Video className="h-5 w-5 text-primary shrink-0" /> {block.title}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground mt-1">{block.description}</p>
                                             </div>
@@ -563,12 +831,12 @@ export default function PublicFormPage() {
                                 )}
 
                                 {block.type === 'link' && (
-                                    <div className="form-glass-card rounded-2xl flex flex-col sm:flex-row items-center justify-between p-6 gap-4 border-l-4 border-l-primary">
+                                    <div className="form-glass-card rounded-2xl flex flex-col sm:flex-row items-center justify-between p-5 sm:p-6 gap-4 border-l-4 border-l-primary">
                                         <div className="space-y-1 text-center sm:text-left">
                                             <h3 className="font-bold text-lg text-foreground">{block.title}</h3>
                                             {block.description && <p className="text-sm text-muted-foreground">{block.description}</p>}
                                         </div>
-                                        <Button asChild className="rounded-full px-8 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow">
+                                        <Button asChild className="rounded-full px-8 w-full sm:w-auto h-12 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow">
                                             <a href={block.linkUrl} target="_blank" rel="noopener noreferrer">
                                                 {block.buttonText || 'Acessar'} <ExternalLink className="ml-2 h-4 w-4" />
                                             </a>
@@ -578,45 +846,103 @@ export default function PublicFormPage() {
 
                                 {/* Bloco de Pergunta */}
                                 {isQuestion && (
-                                    <div className={`form-glass-card soul-light rounded-2xl hover-lift transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/30 ${missingBlockId === block.id ? 'ring-2 ring-destructive ring-offset-2 ring-offset-background' : ''}`}>
-                                        <div className="p-6 pb-4">
-                                            <div className="flex items-start justify-between">
-                                                <h3 className="text-xl font-bold text-foreground leading-snug">
-                                                    {block.title}
-                                                    {block.required && <span className="text-red-500 ml-1" title="Obrigatório">*</span>}
-                                                </h3>
+                                    <div
+                                        className={`form-glass-card soul-light rounded-2xl sm:hover-lift transition-all duration-300 ${
+                                            blockError
+                                                ? 'ring-2 ring-destructive/70'
+                                                : isFocused
+                                                    ? 'ring-2 ring-primary/40'
+                                                    : isAnswered
+                                                        ? 'ring-1 ring-primary/25'
+                                                        : ''
+                                        }`}
+                                    >
+                                        <div className="p-5 sm:p-6 pb-3 sm:pb-4">
+                                            <div className="flex items-start gap-3">
+                                                {/* Numeração: dá noção de "onde estou" numa lista longa. */}
+                                                <span
+                                                    className={`shrink-0 mt-0.5 h-7 w-7 rounded-lg flex items-center justify-center text-xs font-black tabular-nums transition-colors ${
+                                                        blockError
+                                                            ? 'bg-destructive text-white'
+                                                            : isAnswered
+                                                                ? 'bg-primary text-white'
+                                                                : 'bg-primary/10 text-primary'
+                                                    }`}
+                                                    aria-hidden="true"
+                                                >
+                                                    {blockError
+                                                        ? <AlertCircle className="h-4 w-4" />
+                                                        : isAnswered
+                                                            ? <Check className="h-4 w-4" />
+                                                            : currentNumber}
+                                                </span>
+                                                <div className="min-w-0 flex-1">
+                                                    <h3 className="text-lg sm:text-xl font-bold text-foreground leading-snug break-words">
+                                                        {block.title}
+                                                    </h3>
+                                                    <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                                            block.required
+                                                                ? 'bg-destructive/10 text-destructive'
+                                                                : 'bg-muted text-muted-foreground'
+                                                        }`}>
+                                                            {block.required ? 'Obrigatória' : 'Opcional'}
+                                                        </span>
+                                                        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70 tabular-nums">
+                                                            {currentNumber} de {questionBlocks.length}
+                                                        </span>
+                                                    </div>
+                                                    {block.description && (
+                                                        <p className="text-muted-foreground italic mt-2 text-sm font-medium">
+                                                            {block.description}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
-                                            {block.description && (
-                                                <p className="text-muted-foreground italic mt-1 text-sm font-medium">
-                                                    {block.description}
-                                                </p>
-                                            )}
                                         </div>
-                                        <div className="px-6 pb-6 pt-0">
+                                        <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0">
                                             {block.questionType === 'short-text' && (
-                                                <Input
-                                                    placeholder="Sua resposta aqui..."
-                                                    className="auth-glass-input rounded-xl h-12 text-lg transition-all"
-                                                    value={answers[block.id] || ''}
-                                                    onChange={e => handleAnswer(block.id, e.target.value)}
-                                                    required={block.required}
-                                                    maxLength={200}
-                                                />
+                                                <div className="space-y-1.5">
+                                                    <Input
+                                                        placeholder="Sua resposta aqui..."
+                                                        className="auth-glass-input rounded-xl h-12 text-base sm:text-lg transition-all"
+                                                        value={value || ''}
+                                                        onChange={e => handleAnswer(block.id, e.target.value)}
+                                                        onFocus={() => setFocusedBlockId(block.id)}
+                                                        onBlur={() => handleBlur(block)}
+                                                        maxLength={SHORT_TEXT_MAX}
+                                                        enterKeyHint="next"
+                                                        required={block.required}
+                                                        aria-invalid={!!blockError}
+                                                        aria-describedby={blockError ? errorId : undefined}
+                                                    />
+                                                    {charCount > SHORT_TEXT_MAX - 40 && (
+                                                        <p className="text-[10px] text-right text-muted-foreground uppercase tracking-widest font-bold tabular-nums">
+                                                            {charCount} / {SHORT_TEXT_MAX}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             )}
 
                                             {block.questionType === 'long-text' && (
-                                                <div className="space-y-1">
+                                                <div className="space-y-1.5">
                                                     <Textarea
                                                         placeholder="Fale um pouco mais detalhadamente..."
-                                                        className="auth-glass-input rounded-xl min-h-[120px] text-lg transition-all"
-                                                        value={answers[block.id] || ''}
+                                                        className="auth-glass-input rounded-xl min-h-[120px] text-base sm:text-lg transition-all"
+                                                        value={value || ''}
                                                         onChange={e => handleAnswer(block.id, e.target.value)}
+                                                        onFocus={() => setFocusedBlockId(block.id)}
+                                                        onBlur={() => handleBlur(block)}
+                                                        maxLength={LONG_TEXT_MAX}
                                                         required={block.required}
-                                                        maxLength={5000}
+                                                        aria-invalid={!!blockError}
+                                                        aria-describedby={blockError ? errorId : undefined}
                                                     />
-                                                    <p className="text-[10px] text-right text-muted-foreground uppercase tracking-widest font-bold">
-                                                        {(answers[block.id]?.length || 0)} / 5000
-                                                    </p>
+                                                    {charCount > 0 && (
+                                                        <p className="text-[10px] text-right text-muted-foreground uppercase tracking-widest font-bold tabular-nums">
+                                                            {charCount} / {LONG_TEXT_MAX}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             )}
 
@@ -625,17 +951,26 @@ export default function PublicFormPage() {
                                                     <div className="relative">
                                                         <Input
                                                             type="email"
+                                                            inputMode="email"
+                                                            autoComplete="email"
+                                                            autoCapitalize="none"
+                                                            autoCorrect="off"
+                                                            spellCheck={false}
                                                             placeholder="exemplo@email.com"
-                                                            className="auth-glass-input rounded-xl h-12 text-lg pl-10 transition-all"
-                                                            value={answers[block.id] || ''}
+                                                            className="auth-glass-input rounded-xl h-12 text-base sm:text-lg pl-10 transition-all"
+                                                            value={value || ''}
                                                             onChange={e => handleAnswer(block.id, e.target.value)}
-                                                            required={block.required || (form?.settings.deliverMaterial && !user && form.settings.emailQuestionId === block.id)}
+                                                            onFocus={() => setFocusedBlockId(block.id)}
+                                                            onBlur={() => handleBlur(block)}
+                                                            required={block.required || isDeliveryEmailBlock(block)}
+                                                            aria-invalid={!!blockError}
+                                                            aria-describedby={blockError ? errorId : undefined}
                                                         />
                                                         <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                                     </div>
-                                                    {form?.settings.deliverMaterial && !user && form.settings.emailQuestionId === block.id && (
+                                                    {isDeliveryEmailBlock(block) && (
                                                         <p className="text-xs font-medium text-primary flex items-center gap-1.5">
-                                                            <KeyRound className="h-3.5 w-3.5" /> É para este e-mail que enviaremos o material.
+                                                            <KeyRound className="h-3.5 w-3.5 shrink-0" /> É para este e-mail que enviaremos o material.
                                                         </p>
                                                     )}
                                                 </div>
@@ -645,11 +980,19 @@ export default function PublicFormPage() {
                                                 <div className="relative">
                                                     <Input
                                                         type="tel"
+                                                        inputMode="tel"
+                                                        autoComplete="tel"
                                                         placeholder="(00) 00000-0000"
-                                                        className="auth-glass-input rounded-xl h-12 text-lg pl-10 transition-all"
-                                                        value={answers[block.id] || ''}
-                                                        onChange={e => handleAnswer(block.id, e.target.value)}
+                                                        className="auth-glass-input rounded-xl h-12 text-base sm:text-lg pl-10 transition-all"
+                                                        value={value || ''}
+                                                        // Máscara enquanto digita: no celular o teclado numérico não
+                                                        // tem parênteses/hífen e todo mundo mandava formato diferente.
+                                                        onChange={e => handleAnswer(block.id, formatBrazilPhone(e.target.value))}
+                                                        onFocus={() => setFocusedBlockId(block.id)}
+                                                        onBlur={() => handleBlur(block)}
                                                         required={block.required}
+                                                        aria-invalid={!!blockError}
+                                                        aria-describedby={blockError ? errorId : undefined}
                                                     />
                                                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                                 </div>
@@ -657,33 +1000,39 @@ export default function PublicFormPage() {
 
                                             {block.questionType === 'multiple-choice' && (
                                                 <RadioGroup
-                                                    value={answers[block.id] || ''}
+                                                    value={value || ''}
                                                     onValueChange={val => handleAnswer(block.id, val)}
-                                                    className="space-y-3"
-                                                    required={block.required}
+                                                    className="space-y-2.5"
                                                 >
-                                                    {block.options?.map((option, i) => (
-                                                        // onClick na linha inteira: aumenta a área de toque (não depende
-                                                        // de acertar a bolinha ou o texto). O clique redundante que às vezes
-                                                        // chega também pelo RadioGroupItem é inofensivo — ambos definem o
-                                                        // mesmo valor.
-                                                        <div
-                                                            key={i}
-                                                            onClick={() => handleAnswer(block.id, option)}
-                                                            className="flex items-center space-x-3 rounded-xl bg-background/60 border border-white/20 dark:border-white/5 p-4 hover:soul-light active:soul-light active:scale-[0.99] transition-all cursor-pointer group touch-manipulation"
-                                                        >
-                                                            <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary" />
-                                                            <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-foreground">{option}</Label>
-                                                            <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
-                                                        </div>
-                                                    ))}
+                                                    {block.options?.map((option, i) => {
+                                                        const selected = value === option
+                                                        return (
+                                                            // onClick na linha inteira: aumenta a área de toque (não depende
+                                                            // de acertar a bolinha ou o texto). O clique redundante que às vezes
+                                                            // chega também pelo RadioGroupItem é inofensivo — ambos definem o
+                                                            // mesmo valor.
+                                                            <div
+                                                                key={i}
+                                                                onClick={() => handleAnswer(block.id, option)}
+                                                                className={`flex items-center gap-3 rounded-xl border p-4 min-h-[56px] transition-all cursor-pointer group touch-manipulation active:scale-[0.99] ${
+                                                                    selected
+                                                                        ? 'bg-primary/10 border-primary/40 shadow-sm'
+                                                                        : 'bg-background/60 border-white/20 dark:border-white/5 sm:hover:border-primary/30 active:border-primary/30'
+                                                                }`}
+                                                            >
+                                                                <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary shrink-0" />
+                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">{option}</Label>
+                                                                <ChevronRight className={`h-4 w-4 shrink-0 text-primary transition-opacity ${selected ? 'opacity-100' : 'opacity-0 sm:group-hover:opacity-100'}`} />
+                                                            </div>
+                                                        )
+                                                    })}
                                                 </RadioGroup>
                                             )}
 
                                             {block.questionType === 'checklist' && (
-                                                <div className="space-y-3">
+                                                <div className="space-y-2.5">
                                                     {block.options?.map((option, i) => {
-                                                        const current = answers[block.id] || []
+                                                        const current = value || []
                                                         const isChecked = current.includes(option)
                                                         const toggle = () => {
                                                             const newVal = isChecked
@@ -698,11 +1047,12 @@ export default function PublicFormPage() {
                                                             <div
                                                                 key={i}
                                                                 onClick={toggle}
-                                                                className={`flex items-center space-x-3 p-4 rounded-xl border transition-all cursor-pointer group active:scale-[0.99] touch-manipulation ${isChecked ? 'bg-primary/10 border-primary/30 shadow-sm' : 'bg-background/60 border-white/20 dark:border-white/5 hover:border-primary/30 active:border-primary/30'}`}
+                                                                className={`flex items-center gap-3 p-4 min-h-[56px] rounded-xl border transition-all cursor-pointer group active:scale-[0.99] touch-manipulation ${isChecked ? 'bg-primary/10 border-primary/40 shadow-sm' : 'bg-background/60 border-white/20 dark:border-white/5 sm:hover:border-primary/30 active:border-primary/30'}`}
                                                             >
                                                                 <Checkbox
                                                                     id={`${block.id}-${i}`}
                                                                     checked={isChecked}
+                                                                    className="shrink-0"
                                                                     onCheckedChange={(checked) => {
                                                                         const newVal = checked
                                                                             ? [...current, option]
@@ -710,12 +1060,29 @@ export default function PublicFormPage() {
                                                                         handleAnswer(block.id, newVal)
                                                                     }}
                                                                 />
-                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-foreground">{option}</Label>
+                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">{option}</Label>
                                                             </div>
                                                         )
                                                     })}
                                                 </div>
                                             )}
+
+                                            {/* Erro da pergunta (inclui o aviso de resposta aleatória) */}
+                                            <AnimatePresence>
+                                                {blockError && (
+                                                    <motion.p
+                                                        id={errorId}
+                                                        role="alert"
+                                                        initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
+                                                        className="flex items-start gap-2 text-sm font-medium text-destructive mt-3"
+                                                    >
+                                                        <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                                                        <span>{blockError}</span>
+                                                    </motion.p>
+                                                )}
+                                            </AnimatePresence>
                                         </div>
                                     </div>
                                 )}
@@ -724,15 +1091,17 @@ export default function PublicFormPage() {
                     })}
 
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
+                        ref={submitRef}
+                        initial={reduceMotion ? false : { opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '0px 0px -80px 0px' }}
                         transition={{ duration: 0.4 }}
-                        className="pt-8"
+                        className="pt-4 sm:pt-8"
                     >
                         <Button
+                            type="submit"
                             disabled={submitting}
-                            className="btn-brand-glow text-white soul-light soul-light-brand rounded-2xl w-full h-16 text-xl font-black group overflow-hidden relative"
+                            className="btn-brand-glow text-white soul-light soul-light-brand rounded-2xl w-full h-14 sm:h-16 text-lg sm:text-xl font-black group overflow-hidden relative"
                         >
                             {submitting ? (
                                 <>
@@ -752,7 +1121,45 @@ export default function PublicFormPage() {
                             Sua privacidade é importante. Seus dados estão protegidos.
                         </p>
                     </motion.div>
+
+                    {/* Envio sempre à mão no mobile: em formulário longo o botão
+                        do fim fica a dezenas de rolagens de distância. */}
+                    <AnimatePresence>
+                        {!submitInView && (
+                            <motion.div
+                                initial={reduceMotion ? false : { y: 80 }}
+                                animate={{ y: 0 }}
+                                exit={reduceMotion ? undefined : { y: 80 }}
+                                transition={{ duration: 0.2 }}
+                                // Sobe acima do banner "instalar na tela de início" (iOS), que
+                                // publica a própria altura nessa variável justamente pra isso.
+                                style={{ bottom: 'var(--gx-install-prompt-h, 0px)' }}
+                                className="sm:hidden fixed inset-x-0 z-40 border-t border-border/60 bg-background/90 backdrop-blur-md px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+                            >
+                                <Button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="btn-brand-glow text-white rounded-xl w-full h-12 text-base font-bold"
+                                >
+                                    {submitting ? (
+                                        <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Enviando...</>
+                                    ) : (
+                                        <>Finalizar e Enviar <Send className="ml-2 h-4 w-4" /></>
+                                    )}
+                                </Button>
+                                <p className="text-center text-[11px] text-muted-foreground mt-1.5 tabular-nums">
+                                    {answeredCount} de {questionBlocks.length} respondidas
+                                </p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </form>
+
+                {/* Espaço reservado (sempre, não condicional) para a barra fixa de
+                    envio não cobrir o rodapé do formulário. Se aparecesse só junto
+                    com a barra, o documento mudaria de altura no fim da página e o
+                    observador ficaria alternando entre mostrar e esconder. */}
+                <div className="sm:hidden h-24" aria-hidden="true" />
             </div>
         </div>
     )

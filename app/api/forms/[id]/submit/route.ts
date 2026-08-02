@@ -13,6 +13,7 @@ import {
   sanitizeObject,
   validateEmail
 } from '@/lib/api-security'
+import { checkTextAnswer, isFreeTextQuestion } from '@/lib/answer-quality'
 
 export const dynamic = 'force-dynamic'
 
@@ -80,10 +81,32 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         }
       }
       // Max Length check for text inputs
-      if (block.type === 'question' && (block.questionType === 'short-text' || block.questionType === 'long-text')) {
+      if (block.type === 'question' && isFreeTextQuestion(block.questionType)) {
         const answer = sanitizedAnswers[block.id]
         if (typeof answer === 'string' && answer.length > 5000) {
           return NextResponse.json({ error: `A resposta para "${block.title}" é muito longa.` }, { status: 400 })
+        }
+
+        // Barreira contra resposta-lixo ("ajwisajsjiawji", "asdfasdf", "aaaa").
+        // O cliente já avisa antes do envio; aqui é a validação de verdade, já
+        // que dá pra chamar a API direto. `blockId` volta junto para a página
+        // conseguir levar a pessoa até a pergunta certa.
+        //
+        // A análise roda no texto ORIGINAL, não no sanitizado: o sanitizador
+        // troca aspas e barras por entidades (`&#x2F;`), o que faria o servidor
+        // enxergar um texto diferente do que o cliente avaliou. Aqui a string
+        // só é analisada, nunca renderizada — o que vai pro banco continua
+        // sendo a versão sanitizada.
+        const quality = checkTextAnswer(answers[block.id])
+        if (!quality.ok) {
+          return NextResponse.json(
+            {
+              error: `${quality.message} (pergunta: "${block.title}")`,
+              code: 'LOW_QUALITY_ANSWER',
+              blockId: block.id,
+            },
+            { status: 400 }
+          )
         }
       }
     }
