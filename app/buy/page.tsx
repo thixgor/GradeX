@@ -17,6 +17,7 @@ import {
   Zap,
   Star,
   Clock,
+  Mail,
 } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
@@ -41,82 +42,30 @@ interface Plan {
 
 const defaultPlans: Plan[] = [
   {
-    id: 'mensal',
-    name: 'DomineAqui Plus+',
-    period: 'Mensal',
-    originalPrice: 29.9,
-    price: 24.9,
-    description: 'Flexível para testar o ritmo',
-    features: [
-      '400 Questões Pessoais/dia',
-      '500 Flashcards/dia',
-      'Cronogramas ilimitados',
-      'Fórum premium',
-      'Aulas ao vivo',
-      'WhatsApp do grupo',
-    ],
-    durationMonths: 1,
-  },
-  {
-    id: 'trimestral',
-    name: 'DomineAqui Plus+',
-    period: 'Trimestral',
-    originalPrice: 89.7,
-    price: 69.9,
-    discount: 22,
-    discountLabel: 'Economize em 3 meses',
-    description: 'Consistência sem travar o bolso',
-    features: [
-      '400 Questões Pessoais/dia',
-      '500 Flashcards/dia',
-      'Cronogramas ilimitados',
-      'Fórum premium',
-      'Aulas ao vivo',
-      'WhatsApp do grupo',
-    ],
-    durationMonths: 3,
-  },
-  {
     id: 'anual',
     name: 'DomineAqui Plus+',
     period: 'Anual',
-    originalPrice: 358.8,
-    price: 159.9,
-    discount: 55,
-    discountLabel: 'Melhor custo por mês',
-    description: 'O plano que a maioria escolhe',
+    originalPrice: 3128.99,
+    price: 397.0,
+    discount: 87,
+    discountLabel: 'Tenha acesso a TUDO da plataforma por esse valor',
+    description: 'Tenha acesso a TUDO da plataforma por esse valor',
     features: [
-      '400 Questões Pessoais/dia',
-      '500 Flashcards/dia',
-      'Cronogramas ilimitados',
-      'Fórum premium',
-      'Aulas ao vivo',
-      'WhatsApp do grupo',
+      'Manual Clínico',
+      'Manual Interativo do Eletrocardiograma',
+      'Manual Interativo de Farmacologia',
+      'Anatomia 3D Interativa',
+      'Todos os Materiais da plataforma (Resumos, etc)',
+      'Todos os Flashcards da plataforma',
+      'Todas as Provas da Faculdade + Download em PDF',
+      'Criação de Provas com IA',
+      'Criação de Flashcards com IA',
+      'Criação ilimitada de Mapas Mentais',
+      'Criação ilimitada de Cronogramas',
     ],
     highlighted: true,
-    badge: 'MAIS ESCOLHIDO',
+    badge: 'IMPERDÍVEL',
     durationMonths: 12,
-  },
-  {
-    id: 'vitalicio',
-    name: 'DomineAqui Plus+',
-    period: 'Vitalício',
-    originalPrice: 1497.0,
-    price: 529.0,
-    discount: 65,
-    discountLabel: 'Oferta até fim de 2026',
-    description: 'Paga uma vez. Domina pra sempre.',
-    features: [
-      '400 Questões Pessoais/dia',
-      '500 Flashcards/dia',
-      'Cronogramas ilimitados',
-      'Fórum premium',
-      'Aulas ao vivo',
-      'WhatsApp do grupo',
-    ],
-    highlighted: true,
-    badge: 'OFERTA LIMITADA',
-    isLifetime: true,
   },
 ]
 
@@ -127,11 +76,15 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Quais formas de pagamento?',
-    a: 'Pix, cartão e boleto via Mercado Pago.',
+    a: 'Pix, cartão e boleto via Mercado Pago. O acesso é liberado automaticamente no seu e-mail assim que o pagamento é aprovado.',
   },
   {
-    q: 'O vitalício é de verdade?',
-    a: 'Sim: pagamento único e acesso permanente. Oferta limitada até o 2º semestre de 2026.',
+    q: 'É uma assinatura anual?',
+    a: 'Sim. O DomineAqui Plus+ é um plano anual (R$ 397,00/ano), com renovação automática ao fim dos 12 meses via Mercado Pago. Você pode cancelar quando quiser e mantém o acesso até o fim do período já pago.',
+  },
+  {
+    q: 'Tem garantia?',
+    a: 'Sim. Você tem 7 dias corridos após a compra para testar o Plus+ sem compromisso. Se não for pra você, devolvemos 100% do valor, sem burocracia.',
   },
   {
     q: 'Tem teste?',
@@ -305,7 +258,7 @@ function BuyContent() {
           </button>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-secondary">Plus+</p>
-            <p className="truncate text-sm font-semibold text-foreground sm:hidden">Escolha seu plano</p>
+            <p className="truncate text-sm font-semibold text-foreground sm:hidden">Ative seu Plus+</p>
           </div>
           <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-semibold text-muted-foreground">
             <Lock className="h-3 w-3 text-primary" /> Checkout seguro
@@ -336,7 +289,7 @@ function BuyContent() {
               <span className="text-primary"> e chegar na prova no piloto automático.</span>
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Escolha o prazo. Ative o Plus+. Comece a treinar no ritmo de quem passa —
+              Ative o Plus+. Comece a treinar no ritmo de quem passa —
               sem planilha, sem caos, sem enrolação.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-muted-foreground">
@@ -432,21 +385,24 @@ function BuyContent() {
         ) : (
           !hasActiveSub && (
             <>
-              <div className="mb-3 flex items-end justify-between gap-3">
+              <div className="mb-5 flex items-end justify-between gap-3">
                 <div>
-                  <p className="editorial-mark mb-1">Planos</p>
+                  <p className="editorial-mark mb-1">Acesso</p>
                   <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
-                    Escolha quanto tempo você quer de vantagem
+                    Uma decisão. Acesso total.
                   </h2>
                 </div>
               </div>
 
-              <div className="mb-5 inline-flex items-center gap-2 rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-xs font-semibold text-primary sm:text-sm">
-                <Shield className="h-4 w-4 shrink-0" />
-                Garantia incondicional de 7 dias — sem perguntas. Não gostou? Devolvemos 100% do seu dinheiro.
-              </div>
-
-              <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div
+                className={cn(
+                  'grid grid-cols-1 items-stretch gap-4 mx-auto',
+                  plans.length === 1 && 'max-w-sm',
+                  plans.length === 2 && 'sm:grid-cols-2 max-w-2xl',
+                  plans.length === 3 && 'sm:grid-cols-2 lg:grid-cols-3 max-w-4xl',
+                  plans.length >= 4 && 'sm:grid-cols-2 lg:grid-cols-4'
+                )}
+              >
                 {plans.map((plan) => {
                   const isGold = !!plan.isLifetime
                   const isHighlight = !!plan.highlighted
@@ -572,6 +528,18 @@ function BuyContent() {
                           ))}
                         </ul>
 
+                        <div
+                          className={cn(
+                            'mb-4 flex items-start gap-2 rounded-lg border px-3 py-2.5 text-[11px] font-semibold leading-snug sm:text-xs',
+                            isGold
+                              ? 'border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200'
+                              : 'border-primary/25 bg-primary/10 text-primary'
+                          )}
+                        >
+                          <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                          Garantia incondicional de 7 dias — não gostou, devolvemos 100% do valor, sem perguntas.
+                        </div>
+
                         <button
                           type="button"
                           onClick={() => handleSelect(plan)}
@@ -589,14 +557,21 @@ function BuyContent() {
                             'Abrindo checkout…'
                           ) : (
                             <>
-                              Quero este plano
+                              Quero acesso total
                               <ChevronRight className="h-4 w-4" />
                             </>
                           )}
                         </button>
-                        <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                          {plan.isLifetime ? 'Pagamento único · acesso permanente' : 'Pix · cartão · boleto'}
-                        </p>
+                        <div className="mt-3 space-y-1.5">
+                          <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
+                            <Lock className="h-3 w-3 shrink-0 text-primary" />
+                            Pagamento processado com segurança pelo Mercado Pago (Pix, cartão ou boleto)
+                          </p>
+                          <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
+                            <Mail className="h-3 w-3 shrink-0 text-primary" />
+                            Acesso liberado automaticamente no seu e-mail assim que o pagamento for aprovado
+                          </p>
+                        </div>
                       </div>
                     </article>
                   )
@@ -679,7 +654,7 @@ function BuyContent() {
               </span>
             </span>
             <span className="inline-flex items-center gap-1 text-sm font-bold">
-              Assinar agora <ChevronRight className="h-4 w-4" />
+              Quero acesso total <ChevronRight className="h-4 w-4" />
             </span>
           </button>
         </div>
