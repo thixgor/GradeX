@@ -2285,3 +2285,94 @@
 .da-landing .pwa-safe-hero {
   padding-top: calc(72px + env(safe-area-inset-top));
 }
+
+/* ==========================================================================
+   /flashcards — hub
+   Um vocabulário visual único para a área: um material translúcido para a
+   barra de comando, um indicador que desliza entre as seções e um cartão de
+   deck que se eleva ao toque. Tudo em transform/opacity (compositor) e com
+   equivalentes gentis para quem pede menos movimento/transparência.
+   ========================================================================== */
+
+/* Barra de comando: camada flutuante que deixa o conteúdo passar por baixo,
+   em vez de uma faixa opaca que come uma tira fixa da tela. Sem suporte a
+   backdrop-filter, cai para superfície sólida (legibilidade primeiro). */
+.fc-chrome {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .fc-chrome {
+    background: hsl(var(--card) / 0.8);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border-color: hsl(var(--border) / 0.75);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .fc-chrome {
+    background: hsl(var(--card));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: hsl(var(--border));
+  }
+}
+
+/* Segmentado das seções: o indicador viaja da posição atual até a nova com
+   uma curva de mola criticamente amortecida (sem repique — não houve gesto
+   com inércia, foi um toque). Como todos os itens têm a mesma largura, a
+   posição é aritmética: nada é medido no layout. */
+.fc-seg-thumb {
+  transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+
+/* Cartão de deck: elevação curta na resposta ao ponteiro. */
+.fc-card {
+  transition:
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    border-color 200ms ease-out;
+}
+
+/* Ações do dono (editar/apagar): no toque não existe hover, então elas ficam
+   sempre visíveis; onde há ponteiro de verdade, só aparecem sob o cursor ou
+   com foco de teclado, mantendo a capa limpa. */
+.fc-owner-actions {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fc-owner-actions {
+    opacity: 0;
+    transition: opacity 180ms ease-out;
+  }
+
+  .group:hover .fc-owner-actions,
+  .fc-owner-actions:focus-within {
+    opacity: 1;
+  }
+}
+
+/* Entrada dos blocos do hub. */
+@keyframes fc-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.fc-enter {
+  animation: fc-enter 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fc-seg-thumb,
+  .fc-card {
+    transition: none;
+  }
+
+  .fc-enter {
+    animation: none;
+  }
+}
