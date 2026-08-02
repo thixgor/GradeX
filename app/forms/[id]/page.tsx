@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Form, FormBlock } from '@/lib/types'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -1007,13 +1006,16 @@ export default function PublicFormPage() {
                                                     {block.options?.map((option, i) => {
                                                         const selected = value === option
                                                         return (
-                                                            // onClick na linha inteira: aumenta a área de toque (não depende
-                                                            // de acertar a bolinha ou o texto). O clique redundante que às vezes
-                                                            // chega também pelo RadioGroupItem é inofensivo — ambos definem o
-                                                            // mesmo valor.
-                                                            <div
+                                                            // A LINHA INTEIRA é um <label> (não uma <div> com onClick):
+                                                            // é o único jeito de ter exatamente UM clique por toque. Uma
+                                                            // <div onClick> ao lado de um <label htmlFor> pro mesmo campo
+                                                            // dispara duas atualizações por clique (uma pelo próprio clique
+                                                            // borbulhando, outra pelo clique que o navegador encaminha do
+                                                            // label pro campo) — e como cada uma parte de um snapshot
+                                                            // diferente do estado, a segunda desfazia a primeira, travando
+                                                            // a seleção depois da primeira escolha.
+                                                            <label
                                                                 key={i}
-                                                                onClick={() => handleAnswer(block.id, option)}
                                                                 className={`flex items-center gap-3 rounded-xl border p-4 min-h-[56px] transition-all cursor-pointer group touch-manipulation active:scale-[0.99] ${
                                                                     selected
                                                                         ? 'bg-primary/10 border-primary/40 shadow-sm'
@@ -1021,9 +1023,9 @@ export default function PublicFormPage() {
                                                                 }`}
                                                             >
                                                                 <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary shrink-0" />
-                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">{option}</Label>
+                                                                <span className="flex-1 text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">{option}</span>
                                                                 <ChevronRight className={`h-4 w-4 shrink-0 text-primary transition-opacity ${selected ? 'opacity-100' : 'opacity-0 sm:group-hover:opacity-100'}`} />
-                                                            </div>
+                                                            </label>
                                                         )
                                                     })}
                                                 </RadioGroup>
@@ -1034,19 +1036,13 @@ export default function PublicFormPage() {
                                                     {block.options?.map((option, i) => {
                                                         const current = value || []
                                                         const isChecked = current.includes(option)
-                                                        const toggle = () => {
-                                                            const newVal = isChecked
-                                                                ? current.filter((v: string) => v !== option)
-                                                                : [...current, option]
-                                                            handleAnswer(block.id, newVal)
-                                                        }
                                                         return (
-                                                            // onClick na linha inteira pelo mesmo motivo do multiple-choice
-                                                            // acima; o Checkbox mantém seu próprio onCheckedChange para
-                                                            // teclado/leitor de tela.
-                                                            <div
+                                                            // Mesmo motivo do multiple-choice acima: a linha inteira
+                                                            // precisa ser um único <label> (não uma <div onClick> ao lado
+                                                            // de um <label htmlFor>), senão um único toque dispara duas
+                                                            // atualizações conflitantes e a marcação nunca "pega".
+                                                            <label
                                                                 key={i}
-                                                                onClick={toggle}
                                                                 className={`flex items-center gap-3 p-4 min-h-[56px] rounded-xl border transition-all cursor-pointer group active:scale-[0.99] touch-manipulation ${isChecked ? 'bg-primary/10 border-primary/40 shadow-sm' : 'bg-background/60 border-white/20 dark:border-white/5 sm:hover:border-primary/30 active:border-primary/30'}`}
                                                             >
                                                                 <Checkbox
@@ -1060,8 +1056,8 @@ export default function PublicFormPage() {
                                                                         handleAnswer(block.id, newVal)
                                                                     }}
                                                                 />
-                                                                <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">{option}</Label>
-                                                            </div>
+                                                                <span className="flex-1 text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">{option}</span>
+                                                            </label>
                                                         )
                                                     })}
                                                 </div>
