@@ -32,6 +32,7 @@ import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthUser } from '@/hooks/use-auth-user'
+import { ToastAlert } from '@/components/ui/toast-alert'
 
 export default function PublicFormPage() {
     const params = useParams()
@@ -50,6 +51,8 @@ export default function PublicFormPage() {
 
     const { user, loading: authLoading } = useAuthUser()
     const [isMobile, setIsMobile] = useState(false)
+    const [missingBlockId, setMissingBlockId] = useState<string | null>(null)
+    const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
     // Login só é exigido quando o admin liga "Exigir Login" explicitamente. A
     // entrega de material NÃO exige login: se logado, vai para o e-mail da
@@ -97,23 +100,58 @@ export default function PublicFormPage() {
 
     const handleAnswer = (blockId: string, value: any) => {
         setAnswers(prev => ({ ...prev, [blockId]: value }))
+        // A pessoa acabou de responder — some com o destaque de "faltando".
+        if (blockId === missingBlockId) setMissingBlockId(null)
     }
 
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    function isAnswerEmpty(value: any): boolean {
+        return !value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && !value.trim())
+    }
+
+    // Acha a primeira pergunta com problema (obrigatória vazia, ou o e-mail de
+    // entrega do material quando não logado) para levar a pessoa até ela em
+    // vez de só recusar o envio sem dizer onde está o problema.
+    function findFirstInvalidBlock(): { blockId: string; message: string } | null {
+        if (!form) return null
+        for (const block of form.blocks) {
+            if (block.type !== 'question') continue
+            const answer = answers[block.id]
+
+            if (block.required && isAnswerEmpty(answer)) {
+                return { blockId: block.id, message: `Preencha "${block.title}" para continuar.` }
+            }
+
+            if (
+                form.settings.deliverMaterial &&
+                !user &&
+                form.settings.emailQuestionId === block.id &&
+                (isAnswerEmpty(answer) || !EMAIL_RE.test(String(answer).trim()))
+            ) {
+                return { blockId: block.id, message: 'Informe um e-mail válido para receber o material.' }
+            }
+        }
+        return null
+    }
+
+    function scrollToBlock(blockId: string) {
+        const el = document.getElementById(`form-block-${blockId}`)
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         setError(null)
 
-        // Entrega de material sem login depende da pergunta de e-mail: valida
-        // antes de enviar para não perder a resposta por um e-mail ausente.
-        if (form?.settings.deliverMaterial && !user && form.settings.emailQuestionId) {
-            const emailAnswer = answers[form.settings.emailQuestionId]
-            if (typeof emailAnswer !== 'string' || !EMAIL_RE.test(emailAnswer.trim())) {
-                setError('Informe um e-mail válido para receber o material.')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-                return
-            }
+        const invalid = findFirstInvalidBlock()
+        if (invalid) {
+            setMissingBlockId(invalid.blockId)
+            setToast({ open: true, message: invalid.message })
+            scrollToBlock(invalid.blockId)
+            return
         }
 
         setSubmitting(true)
@@ -387,6 +425,13 @@ export default function PublicFormPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            <ToastAlert
+                open={toast.open}
+                onOpenChange={(open) => setToast(prev => ({ ...prev, open }))}
+                type="error"
+                title="Falta preencher"
+                message={toast.message}
+            />
             {/* Ambient blobs (decorativos apenas — ocultos no mobile pra não pesar o scroll) */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden hidden sm:block">
                 <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
@@ -433,6 +478,7 @@ export default function PublicFormPage() {
                         return (
                             <motion.div
                                 key={block.id}
+                                id={`form-block-${block.id}`}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: '0px 0px -80px 0px' }}
@@ -506,7 +552,7 @@ export default function PublicFormPage() {
 
                                 {/* Bloco de Pergunta */}
                                 {isQuestion && (
-                                    <div className="form-glass-card soul-light rounded-2xl hover-lift transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/30">
+                                    <div className={`form-glass-card soul-light rounded-2xl hover-lift transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/30 ${missingBlockId === block.id ? 'ring-2 ring-destructive ring-offset-2 ring-offset-background' : ''}`}>
                                         <div className="p-6 pb-4">
                                             <div className="flex items-start justify-between">
                                                 <h3 className="text-xl font-bold text-foreground leading-snug">
@@ -585,12 +631,21 @@ export default function PublicFormPage() {
 
                                             {block.questionType === 'multiple-choice' && (
                                                 <RadioGroup
+                                                    value={answers[block.id] || ''}
                                                     onValueChange={val => handleAnswer(block.id, val)}
                                                     className="space-y-3"
                                                     required={block.required}
                                                 >
                                                     {block.options?.map((option, i) => (
-                                                        <div key={i} className="flex items-center space-x-3 rounded-xl bg-background/60 border border-white/20 dark:border-white/5 p-4 hover:soul-light transition-all cursor-pointer group">
+                                                        // onClick na linha inteira: aumenta a área de toque (não depende
+                                                        // de acertar a bolinha ou o texto). O clique redundante que às vezes
+                                                        // chega também pelo RadioGroupItem é inofensivo — ambos definem o
+                                                        // mesmo valor.
+                                                        <div
+                                                            key={i}
+                                                            onClick={() => handleAnswer(block.id, option)}
+                                                            className="flex items-center space-x-3 rounded-xl bg-background/60 border border-white/20 dark:border-white/5 p-4 hover:soul-light active:soul-light active:scale-[0.99] transition-all cursor-pointer group touch-manipulation"
+                                                        >
                                                             <RadioGroupItem value={option} id={`${block.id}-${i}`} className="border-primary text-primary" />
                                                             <Label htmlFor={`${block.id}-${i}`} className="flex-1 cursor-pointer text-lg font-medium group-hover:text-primary transition-colors text-foreground">{option}</Label>
                                                             <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
@@ -604,8 +659,21 @@ export default function PublicFormPage() {
                                                     {block.options?.map((option, i) => {
                                                         const current = answers[block.id] || []
                                                         const isChecked = current.includes(option)
+                                                        const toggle = () => {
+                                                            const newVal = isChecked
+                                                                ? current.filter((v: string) => v !== option)
+                                                                : [...current, option]
+                                                            handleAnswer(block.id, newVal)
+                                                        }
                                                         return (
-                                                            <div key={i} className={`flex items-center space-x-3 p-4 rounded-xl border transition-all cursor-pointer group ${isChecked ? 'bg-primary/10 border-primary/30 shadow-sm' : 'bg-background/60 border-white/20 dark:border-white/5 hover:border-primary/30'}`}>
+                                                            // onClick na linha inteira pelo mesmo motivo do multiple-choice
+                                                            // acima; o Checkbox mantém seu próprio onCheckedChange para
+                                                            // teclado/leitor de tela.
+                                                            <div
+                                                                key={i}
+                                                                onClick={toggle}
+                                                                className={`flex items-center space-x-3 p-4 rounded-xl border transition-all cursor-pointer group active:scale-[0.99] touch-manipulation ${isChecked ? 'bg-primary/10 border-primary/30 shadow-sm' : 'bg-background/60 border-white/20 dark:border-white/5 hover:border-primary/30 active:border-primary/30'}`}
+                                                            >
                                                                 <Checkbox
                                                                     id={`${block.id}-${i}`}
                                                                     checked={isChecked}

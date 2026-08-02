@@ -2,6 +2,16 @@ import type { Config } from 'tailwindcss'
 
 const config: Config = {
   darkMode: ['class'],
+  // Sem isso, toda classe `hover:` vira `:hover` puro no CSS — em touch
+  // (celular), o navegador consome o 1º toque só para simular o hover e
+  // exige um 2º toque para o clique de fato disparar (bug clássico
+  // iOS/Android). Escopar `hover:` para `@media (hover: hover)` faz o efeito
+  // de hover só existir em dispositivos com mouse/trackpad de verdade, e o
+  // toque passa a disparar o clique já na primeira vez em qualquer lugar do
+  // site (checklist/múltipla escolha dos formulários incluídos).
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   content: [
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
