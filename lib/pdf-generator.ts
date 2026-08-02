@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf'
 import JsBarcode from 'jsbarcode'
 import { Exam, Question, UserAnswer, QuestionAnnotation, Form, FormBlock } from './types'
+import { decodeHtmlEntities } from './html-entities'
 
 // ── Cores da paleta DomineAqui ───────────────────────────────────
 const VERDE_ESCURO = [26, 71, 42] as const
@@ -1518,7 +1519,7 @@ export async function generateFormResponsePDF(
   doc.setTextColor(...VERDE_ESCURO)
   doc.setFontSize(14)
   doc.setFont(FONT, 'bold')
-  doc.text(form.title, pageWidth / 2, y + 13, { align: 'center' })
+  doc.text(decodeHtmlEntities(form.title), pageWidth / 2, y + 13, { align: 'center' })
 
   y += 30
 
@@ -1547,7 +1548,7 @@ export async function generateFormResponsePDF(
       doc.setTextColor(...VERDE_ESCURO)
       doc.setFontSize(11)
       doc.setFont(FONT, 'bold')
-      const titleText = block.title || 'Sem título'
+      const titleText = decodeHtmlEntities(block.title || 'Sem título')
       const titleLines = wrapText(doc, titleText, pageWidth - 2 * margin)
       titleLines.forEach(line => {
         checkPage(8)
@@ -1565,9 +1566,9 @@ export async function generateFormResponsePDF(
       let answerText = ''
 
       if (Array.isArray(answer)) {
-        answerText = answer.join(', ')
+        answerText = answer.map(a => decodeHtmlEntities(String(a))).join(', ')
       } else if (answer) {
-        answerText = answer
+        answerText = decodeHtmlEntities(String(answer))
       } else {
         answerText = '(Sem resposta)'
       }
