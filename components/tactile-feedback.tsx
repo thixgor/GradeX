@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { isLiteModeActive } from '@/lib/lite-mode'
 
 /**
  * Camada global de resposta tátil e aquecimento de navegação — mobile-first.
@@ -106,6 +107,11 @@ export function TactileFeedback() {
 
       const path = url.pathname + url.search
       if (prefetched.has(path)) return
+      // No Modo Lite o prefetch é contraproducente: baixar e avaliar o JS de um
+      // destino que talvez nem seja aberto rouba banda (muitas vezes economia de
+      // dados ligada) e main thread de quem já está no limite. O clique continua
+      // funcionando — só sem o adiantamento.
+      if (isLiteModeActive()) return
       prefetched.add(path)
       try {
         router.prefetch(path)

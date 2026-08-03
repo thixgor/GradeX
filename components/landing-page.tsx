@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LiteModeToggle } from '@/components/lite-mode-toggle'
 
 // Import estático: o Next lê as dimensões no build (zero layout shift) e gera o
 // blurDataURL embutido — as fotos aparecem borradas na hora em vez de deixar um
@@ -738,6 +739,7 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
         <div className="flex items-center gap-3">
           {/* Botão redondo da landing: tailwind-merge deixa estas classes
               sobrescreverem o visual padrão (quadrado, bg-card) do app. */}
+          <LiteModeToggle className="h-10 w-10 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95" />
           <ThemeToggle
             variant="icon"
             className="h-10 w-10 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95"

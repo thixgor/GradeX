@@ -1773,43 +1773,179 @@
 
 /* ==========================================
    LITE MODE — Performance optimizations
+
+   Objetivo: em celular antigo / notebook fraco, tirar da frente o que custa
+   caro pra GPU (blur, sombras, gradientes, camadas compostas) e pro main
+   thread (animações contínuas, fontes web), SEM quebrar o layout nem esconder
+   informação. Cada regra abaixo tem uma exceção deliberada — é o que separa
+   "modo leve" de "site quebrado".
    ========================================== */
 
-/* Remove todas as animações e transições */
+/* ── 1. Animações e transições ──────────────────────────────
+   Zerar tudo congelaria também os spinners de carregamento (o usuário acha
+   que travou). Então: transições morrem, animações decorativas morrem, e o
+   spinner continua girando — devagar, num elemento só. */
 .lite-mode *,
 .lite-mode *::before,
 .lite-mode *::after {
-  animation-duration: 0ms !important;
-  animation-delay: 0ms !important;
   transition-duration: 0ms !important;
   transition-delay: 0ms !important;
+  animation-duration: 0ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
 }
 
-/* Remove efeitos visuais pesados */
+.lite-mode .animate-spin {
+  animation: spin 1.4s linear infinite !important;
+}
+
+/* Pulsos e pings ficam em estado final visível (em vez de sumir por opacity
+   0 no primeiro frame de um keyframe congelado). */
+.lite-mode .animate-pulse,
+.lite-mode .animate-bounce,
+.lite-mode .animate-ping {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.lite-mode .animate-ping {
+  display: none !important;
+}
+
+/* ── 2. Composição / GPU ────────────────────────────────────
+   backdrop-filter empilhado é o item mais caro da interface em GPU mobile.
+   Sombras e filtros somem junto — inclusive o anel de foco do Tailwind, que é
+   box-shadow. Por isso o foco é redesenhado logo abaixo com `outline`, que não
+   depende de box-shadow: acessibilidade não é enfeite. */
 .lite-mode * {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   box-shadow: none !important;
   text-shadow: none !important;
   filter: none !important;
+  will-change: auto !important;
 }
 
-/* Remove gradientes de background */
-.lite-mode [style*="background-image"],
-.lite-mode [class*="gradient"] {
+.lite-mode :focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+}
+
+.lite-mode * {
+  background-attachment: scroll !important;
+  perspective: none !important;
+  transform-style: flat !important;
+}
+
+/* Elementos puramente decorativos (orbes borradas, brilhos, véus) são
+   marcados com aria-hidden + pointer-events-none em todo o projeto. Some com
+   eles: ninguém perde conteúdo e a GPU perde várias camadas. */
+/* `[class~=]` casa o token exato: pega o orbe `blur-3xl` e NÃO pega o
+   `backdrop-blur-2xl` de um card com conteúdo dentro. Sem isso, tirar o
+   filtro transformaria a mancha de luz difusa num círculo sólido de borda
+   dura no meio da tela. */
+.lite-mode [class~='blur-2xl'],
+.lite-mode [class~='blur-3xl'],
+.lite-mode [aria-hidden='true'][class*='pointer-events-none'][class*='blur-'],
+.lite-mode [aria-hidden='true'][class*='pointer-events-none'][class*='animate-'],
+.lite-mode .liquid-glass-bubble,
+.lite-mode .theme-portal,
+.lite-mode .glass-glow {
+  display: none !important;
+}
+
+/* ── 3. Imagens de fundo ────────────────────────────────────
+   Foto de fundo declarada por `style="background-image:url(...)"` é download
+   puro — sai no Modo Lite e economiza banda de verdade.
+
+   Gradientes de CSS (`bg-gradient-to-*`) FICAM. A versão anterior apagava
+   todos, e o efeito colateral era grave: ícones brancos sobre tile de
+   gradiente viravam ícone branco sobre nada (invisível), e textos com
+   `bg-clip-text` ficavam transparentes. O ganho de performance de um gradiente
+   linear é próximo de zero perto de um blur — não vale o conteúdo sumir. */
+.lite-mode [style*='background-image']:not([style*='gradient']) {
   background-image: none !important;
 }
 
-/* Simplifica tipografia */
-.lite-mode * {
-  font-family: system-ui, sans-serif !important;
+/* Sem sombra, um card que só existia por causa dela some no fundo. Devolvemos
+   um contorno de 1px — só onde o elemento já não declara borda própria. */
+.lite-mode .bg-card:not([class*='border']),
+.lite-mode .glass-card:not([class*='border']),
+.lite-mode .surface-inset:not([class*='border']) {
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+/* ── 4. Tipografia ──────────────────────────────────────────
+   Cair pra fonte do sistema evita baixar e renderizar três famílias web.
+   Monoespaçado é preservado onde o alinhamento importa (código, ECG, CID). */
+.lite-mode body,
+.lite-mode button,
+.lite-mode input,
+.lite-mode select,
+.lite-mode textarea,
+.lite-mode h1,
+.lite-mode h2,
+.lite-mode h3,
+.lite-mode h4,
+.lite-mode h5,
+.lite-mode h6,
+.lite-mode p,
+.lite-mode span,
+.lite-mode a,
+.lite-mode li,
+.lite-mode td,
+.lite-mode th,
+.lite-mode label,
+.lite-mode div {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
   letter-spacing: normal !important;
   word-spacing: normal !important;
 }
 
-/* Remove border-radius excessivo */
+.lite-mode code,
+.lite-mode pre,
+.lite-mode kbd,
+.lite-mode samp,
+.lite-mode .font-clinical,
+.lite-mode [class*='font-mono'] {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+}
+
+/* ── 5. Cantos ──────────────────────────────────────────────
+   Raio grande custa antialiasing por camada. Reduzimos só os exageros. Note
+   que `rounded-full` NÃO é alcançado por estes seletores — de propósito:
+   avatares, pílulas e badges continuam redondos em vez de virar quadrados
+   (era o efeito colateral da versão anterior, que aplicava 4px em tudo). */
+.lite-mode [class*='rounded-2xl'],
+.lite-mode [class*='rounded-3xl'],
+.lite-mode [class*='rounded-xl'] {
+  border-radius: 0.5rem !important;
+}
+
+/* ── 6. Rolagem ─────────────────────────────────────────────
+   Scroll suave = trabalho por quadro durante toda a rolagem. Em aparelho
+   fraco isso é exatamente o que trava. */
+.lite-mode,
 .lite-mode * {
-  border-radius: 4px !important;
+  scroll-behavior: auto !important;
+}
+
+.lite-mode [style*='position: sticky'],
+.lite-mode .sticky {
+  /* sticky continua funcionando, mas sem promover camada extra */
+  will-change: auto !important;
+}
+
+/* ── 7. Mídia ───────────────────────────────────────────────
+   Vídeos decorativos de fundo não têm função em modo leve. */
+.lite-mode video[data-decorative='true'],
+.lite-mode iframe[data-decorative='true'] {
+  display: none !important;
+}
+
+.lite-mode img {
+  image-rendering: auto !important;
 }
 
 /* ─── Streak Fire Animations ─── */

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { type ReactNode } from 'react'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { cn } from '@/lib/utils'
 
 /**
@@ -37,6 +38,7 @@ export function PublicPageShell({
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             {rightSlot}
+            <LiteModeToggle />
             <ThemeToggle />
           </div>
         </div>

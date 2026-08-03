@@ -28,9 +28,11 @@ import {
   BookOpen,
   Network,
   Ticket,
+  Zap,
 } from 'lucide-react'
 import type { SidebarSectionKey, SidebarSectionSettings } from '@/lib/sidebar-sections'
 import { isPlusAccount } from '@/lib/account-tier'
+import { useLiteMode } from '@/hooks/use-lite-mode'
 
 interface SidebarProps {
   user: {
@@ -152,6 +154,7 @@ function NavItemButton({
   onClick,
   staggerDelay,
   skipEntrance,
+  lite,
 }: {
   item: NavItem
   index: number
@@ -168,6 +171,10 @@ function NavItemButton({
   // staggered slide-in every navigation is what reads as "flickering". After the
   // first mount of the session we skip the entrance and the item is simply there.
   skipEntrance: boolean
+  // Modo Lite: os springs por item (escala, rotação, entrada escalonada) somam
+  // ~20 animações simultâneas na abertura do menu — em aparelho fraco é o
+  // momento em que a sidebar mais engasga. Aqui elas simplesmente não rodam.
+  lite: boolean
 }) {
   const isHovered = hoveredIndex === index
   const isPressed = pressedIndex === index
@@ -180,12 +187,14 @@ function NavItemButton({
   return (
     <motion.button
       data-nav-item
-      initial={skipEntrance ? false : { opacity: 0, x: -12 }}
-      animate={{ opacity: 1, x: 0, scale: isPressed ? 0.97 : 1 }}
+      initial={skipEntrance || lite ? false : { opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0, scale: !lite && isPressed ? 0.97 : 1 }}
       transition={
-        skipEntrance
-          ? { duration: 0.15, ease: [0.16, 1, 0.3, 1] }
-          : { duration: 0.35, delay: staggerDelay, ease: [0.16, 1, 0.3, 1] }
+        lite
+          ? { duration: 0 }
+          : skipEntrance
+            ? { duration: 0.15, ease: [0.16, 1, 0.3, 1] }
+            : { duration: 0.35, delay: staggerDelay, ease: [0.16, 1, 0.3, 1] }
       }
       onMouseEnter={() => onHover(index)}
       onPointerDown={(event) => {
@@ -215,14 +224,22 @@ function NavItemButton({
     >
       {/* Icon with spring bounce */}
       <motion.span
-        animate={{
-          scale: isPressed ? 0.9 : isHovered ? 1.15 : 1,
-          rotate: isHovered ? [-6, 0] : 0,
-        }}
-        transition={{
-          scale: { type: 'spring', stiffness: 400, damping: 17 },
-          rotate: { type: 'spring', stiffness: 300, damping: 12 },
-        }}
+        animate={
+          lite
+            ? { scale: 1, rotate: 0 }
+            : {
+                scale: isPressed ? 0.9 : isHovered ? 1.15 : 1,
+                rotate: isHovered ? [-6, 0] : 0,
+              }
+        }
+        transition={
+          lite
+            ? { duration: 0 }
+            : {
+                scale: { type: 'spring', stiffness: 400, damping: 17 },
+                rotate: { type: 'spring', stiffness: 300, damping: 12 },
+              }
+        }
         className="flex-shrink-0"
       >
         {item.icon}
@@ -310,6 +327,7 @@ export function Sidebar({
   const router = useRouter()
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
+  const { liteMode, preference: litePreference, toggleLiteMode } = useLiteMode()
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(_lastClickedIndex)
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
@@ -363,7 +381,17 @@ export function Sidebar({
     secondaryNavItems.push({ icon: <Settings className="h-5 w-5" />, label: 'Painel Admin', href: '/admin' })
   }
 
-  const logoutIndex = mainNavItems.length + secondaryNavItems.length
+  // Modo Lite no menu principal, com o estado à vista (ON/OFF/AUTO). Ficava só
+  // no fim do /profile — quem tem aparelho fraco nunca chegava lá.
+  const liteNavItem: NavItem = {
+    icon: <Zap className={cn('h-5 w-5', liteMode && 'fill-current')} />,
+    label: 'Modo Lite',
+    badge: liteMode ? (litePreference === 'auto' ? 'Auto' : 'Ativo') : 'Off',
+    onClick: toggleLiteMode,
+  }
+
+  const liteIndex = mainNavItems.length + secondaryNavItems.length
+  const logoutIndex = liteIndex + 1
 
   // ── Aquecimento das rotas do menu ────────────────────────────────────
   // Os itens são <button> com router.push, não <Link>, então o Next nunca
@@ -378,6 +406,10 @@ export function Sidebar({
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+    // No Modo Lite não aquecemos o menu inteiro: são ~12 rotas baixadas de uma
+    // vez, o pior negócio possível num 3G ou num aparelho que já está no limite.
+    // O prefetch sob demanda (hover/toque) continua valendo quando o Lite sai.
+    if (liteMode) return
     const hrefs = navHrefsKey.split(',').filter(Boolean)
     if (hrefs.length === 0) return
 
@@ -400,7 +432,7 @@ export function Sidebar({
     }
     const timer = window.setTimeout(run, 1500)
     return () => window.clearTimeout(timer)
-  }, [navHrefsKey, router])
+  }, [navHrefsKey, router, liteMode])
 
   // Prefetch imediato no toque/hover: cobre o caso de o usuário clicar antes
   // do aquecimento ocioso acontecer.
@@ -669,12 +701,16 @@ export function Sidebar({
           onMouseEnter={handleNavMouseEnter}
           onMouseLeave={handleNavMouseLeave}
         >
-          <FluidGlassBubble
-            navRef={navRef}
-            hoveredIndex={hoveredIndex}
-            isVisible={bubbleVisible}
-            collapsed={isCollapsed}
-          />
+          {/* A bolha de vidro é três camadas com blur seguindo o cursor por
+              spring — bonita no desktop, cara demais em GPU fraca. */}
+          {!liteMode && (
+            <FluidGlassBubble
+              navRef={navRef}
+              hoveredIndex={hoveredIndex}
+              isVisible={bubbleVisible}
+              collapsed={isCollapsed}
+            />
+          )}
 
           <div className="space-y-0.5">
             {mainNavItems.map((item, index) => (
@@ -698,6 +734,7 @@ export function Sidebar({
                 onClick={() => handleNavClick(item, index)}
                 staggerDelay={index * 0.03}
                 skipEntrance={skipEntranceRef.current}
+                lite={liteMode}
               />
             ))}
           </div>
@@ -728,12 +765,31 @@ export function Sidebar({
                   onClick={() => handleNavClick(item, globalIndex)}
                   staggerDelay={(mainNavItems.length + index) * 0.03}
                   skipEntrance={skipEntranceRef.current}
+                  lite={liteMode}
                 />
               )
             })}
           </div>
 
           <div className="mt-3 pt-3 border-t mx-1">
+            <NavItemButton
+              item={liteNavItem}
+              index={liteIndex}
+              hoveredIndex={hoveredIndex}
+              pressedIndex={pressedIndex}
+              collapsed={isCollapsed}
+              isItemActive={liteMode}
+              onHover={setHoveredIndex}
+              onPress={handleNavPress}
+              onRelease={handleNavRelease}
+              onClick={() => {
+                handleNavRelease()
+                toggleLiteMode()
+              }}
+              staggerDelay={liteIndex * 0.03}
+              skipEntrance={skipEntranceRef.current}
+              lite={liteMode}
+            />
             <NavItemButton
               item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}
               index={logoutIndex}
@@ -750,6 +806,7 @@ export function Sidebar({
               }}
               staggerDelay={(logoutIndex) * 0.03}
               skipEntrance={skipEntranceRef.current}
+              lite={liteMode}
             />
           </div>
         </nav>

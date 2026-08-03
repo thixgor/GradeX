@@ -11,6 +11,7 @@ import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
 import { MaterialCartButton } from '@/components/materiais/material-cart-button'
@@ -20,6 +21,8 @@ import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
+import { useLiteMode } from '@/hooks/use-lite-mode'
+import { MotionConfig } from 'framer-motion'
 import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 /**
@@ -116,6 +119,7 @@ export function AppShell({
   const router = useRouter()
   const pathname = usePathname()
   const { showSupport } = useUIPreferences()
+  const { liteMode } = useLiteMode()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -290,6 +294,7 @@ export function AppShell({
 
     return (
       <AppShellContext.Provider value={contextValue}>
+        <LiteMotionConfig lite={liteMode}>
         <FocusSessionProvider>
           <div className="min-h-screen surface-page">
             {showHeader ? (
@@ -309,6 +314,7 @@ export function AppShell({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <LiteModeToggle />
                     <ThemeToggle />
                     <a
                       href={loginHref}
@@ -335,12 +341,14 @@ export function AppShell({
             {guestNotice && <GuestAccessNotice />}
           </div>
         </FocusSessionProvider>
+        </LiteMotionConfig>
       </AppShellContext.Provider>
     )
   }
 
   return (
     <AppShellContext.Provider value={contextValue}>
+      <LiteMotionConfig lite={liteMode}>
       <FocusSessionProvider>
       <div className="min-h-screen surface-page">
         <BanChecker />
@@ -375,6 +383,7 @@ export function AppShell({
               <Menu className="h-5 w-5" />
             </Button>
             <ThemeToggle floating className="pwa-safe-fixed-top !top-3 !right-3" />
+            <LiteModeToggle className="pwa-safe-fixed-top fixed top-3 right-[6.25rem] z-[60] h-10 w-10 shadow-md" />
           </>
         )}
 
@@ -427,6 +436,8 @@ export function AppShell({
                   <MaterialCartButton isAuthenticated={!!user} />
                   <FocusSessionButton />
                   <NotificationsBell />
+                  {/* Ao lado do tema: é onde a pessoa procura por "mudar o visual". */}
+                  <LiteModeToggle />
                   <ThemeToggle />
                 </div>
               </div>
@@ -448,7 +459,23 @@ export function AppShell({
         {showSupport && <SupportChat />}
       </div>
       </FocusSessionProvider>
+      </LiteMotionConfig>
     </AppShellContext.Provider>
+  )
+}
+
+/**
+ * Corta as animações do framer-motion em todo o app quando o Modo Lite está
+ * ligado. O CSS do Modo Lite não alcança essas animações — elas são calculadas
+ * em JavaScript, quadro a quadro, e são justamente as mais caras. Com
+ * `reducedMotion="always"` o framer aplica o estado final direto, sem tween.
+ *
+ * Fora do Lite fica em `"user"`, que passa a respeitar o
+ * `prefers-reduced-motion` do sistema — algo que o app não fazia.
+ */
+function LiteMotionConfig({ lite, children }: { lite: boolean; children: React.ReactNode }) {
+  return (
+    <MotionConfig reducedMotion={lite ? 'always' : 'user'}>{children}</MotionConfig>
   )
 }
 

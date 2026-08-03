@@ -1,12 +1,25 @@
 'use client'
 
 import { useContext } from 'react'
-import { LiteModeContext } from '@/context/LiteModeContext'
+import { LiteModeContext, type LiteModeContextType } from '@/context/LiteModeContext'
 
-export function useLiteMode() {
-  const context = useContext(LiteModeContext)
-  if (!context) {
-    throw new Error('useLiteMode deve ser usado dentro de um LiteModeProvider')
-  }
-  return context
+// Fallback inerte: se por algum motivo um componente for renderizado fora do
+// provider (portal isolado, teste, storybook), ele continua funcionando com o
+// Modo Lite desligado em vez de derrubar a árvore inteira.
+const FALLBACK: LiteModeContextType = {
+  liteMode: false,
+  preference: 'auto',
+  setPreference: () => {},
+  toggleLiteMode: () => {},
+  hydrated: false,
+  device: null,
+  autoEnabled: false,
+  shouldSuggest: false,
+  dismissSuggestion: () => {},
+  autoNoticeSeen: true,
+  markAutoNoticeSeen: () => {},
+}
+
+export function useLiteMode(): LiteModeContextType {
+  return useContext(LiteModeContext) ?? FALLBACK
 }

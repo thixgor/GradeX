@@ -20,7 +20,7 @@ import { Label } from '@/components/ui/label'
 import { AccountType } from '@/lib/types'
 import { ActivationSuccessDialog } from '@/components/activation-success-dialog'
 import { cn } from '@/lib/utils'
-import { useLiteMode } from '@/hooks/use-lite-mode'
+import { LiteModeSettingsCard } from '@/components/lite-mode-settings-card'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { Heart, Music, MessageCircle } from 'lucide-react'
 import { SearchableSelect } from '@/components/ui/searchable-select'
@@ -156,7 +156,6 @@ export default function ProfilePage() {
   const [userEmail, setUserEmail] = useState('')
   const [userId, setUserId] = useState('')
   const [generatingReceipt, setGeneratingReceipt] = useState(false)
-  const { liteMode, toggleLiteMode } = useLiteMode()
   const { showMusic, showSupport, toggle: toggleUIPref } = useUIPreferences()
 
   // ====== Dados de perfil (editáveis) ======
@@ -1317,14 +1316,11 @@ export default function ProfilePage() {
         {/* ====== SECTION 7: Preferences ====== */}
         <section className="mb-10">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Preferencias</h2>
-          <div className="rounded-lg border border-border bg-card shadow-sm divide-y divide-border">
-            <PreferenceToggle
-              label="Lite Mode"
-              description="Melhora o desempenho em dispositivos mais lentos"
-              checked={liteMode}
-              onToggle={toggleLiteMode}
-            />
-          </div>
+
+          <h3 className="mb-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
+            Desempenho
+          </h3>
+          <LiteModeSettingsCard />
 
           <h3 className="mt-6 mb-3 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
             Botões flutuantes

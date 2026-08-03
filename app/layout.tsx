@@ -17,6 +17,8 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { MetaPixel } from '@/components/meta-pixel'
 import { LiteModeProvider } from '@/context/LiteModeContext'
+import { LiteModePrompt } from '@/components/lite-mode-prompt'
+import { LITE_BOOTSTRAP_SCRIPT } from '@/lib/lite-mode'
 import { UIPreferencesProvider } from '@/context/UIPreferencesContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
 import { ShopCartProvider } from '@/context/ShopCartContext'
@@ -200,11 +202,9 @@ export default function RootLayout({
             __html: `(function(){if(typeof Node!=='function'||!Node.prototype)return;var r=Node.prototype.removeChild;Node.prototype.removeChild=function(c){if(c&&c.parentNode!==this){return c}return r.apply(this,arguments)};var i=Node.prototype.insertBefore;Node.prototype.insertBefore=function(n,ref){if(ref&&ref.parentNode!==this){return n}return i.apply(this,arguments)}})();`,
           }}
         />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('lite-mode')==='true'){document.documentElement.classList.add('lite-mode')}}catch(e){}`,
-          }}
-        />
+        {/* Modo Lite resolvido antes da primeira pintura: aparelho fraco já
+            recebe a versão leve, sem flash da versão pesada. */}
+        <script dangerouslySetInnerHTML={{ __html: LITE_BOOTSTRAP_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: buildJsonLd(organizationJsonLd) }}
@@ -239,6 +239,7 @@ export default function RootLayout({
                <RegisterSW />
                <IosInstallPrompt />
                <TactileFeedback />
+               <LiteModePrompt />
              </ImageProtectionProvider>
             </FloatingDockProvider>
            </ShopCartProvider>
