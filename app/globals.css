@@ -2512,3 +2512,74 @@
     animation: none;
   }
 }
+
+/* ============================================
+   Dataviz — paleta dos gráficos do perfil
+   ============================================
+
+   Cores validadas com o validador de paleta (OKLab ΔE, banda de luminância,
+   piso de croma, contraste WCAG contra a superfície do card):
+
+   Categórica (2 slots — "Banco" e "Provas"):
+     claro  #367946 / #c28403  → CVD ΔE 10.3 · visão normal ΔE 20.5 · contraste ≥ 3:1
+     escuro #5ba66a / #c28403  → CVD ΔE  8.4 · visão normal ΔE 15.3 · contraste ≥ 3:1
+
+   Ordinal (dificuldade: fácil → difícil), um só matiz, ΔL ≥ 0.06 por degrau:
+     claro  #77bc84 / #418a52 / #255630  (ponta clara 2.20:1)
+     escuro #b7e3bd / #77bc84 / #418a52  (ponta clara 4.13:1)
+
+   Sequencial (mapa de constância): matiz do verde da marca (#468152, OKLCH h 149),
+   100 → 700 em luminância monotônica. No escuro a âncora inverte: "quase zero"
+   é o degrau mais próximo da superfície.
+*/
+.viz {
+  --viz-surface: #fffcf7;
+  --viz-grid: #e7e0d3;
+  --viz-axis: #d3c9b8;
+
+  --viz-series-1: #367946;
+  --viz-series-2: #c28403;
+
+  --viz-good: #367946;
+  --viz-bad: #d03b3b;
+
+  --viz-ord-1: #77bc84;
+  --viz-ord-2: #418a52;
+  --viz-ord-3: #255630;
+
+  /* Trilha vazia das barras/medidores: um degrau da mesma rampa, mais próximo
+     da superfície que qualquer valor — assim o "vazio" se lê como vazio. */
+  --viz-track: #dcefdf;
+
+  --viz-seq-0: #efe9dd;
+  --viz-seq-1: #cbecd0;
+  --viz-seq-2: #a0d8a9;
+  --viz-seq-3: #77bc84;
+  --viz-seq-4: #519c61;
+  --viz-seq-5: #367946;
+}
+
+.dark .viz {
+  --viz-surface: #131c16;
+  --viz-grid: #22302a;
+  --viz-axis: #33443a;
+
+  --viz-series-1: #5ba66a;
+  --viz-series-2: #c28403;
+
+  --viz-good: #5ba66a;
+  --viz-bad: #d03b3b;
+
+  --viz-ord-1: #b7e3bd;
+  --viz-ord-2: #77bc84;
+  --viz-ord-3: #418a52;
+
+  --viz-track: #1f2c25;
+
+  --viz-seq-0: #1c2720;
+  --viz-seq-1: #2d673a;
+  --viz-seq-2: #418a52;
+  --viz-seq-3: #519c61;
+  --viz-seq-4: #64ad72;
+  --viz-seq-5: #8bcb96;
+}
