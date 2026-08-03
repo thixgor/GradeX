@@ -94,10 +94,13 @@ function AdminGateForm() {
         }
 
         setUnlocked(true)
-        // `refresh` limpa o cache de rota do App Router: sem isso o Next pode
-        // reentregar a resposta de redirect que o middleware já tinha dado.
-        router.replace(redirectTo)
-        router.refresh()
+        // Navegação completa (não router.replace + refresh): o cookie do gate
+        // já foi setado, então o destino precisa renderizar do zero no
+        // servidor. Com navegação client-side, o Router Cache do App Router
+        // pode reentregar o redirect antigo (para esta mesma página) de antes
+        // do desbloqueio, travando num loop — mesmo problema documentado no
+        // login (app/auth/login/page.tsx).
+        window.location.assign(redirectTo)
       } catch {
         setError('Falha de conexão. Tente novamente.')
         setDigits(Array(CODE_LENGTH).fill(''))
@@ -183,7 +186,8 @@ function AdminGateForm() {
     } catch {
       // segue para o login de qualquer forma
     }
-    router.replace('/auth/login')
+    // Mesmo motivo do desbloqueio: navegação completa depois de mudar cookies.
+    window.location.assign('/auth/login')
   }
 
   const blocked = submitting || unlocked || lockedUntilSeconds > 0

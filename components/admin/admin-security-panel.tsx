@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -80,7 +79,6 @@ interface AdminSecurityPanelProps {
  * todos os administradores e a trilha de auditoria recente.
  */
 export function AdminSecurityPanel({ onNotify }: AdminSecurityPanelProps) {
-  const router = useRouter()
   const [status, setStatus] = useState<GateStatus | null>(null)
   const [events, setEvents] = useState<SecurityEvent[]>([])
   const [loadingEvents, setLoadingEvents] = useState(false)
@@ -144,8 +142,10 @@ export function AdminSecurityPanel({ onNotify }: AdminSecurityPanelProps) {
     try {
       const res = await fetch('/api/admin/security/gate', { method: 'DELETE' })
       if (!res.ok) throw new Error('Erro ao trancar o painel')
-      router.replace('/admin/verificacao?redirect=/admin/users')
-      router.refresh()
+      // Navegação completa: o cookie do gate acabou de ser removido, e
+      // navegação client-side pode reentregar uma resposta cacheada de antes
+      // da mudança (mesmo cuidado do login e da tela de verificação).
+      window.location.assign('/admin/verificacao?redirect=/admin/users')
     } catch (error: any) {
       notify(error?.message || 'Erro ao trancar o painel')
       setLocking(false)
@@ -167,9 +167,9 @@ export function AdminSecurityPanel({ onNotify }: AdminSecurityPanelProps) {
 
       if (!keepCurrentSession) {
         // A própria sessão caiu junto: sai para o login em vez de ficar numa
-        // tela que vai dar 401 na primeira ação.
-        router.replace('/auth/login')
-        router.refresh()
+        // tela que vai dar 401 na primeira ação. Navegação completa pelo
+        // mesmo motivo dos outros pontos deste arquivo.
+        window.location.assign('/auth/login')
         return
       }
 

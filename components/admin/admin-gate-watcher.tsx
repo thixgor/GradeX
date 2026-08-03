@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { ADMIN_GATE_ERROR_CODE, ADMIN_GATE_PAGE } from '@/lib/admin-gate'
 
 /**
@@ -14,7 +14,6 @@ import { ADMIN_GATE_ERROR_CODE, ADMIN_GATE_PAGE } from '@/lib/admin-gate'
  * página em que ele estava.
  */
 export function AdminGateWatcher() {
-  const router = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
@@ -33,7 +32,11 @@ export function AdminGateWatcher() {
           if (data?.code === ADMIN_GATE_ERROR_CODE) {
             redirecting = true
             const redirectTo = window.location.pathname + window.location.search
-            router.replace(`${ADMIN_GATE_PAGE}?redirect=${encodeURIComponent(redirectTo)}`)
+            // Navegação completa: consistente com o resto da trava e evita
+            // que o Router Cache do App Router sirva uma resposta antiga.
+            window.location.assign(
+              `${ADMIN_GATE_PAGE}?redirect=${encodeURIComponent(redirectTo)}`
+            )
           }
         } catch {
           // 403 sem corpo JSON: não é da trava, segue o fluxo normal.
@@ -46,7 +49,7 @@ export function AdminGateWatcher() {
     return () => {
       window.fetch = originalFetch
     }
-  }, [pathname, router])
+  }, [pathname])
 
   return null
 }
