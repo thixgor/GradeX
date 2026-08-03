@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { getSession, invalidateSessionCache, removeAuthCookie } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { ADMIN_GATE_COOKIE } from '@/lib/admin-gate'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +25,10 @@ export async function POST() {
       }
     }
     await removeAuthCookie()
+    // O gate do painel é amarrado ao jti da sessão, mas apagar o cookie junto
+    // evita deixar lixo no navegador entre logins.
+    const cookieStore = await cookies()
+    cookieStore.delete(ADMIN_GATE_COOKIE)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Logout error:', error)

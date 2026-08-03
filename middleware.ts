@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
+import {
+  ADMIN_GATE_COOKIE,
+  ADMIN_GATE_ERROR_CODE,
+  ADMIN_GATE_PAGE,
+  adminGateCookieOptions,
+  issueAdminGateToken,
+  requiresAdminGate,
+  shouldRefreshAdminGate,
+  verifyAdminGateToken,
+} from '@/lib/admin-gate'
 
 // Rotas públicas (não precisam de autenticação)
 const publicRoutes = [
@@ -95,7 +105,9 @@ const publicPrefixes = [
   '/favicon',
 ]
 
-// Rotas que exigem role admin
+// Rotas que exigem role admin. `/admin` (a home do painel) precisa entrar
+// explicitamente: `'/admin'.startsWith('/admin/')` é false, e sem isso a home
+// do painel só era protegida pela checagem no cliente.
 const adminPrefixes = ['/admin/', '/api/admin/']
 
 function isPublicRoute(pathname: string): boolean {
@@ -147,6 +159,7 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 function isAdminRoute(pathname: string): boolean {
+  if (pathname === '/admin' || pathname === '/api/admin') return true
   return adminPrefixes.some(prefix => pathname.startsWith(prefix))
 }
 
@@ -225,8 +238,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Rotas públicas: permitir acesso sem autenticação
-  if (isPublicRoute(pathname)) {
+  // Rotas públicas: permitir acesso sem autenticação.
+  // Exceção: algumas entradas da lista pública são públicas só na leitura
+  // (ex.: GET /api/admin/settings alimenta a landing, GET /api/display-settings,
+  // GET /api/loja/produtos). A escrita nelas é administrativa e precisa passar
+  // pela autenticação e pelo código do painel logo abaixo.
+  const isWriteMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)
+  if (isPublicRoute(pathname) && !(isWriteMethod && requiresAdminGate(pathname, request.method))) {
     return response
   }
 
@@ -295,6 +313,50 @@ export async function middleware(request: NextRequest) {
       }
     }
 
+    // Segunda camada: código de segurança do painel.
+    // Só é cobrado de quem já é admin — usuário comum nunca vê essa tela, e as
+    // rotas adjacentes seguem funcionando normalmente para ele.
+    if (payload.role === 'admin' && requiresAdminGate(pathname, request.method)) {
+      const gate = await verifyAdminGateToken(
+        request.cookies.get(ADMIN_GATE_COOKIE)?.value,
+        { userId: payload.userId as string, sessionJti: (payload.jti as string) || '' }
+      )
+
+      if (!gate.valid) {
+        if (pathname.startsWith('/api/')) {
+          const res = withNoIndex(NextResponse.json(
+            {
+              error: 'Código de segurança do painel obrigatório',
+              code: ADMIN_GATE_ERROR_CODE,
+            },
+            { status: 403 }
+          ))
+          res.cookies.delete(ADMIN_GATE_COOKIE)
+          return res
+        }
+        const gateUrl = new URL(ADMIN_GATE_PAGE, request.url)
+        gateUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
+        const res = withNoIndex(NextResponse.redirect(gateUrl))
+        res.cookies.delete(ADMIN_GATE_COOKIE)
+        return res
+      }
+
+      // Renovação deslizante: enquanto o painel estiver em uso o código não é
+      // pedido de novo; parado além da janela de inatividade, tranca sozinho.
+      if (shouldRefreshAdminGate(gate.payload)) {
+        const renewed = await issueAdminGateToken({
+          userId: payload.userId as string,
+          sessionJti: (payload.jti as string) || '',
+          absoluteExpiresAt: gate.payload.abs,
+        })
+        response.cookies.set(
+          ADMIN_GATE_COOKIE,
+          renewed.token,
+          adminGateCookieOptions(renewed.expiresAt - Math.floor(Date.now() / 1000))
+        )
+      }
+    }
+
     // Adicionar dados do usuário nos headers para uso nos server components
     response.headers.set('x-user-id', payload.userId as string)
     response.headers.set('x-user-role', payload.role as string)
@@ -310,6 +372,7 @@ export async function middleware(request: NextRequest) {
         { status: 401 }
       ))
       res.cookies.delete('auth-token')
+      res.cookies.delete(ADMIN_GATE_COOKIE)
       return res
     }
     // Pages: redirecionar para login preservando a URL de retorno
@@ -317,6 +380,7 @@ export async function middleware(request: NextRequest) {
     loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
     const res = withNoIndex(NextResponse.redirect(loginUrl))
     res.cookies.delete('auth-token')
+    res.cookies.delete(ADMIN_GATE_COOKIE)
     return res
   }
 }

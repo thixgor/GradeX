@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 import { formatStateLabel } from '@/lib/brazil-states'
 import { isPlusAccount, normalizeAccountType, PLUS_LABEL } from '@/lib/account-tier'
+import { AdminSecurityPanel } from '@/components/admin/admin-security-panel'
 
 const PROFESSION_LABELS: Record<string, string> = {
   medico: 'Médico',
@@ -793,6 +794,8 @@ export default function AdminUsersPage() {
                 </CardContent>
               </Card>
             </section>
+
+            <AdminSecurityPanel onNotify={showToastMessage} />
 
             <Card>
               <CardHeader>

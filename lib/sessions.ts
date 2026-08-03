@@ -228,6 +228,62 @@ export async function revokeSessionById(
   return result.modifiedCount > 0
 }
 
+/**
+ * Derruba as sessões de TODOS os administradores de uma vez — o botão de
+ * pânico de /admin/users. Pensado para o caso "ficou logado num PC/celular
+ * que não é mais confiável": um clique e nenhuma conta com poder de admin
+ * segue conectada em lugar nenhum.
+ *
+ * `exceptJti` preserva a sessão de quem apertou o botão (padrão da tela), para
+ * não se trancar para fora junto com o resto.
+ */
+export async function revokeAllAdminSessions(
+  options: { exceptJti?: string; exceptUserId?: string } = {}
+): Promise<{ revoked: number; admins: number; affectedUsers: number }> {
+  const db = await getDb()
+
+  const admins = await db
+    .collection('users')
+    .find({ role: 'admin' }, { projection: { _id: 1 } })
+    .toArray()
+
+  const adminIds = admins
+    .map((admin) => admin._id?.toString())
+    .filter((id): id is string => !!id)
+
+  if (adminIds.length === 0) return { revoked: 0, admins: 0, affectedUsers: 0 }
+
+  const col = db.collection<UserSession>('sessions')
+  const filter: Record<string, unknown> = {
+    userId: { $in: adminIds },
+    revokedAt: { $exists: false },
+  }
+  if (options.exceptJti) filter.jti = { $ne: options.exceptJti }
+
+  // Lista antes de revogar para saber quais caches de sessão invalidar — o
+  // updateMany não devolve os documentos afetados.
+  const targets = await col
+    .find(filter, { projection: { userId: 1 } })
+    .toArray()
+
+  if (targets.length === 0) {
+    return { revoked: 0, admins: adminIds.length, affectedUsers: 0 }
+  }
+
+  const result = await col.updateMany(filter, {
+    $set: { revokedAt: new Date(), revokedBy: 'admin' },
+  })
+
+  const affected = new Set(targets.map((session) => session.userId))
+  for (const userId of affected) invalidateSessionCache(userId)
+
+  return {
+    revoked: result.modifiedCount,
+    admins: adminIds.length,
+    affectedUsers: affected.size,
+  }
+}
+
 export async function revokeAllUserSessions(
   userId: string,
   options: { exceptJti?: string; revokedBy?: UserSession['revokedBy'] } = {}
