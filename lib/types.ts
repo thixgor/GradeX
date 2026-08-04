@@ -1220,6 +1220,19 @@ export interface FormBlock {
   buttonText?: string // Texto do botão (tipo link)
 }
 
+/** Material oferecido como prêmio por um formulário. */
+export interface FormMaterialPrize {
+  id: string // ID do material (coleção materials)
+  title?: string // Cache do título (exibição/admin)
+}
+
+/**
+ * Como os prêmios são distribuídos quando o formulário tem mais de um:
+ * - `all`: o usuário recebe todos os materiais da lista;
+ * - `single`: o usuário escolhe UM material da lista e só recebe esse.
+ */
+export type FormMaterialChoiceMode = 'all' | 'single'
+
 export interface FormSettings {
   isActive: boolean
   deadline?: Date // Data de encerramento (horário de Brasília)
@@ -1231,12 +1244,25 @@ export interface FormSettings {
   // Quando ativo, o e-mail de destino de entregas passa a ser o da conta logada.
   requireLogin?: boolean
 
+  // Impede que o mesmo e-mail responda o formulário mais de uma vez. A checagem
+  // usa o e-mail da conta logada e/ou a resposta da pergunta de e-mail.
+  oneResponsePerEmail?: boolean
+
   // Entrega de material por e-mail após o envio das respostas. Gera uma serial
   // key (com link de ativação) para um material de /materiais e envia ao e-mail
   // do usuário. Requer login (para conhecermos o e-mail com segurança).
   deliverMaterial?: boolean
+  /** @deprecated Use `deliverMaterials`. Mantido para formulários antigos. */
   deliverMaterialId?: string // ID do material (coleção materials) a ser entregue
+  /** @deprecated Use `deliverMaterials`. Mantido para formulários antigos. */
   deliverMaterialTitle?: string // Cache do título do material (exibição/admin)
+
+  // Lista de materiais entregues pelo formulário (permite mais de um prêmio).
+  deliverMaterials?: FormMaterialPrize[]
+  // Padrão: 'all' (entrega todos). Em 'single' o usuário escolhe apenas um.
+  materialChoiceMode?: FormMaterialChoiceMode
+  // Enunciado exibido no seletor de prêmio quando o modo é 'single'.
+  materialChoiceTitle?: string
 }
 
 export interface Form {
@@ -1260,6 +1286,13 @@ export interface FormResponse {
   answers: Record<string, string | string[]> // blockId -> resposta
   submittedAt: Date
   userEmail?: string // E-mail extraído da resposta (se configurado)
+  /** Todos os e-mails conhecidos da resposta (conta + pergunta), em minúsculas.
+   *  É o campo consultado pela trava de "uma resposta por e-mail". */
+  emails?: string[]
+  /** Material escolhido pelo usuário quando o formulário entrega só um prêmio. */
+  selectedMaterialId?: string
+  /** Materiais efetivamente entregues nesta resposta. */
+  deliveredMaterialIds?: string[]
 }
 
 // === SISTEMA DE LEADS (CAPTURA DE LEADS) ===

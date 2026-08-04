@@ -14,6 +14,7 @@ import {
   validateEmail
 } from '@/lib/api-security'
 import { checkTextAnswer, isFreeTextQuestion } from '@/lib/answer-quality'
+import { getFormPrizes, requiresPrizeChoice, resolvePrizesToDeliver } from '@/lib/form-prizes'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,6 +39,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const body = await req.json()
     const { answers } = body
+    const selectedMaterialId =
+      typeof body?.selectedMaterialId === 'string' ? body.selectedMaterialId.trim() : ''
 
     if (!answers || typeof answers !== 'object') {
       return NextResponse.json({ error: 'Respostas são obrigatórias' }, { status: 400 })
@@ -138,11 +141,77 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       )
     }
 
+    // E-mails conhecidos desta resposta (conta logada + pergunta de e-mail).
+    // Guardar os dois é o que permite a trava por e-mail funcionar mesmo quando
+    // a pessoa responde logada numa vez e deslogada na outra.
+    const knownEmails = Array.from(new Set([accountEmail, userEmail].filter(Boolean) as string[]))
+
+    // Trava de "uma resposta por e-mail". Sem e-mail conhecido não há como
+    // identificar quem está respondendo, então o envio é barrado — o editor
+    // obriga o admin a exigir login ou configurar a pergunta de e-mail.
+    if (form.settings.oneResponsePerEmail) {
+      if (knownEmails.length === 0) {
+        return NextResponse.json(
+          {
+            error: 'Informe um e-mail válido para enviar este formulário.',
+            code: 'EMAIL_REQUIRED',
+          },
+          { status: 400 }
+        )
+      }
+
+      // `userEmail` cobre as respostas antigas (anteriores ao campo `emails`).
+      const duplicate = await db.collection('form_responses').findOne({
+        formId: params.id,
+        $or: [
+          { emails: { $in: knownEmails } },
+          { userEmail: { $in: knownEmails } },
+        ],
+      })
+
+      if (duplicate) {
+        return NextResponse.json(
+          {
+            error: 'Este e-mail já respondeu este formulário. Só é permitida uma resposta por e-mail.',
+            code: 'ALREADY_ANSWERED',
+          },
+          { status: 409 }
+        )
+      }
+    }
+
+    // Prêmios: o formulário pode oferecer vários materiais. No modo "escolha
+    // única" o usuário precisa indicar qual dos materiais quer receber.
+    const prizes = getFormPrizes(form.settings)
+    const mustChoosePrize = requiresPrizeChoice(form.settings)
+    const prizesToDeliver =
+      form.settings.deliverMaterial && deliveryEmail
+        ? resolvePrizesToDeliver(form.settings, selectedMaterialId)
+        : []
+
+    if (mustChoosePrize && prizes.length > 0) {
+      const validChoice = prizes.some(p => p.id === selectedMaterialId)
+      if (!validChoice) {
+        return NextResponse.json(
+          {
+            error: 'Escolha qual material você quer receber.',
+            code: 'MATERIAL_CHOICE_REQUIRED',
+          },
+          { status: 400 }
+        )
+      }
+    }
+
     const response: FormResponse = {
       formId: params.id,
       answers: sanitizedAnswers,
       submittedAt: new Date(),
-      userEmail: userEmail || accountEmail
+      userEmail: userEmail || accountEmail,
+      ...(knownEmails.length > 0 ? { emails: knownEmails } : {}),
+      ...(mustChoosePrize && selectedMaterialId ? { selectedMaterialId } : {}),
+      ...(prizesToDeliver.length > 0
+        ? { deliveredMaterialIds: prizesToDeliver.map(p => p.id) }
+        : {}),
     }
 
     await db.collection('form_responses').insertOne(response as any)
@@ -165,13 +234,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       }
     }
 
-    // Entrega de material por e-mail (serial key + link de ativação).
-    let materialDelivery:
+    // Entrega de material por e-mail (serial key + link de ativação). Um
+    // formulário pode entregar vários materiais — cada um gera a sua própria
+    // serial key e o seu próprio e-mail de ativação.
+    type MaterialDelivery =
       | { delivered: true; title: string; email: string; serialKey: string; activationUrl: string }
-      | { delivered: false; reason: string }
-      | null = null
+      | { delivered: false; reason: string; title?: string }
 
-    if (form.settings.deliverMaterial && form.settings.deliverMaterialId && deliveryEmail) {
+    const materialDeliveries: MaterialDelivery[] = []
+
+    for (const prize of prizesToDeliver) {
       try {
         // Idempotência: se este e-mail já recebeu uma key deste material por
         // este formulário e ainda não a ativou, reaproveita (reenvia) em vez
@@ -182,7 +254,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         const existing = await db.collection('serial_keys').findOne({
           source: 'form',
           buyerEmail: deliveryEmail,
-          productId: form.settings.deliverMaterialId,
+          productId: prize.id,
           status: 'unactivated',
           used: { $ne: true },
         })
@@ -192,12 +264,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         let kind: 'purchase' | 'resend' = 'purchase'
         if (existing && existing.activationToken) {
           serial = existing
-          materialTitle = existing.productTitle || 'Material'
+          materialTitle = existing.productTitle || prize.title || 'Material'
           kind = 'resend'
         } else {
           const created = await createGrantedMaterialSerialKey(db, {
-            materialId: form.settings.deliverMaterialId,
-            email: deliveryEmail,
+            materialId: prize.id,
+            email: deliveryEmail!,
             name: session?.name,
             generatedBy: session?.userId || 'system',
             generatedByName: `Formulário: ${form.title}`,
@@ -208,22 +280,29 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         }
 
         const sent = await sendSerialKeyEmail(db, serial, { kind })
-        materialDelivery = sent
-          ? {
-              delivered: true,
-              title: materialTitle,
-              email: deliveryEmail,
-              serialKey: serial.key,
-              activationUrl: serial.activationToken ? getActivationUrl(serial.activationToken) : '',
-            }
-          : { delivered: false, reason: 'email_failed' }
+        materialDeliveries.push(
+          sent
+            ? {
+                delivered: true,
+                title: materialTitle,
+                email: deliveryEmail!,
+                serialKey: serial.key,
+                activationUrl: serial.activationToken ? getActivationUrl(serial.activationToken) : '',
+              }
+            : { delivered: false, reason: 'email_failed', title: materialTitle }
+        )
       } catch (materialError) {
         console.error('Failed to deliver material:', materialError)
-        materialDelivery = { delivered: false, reason: 'error' }
+        materialDeliveries.push({ delivered: false, reason: 'error', title: prize.title })
       }
     }
 
-    return NextResponse.json({ success: true, materialDelivery })
+    return NextResponse.json({
+      success: true,
+      materialDeliveries,
+      // Compatibilidade com clientes antigos, que esperavam uma única entrega.
+      materialDelivery: materialDeliveries[0] ?? null,
+    })
   } catch (error) {
     console.error('Error submitting form:', error)
     return NextResponse.json({ error: 'Erro ao enviar resposta' }, { status: 500 })

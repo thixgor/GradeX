@@ -20,8 +20,10 @@ import {
     ListChecks,
     Clock,
     TrendingUp,
+    Gift,
 } from 'lucide-react'
 import { Form, FormResponse } from '@/lib/types'
+import { getFormPrizes } from '@/lib/form-prizes'
 import { format, isToday, subDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Badge } from '@/components/ui/badge'
@@ -107,6 +109,17 @@ export default function FormResponsesPage() {
         () => (form?.blocks || []).filter(b => b.type === 'question'),
         [form]
     )
+
+    // Título dos prêmios, para mostrar qual material cada resposta levou.
+    const prizeTitles = useMemo(() => {
+        const map = new Map<string, string>()
+        for (const prize of getFormPrizes(form?.settings)) {
+            map.set(prize.id, dec(prize.title || '') || prize.id)
+        }
+        return map
+    }, [form])
+
+    const prizeTitle = (materialId: string) => prizeTitles.get(materialId) || materialId
 
     // ── Analytics agregadas ──────────────────────────────────────────
     const stats = useMemo(() => {
@@ -299,6 +312,19 @@ export default function FormResponsesPage() {
                                                             </div>
                                                         )
                                                     })}
+
+                                                    {(resp.deliveredMaterialIds?.length || 0) > 0 && (
+                                                        <div className="space-y-2">
+                                                            <p className="font-bold text-sm text-foreground flex items-center gap-2">
+                                                                <Gift className="h-3 w-3 text-primary" /> Material entregue
+                                                            </p>
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {resp.deliveredMaterialIds!.map(mid => (
+                                                                    <Badge key={mid} variant="secondary">{prizeTitle(mid)}</Badge>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
 
                                                     <div className="flex justify-end pt-4">
                                                         <Button

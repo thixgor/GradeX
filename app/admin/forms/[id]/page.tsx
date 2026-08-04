@@ -30,7 +30,8 @@ import {
     Users,
     Lock,
     Gift,
-    KeyRound
+    KeyRound,
+    MailCheck
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,7 +45,8 @@ import {
     SelectValue
 } from '@/components/ui/select'
 import { v4 as uuidv4 } from 'uuid'
-import { Form, FormBlock, FormBlockType, FormQuestionType } from '@/lib/types'
+import { Form, FormBlock, FormBlockType, FormMaterialPrize, FormQuestionType } from '@/lib/types'
+import { DEFAULT_PRIZE_CHOICE_TITLE, getFormPrizes, getMaterialChoiceMode } from '@/lib/form-prizes'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -97,13 +99,66 @@ export default function FormEditorPage() {
             const res = await fetch(`/api/admin/forms/${id}`)
             const data = await res.json()
             if (data.form) {
-                setForm(data.form)
+                // Formulários antigos guardavam um único material em
+                // `deliverMaterialId`. Migra para a lista assim que abrem no
+                // editor, para o restante da tela lidar só com `deliverMaterials`.
+                const migrated = {
+                    ...data.form,
+                    settings: {
+                        ...data.form.settings,
+                        deliverMaterials: getFormPrizes(data.form.settings),
+                        materialChoiceMode: getMaterialChoiceMode(data.form.settings),
+                    },
+                }
+                setForm(migrated)
             }
         } catch (error) {
             console.error('Error fetching form:', error)
         } finally {
             setLoading(false)
         }
+    }
+
+    // === Prêmios (materiais entregues) ===================================
+
+    const prizes: FormMaterialPrize[] = form.settings?.deliverMaterials || []
+    const choiceMode = getMaterialChoiceMode(form.settings)
+
+    /**
+     * Grava a lista de prêmios mantendo `deliverMaterialId`/`Title` apontando
+     * para o primeiro item: são campos legados que ainda podem ser lidos por
+     * formulários/telas antigas.
+     */
+    const setPrizes = (next: FormMaterialPrize[]) => {
+        setForm(prev => ({
+            ...prev,
+            settings: {
+                ...prev.settings!,
+                deliverMaterials: next,
+                deliverMaterialId: next[0]?.id,
+                deliverMaterialTitle: next[0]?.title,
+            }
+        }))
+    }
+
+    const addPrize = (materialId: string) => {
+        if (prizes.some(p => p.id === materialId)) return
+        const mat = materials.find(m => m._id === materialId)
+        setPrizes([...prizes, { id: materialId, title: mat?.title }])
+    }
+
+    const removePrize = (materialId: string) => {
+        setPrizes(prizes.filter(p => p.id !== materialId))
+    }
+
+    const movePrize = (index: number, direction: 'up' | 'down') => {
+        const target = direction === 'up' ? index - 1 : index + 1
+        if (target < 0 || target >= prizes.length) return
+        const next = [...prizes]
+        const temp = next[index]
+        next[index] = next[target]
+        next[target] = temp
+        setPrizes(next)
     }
 
     const addBlock = (type: FormBlockType) => {
@@ -151,8 +206,8 @@ export default function FormEditorPage() {
         }
 
         if (form.settings?.deliverMaterial) {
-            if (!form.settings?.deliverMaterialId) {
-                alert('Selecione o material que será entregue.')
+            if (prizes.length === 0) {
+                alert('Adicione pelo menos um material para entregar.')
                 return
             }
             if (!form.settings?.emailQuestionId) {
@@ -162,6 +217,12 @@ export default function FormEditorPage() {
         }
         if (form.settings?.sendConfirmationEmail && !form.settings?.emailQuestionId) {
             alert('Para enviar a confirmação por e-mail, selecione a pergunta que coleta o e-mail.')
+            return
+        }
+        // Sem login obrigatório nem pergunta de e-mail não há como saber quem
+        // está respondendo — a trava por e-mail barraria todo mundo.
+        if (form.settings?.oneResponsePerEmail && !form.settings?.requireLogin && !form.settings?.emailQuestionId) {
+            alert('Para limitar uma resposta por e-mail, ative "Exigir Login" ou adicione uma pergunta do tipo "E-mail" e selecione-a em "Pergunta de E-mail".')
             return
         }
 
@@ -463,6 +524,28 @@ export default function FormEditorPage() {
                                     />
                                 </div>
 
+                                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                                    <div className="space-y-0.5 pr-4">
+                                        <Label className="text-base font-bold flex items-center gap-2">
+                                            <MailCheck className="h-4 w-4" /> Uma Resposta por E-mail
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Bloqueia envios repetidos do mesmo e-mail. Exige login ativo ou uma pergunta de e-mail configurada.
+                                        </p>
+                                    </div>
+                                    <Switch
+                                        checked={form.settings?.oneResponsePerEmail ?? false}
+                                        onCheckedChange={(val) => setForm(prev => ({ ...prev, settings: { ...prev.settings!, oneResponsePerEmail: val } }))}
+                                    />
+                                </div>
+
+                                {form.settings?.oneResponsePerEmail && !form.settings?.requireLogin && !form.settings?.emailQuestionId && (
+                                    <p className="text-xs text-destructive flex items-start gap-1.5">
+                                        <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                        Ative "Exigir Login" ou selecione uma "Pergunta de E-mail" abaixo — sem isso não é possível identificar quem respondeu.
+                                    </p>
+                                )}
+
                                 <div className="space-y-2">
                                     <Label className="flex items-center gap-2">
                                         <Clock className="h-4 w-4" /> Prazo de Encerramento (Opcional)
@@ -536,40 +619,117 @@ export default function FormEditorPage() {
                                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                                         <div className="space-y-2">
                                             <Label className="flex items-center gap-2">
-                                                <KeyRound className="h-4 w-4" /> Material a entregar
+                                                <KeyRound className="h-4 w-4" /> Materiais a entregar
                                             </Label>
-                                            <Select
-                                                value={form.settings?.deliverMaterialId}
-                                                onValueChange={(val) => {
-                                                    const mat = materials.find(m => m._id === val)
-                                                    setForm(prev => ({
-                                                        ...prev,
-                                                        settings: {
-                                                            ...prev.settings!,
-                                                            deliverMaterialId: val,
-                                                            deliverMaterialTitle: mat?.title
-                                                        }
-                                                    }))
-                                                }}
-                                            >
+
+                                            {prizes.length > 0 && (
+                                                <div className="space-y-2">
+                                                    {prizes.map((prize, index) => (
+                                                        <div
+                                                            key={prize.id}
+                                                            className="flex items-center gap-2 p-3 rounded-lg border bg-background"
+                                                        >
+                                                            <Badge variant="outline" className="shrink-0 tabular-nums">{index + 1}</Badge>
+                                                            <span className="flex-1 min-w-0 text-sm font-medium truncate">
+                                                                {prize.title || materials.find(m => m._id === prize.id)?.title || prize.id}
+                                                            </span>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 shrink-0"
+                                                                disabled={index === 0}
+                                                                onClick={() => movePrize(index, 'up')}
+                                                            >
+                                                                <ChevronUp className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 shrink-0"
+                                                                disabled={index === prizes.length - 1}
+                                                                onClick={() => movePrize(index, 'down')}
+                                                            >
+                                                                <ChevronDown className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 shrink-0 text-destructive hover:text-white hover:bg-destructive"
+                                                                onClick={() => removePrize(prize.id)}
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* `value=""` mantém o seletor sempre no placeholder: ele é um
+                                                "adicionar", não a exibição de uma escolha atual. */}
+                                            <Select value="" onValueChange={addPrize}>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Selecione o material..." />
+                                                    <SelectValue placeholder={prizes.length === 0 ? 'Selecione o material...' : 'Adicionar outro material...'} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {materials.map(m => (
+                                                    {materials.filter(m => !prizes.some(p => p.id === m._id)).map(m => (
                                                         <SelectItem key={m._id} value={m._id}>
                                                             {m.title}{m.pricing === 'free' ? ' (Grátis)' : ''}
                                                         </SelectItem>
                                                     ))}
-                                                    {materials.length === 0 && (
+                                                    {materials.filter(m => !prizes.some(p => p.id === m._id)).length === 0 && (
                                                         <div className="p-2 text-xs text-muted-foreground flex items-center gap-1">
                                                             <AlertTriangle className="h-3 w-3" />
-                                                            Nenhum material encontrado.
+                                                            {materials.length === 0 ? 'Nenhum material encontrado.' : 'Todos os materiais já foram adicionados.'}
                                                         </div>
                                                     )}
                                                 </SelectContent>
                                             </Select>
                                         </div>
+
+                                        {prizes.length > 1 && (
+                                            <div className="space-y-3 rounded-lg border bg-background p-4">
+                                                <Label className="flex items-center gap-2 text-base font-bold">
+                                                    <Gift className="h-4 w-4" /> Como entregar os prêmios
+                                                </Label>
+                                                <div className="grid gap-2 sm:grid-cols-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setForm(prev => ({ ...prev, settings: { ...prev.settings!, materialChoiceMode: 'all' } }))}
+                                                        className={`text-left p-3 rounded-lg border transition-colors ${choiceMode === 'all' ? 'border-primary bg-primary/10' : 'hover:border-primary/40'}`}
+                                                    >
+                                                        <p className="font-semibold text-sm">Entregar todos</p>
+                                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                                            O usuário recebe uma serial key para cada material da lista.
+                                                        </p>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setForm(prev => ({ ...prev, settings: { ...prev.settings!, materialChoiceMode: 'single' } }))}
+                                                        className={`text-left p-3 rounded-lg border transition-colors ${choiceMode === 'single' ? 'border-primary bg-primary/10' : 'hover:border-primary/40'}`}
+                                                    >
+                                                        <p className="font-semibold text-sm">O usuário escolhe apenas um</p>
+                                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                                            Ele seleciona um material da lista no formulário e só recebe esse.
+                                                        </p>
+                                                    </button>
+                                                </div>
+
+                                                {choiceMode === 'single' && (
+                                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                                                        <Label>Enunciado do seletor de prêmio (Opcional)</Label>
+                                                        <Input
+                                                            value={form.settings?.materialChoiceTitle || ''}
+                                                            onChange={e => setForm(prev => ({ ...prev, settings: { ...prev.settings!, materialChoiceTitle: e.target.value } }))}
+                                                            placeholder={DEFAULT_PRIZE_CHOICE_TITLE}
+                                                        />
+                                                        <p className="text-xs text-muted-foreground">
+                                                            Aparece no formulário, logo antes do botão de envio, como uma escolha obrigatória.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
                                         <p className="text-xs text-muted-foreground">
                                             Não exige login: se o usuário estiver logado, enviamos para o e-mail da conta; se não, usamos a
                                             resposta da <strong>pergunta de e-mail</strong> configurada abaixo — por isso ela é obrigatória
@@ -580,14 +740,15 @@ export default function FormEditorPage() {
                             </CardContent>
                         </Card>
 
-                        {(form.settings?.sendConfirmationEmail || form.settings?.deliverMaterial) && (
+                        {(form.settings?.sendConfirmationEmail || form.settings?.deliverMaterial || form.settings?.oneResponsePerEmail) && (
                             <Card className="border-primary/20 bg-primary/5 animate-in fade-in slide-in-from-top-2">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <AtSign className="h-5 w-5 text-primary" /> Pergunta de E-mail
                                     </CardTitle>
                                     <CardDescription>
-                                        Usada para a confirmação por e-mail e/ou para entregar o material a quem responde sem login.
+                                        Usada para a confirmação por e-mail, para entregar o material a quem responde sem login
+                                        e para a trava de uma resposta por e-mail.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-2">

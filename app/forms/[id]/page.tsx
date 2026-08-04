@@ -29,7 +29,8 @@ import {
     Check,
     Clock,
     ArrowUp,
-    RotateCcw
+    RotateCcw,
+    Gift
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +39,19 @@ import { useAuthUser } from '@/hooks/use-auth-user'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { checkTextAnswer, isFreeTextQuestion } from '@/lib/answer-quality'
 import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
+import {
+    DEFAULT_PRIZE_CHOICE_TITLE,
+    getFormPrizes,
+    getMaterialChoiceMode,
+    requiresPrizeChoice,
+} from '@/lib/form-prizes'
+
+/** Id sintético do card de escolha de prêmio (não é um bloco do formulário). */
+const PRIZE_BLOCK_ID = '__prize-choice__'
+
+type MaterialDelivery =
+    | { delivered: true; title: string; email: string; serialKey: string; activationUrl: string }
+    | { delivered: false; reason: string; title?: string }
 
 const SHORT_TEXT_MAX = 200
 const LONG_TEXT_MAX = 5000
@@ -59,11 +73,9 @@ export default function PublicFormPage() {
     const [answers, setAnswers] = useState<Record<string, any>>({})
     const [submitting, setSubmitting] = useState(false)
     const [submitted, setSubmitted] = useState(false)
-    const [deliveryResult, setDeliveryResult] = useState<
-        | { delivered: true; title: string; email: string; serialKey: string; activationUrl: string }
-        | { delivered: false; reason: string }
-        | null
-    >(null)
+    const [deliveries, setDeliveries] = useState<MaterialDelivery[]>([])
+    // Material escolhido quando o formulário entrega só um prêmio dentre vários.
+    const [selectedPrizeId, setSelectedPrizeId] = useState<string>('')
 
     const { user, loading: authLoading } = useAuthUser()
     const [isMobile, setIsMobile] = useState(false)
@@ -72,7 +84,7 @@ export default function PublicFormPage() {
     const [blockErrors, setBlockErrors] = useState<Record<string, string>>({})
     const [focusedBlockId, setFocusedBlockId] = useState<string | null>(null)
     const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
-    const [keyCopied, setKeyCopied] = useState(false)
+    const [copiedKey, setCopiedKey] = useState<string | null>(null)
     const [draftRestored, setDraftRestored] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const [submitInView, setSubmitInView] = useState(true)
@@ -83,10 +95,15 @@ export default function PublicFormPage() {
     async function copySerialKey(key: string) {
         try {
             await navigator.clipboard.writeText(key)
-            setKeyCopied(true)
-            setTimeout(() => setKeyCopied(false), 1500)
+            setCopiedKey(key)
+            setTimeout(() => setCopiedKey(prev => (prev === key ? null : prev)), 1500)
         } catch {}
     }
+
+    // Prêmios do formulário e regra de escolha (um só ou todos).
+    const prizes = useMemo(() => getFormPrizes(form?.settings), [form])
+    const mustChoosePrize = useMemo(() => requiresPrizeChoice(form?.settings), [form])
+    const prizeChoiceTitle = form?.settings.materialChoiceTitle?.trim() || DEFAULT_PRIZE_CHOICE_TITLE
 
     // Login só é exigido quando o admin liga "Exigir Login" explicitamente. A
     // entrega de material NÃO exige login: se logado, vai para o e-mail da
@@ -325,6 +342,13 @@ export default function PublicFormPage() {
             }
         }
 
+        // A escolha do prêmio é obrigatória: sem ela o servidor não sabe qual
+        // material entregar e recusaria o envio.
+        if (mustChoosePrize && !selectedPrizeId) {
+            errors[PRIZE_BLOCK_ID] = 'Escolha qual material você quer receber.'
+            if (!firstInvalid) firstInvalid = PRIZE_BLOCK_ID
+        }
+
         if (firstInvalid) {
             setBlockErrors(errors)
             setToast({ open: true, message: errors[firstInvalid] })
@@ -339,14 +363,27 @@ export default function PublicFormPage() {
             const res = await fetch(`/api/forms/${id}/submit`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ answers })
+                body: JSON.stringify({
+                    answers,
+                    ...(mustChoosePrize ? { selectedMaterialId: selectedPrizeId } : {}),
+                })
             })
 
             const data = await res.json()
             if (res.ok) {
                 try { localStorage.removeItem(draftKey(id)) } catch {}
-                setDeliveryResult(data.materialDelivery ?? null)
+                setDeliveries(
+                    Array.isArray(data.materialDeliveries)
+                        ? data.materialDeliveries
+                        : data.materialDelivery
+                            ? [data.materialDelivery]
+                            : []
+                )
                 setSubmitted(true)
+            } else if (data.code === 'MATERIAL_CHOICE_REQUIRED') {
+                setBlockErrors(prev => ({ ...prev, [PRIZE_BLOCK_ID]: data.error }))
+                setToast({ open: true, message: data.error })
+                scrollToBlock(PRIZE_BLOCK_ID)
             } else if (res.status === 401 || data.code === 'LOGIN_REQUIRED') {
                 window.location.href = `/auth/login?redirect=/forms/${id}`
             } else {
@@ -356,6 +393,12 @@ export default function PublicFormPage() {
                     setBlockErrors(prev => ({ ...prev, [data.blockId]: data.error }))
                     scrollToBlock(data.blockId)
                     setToast({ open: true, message: data.error })
+                } else if (data.code === 'ALREADY_ANSWERED' || data.code === 'EMAIL_REQUIRED') {
+                    // A trava é por e-mail: o aviso precisa ficar visível no topo,
+                    // não perdido no fim de um formulário longo.
+                    setError(data.error)
+                    setToast({ open: true, message: data.error })
+                    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
                 } else {
                     setError(data.error || 'Erro ao enviar resposta')
                 }
@@ -438,8 +481,11 @@ export default function PublicFormPage() {
     }
 
     if (submitted) {
-        const materialDelivered = deliveryResult?.delivered === true
-        const deliveryFailed = deliveryResult?.delivered === false
+        const delivered = deliveries.filter(
+            (d): d is Extract<MaterialDelivery, { delivered: true }> => d.delivered === true
+        )
+        const failed = deliveries.filter(d => d.delivered === false)
+        const materialDelivered = delivered.length > 0
         // Passos confirmados em sequência (efeito de "check em cascata").
         const steps: Array<{ icon: any; title: string; desc: string; tone: 'ok' | 'warn' }> = [
             {
@@ -457,17 +503,20 @@ export default function PublicFormPage() {
                 tone: 'ok',
             })
         }
-        if (materialDelivered && deliveryResult?.delivered) {
+        for (const item of delivered) {
             steps.push({
                 icon: KeyRound,
-                title: 'Material a caminho!',
-                desc: `Enviamos “${deliveryResult.title}” com a sua serial key e o link de ativação para ${deliveryResult.email}.`,
+                title: delivered.length > 1 ? `Material: ${item.title}` : 'Material a caminho!',
+                desc: `Enviamos “${item.title}” com a sua serial key e o link de ativação para ${item.email}.`,
                 tone: 'ok',
             })
-        } else if (deliveryFailed) {
+        }
+        for (const item of failed) {
             steps.push({
                 icon: AlertCircle,
-                title: 'Não foi possível enviar o material',
+                title: item.title
+                    ? `Não foi possível enviar “${item.title}”`
+                    : 'Não foi possível enviar o material',
                 desc: 'Suas respostas foram salvas. Se o material não chegar, fale com o suporte.',
                 tone: 'warn',
             })
@@ -596,31 +645,37 @@ export default function PublicFormPage() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: reduceMotion ? 0 : 0.9 + steps.length * 0.35 }}
                     >
-                        {materialDelivered && deliveryResult?.delivered && (
-                            <>
-                                {deliveryResult.serialKey && (
+                        {delivered.map(item => (
+                            <div key={item.serialKey || item.title} className="space-y-2">
+                                {delivered.length > 1 && (
+                                    <p className="text-left text-sm font-bold text-foreground truncate">{item.title}</p>
+                                )}
+                                {item.serialKey && (
                                     <button
                                         type="button"
-                                        onClick={() => copySerialKey(deliveryResult.serialKey)}
+                                        onClick={() => copySerialKey(item.serialKey)}
                                         className="w-full flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-background/40 px-4 py-3 text-left transition-colors hover:border-primary/40"
                                     >
                                         <span className="min-w-0">
                                             <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                                                {keyCopied ? 'Copiada!' : 'Sua serial key (toque para copiar)'}
+                                                {copiedKey === item.serialKey ? 'Copiada!' : 'Sua serial key (toque para copiar)'}
                                             </span>
-                                            <span className="block font-mono text-sm font-bold text-foreground truncate">{deliveryResult.serialKey}</span>
+                                            <span className="block font-mono text-sm font-bold text-foreground truncate">{item.serialKey}</span>
                                         </span>
-                                        {keyCopied ? <Check className="h-4 w-4 shrink-0 text-primary" /> : <Copy className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                                        {copiedKey === item.serialKey
+                                            ? <Check className="h-4 w-4 shrink-0 text-primary" />
+                                            : <Copy className="h-4 w-4 shrink-0 text-muted-foreground" />}
                                     </button>
                                 )}
                                 <Button
                                     className="btn-brand-glow text-white rounded-xl w-full h-12 text-base font-bold group"
-                                    onClick={() => window.location.href = deliveryResult.activationUrl || '/ativar'}
+                                    onClick={() => window.location.href = item.activationUrl || '/ativar'}
                                 >
-                                    Ativar meu material <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    {delivered.length > 1 ? 'Ativar este material' : 'Ativar meu material'}
+                                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                 </Button>
-                            </>
-                        )}
+                            </div>
+                        ))}
                         <p className="text-xs text-muted-foreground">
                             {materialDelivered
                                 ? 'Confira também a sua caixa de entrada (e o spam) para o e-mail de ativação.'
@@ -1085,6 +1140,117 @@ export default function PublicFormPage() {
                             </motion.div>
                         )
                     })}
+
+                    {/* Escolha do prêmio: o formulário oferece vários materiais,
+                        mas a pessoa só leva um — precisa dizer qual antes de enviar. */}
+                    {mustChoosePrize && (
+                        <motion.div
+                            id={`form-block-${PRIZE_BLOCK_ID}`}
+                            initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '0px 0px -80px 0px' }}
+                            transition={{ duration: 0.4 }}
+                            className="scroll-mt-24"
+                        >
+                            <div
+                                className={`form-glass-card soul-light rounded-2xl transition-all duration-300 ${
+                                    blockErrors[PRIZE_BLOCK_ID]
+                                        ? 'ring-2 ring-destructive/70'
+                                        : selectedPrizeId
+                                            ? 'ring-1 ring-primary/25'
+                                            : 'ring-1 ring-primary/40'
+                                }`}
+                            >
+                                <div className="p-5 sm:p-6 pb-3 sm:pb-4">
+                                    <div className="flex items-start gap-3">
+                                        <span className="shrink-0 mt-0.5 h-7 w-7 rounded-lg flex items-center justify-center bg-primary/10 text-primary" aria-hidden="true">
+                                            <Gift className="h-4 w-4" />
+                                        </span>
+                                        <div className="min-w-0 flex-1">
+                                            <h3 className="text-lg sm:text-xl font-bold text-foreground leading-snug break-words">
+                                                {prizeChoiceTitle}
+                                            </h3>
+                                            <span className="inline-block mt-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">
+                                                Obrigatória
+                                            </span>
+                                            <p className="text-muted-foreground italic mt-2 text-sm font-medium">
+                                                Você pode escolher apenas um material. Ele será enviado para o seu e-mail.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0">
+                                    <RadioGroup
+                                        value={selectedPrizeId}
+                                        onValueChange={val => {
+                                            setSelectedPrizeId(val)
+                                            setBlockErrors(prev => {
+                                                if (!prev[PRIZE_BLOCK_ID]) return prev
+                                                const next = { ...prev }
+                                                delete next[PRIZE_BLOCK_ID]
+                                                return next
+                                            })
+                                        }}
+                                        className="space-y-2.5"
+                                    >
+                                        {prizes.map(prize => {
+                                            const selected = selectedPrizeId === prize.id
+                                            return (
+                                                // Linha inteira como <label> pelo mesmo motivo das
+                                                // demais perguntas de escolha (um clique por toque).
+                                                <label
+                                                    key={prize.id}
+                                                    className={`flex items-center gap-3 rounded-xl border p-4 min-h-[56px] transition-all cursor-pointer group touch-manipulation active:scale-[0.99] ${
+                                                        selected
+                                                            ? 'bg-primary/10 border-primary/40 shadow-sm'
+                                                            : 'bg-background/60 border-white/20 dark:border-white/5 sm:hover:border-primary/30 active:border-primary/30'
+                                                    }`}
+                                                >
+                                                    <RadioGroupItem value={prize.id} id={`prize-${prize.id}`} className="border-primary text-primary shrink-0" />
+                                                    <span className="flex-1 text-base sm:text-lg font-medium sm:group-hover:text-primary transition-colors text-foreground break-words">
+                                                        {prize.title || 'Material'}
+                                                    </span>
+                                                    <ChevronRight className={`h-4 w-4 shrink-0 text-primary transition-opacity ${selected ? 'opacity-100' : 'opacity-0 sm:group-hover:opacity-100'}`} />
+                                                </label>
+                                            )
+                                        })}
+                                    </RadioGroup>
+
+                                    <AnimatePresence>
+                                        {blockErrors[PRIZE_BLOCK_ID] && (
+                                            <motion.p
+                                                role="alert"
+                                                initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
+                                                className="flex items-start gap-2 text-sm font-medium text-destructive mt-3"
+                                            >
+                                                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                                                <span>{blockErrors[PRIZE_BLOCK_ID]}</span>
+                                            </motion.p>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Vários prêmios sem escolha: só avisa o que vem por e-mail. */}
+                    {form?.settings.deliverMaterial && !mustChoosePrize && prizes.length > 1 && getMaterialChoiceMode(form.settings) === 'all' && (
+                        <div className="form-glass-card rounded-2xl p-5 sm:p-6">
+                            <h3 className="flex items-center gap-2 text-lg font-bold text-foreground">
+                                <Gift className="h-5 w-5 text-primary shrink-0" /> Você vai receber {prizes.length} materiais
+                            </h3>
+                            <ul className="mt-3 space-y-1.5">
+                                {prizes.map(prize => (
+                                    <li key={prize.id} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                        <Check className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
+                                        <span className="break-words">{prize.title || 'Material'}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
                     <motion.div
                         ref={submitRef}
