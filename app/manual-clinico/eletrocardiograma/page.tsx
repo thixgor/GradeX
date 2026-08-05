@@ -137,7 +137,7 @@ function EcgManualContent() {
                 />
               </>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Simulador interativo de ECG: 12 derivações geradas matematicamente em tempo real, medidas automáticas, régua, modo monitor e banco de traçados com critérios diagnósticos internacionais.
+                Trilha de ensino interativa — do nó sinusal ao laudo, construindo o traçado onda por onda — mais o simulador de ECG: 12 derivações geradas matematicamente em tempo real, medidas automáticas, régua, modo monitor e banco de traçados com critérios diagnósticos internacionais.
               </p>
             </div>
             {ready && hasAccess && (
@@ -173,10 +173,10 @@ function EcgManualContent() {
 }
 
 const FEATURES = [
+  { icon: GraduationCap, t: 'Trilha de ensino do zero ao laudo', d: '11 módulos e 27 lições que constroem o traçado onda por onda, com laboratórios interativos, XP e progresso.' },
   { icon: Activity, t: '12 derivações em tempo real', d: 'Traçados vetoriais gerados por parâmetros eletrofisiológicos — nunca imagens prontas.' },
   { icon: Gauge, t: 'Papel milimetrado real', d: 'Velocidades 25/50/100 mm/s e ganhos 5/10/20 mm/mV, calibração 10 mm = 1 mV.' },
   { icon: Ruler, t: 'Medidas automáticas e régua', d: 'FC, PR, QRS, QT, QTc, eixo e amplitudes; paquímetro para medir intervalos.' },
-  { icon: GraduationCap, t: 'Exercícios e modo prova', d: 'Treine o reconhecimento com correção comentada e simulação de residência.' },
 ]
 
 /**

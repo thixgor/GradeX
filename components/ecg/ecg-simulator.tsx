@@ -6,6 +6,7 @@ import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
   Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
   X, ListFilter, Gauge, Star, StickyNote, ChevronRight, HelpCircle, FlaskConical,
+  BookOpen,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
@@ -22,6 +23,7 @@ import { EcgReport } from './ecg-report'
 import { EcgPlayground } from './ecg-playground'
 import { EcgQuiz } from './ecg-quiz'
 import { EcgTutorial, useEcgTour } from './ecg-tutorial'
+import { EcgCourse } from './course/ecg-course'
 
 // Coração 3D (WebGL/three.js) carregado sob demanda — three.js só entra no
 // bundle quando o modo 3D é ativado.
@@ -79,7 +81,10 @@ function playgroundScenarioFor(entry: EcgEntry): string | undefined {
 }
 
 export function EcgSimulator() {
-  const [tab, setTab] = useState<'sim' | 'quiz'>('sim')
+  // A trilha de ensino é a porta de entrada do Manual: quem chega aqui pela
+  // primeira vez precisa aprender a ler um ECG antes de brincar com o gerador
+  // de traçados. O simulador continua a um clique de distância.
+  const [tab, setTab] = useState<'learn' | 'sim' | 'quiz'>('learn')
   const [selectedId, setSelectedId] = useState<string>('sinus-normal')
   const [query, setQuery] = useState('')
   const [cat, setCat] = useState<EcgCategory | null>(null)
@@ -162,7 +167,11 @@ export function EcgSimulator() {
   return (
     <div className="w-full">
       {/* Tabs */}
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <button onClick={() => setTab('learn')}
+          className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition ${tab === 'learn' ? 'bg-primary text-primary-foreground' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
+          <BookOpen className="h-4 w-4" /> Aprender
+        </button>
         <button onClick={() => setTab('sim')}
           className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition ${tab === 'sim' ? 'bg-primary text-primary-foreground' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
           <Activity className="h-4 w-4" /> Simulador
@@ -171,21 +180,28 @@ export function EcgSimulator() {
           className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition ${tab === 'quiz' ? 'bg-primary text-primary-foreground' : 'bg-white/[0.05] text-muted-foreground hover:text-foreground'}`}>
           <GraduationCap className="h-4 w-4" /> Exercícios
         </button>
-        <button onClick={() => setTourOpen(true)}
-          className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-xs font-bold text-muted-foreground transition hover:border-primary/30 hover:text-primary"
-          title="Como usar o simulador">
-          <HelpCircle className="h-4 w-4" /> Tutorial
-        </button>
+        {tab !== 'learn' && (
+          <button onClick={() => setTourOpen(true)}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-xs font-bold text-muted-foreground transition hover:border-primary/30 hover:text-primary"
+            title="Como usar o simulador">
+            <HelpCircle className="h-4 w-4" /> Tutorial
+          </button>
+        )}
       </div>
 
-      <EcgTutorial open={tourOpen} onClose={closeTour} />
+      {/* O tour guiado explica a barra de ferramentas do simulador — não faz
+          sentido aparecer por cima da trilha de ensino. Ele fica retido e
+          abre quando a pessoa chega ao simulador. */}
+      <EcgTutorial open={tourOpen && tab !== 'learn'} onClose={closeTour} />
 
       {playgroundOpen && (
         <EcgPlayground dark={dark} onClose={() => setPlaygroundOpen(false)} initialScenario={playgroundScenarioFor(entry)}
           onOpenPattern={(id) => { if (ECG_CATALOG.some((e) => e.id === id)) { setSelectedId(id); setTab('sim') } }} />
       )}
 
-      {tab === 'quiz' ? (
+      {tab === 'learn' ? (
+        <EcgCourse />
+      ) : tab === 'quiz' ? (
         <EcgQuiz dark={dark} />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[300px_1fr]">
