@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react'
 import type { EcgPattern, LeadName } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
 import { CourseHeart, type HeartPart } from './course-heart'
-import { EcgGrid, LabButton, LabNote, LabShell } from './ui'
+import { EcgGrid, LabButton, LabNote, LabShell, ScrollRow } from './ui'
 
 /**
  * Laboratório dos bloqueios de ramo e fasciculares.
@@ -133,16 +133,16 @@ export function BbbLab() {
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap gap-1.5">
+      <ScrollRow className="mb-2" label="Padrão">
         {CASES.map((x) => (
           <LabButton key={x.key} active={key === x.key} tone={x.tone === 'bad' ? 'danger' : 'primary'} onClick={() => setKey(x.key)}>
             {x.name}
           </LabButton>
         ))}
-      </div>
+      </ScrollRow>
 
-      <div className="grid items-start gap-3 lg:grid-cols-[1.35fr_0.65fr]">
-        <div className="grid items-start gap-2 sm:grid-cols-2">
+      <div className="grid items-start gap-3 lg:grid-cols-[1.35fr_0.65fr] [&>*]:min-w-0">
+        <div className="grid items-start gap-2 sm:grid-cols-2 [&>*]:min-w-0">
           {c.leads.map((l) => (
             <LeadPanel key={l} lead={l} pattern={c.pattern} label={`QRS ${c.qrs}`} />
           ))}

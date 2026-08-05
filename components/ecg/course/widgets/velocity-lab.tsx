@@ -120,7 +120,7 @@ export function VelocityLab() {
       <div className="space-y-1.5">
         {LEGS.map((leg) => (
           <div key={leg.id} className="flex items-center gap-2">
-            <span className="w-[38%] shrink-0 truncate text-[11px] font-semibold">{leg.name}</span>
+            <span className="w-[38%] shrink-0 line-clamp-1 text-[11px] font-semibold">{leg.name}</span>
             <div className="h-4 flex-1 overflow-hidden rounded bg-muted/40">
               <div className="h-full rounded" style={{ width: barPct(leg.ms1), backgroundColor: leg.color, opacity: 0.85 }} />
             </div>

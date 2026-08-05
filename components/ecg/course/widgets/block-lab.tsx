@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { buildTimeline, type EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabNote, LabShell } from './ui'
+import { EcgGrid, LabButton, LabNote, LabShell, ScrollRow } from './ui'
 
 /**
  * Laboratório dos bloqueios atrioventriculares.
@@ -212,13 +212,13 @@ export function BlockLab() {
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap gap-1.5">
+      <ScrollRow className="mb-2" label="Tipo de bloqueio">
         {CASES.map((x) => (
           <LabButton key={x.key} active={key === x.key} tone={x.tone === 'bad' ? 'danger' : 'primary'} onClick={() => setKey(x.key)}>
             {x.name}
           </LabButton>
         ))}
-      </div>
+      </ScrollRow>
 
       <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
         <svg viewBox={`0 0 ${W} ${STRIP_H}`} className="block h-auto w-full text-emerald-400" role="img" aria-label={`Traçado: ${c.name}`}>
@@ -234,7 +234,7 @@ export function BlockLab() {
         </p>
       </div>
 
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 [&>*]:min-w-0">
         <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
           <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Padrão</p>
           <p className="text-[13.5px] font-bold leading-snug">{c.name}</p>

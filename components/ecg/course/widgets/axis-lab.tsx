@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { LabButton, LabNote, LabShell, LabSlider, Metric } from './ui'
+import { LabButton, LabNote, LabShell, LabSlider, Metric, ScrollRow } from './ui'
 
 /**
  * Laboratório do eixo elétrico.
@@ -102,7 +102,7 @@ export function AxisLab() {
 
   return (
     <LabShell>
-      <div className="grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
+      <div className="grid gap-3 lg:grid-cols-[0.85fr_1.15fr] [&>*]:min-w-0">
         <div className="rounded-xl border border-border bg-muted/20 p-2">
           <svg viewBox="0 0 300 316" className="block h-auto w-full" role="img" aria-label={`Eixo elétrico a ${axis} graus`}>
             <path
@@ -149,13 +149,13 @@ export function AxisLab() {
         <div className="space-y-3">
           <LabSlider label="Eixo elétrico" value={axis} min={-180} max={180} step={5} unit="°" onChange={setAxis} />
 
-          <div className="flex flex-wrap gap-1.5">
+          <ScrollRow label="Cenários">
             {PRESETS.map((p) => (
               <LabButton key={p.label} active={axis === p.axis} onClick={() => setAxis(p.axis)}>{p.label}</LabButton>
             ))}
-          </div>
+          </ScrollRow>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 [&>*]:min-w-0">
             <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
               <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Classificação</p>
               <p className={`text-[13px] font-black leading-snug ${
@@ -168,7 +168,7 @@ export function AxisLab() {
             <Metric label="Projeção em aVF" value={avf.toFixed(2).replace('.', ',')} tone={avf >= 0 ? 'good' : 'bad'} />
           </div>
 
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-3 gap-1.5 [&>*]:min-w-0">
             {LIMB.map((l) => (
               <MiniLead key={l.key} name={l.key} axis={axis} leadAngle={l.angle} />
             ))}

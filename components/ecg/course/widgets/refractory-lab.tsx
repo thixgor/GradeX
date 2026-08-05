@@ -3,7 +3,16 @@
 import React, { useMemo, useState } from 'react'
 import { MousePointerClick } from 'lucide-react'
 import { beatValue } from '@/lib/ecg/course/strip'
-import { LabButton, LabNote, LabShell } from './ui'
+import { LabChip, LabNote, LabShell, ScrollRow } from './ui'
+
+/** Instantes de interesse, para quem está no celular e não quer mirar no pixel. */
+const SHORTCUTS = [
+  { label: 'No QRS', t: 20 },
+  { label: 'No segmento ST', t: 150 },
+  { label: 'No pico da T (R sobre T)', t: 292 },
+  { label: 'No fim da T', t: 325 },
+  { label: 'No segmento TP', t: 390 },
+]
 
 /**
  * Laboratório do potencial de ação e dos períodos refratários.
@@ -134,14 +143,11 @@ export function RefractoryLab({ focus = 'stimulate' }: { focus?: 'phases' | 'ref
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap items-center gap-2">
-        <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-muted-foreground">
+      <div className="mb-2">
+        <p className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-muted-foreground">
           <MousePointerClick className="h-3.5 w-3.5" />
-          {focus === 'phases' ? 'As cinco fases do potencial de ação' : 'Clique no gráfico para disparar um estímulo'}
+          {focus === 'phases' ? 'As cinco fases do potencial de ação' : 'Toque no gráfico ou use os atalhos abaixo'}
         </p>
-        {stim != null && (
-          <LabButton onClick={() => setStim(null)} className="ml-auto">Limpar</LabButton>
-        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-[#080d14]">
@@ -216,8 +222,17 @@ export function RefractoryLab({ focus = 'stimulate' }: { focus?: 'phases' | 'ref
         </svg>
       </div>
 
+      {focus !== 'phases' && (
+        <ScrollRow className="mt-2" label="Disparar um estímulo em">
+          {SHORTCUTS.map((s) => (
+            <LabChip key={s.label} active={stim === s.t} onClick={() => setStim(s.t)}>{s.label}</LabChip>
+          ))}
+          {stim != null && <LabChip onClick={() => setStim(null)}>Limpar</LabChip>}
+        </ScrollRow>
+      )}
+
       {focus === 'phases' && (
-        <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+        <div className="mt-2 grid gap-1.5 sm:grid-cols-2 [&>*]:min-w-0">
           {PHASES.map((p) => (
             <div key={p.n} className="flex items-start gap-2 rounded-lg border border-border bg-muted/30 px-2.5 py-1.5">
               <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded bg-sky-500/20 font-mono text-[11px] font-black text-sky-500">

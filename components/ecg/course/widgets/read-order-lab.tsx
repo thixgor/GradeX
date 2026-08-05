@@ -80,18 +80,18 @@ export function ReadOrderLab() {
                 type="button"
                 onClick={() => setDone((d) => d.map((v, j) => (j === i ? !v : v)))}
                 aria-label={`Marcar passo ${i + 1}`}
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-[11px] font-black transition ${
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-[12px] font-black transition active:scale-95 ${
                   done[i] ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-border bg-background text-muted-foreground'
                 }`}
               >
-                {done[i] ? <Check className="h-3.5 w-3.5" /> : i + 1}
+                {done[i] ? <Check className="h-4 w-4" /> : i + 1}
               </button>
               <button
                 type="button"
                 onClick={() => setOpen(open === i ? null : i)}
-                className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                className="flex min-h-[40px] min-w-0 flex-1 items-center gap-2 text-left"
               >
-                <span className={`flex-1 truncate text-[13px] font-bold ${done[i] ? 'text-emerald-600 dark:text-emerald-400' : ''}`}>{s.t}</span>
+                <span className={`flex-1 line-clamp-1 text-[13px] font-bold ${done[i] ? 'text-emerald-600 dark:text-emerald-400' : ''}`}>{s.t}</span>
                 <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition ${open === i ? 'rotate-180' : ''}`} />
               </button>
             </div>

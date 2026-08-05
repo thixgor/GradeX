@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import {
   Lightbulb, AlertTriangle, HelpCircle, GraduationCap, Stethoscope,
-  Check, X, ArrowRight,
+  Check, X, ArrowRight, MoveHorizontal,
 } from 'lucide-react'
 import type {
   Callout, FillStep, MatchStep, OrderStep, QuizStep, TeachStep, LabStep,
@@ -13,9 +13,12 @@ import { CourseWidget } from './widgets'
 /**
  * Renderização de cada tipo de passo de lição.
  *
- * Os passos avaliados (quiz, ordenar, parear, completar) avisam o player pelo
- * callback `onAnswer(correct)` — que só dispara UMA vez, no primeiro palpite,
- * porque é ele que define a pontuação da lição.
+ * Dois cuidados atravessam o arquivo:
+ *  - o embaralhamento é DETERMINÍSTICO (semente derivada do enunciado). Sem
+ *    isso, voltar um passo e avançar de novo reordenaria as alternativas e a
+ *    resposta guardada apontaria para outra opção;
+ *  - todo alvo clicável tem pelo menos ~48 px de altura, porque a lição é
+ *    feita majoritariamente no celular.
  */
 
 /* ───────────────────────── callouts ───────────────────────── */
@@ -32,13 +35,13 @@ export function CalloutBox({ c }: { c: Callout }) {
   const s = CALLOUT_STYLE[c.kind]
   const Icon = s.icon
   return (
-    <div className={`rounded-xl border p-3.5 ${s.cls}`}>
-      <p className={`mb-1 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider ${s.text}`}>
-        <Icon className="h-3.5 w-3.5" />
+    <aside className={`rounded-xl border p-3 sm:p-3.5 ${s.cls}`}>
+      <p className={`mb-1 inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-wider ${s.text}`}>
+        <Icon className="h-3.5 w-3.5 shrink-0" />
         {c.title || s.label}
       </p>
-      <p className="text-[13.5px] leading-relaxed">{c.text}</p>
-    </div>
+      <p className="text-[13px] leading-relaxed sm:text-[13.5px]">{c.text}</p>
+    </aside>
   )
 }
 
@@ -46,23 +49,25 @@ export function CalloutBox({ c }: { c: Callout }) {
 
 export function TeachView({ step }: { step: TeachStep }) {
   return (
-    <div className="space-y-4">
-      <h3 className="font-heading text-xl font-black leading-tight tracking-tight sm:text-2xl">{step.title}</h3>
+    <article className="space-y-4">
+      <h3 className="font-heading text-[19px] font-black leading-tight tracking-tight sm:text-2xl">{step.title}</h3>
 
       {step.lead && (
-        <p className="border-l-2 border-primary/60 pl-3 text-[15px] font-semibold leading-relaxed">{step.lead}</p>
+        <p className="border-l-[3px] border-primary/60 pl-3 text-[14.5px] font-semibold leading-relaxed sm:text-[15px]">
+          {step.lead}
+        </p>
       )}
 
       {step.body?.map((p, i) => (
-        <p key={i} className="text-[14.5px] leading-relaxed text-foreground/85">{p}</p>
+        <p key={i} className="text-[14px] leading-relaxed text-foreground/85 sm:text-[14.5px]">{p}</p>
       ))}
 
       {step.bullets && (
         <ul className="space-y-2">
           {step.bullets.map((b) => (
             <li key={b.t} className="rounded-xl border border-border bg-muted/25 p-3">
-              <strong className="text-[13.5px]">{b.t}</strong>
-              <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">{b.d}</p>
+              <strong className="text-[13px] sm:text-[13.5px]">{b.t}</strong>
+              <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground sm:text-[13px]">{b.d}</p>
             </li>
           ))}
         </ul>
@@ -70,12 +75,12 @@ export function TeachView({ step }: { step: TeachStep }) {
 
       {step.table && (
         <figure className="m-0">
-          <div className="overflow-x-auto rounded-xl border border-border">
-            <table className="w-full min-w-[520px] border-collapse text-left text-[12.5px]">
+          <div className="relative overflow-x-auto rounded-xl border border-border">
+            <table className="w-full min-w-[540px] border-collapse text-left text-[12px] sm:text-[12.5px]">
               <thead>
                 <tr className="bg-muted/50">
                   {step.table.head.map((h) => (
-                    <th key={h} className="border-b border-border px-3 py-2 font-black uppercase tracking-wider text-[10.5px] text-muted-foreground">
+                    <th key={h} className="border-b border-border px-2.5 py-2 text-[10px] font-black uppercase tracking-wider text-muted-foreground sm:px-3">
                       {h}
                     </th>
                   ))}
@@ -87,9 +92,9 @@ export function TeachView({ step }: { step: TeachStep }) {
                     {r.map((cell, j) => (
                       <td
                         key={j}
-                        className={`border-b border-border/60 px-3 py-2 align-top leading-relaxed ${
+                        className={`border-b border-border/60 px-2.5 py-2 align-top leading-relaxed sm:px-3 ${
                           j === 0 ? 'font-bold' : ''
-                        } ${step.table?.numericFrom != null && j === step.table.numericFrom ? 'font-mono font-bold text-primary' : ''}`}
+                        } ${step.table?.numericFrom != null && j === step.table.numericFrom ? 'whitespace-nowrap font-mono font-bold text-primary' : ''}`}
                       >
                         {cell}
                       </td>
@@ -99,39 +104,63 @@ export function TeachView({ step }: { step: TeachStep }) {
               </tbody>
             </table>
           </div>
-          {step.table.caption && (
-            <figcaption className="mt-1.5 text-[11.5px] text-muted-foreground">{step.table.caption}</figcaption>
-          )}
+          <figcaption className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground">
+            <MoveHorizontal className="mt-0.5 h-3 w-3 shrink-0 sm:hidden" />
+            <span>{step.table.caption || <span className="sm:hidden">Arraste a tabela para o lado para ver todas as colunas.</span>}</span>
+          </figcaption>
         </figure>
       )}
 
       {step.widget && <CourseWidget spec={step.widget} />}
 
       {step.callouts?.map((c, i) => <CalloutBox key={i} c={c} />)}
-    </div>
+    </article>
   )
 }
 
 export function LabView({ step }: { step: LabStep }) {
   return (
-    <div className="space-y-4">
-      <h3 className="font-heading text-xl font-black leading-tight tracking-tight sm:text-2xl">{step.title}</h3>
-      {step.intro && <p className="text-[14.5px] leading-relaxed text-foreground/85">{step.intro}</p>}
+    <article className="space-y-4">
+      <h3 className="font-heading text-[19px] font-black leading-tight tracking-tight sm:text-2xl">{step.title}</h3>
+      {step.intro && <p className="text-[14px] leading-relaxed text-foreground/85 sm:text-[14.5px]">{step.intro}</p>}
       <CourseWidget spec={step.widget} />
       {step.outro && (
-        <p className="rounded-xl border border-border bg-muted/25 p-3 text-[13.5px] leading-relaxed">{step.outro}</p>
+        <p className="rounded-xl border border-border bg-muted/25 p-3 text-[13px] leading-relaxed sm:text-[13.5px]">
+          {step.outro}
+        </p>
       )}
       {step.callouts?.map((c, i) => <CalloutBox key={i} c={c} />)}
-    </div>
+    </article>
   )
 }
 
 /* ───────────────────────── util ───────────────────────── */
 
-function shuffle<T>(arr: T[]): T[] {
+/** Hash simples e estável de uma string — semente do embaralhamento. */
+function seedOf(s: string) {
+  let h = 2166136261
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return h >>> 0
+}
+
+/**
+ * Embaralhamento determinístico: a mesma pergunta gera sempre a mesma ordem.
+ * É o que permite guardar a resposta por índice e restaurá-la ao voltar.
+ */
+function stableShuffle<T>(arr: T[], seedStr: string): T[] {
   const a = [...arr]
+  let s = seedOf(seedStr) || 1
+  const rand = () => {
+    s ^= s << 13; s >>>= 0
+    s ^= s >> 17
+    s ^= s << 5; s >>>= 0
+    return s / 4294967296
+  }
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
+    const j = Math.floor(rand() * (i + 1))
       ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
@@ -139,48 +168,66 @@ function shuffle<T>(arr: T[]): T[] {
 
 function Explanation({ correct, text }: { correct: boolean; text: string }) {
   return (
-    <div className={`rounded-xl border p-3.5 ${correct ? 'border-emerald-500/35 bg-emerald-500/[0.07]' : 'border-rose-500/35 bg-rose-500/[0.07]'}`}>
-      <p className={`mb-1 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider ${correct ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+    <div
+      role="status"
+      className={`rounded-xl border p-3 sm:p-3.5 ${
+        correct ? 'border-emerald-500/35 bg-emerald-500/[0.07]' : 'border-rose-500/35 bg-rose-500/[0.07]'
+      }`}
+    >
+      <p className={`mb-1 inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-wider ${
+        correct ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+      }`}>
         {correct ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
         {correct ? 'Isso mesmo' : 'Não é essa'}
       </p>
-      <p className="text-[13.5px] leading-relaxed">{text}</p>
+      <p className="text-[13px] leading-relaxed sm:text-[13.5px]">{text}</p>
     </div>
   )
 }
 
-interface GradedProps {
+function Prompt({ stem, question }: { stem?: string; question: string }) {
+  return (
+    <>
+      {stem && (
+        <div className="rounded-xl border border-border bg-muted/30 p-3 sm:p-3.5">
+          <p className="mb-1 text-[10px] font-black uppercase tracking-wider text-muted-foreground">Caso clínico</p>
+          <p className="text-[13px] leading-relaxed sm:text-[13.5px]">{stem}</p>
+        </div>
+      )}
+      <h3 className="font-heading text-[17px] font-black leading-tight tracking-tight sm:text-xl">{question}</h3>
+    </>
+  )
+}
+
+interface GradedProps<S> {
   /** Disparado só na primeira resposta — define a pontuação. */
   onAnswer: (correct: boolean) => void
-  /** Libera o botão de avançar do player. */
-  onResolved: () => void
+  /** Guarda o estado da resposta para restaurar ao voltar um passo. */
+  onSave: (state: S) => void
+  saved?: S
 }
 
 /* ───────────────────────── quiz ───────────────────────── */
 
-export function QuizView({ step, onAnswer, onResolved }: { step: QuizStep } & GradedProps) {
-  const options = useMemo(() => shuffle(step.options), [step])
-  const [picked, setPicked] = useState<number | null>(null)
+export function QuizView({
+  step, onAnswer, onSave, saved,
+}: { step: QuizStep } & GradedProps<number>) {
+  const options = useMemo(() => stableShuffle(step.options, step.question), [step])
+  const [picked, setPicked] = useState<number | null>(saved ?? null)
   const correctIdx = options.findIndex((o) => o.correct)
 
   function pick(i: number) {
     if (picked != null) return
     setPicked(i)
     onAnswer(!!options[i].correct)
-    onResolved()
+    onSave(i)
   }
 
   return (
     <div className="space-y-4">
-      {step.stem && (
-        <div className="rounded-xl border border-border bg-muted/30 p-3.5">
-          <p className="mb-1 text-[10.5px] font-black uppercase tracking-wider text-muted-foreground">Caso</p>
-          <p className="text-[13.5px] leading-relaxed">{step.stem}</p>
-        </div>
-      )}
-      <h3 className="font-heading text-lg font-black leading-tight tracking-tight sm:text-xl">{step.question}</h3>
+      <Prompt stem={step.stem} question={step.question} />
 
-      <div className="space-y-2">
+      <div className="space-y-2" role="radiogroup" aria-label={step.question}>
         {options.map((o, i) => {
           const revealed = picked != null
           const isCorrect = !!o.correct
@@ -191,23 +238,27 @@ export function QuizView({ step, onAnswer, onResolved }: { step: QuizStep } & Gr
               ? 'border-emerald-500/60 bg-emerald-500/10'
               : isPicked
                 ? 'border-rose-500/60 bg-rose-500/10'
-                : 'border-border bg-muted/15 opacity-60'
+                : 'border-border bg-muted/15 opacity-55'
           return (
             <button
               key={i}
               type="button"
+              role="radio"
+              aria-checked={isPicked}
               onClick={() => pick(i)}
               disabled={revealed}
-              className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition ${style}`}
+              className={`flex min-h-[52px] w-full items-start gap-3 rounded-xl border p-3 text-left transition active:scale-[0.995] disabled:cursor-default sm:p-3.5 ${style}`}
             >
-              <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[11px] font-black ${
+              <span className={`mt-px flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-black ${
                 revealed && isCorrect ? 'border-emerald-500 bg-emerald-500 text-white'
                   : revealed && isPicked ? 'border-rose-500 bg-rose-500 text-white'
                     : 'border-muted-foreground/40 text-muted-foreground'
               }`}>
-                {revealed && isCorrect ? <Check className="h-3 w-3" /> : revealed && isPicked ? <X className="h-3 w-3" /> : String.fromCharCode(65 + i)}
+                {revealed && isCorrect ? <Check className="h-3.5 w-3.5" />
+                  : revealed && isPicked ? <X className="h-3.5 w-3.5" />
+                    : String.fromCharCode(65 + i)}
               </span>
-              <span className="text-[13.5px] leading-relaxed">{o.text}</span>
+              <span className="text-[13px] leading-relaxed sm:text-[13.5px]">{o.text}</span>
             </button>
           )
         })}
@@ -220,68 +271,79 @@ export function QuizView({ step, onAnswer, onResolved }: { step: QuizStep } & Gr
 
 /* ───────────────────────── ordenar ───────────────────────── */
 
-export function OrderView({ step, onAnswer, onResolved }: { step: OrderStep } & GradedProps) {
-  const pool = useMemo(() => shuffle(step.items.map((t, i) => ({ t, i }))), [step])
-  const [picked, setPicked] = useState<{ t: string; i: number }[]>([])
-  const [checked, setChecked] = useState(false)
+interface OrderSaved { picked: number[] }
+
+export function OrderView({
+  step, onAnswer, onSave, saved,
+}: { step: OrderStep } & GradedProps<OrderSaved>) {
+  const pool = useMemo(
+    () => stableShuffle(step.items.map((t, i) => ({ t, i })), step.question),
+    [step],
+  )
+  const [picked, setPicked] = useState<number[]>(saved?.picked ?? [])
+  const [checked, setChecked] = useState(!!saved)
 
   const complete = picked.length === step.items.length
-  const correct = checked && picked.every((p, idx) => p.i === idx)
+  const correct = checked && picked.every((idx, pos) => idx === pos)
 
-  function toggle(item: { t: string; i: number }) {
+  function toggle(i: number) {
     if (checked) return
-    setPicked((p) => (p.some((x) => x.i === item.i) ? p.filter((x) => x.i !== item.i) : [...p, item]))
+    setPicked((p) => (p.includes(i) ? p.filter((x) => x !== i) : [...p, i]))
   }
 
   function check() {
     setChecked(true)
-    onAnswer(picked.every((p, idx) => p.i === idx))
-    onResolved()
+    onAnswer(picked.every((idx, pos) => idx === pos))
+    onSave({ picked })
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="font-heading text-lg font-black leading-tight tracking-tight sm:text-xl">{step.question}</h3>
-      {step.hint && <p className="text-[13px] text-muted-foreground">{step.hint}</p>}
+      <Prompt question={step.question} />
+      <p className="text-[12.5px] leading-snug text-muted-foreground">
+        {step.hint || 'Toque nos itens na ordem certa. Toque de novo para tirar da sequência.'}
+      </p>
 
-      <div className="space-y-1.5">
+      <ol className="space-y-1.5">
         {pool.map((item) => {
-          const pos = picked.findIndex((p) => p.i === item.i)
+          const pos = picked.indexOf(item.i)
           const on = pos >= 0
           const right = checked && on && pos === item.i
           const wrong = checked && on && pos !== item.i
           return (
-            <button
-              key={item.i}
-              type="button"
-              onClick={() => toggle(item)}
-              disabled={checked}
-              className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition ${
-                right ? 'border-emerald-500/60 bg-emerald-500/10'
-                  : wrong ? 'border-rose-500/60 bg-rose-500/10'
-                    : on ? 'border-primary/60 bg-primary/10'
-                      : 'border-border bg-muted/25 hover:border-primary/40'
-              }`}
-            >
-              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-black ${
-                on ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-              }`}>
-                {on ? pos + 1 : '·'}
-              </span>
-              <span className="text-[13.5px] leading-snug">{item.t}</span>
-            </button>
+            <li key={item.i}>
+              <button
+                type="button"
+                onClick={() => toggle(item.i)}
+                disabled={checked}
+                className={`flex min-h-[52px] w-full items-center gap-3 rounded-xl border p-2.5 text-left transition active:scale-[0.995] disabled:cursor-default sm:p-3 ${
+                  right ? 'border-emerald-500/60 bg-emerald-500/10'
+                    : wrong ? 'border-rose-500/60 bg-rose-500/10'
+                      : on ? 'border-primary/60 bg-primary/10'
+                        : 'border-border bg-muted/25 hover:border-primary/40'
+                }`}
+              >
+                <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[12px] font-black ${
+                  on ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
+                  {on ? pos + 1 : '·'}
+                </span>
+                <span className="text-[12.5px] leading-snug sm:text-[13px]">{item.t}</span>
+              </button>
+            </li>
           )
         })}
-      </div>
+      </ol>
 
       {!checked && (
         <button
           type="button"
           onClick={check}
           disabled={!complete}
-          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-black text-primary-foreground transition disabled:opacity-40"
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-black text-primary-foreground transition active:scale-[0.99] disabled:opacity-40"
         >
-          Conferir a ordem <ArrowRight className="h-4 w-4" />
+          {complete ? 'Conferir a ordem' : `Faltam ${step.items.length - picked.length}`}
+          {complete && <ArrowRight className="h-4 w-4" />}
         </button>
       )}
 
@@ -289,8 +351,8 @@ export function OrderView({ step, onAnswer, onResolved }: { step: OrderStep } & 
         <>
           {!correct && (
             <div className="rounded-xl border border-border bg-muted/30 p-3">
-              <p className="mb-1.5 text-[10.5px] font-black uppercase tracking-wider text-muted-foreground">Ordem correta</p>
-              <ol className="ml-4 list-decimal space-y-0.5 text-[13px]">
+              <p className="mb-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground">Ordem correta</p>
+              <ol className="ml-4 list-decimal space-y-0.5 text-[12.5px] leading-snug">
                 {step.items.map((t) => <li key={t}>{t}</li>)}
               </ol>
             </div>
@@ -304,13 +366,20 @@ export function OrderView({ step, onAnswer, onResolved }: { step: OrderStep } & 
 
 /* ───────────────────────── parear ───────────────────────── */
 
-export function MatchView({ step, onAnswer, onResolved }: { step: MatchStep } & GradedProps) {
-  const rights = useMemo(() => shuffle(step.pairs.map((p, i) => ({ text: p.right, i }))), [step])
+interface MatchSaved { solved: number[]; misses: number }
+
+export function MatchView({
+  step, onAnswer, onSave, saved,
+}: { step: MatchStep } & GradedProps<MatchSaved>) {
+  const rights = useMemo(
+    () => stableShuffle(step.pairs.map((p, i) => ({ text: p.right, i })), step.question),
+    [step],
+  )
   const [selLeft, setSelLeft] = useState<number | null>(null)
-  const [solved, setSolved] = useState<number[]>([])
-  const [misses, setMisses] = useState(0)
+  const [solved, setSolved] = useState<number[]>(saved?.solved ?? [])
+  const [misses, setMisses] = useState(saved?.misses ?? 0)
   const [flash, setFlash] = useState<number | null>(null)
-  const [reported, setReported] = useState(false)
+  const [reported, setReported] = useState(!!saved)
 
   function pickRight(i: number) {
     if (selLeft == null || solved.includes(i)) return
@@ -321,12 +390,12 @@ export function MatchView({ step, onAnswer, onResolved }: { step: MatchStep } & 
       if (next.length === step.pairs.length && !reported) {
         setReported(true)
         onAnswer(misses === 0)
-        onResolved()
+        onSave({ solved: next, misses })
       }
     } else {
       setMisses((m) => m + 1)
       setFlash(i)
-      setTimeout(() => setFlash(null), 450)
+      setTimeout(() => setFlash(null), 420)
     }
   }
 
@@ -334,9 +403,9 @@ export function MatchView({ step, onAnswer, onResolved }: { step: MatchStep } & 
 
   return (
     <div className="space-y-4">
-      <h3 className="font-heading text-lg font-black leading-tight tracking-tight sm:text-xl">{step.question}</h3>
-      <p className="text-[13px] text-muted-foreground">
-        Toque em um item da esquerda e depois no par correspondente da direita.
+      <Prompt question={step.question} />
+      <p className="text-[12.5px] leading-snug text-muted-foreground">
+        Toque num item da esquerda e depois no par correspondente da direita.
       </p>
 
       <div className="grid grid-cols-2 gap-2">
@@ -349,13 +418,15 @@ export function MatchView({ step, onAnswer, onResolved }: { step: MatchStep } & 
                 type="button"
                 onClick={() => !ok && setSelLeft(selLeft === i ? null : i)}
                 disabled={ok}
-                className={`w-full rounded-xl border p-2.5 text-left text-[12.5px] font-semibold leading-snug transition ${
+                aria-pressed={selLeft === i}
+                className={`flex min-h-[52px] w-full items-center rounded-xl border p-2.5 text-left text-[12px] font-semibold leading-snug transition active:scale-[0.98] disabled:cursor-default sm:text-[12.5px] ${
                   ok ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-                    : selLeft === i ? 'border-primary bg-primary/15'
+                    : selLeft === i ? 'border-primary bg-primary/15 ring-2 ring-primary/30'
                       : 'border-border bg-muted/25 hover:border-primary/40'
                 }`}
               >
-                {p.left}
+                {ok && <Check className="mr-1.5 h-3.5 w-3.5 shrink-0" />}
+                <span className="min-w-0">{p.left}</span>
               </button>
             )
           })}
@@ -369,23 +440,25 @@ export function MatchView({ step, onAnswer, onResolved }: { step: MatchStep } & 
                 type="button"
                 onClick={() => pickRight(r.i)}
                 disabled={ok}
-                className={`w-full rounded-xl border p-2.5 text-left text-[12.5px] font-semibold leading-snug transition ${
+                className={`flex min-h-[52px] w-full items-center rounded-xl border p-2.5 text-left text-[12px] font-semibold leading-snug transition active:scale-[0.98] disabled:cursor-default sm:text-[12.5px] ${
                   ok ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                     : flash === r.i ? 'border-rose-500 bg-rose-500/15'
-                      : selLeft != null ? 'border-border bg-muted/25 hover:border-primary/50'
+                      : selLeft != null ? 'border-primary/30 bg-muted/25 hover:border-primary/50'
                         : 'border-border bg-muted/15'
                 }`}
               >
-                {r.text}
+                {ok && <Check className="mr-1.5 h-3.5 w-3.5 shrink-0" />}
+                <span className="min-w-0">{r.text}</span>
               </button>
             )
           })}
         </div>
       </div>
 
-      {misses > 0 && !done && (
-        <p className="text-center text-[12px] font-semibold text-rose-500">
-          {misses} {misses === 1 ? 'tentativa errada' : 'tentativas erradas'} — continue
+      {!done && (
+        <p className="text-center text-[11.5px] font-semibold text-muted-foreground" role="status">
+          {solved.length}/{step.pairs.length} pares
+          {misses > 0 && <span className="text-rose-500"> · {misses} {misses === 1 ? 'erro' : 'erros'}</span>}
         </p>
       )}
 
@@ -396,27 +469,30 @@ export function MatchView({ step, onAnswer, onResolved }: { step: MatchStep } & 
 
 /* ───────────────────────── completar ───────────────────────── */
 
-export function FillView({ step, onAnswer, onResolved }: { step: FillStep } & GradedProps) {
-  const options = useMemo(() => shuffle(step.options), [step])
-  const [picked, setPicked] = useState<string | null>(null)
+export function FillView({
+  step, onAnswer, onSave, saved,
+}: { step: FillStep } & GradedProps<string>) {
+  const options = useMemo(() => stableShuffle(step.options, step.sentence), [step])
+  const [picked, setPicked] = useState<string | null>(saved ?? null)
   const parts = step.sentence.split('___')
 
   function pick(o: string) {
     if (picked) return
     setPicked(o)
     onAnswer(o === step.answer)
-    onResolved()
+    onSave(o)
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="font-heading text-lg font-black leading-tight tracking-tight sm:text-xl">{step.question}</h3>
+      <Prompt question={step.question} />
 
-      <p className="rounded-xl border border-border bg-muted/30 p-4 text-[15px] leading-relaxed">
+      <p className="rounded-xl border border-border bg-muted/30 p-3.5 text-[14.5px] leading-loose sm:p-4 sm:text-[15px]">
         {parts[0]}
-        <span className={`mx-1 inline-flex min-w-[110px] justify-center rounded-md border-b-2 px-2 py-0.5 font-black ${
+        <span className={`mx-1 inline-flex min-w-[100px] justify-center rounded-md border-b-2 px-2 py-0.5 font-black ${
           picked
-            ? picked === step.answer ? 'border-emerald-500 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+            ? picked === step.answer
+              ? 'border-emerald-500 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
               : 'border-rose-500 bg-rose-500/15 text-rose-600 dark:text-rose-400'
             : 'border-primary/60 bg-primary/5 text-muted-foreground'
         }`}>
@@ -432,7 +508,7 @@ export function FillView({ step, onAnswer, onResolved }: { step: FillStep } & Gr
             type="button"
             onClick={() => pick(o)}
             disabled={!!picked}
-            className={`rounded-xl border px-4 py-2.5 text-[13.5px] font-bold transition ${
+            className={`min-h-[48px] flex-1 rounded-xl border px-4 text-[13px] font-bold transition active:scale-[0.98] disabled:cursor-default sm:flex-none sm:text-[13.5px] ${
               picked === o
                 ? o === step.answer ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-rose-500/60 bg-rose-500/10'
                 : picked && o === step.answer ? 'border-emerald-500/60 bg-emerald-500/10'

@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import type { EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabNote, LabShell, Metric } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, ScrollRow } from './ui'
 
 /**
  * Laboratório do papel milimetrado: mostra na prática o que muda quando alguém
@@ -50,25 +50,25 @@ export function PaperLab() {
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1">
-          <span className="mr-1 text-[11px] font-black uppercase tracking-wider text-muted-foreground">mm/s</span>
+      <div className="mb-2 grid gap-2 sm:grid-cols-2 [&>*]:min-w-0">
+        <ScrollRow label="Velocidade (mm/s)">
           {SPEEDS.map((s) => (
-            <LabButton key={s} active={speed === s} onClick={() => setSpeed(s)}>{s}</LabButton>
+            <LabChip key={s} active={speed === s} onClick={() => setSpeed(s)} className="min-w-[52px]">{s}</LabChip>
           ))}
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="mr-1 text-[11px] font-black uppercase tracking-wider text-muted-foreground">mm/mV</span>
+        </ScrollRow>
+        <ScrollRow label="Ganho (mm/mV)">
           {GAINS.map((g) => (
-            <LabButton key={g} active={gain === g} onClick={() => setGain(g)}>{g}</LabButton>
+            <LabChip key={g} active={gain === g} onClick={() => setGain(g)} className="min-w-[52px]">{g}</LabChip>
           ))}
-        </div>
-        {!standard && (
-          <LabButton tone="primary" active onClick={() => { setSpeed(25); setGain(10) }} className="ml-auto">
-            Voltar ao padrão
-          </LabButton>
-        )}
+        </ScrollRow>
       </div>
+      {!standard && (
+        <div className="mb-2">
+          <LabButton tone="primary" active onClick={() => { setSpeed(25); setGain(10) }}>
+            Voltar ao padrão (25 mm/s · 10 mm/mV)
+          </LabButton>
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
         <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img"
@@ -86,7 +86,7 @@ export function PaperLab() {
         </svg>
       </div>
 
-      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 [&>*]:min-w-0">
         <Metric label="Quadradinho (tempo)" value={msPerSmall} unit="ms" tone={standard ? 'good' : 'warn'} />
         <Metric label="Quadradinho (voltagem)" value={mvPerSmall.toFixed(3).replace('.', ',')} unit="mV" tone={standard ? 'good' : 'warn'} />
         <Metric label="Quadradão (tempo)" value={msPerSmall * 5} unit="ms" />

@@ -5,7 +5,7 @@ import { Zap, ShieldAlert } from 'lucide-react'
 import type { EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
 import { CourseHeart, HEART_PARTS, type HeartPart } from './course-heart'
-import { EcgGrid, LabButton, LabNote, LabShell, Metric } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, ScrollRow } from './ui'
 
 /**
  * Laboratório da hierarquia de marca-passos.
@@ -190,7 +190,7 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
 
   return (
     <LabShell>
-      <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+      <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr] [&>*]:min-w-0">
         {/* ── Coração ── */}
         <div>
           <div className="rounded-xl border border-border bg-muted/20 p-2">
@@ -206,30 +206,24 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
               <p className="mt-2 text-center text-[11px] font-semibold text-muted-foreground">
                 Toque em uma estrutura do desenho ou escolha abaixo
               </p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
+              <ScrollRow className="mt-2" label="Estruturas">
                 {HEART_PARTS.map((p) => (
-                  <button
-                    key={p.key}
-                    type="button"
-                    onClick={() => setSelected(p.key)}
-                    className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
-                      selected === p.key ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
+                  <LabChip key={p.key} active={selected === p.key} onClick={() => setSelected(p.key)}>
                     {p.short}
-                  </button>
+                  </LabChip>
                 ))}
-              </div>
+              </ScrollRow>
             </>
           )}
           {showBlocks && (
-            <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <div className="mt-2 grid grid-cols-2 gap-1.5 [&>*]:min-w-0">
               {SCENARIOS.map((s) => (
                 <LabButton
                   key={s.key}
                   active={block === s.key}
                   tone={s.key === 'none' ? 'primary' : 'danger'}
                   onClick={() => setBlock(s.key)}
+                  className="text-center"
                 >
                   {s.key === 'none' ? <Zap className="h-3.5 w-3.5" /> : <ShieldAlert className="h-3.5 w-3.5" />}
                   {s.label}
@@ -250,7 +244,7 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
                   <path d={path} fill="none" stroke={scenario.tone === 'bad' ? '#fb7185' : '#3ff08a'} strokeWidth="2.2" strokeLinejoin="round" />
                 </svg>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 [&>*]:min-w-0">
                 <Metric label="Comando" value={scenario.driver.split(' ')[0]} />
                 <Metric label="Frequência" value={scenario.rate.split(' ')[0]} unit="bpm" tone={scenario.tone === 'bad' ? 'bad' : scenario.tone === 'warn' ? 'warn' : 'good'} />
                 <Metric label="QRS" value={scenario.qrs.split(' ')[0]} unit="ms" tone={scenario.qrs.includes('largo') ? 'bad' : 'good'} />
@@ -263,7 +257,7 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
                 <h4 className="font-heading text-base font-black leading-tight tracking-tight">{info.name}</h4>
                 <p className="mt-0.5 text-[13px] text-muted-foreground">{info.role}</p>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 [&>*]:min-w-0">
                 <Metric label="Frequência intrínseca" value={info.rate ?? '—'} tone={info.rate ? 'good' : 'neutral'} />
                 <Metric label="Velocidade de condução" value={info.velocity.split(' ')[0]} unit="m/s" />
               </div>

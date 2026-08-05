@@ -55,6 +55,23 @@ const ON = '#34d399'
 const OFF = 'rgba(148,163,184,0.35)'
 const BAD = '#fb7185'
 
+/**
+ * Traçado de cada via. Guardar o `d` aqui permite desenhar DUAS vezes: a linha
+ * visível (fina, bonita) e, por cima, uma faixa transparente de 18 unidades que
+ * é o alvo real do dedo. Sem ela, acertar um traço de 2 px num celular é sorte.
+ */
+const PATHS: Partial<Record<HeartPart, string>> = {
+  bachmann: 'M80 62 C118 42 168 44 200 60',
+  internodal: 'M76 74 C92 104 118 126 145 137',
+  his: 'M150 150 L150 182',
+  rbb: 'M150 182 C140 216 124 250 114 282',
+  lbb: 'M150 182 C162 192 172 200 180 208',
+  laf: 'M180 208 C200 216 214 230 222 246',
+  lpf: 'M180 208 C182 238 180 264 174 288',
+  septal: 'M168 198 C160 222 157 244 156 262',
+  purkinje: 'M114 282 C106 290 100 296 96 300',
+}
+
 export function CourseHeart({
   active = [], blocked = [], onPick, selected = null, className = '', showChambers = true,
 }: Props) {
@@ -180,6 +197,39 @@ export function CourseHeart({
       <g onClick={pick('av')} className={interactive}>
         <ellipse cx="150" cy="144" rx="12" ry="8" fill={isBad('av') ? BAD : isOn('av') || selected === 'av' ? ON : 'rgba(148,163,184,0.55)'} filter={glow('av')} />
       </g>
+
+      {/* Áreas de toque: invisíveis, largas e focáveis pelo teclado. */}
+      {onPick && (Object.keys(PATHS) as HeartPart[]).map((k) => (
+        <path
+          key={`hit-${k}`}
+          d={PATHS[k]}
+          fill="none"
+          stroke="transparent"
+          strokeWidth={18}
+          strokeLinecap="round"
+          pointerEvents="stroke"
+          role="button"
+          tabIndex={0}
+          aria-label={HEART_PARTS.find((h) => h.key === k)?.label || k}
+          onClick={() => onPick(k)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(k) } }}
+          className="cursor-pointer focus:outline-none"
+        />
+      ))}
+      {onPick && ([['sa', 74, 66], ['av', 150, 144]] as const).map(([k, cx, cy]) => (
+        <circle
+          key={`hit-${k}`}
+          cx={cx} cy={cy} r={20}
+          fill="transparent"
+          pointerEvents="all"
+          role="button"
+          tabIndex={0}
+          aria-label={HEART_PARTS.find((h) => h.key === k)?.label || k}
+          onClick={() => onPick(k as HeartPart)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(k as HeartPart) } }}
+          className="cursor-pointer focus:outline-none"
+        />
+      ))}
 
       <g fontSize="9.5" fontWeight="700" fill="rgba(148,163,184,0.85)" fontFamily="ui-monospace, monospace">
         <text x="46" y="52">SA</text>

@@ -3,7 +3,7 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { Ruler } from 'lucide-react'
 import { BEAT, beatValue } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabNote, LabShell, Metric } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, ScrollRow } from './ui'
 
 /**
  * Laboratório de intervalos e segmentos.
@@ -128,21 +128,20 @@ export function IntervalLab() {
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap gap-1.5">
+      <ScrollRow className="mb-2" label="O que medir">
         {MEASURES.map((m) => (
-          <button
+          <LabChip
             key={m.key}
-            type="button"
+            active={sel === m.key}
             onClick={() => { setSel(m.key); setA(m.from); setB(m.to) }}
-            className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
-              sel === m.key ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground'
-            }`}
           >
             {m.label}
-          </button>
+          </LabChip>
         ))}
-        <LabButton active={caliper} onClick={() => setCaliper((v) => !v)} className="ml-auto">
-          <Ruler className="h-3.5 w-3.5" /> Paquímetro
+      </ScrollRow>
+      <div className="mb-2">
+        <LabButton active={caliper} onClick={() => setCaliper((v) => !v)}>
+          <Ruler className="h-3.5 w-3.5" /> {caliper ? 'Paquímetro ligado' : 'Medir com o paquímetro'}
         </LabButton>
       </div>
 
@@ -150,7 +149,7 @@ export function IntervalLab() {
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
-          className="block h-auto w-full touch-none text-emerald-400"
+          className={`block h-auto w-full text-emerald-400 ${caliper ? 'touch-none' : ''}`}
           role="img"
           aria-label={`Traçado com ${spec.label} destacado`}
           onPointerMove={(e) => {
@@ -185,10 +184,16 @@ export function IntervalLab() {
           {caliper && (
             <g>
               {[{ t: a, k: 'a' as const }, { t: b, k: 'b' as const }].map(({ t, k }) => (
-                <g key={k} onPointerDown={(e) => { e.preventDefault(); setDrag(k) }} className="cursor-ew-resize">
-                  <line x1={xOf(t)} y1={0} x2={xOf(t)} y2={H} stroke="#f472b6" strokeWidth="2" />
-                  <rect x={xOf(t) - 9} y={H - 26} width="18" height="22" rx="4" fill="#f472b6" />
-                  <text x={xOf(t)} y={H - 11} textAnchor="middle" fontSize="11" fontWeight="900" fill="#111">{k.toUpperCase()}</text>
+                <g
+                  key={k}
+                  onPointerDown={(e) => { e.preventDefault(); (e.target as Element).releasePointerCapture?.(e.pointerId); setDrag(k) }}
+                  className="cursor-ew-resize"
+                >
+                  {/* faixa invisível de arraste: ~30 px de largura real no celular */}
+                  <rect x={xOf(t) - 28} y={0} width={56} height={H} fill="transparent" pointerEvents="all" />
+                  <line x1={xOf(t)} y1={0} x2={xOf(t)} y2={H} stroke="#f472b6" strokeWidth="2.4" />
+                  <rect x={xOf(t) - 17} y={H - 40} width="34" height="36" rx="8" fill="#f472b6" />
+                  <text x={xOf(t)} y={H - 16} textAnchor="middle" fontSize="17" fontWeight="900" fill="#1a1020">{k.toUpperCase()}</text>
                 </g>
               ))}
               <line x1={xOf(Math.min(a, b))} y1={48} x2={xOf(Math.max(a, b))} y2={48} stroke="#f472b6" strokeWidth="2" />
@@ -200,7 +205,7 @@ export function IntervalLab() {
         </svg>
       </div>
 
-      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 [&>*]:min-w-0">
         <Metric label="Tipo" value={spec.kind} />
         <Metric label="Duração no traçado" value={target} unit="ms" />
         <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">

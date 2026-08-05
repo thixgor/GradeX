@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react'
 import { Dices, Check, X } from 'lucide-react'
 import type { EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabNote, LabShell, Metric } from './ui'
+import { EcgGrid, LabButton, LabNote, LabShell, Metric, ScrollRow } from './ui'
 
 /**
  * Laboratório de frequência cardíaca.
@@ -125,11 +125,13 @@ export function HeartRateLab({ mode = 'practice' }: { mode?: 'demo' | 'practice'
         Tira de 6 segundos · 25 mm/s · quadradinho = 40 ms, quadradão = 200 ms
       </p>
 
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+      <ScrollRow className="mt-3" label="Método">
         {METHODS.map((m) => (
           <LabButton key={m.key} active={method === m.key} onClick={() => setMethod(m.key)}>{m.name}</LabButton>
         ))}
-        <LabButton active={helpers} onClick={() => setHelpers((v) => !v)} className="ml-auto">
+      </ScrollRow>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        <LabButton active={helpers} onClick={() => setHelpers((v) => !v)}>
           {helpers ? 'Ocultar auxílio' : 'Mostrar auxílio'}
         </LabButton>
         <LabButton onClick={newCase}><Dices className="h-3.5 w-3.5" /> Novo traçado</LabButton>
@@ -140,20 +142,30 @@ export function HeartRateLab({ mode = 'practice' }: { mode?: 'demo' | 'practice'
       </LabNote>
 
       {mode === 'practice' && (
-        <div className="mt-3 flex flex-wrap items-end gap-2">
-          <label className="block">
+        <form
+          className="mt-3 flex items-end gap-2"
+          onSubmit={(e) => { e.preventDefault(); if (guess) setChecked(true) }}
+        >
+          <label className="block flex-1 sm:max-w-[180px]">
             <span className="text-xs font-bold">Sua resposta (bpm)</span>
             <input
               type="number"
               inputMode="numeric"
+              enterKeyHint="done"
               value={guess}
               onChange={(e) => { setGuess(e.target.value); setChecked(false) }}
               placeholder="ex.: 75"
-              className="mt-1 w-32 rounded-lg border border-border bg-muted/30 px-3 py-2 font-mono text-sm font-bold outline-none focus:border-primary/50"
+              className="mt-1 h-12 w-full rounded-xl border border-border bg-muted/30 px-3 font-mono text-base font-bold outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/25"
             />
           </label>
-          <LabButton tone="primary" active onClick={() => setChecked(true)} disabled={!guess}>Conferir</LabButton>
-        </div>
+          <button
+            type="submit"
+            disabled={!guess}
+            className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground transition active:scale-[0.97] disabled:opacity-40"
+          >
+            Conferir
+          </button>
+        </form>
       )}
 
       {(checked || mode === 'demo') && (
@@ -168,7 +180,7 @@ export function HeartRateLab({ mode = 'practice' }: { mode?: 'demo' | 'practice'
               </span>
             </LabNote>
           )}
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 [&>*]:min-w-0">
             <Metric label="Frequência real" value={c.rate} unit="bpm" tone={c.rate < 60 ? 'warn' : c.rate > 100 ? 'warn' : 'good'} />
             <Metric label="Intervalo RR" value={Math.round(rrMs)} unit="ms" />
             <Metric label="Quadradões entre R" value={bigSquares.toFixed(1).replace('.', ',')} />

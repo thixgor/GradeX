@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { RotateCcw } from 'lucide-react'
-import { Chip, EcgGrid, LabButton, LabNote, LabShell, LabSlider, Metric } from './ui'
+import { Chip, EcgGrid, LabButton, LabNote, LabShell, LabSlider, Metric, ScrollRow } from './ui'
 
 /**
  * Laboratório de eletrólitos e temperatura.
@@ -191,7 +191,7 @@ export function ElectrolyteLab({ scenario = 'todos' }: { scenario?: Scenario }) 
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap gap-1.5">
+      <ScrollRow className="mb-2" label="Cenários prontos">
         {PRESETS.map((p) => (
           <LabButton
             key={p.label}
@@ -201,10 +201,10 @@ export function ElectrolyteLab({ scenario = 'todos' }: { scenario?: Scenario }) 
             {p.label}
           </LabButton>
         ))}
-        <LabButton onClick={() => { setK(4.2); setCa(9.5); setTemp(36.8) }} className="ml-auto">
+        <LabButton onClick={() => { setK(4.2); setCa(9.5); setTemp(36.8) }}>
           <RotateCcw className="h-3.5 w-3.5" /> Zerar
         </LabButton>
-      </div>
+      </ScrollRow>
 
       <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
         <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img"
@@ -216,7 +216,7 @@ export function ElectrolyteLab({ scenario = 'todos' }: { scenario?: Scenario }) 
       </div>
       <p className="mt-1 text-center text-[11px] text-muted-foreground">25 mm/s · 10 mm/mV · quadradinho = 40 ms e 0,1 mV</p>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+      <div className="mt-3 grid gap-3 sm:grid-cols-3 [&>*]:min-w-0">
         {showK && (
           <LabSlider label="Potássio (K⁺)" value={k} min={1.5} max={9} step={0.1} unit=" mEq/L" onChange={setK}
             hint="Normal 3,5–5,0 · governa o potencial de REPOUSO e a onda T" />
@@ -231,7 +231,7 @@ export function ElectrolyteLab({ scenario = 'todos' }: { scenario?: Scenario }) 
         )}
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 [&>*]:min-w-0">
         <Metric label="Frequência" value={shape.hr} unit="bpm" tone={shape.hr < 60 || shape.hr > 100 ? 'warn' : 'good'} />
         <Metric label="PR estimado" value={Math.round(shape.pr)} unit="ms" tone={shape.pr > 200 ? 'bad' : 'good'} />
         <Metric label="QRS estimado" value={Math.round(90 * shape.qrsW)} unit="ms" tone={90 * shape.qrsW >= 120 ? 'bad' : 'good'} />

@@ -54,7 +54,7 @@ export function LettersLab() {
       <p className="mb-2 text-xs font-black uppercase tracking-wider text-muted-foreground">
         A régua do alfabeto — toque nas letras coloridas
       </p>
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1.5">
         {ALPHABET.map((l) => {
           const r = ROLE[l]
           const style = r ? KIND_STYLE[r.kind] : KIND_STYLE.none
@@ -64,7 +64,7 @@ export function LettersLab() {
               type="button"
               disabled={!r}
               onClick={() => setSel(l)}
-              className={`h-8 w-8 rounded-md border text-sm font-black transition disabled:cursor-default ${style} ${
+              className={`h-10 w-10 rounded-lg border text-sm font-black transition active:scale-95 disabled:cursor-default ${style} ${
                 sel === l ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''
               }`}
             >

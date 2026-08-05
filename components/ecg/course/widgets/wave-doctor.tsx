@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { EcgGrid, LabButton, LabNote, LabShell } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, ScrollRow } from './ui'
 
 /**
  * "Consultório das ondas": catálogo interativo das deformidades de cada onda.
@@ -261,7 +261,7 @@ export function WaveDoctor({ focus = 'p' }: { focus?: Group }) {
 
   return (
     <LabShell>
-      <div className="mb-2 flex flex-wrap gap-1.5">
+      <ScrollRow className="mb-2" label="Onda">
         {GROUPS.map((g) => (
           <LabButton
             key={g.key}
@@ -275,9 +275,9 @@ export function WaveDoctor({ focus = 'p' }: { focus?: Group }) {
             {g.label}
           </LabButton>
         ))}
-      </div>
+      </ScrollRow>
 
-      <div className="grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
+      <div className="grid gap-3 lg:grid-cols-[0.85fr_1.15fr] [&>*]:min-w-0">
         <div>
           <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
             <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img" aria-label={entry.name}>
@@ -295,16 +295,9 @@ export function WaveDoctor({ focus = 'p' }: { focus?: Group }) {
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1.5">
             {list.map((e) => (
-              <button
-                key={e.name}
-                type="button"
-                onClick={() => setName(e.name)}
-                className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
-                  entry.name === e.name ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground'
-                }`}
-              >
+              <LabChip key={e.name} active={entry.name === e.name} onClick={() => setName(e.name)}>
                 {e.name}
-              </button>
+              </LabChip>
             ))}
           </div>
           <h4 className="font-heading text-base font-black leading-tight tracking-tight">{entry.name}</h4>

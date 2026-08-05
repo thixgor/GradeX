@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { LabButton, LabNote, LabShell } from './ui'
+import { LabButton, LabChip, LabNote, LabShell, ScrollRow } from './ui'
 
 /**
  * Explorador das 12 derivações.
@@ -128,7 +128,7 @@ export function LeadsExplorer({ plane: initial = 'frontal' }: { plane?: 'frontal
         </LabButton>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr] [&>*]:min-w-0">
         <div className="rounded-xl border border-border bg-muted/20 p-2">
           {plane === 'frontal' ? (
             <svg viewBox="0 0 300 314" className="block h-auto w-full" role="img" aria-label="Sistema hexaxial das derivações dos membros">
@@ -149,18 +149,34 @@ export function LeadsExplorer({ plane: initial = 'frontal' }: { plane?: 'frontal
                 const ny = cy - R * Math.sin(rad)
                 const on = sel === l.key
                 return (
-                  <g key={l.key} onClick={() => setSel(l.key)} className="cursor-pointer">
-                    <line x1={nx} y1={ny} x2={x} y2={y} stroke={on ? l.color : 'rgba(148,163,184,0.3)'} strokeWidth={on ? 3 : 1.6} />
-                    <circle cx={x} cy={y} r={on ? 15 : 12} fill={on ? l.color : 'rgba(15,23,42,0.85)'} stroke={l.color} strokeWidth="1.6" />
-                    <text x={x} y={y + 4} textAnchor="middle" fontSize="11" fontWeight="900"
-                      fill={on ? '#0b1220' : l.color} fontFamily="ui-monospace, monospace">
-                      {l.key}
-                    </text>
+                  <React.Fragment key={l.key}>
+                    {/* O eixo é só desenho: deixá-lo fora do alvo evita que um
+                        clique perto do centro do círculo — onde os seis eixos
+                        se cruzam — selecione uma derivação ao acaso. */}
+                    <line x1={nx} y1={ny} x2={x} y2={y} pointerEvents="none"
+                      stroke={on ? l.color : 'rgba(148,163,184,0.3)'} strokeWidth={on ? 3 : 1.6} />
                     <text x={cx + (R + 22) * Math.cos(rad)} y={cy + (R + 22) * Math.sin(rad) + 3} textAnchor="middle"
-                      fontSize="9.5" fontWeight="700" fill="rgba(148,163,184,0.8)" fontFamily="ui-monospace, monospace">
+                      pointerEvents="none" fontSize="9.5" fontWeight="700" fill="rgba(148,163,184,0.8)"
+                      fontFamily="ui-monospace, monospace">
                       {l.angle}°
                     </text>
-                  </g>
+                    <g
+                      onClick={() => setSel(l.key)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSel(l.key) } }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Derivação ${l.key}, ${l.wall}`}
+                      className="cursor-pointer focus:outline-none"
+                    >
+                      <circle cx={x} cy={y} r={24} fill="transparent" pointerEvents="all" />
+                      <circle cx={x} cy={y} r={on ? 15 : 12} pointerEvents="none"
+                        fill={on ? l.color : 'rgba(15,23,42,0.85)'} stroke={l.color} strokeWidth="1.6" />
+                      <text x={x} y={y + 4} textAnchor="middle" fontSize="11" fontWeight="900" pointerEvents="none"
+                        fill={on ? '#0b1220' : l.color} fontFamily="ui-monospace, monospace">
+                        {l.key}
+                      </text>
+                    </g>
+                  </React.Fragment>
                 )
               })}
               <circle cx={cx} cy={cy} r="5" fill="rgba(148,163,184,0.9)" />
@@ -186,14 +202,27 @@ export function LeadsExplorer({ plane: initial = 'frontal' }: { plane?: 'frontal
                 const p = CHEST_POS[l.key]
                 const on = sel === l.key
                 return (
-                  <g key={l.key} onClick={() => setSel(l.key)} className="cursor-pointer">
-                    <line x1={p.x} y1={p.y} x2={140} y2={118} stroke={on ? l.color : 'rgba(148,163,184,0.22)'} strokeWidth={on ? 2.4 : 1} strokeDasharray={on ? undefined : '3 4'} />
-                    <circle cx={p.x} cy={p.y} r={on ? 14 : 11} fill={on ? l.color : 'rgba(15,23,42,0.85)'} stroke={l.color} strokeWidth="1.6" />
-                    <text x={p.x} y={p.y + 4} textAnchor="middle" fontSize="10" fontWeight="900"
-                      fill={on ? '#0b1220' : l.color} fontFamily="ui-monospace, monospace">
-                      {l.key}
-                    </text>
-                  </g>
+                  <React.Fragment key={l.key}>
+                    <line x1={p.x} y1={p.y} x2={140} y2={118} pointerEvents="none"
+                      stroke={on ? l.color : 'rgba(148,163,184,0.22)'} strokeWidth={on ? 2.4 : 1}
+                      strokeDasharray={on ? undefined : '3 4'} />
+                    <g
+                      onClick={() => setSel(l.key)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSel(l.key) } }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Derivação ${l.key}, ${l.wall}`}
+                      className="cursor-pointer focus:outline-none"
+                    >
+                      <circle cx={p.x} cy={p.y} r={22} fill="transparent" pointerEvents="all" />
+                      <circle cx={p.x} cy={p.y} r={on ? 14 : 11} pointerEvents="none"
+                        fill={on ? l.color : 'rgba(15,23,42,0.85)'} stroke={l.color} strokeWidth="1.6" />
+                      <text x={p.x} y={p.y + 4} textAnchor="middle" fontSize="10" fontWeight="900" pointerEvents="none"
+                        fill={on ? '#0b1220' : l.color} fontFamily="ui-monospace, monospace">
+                        {l.key}
+                      </text>
+                    </g>
+                  </React.Fragment>
                 )
               })}
               <text x="150" y="212" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="rgba(148,163,184,0.75)">
@@ -204,27 +233,20 @@ export function LeadsExplorer({ plane: initial = 'frontal' }: { plane?: 'frontal
         </div>
 
         <div className="space-y-2.5">
-          <div className="flex flex-wrap gap-1.5">
+          <ScrollRow label="Derivações">
             {list.map((l) => (
-              <button
-                key={l.key}
-                type="button"
-                onClick={() => setSel(l.key)}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-black transition ${
-                  sel === l.key ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground'
-                }`}
-              >
+              <LabChip key={l.key} active={sel === l.key} onClick={() => setSel(l.key)} className="min-w-[46px] font-black">
                 {l.key}
-              </button>
+              </LabChip>
             ))}
-          </div>
+          </ScrollRow>
 
           <div>
             <h4 className="font-heading text-lg font-black leading-none tracking-tight" style={{ color: info.color }}>{info.key}</h4>
             <p className="mt-1 text-[12px] text-muted-foreground">{info.type}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 [&>*]:min-w-0">
             <div className="rounded-lg border border-border bg-muted/30 px-3 py-2">
               <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Parede</p>
               <p className="text-[13px] font-bold">{info.wall}</p>

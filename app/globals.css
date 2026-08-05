@@ -2583,3 +2583,87 @@
   --viz-seq-4: #64ad72;
   --viz-seq-5: #8bcb96;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Trilha de ensino do Manual do Eletrocardiograma
+   Peças que o Tailwind não cobre: pseudo-elementos do <input type=range>
+   (o polegar precisa de 24 px para ser pego com o dedo) e as máscaras de
+   rolagem das barras de controle horizontais dos laboratórios.
+   ══════════════════════════════════════════════════════════════════ */
+
+.course-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  cursor: pointer;
+  /* área de toque de 44 px sem engordar o traço visível */
+  padding: 18px 0;
+  margin: -14px 0;
+  touch-action: pan-y;
+}
+.course-range:focus { outline: none; }
+.course-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.35);
+}
+
+.course-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: hsl(var(--muted-foreground) / 0.25);
+}
+.course-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 24px;
+  width: 24px;
+  margin-top: -8px;
+  border-radius: 999px;
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+  transition: transform 0.12s ease;
+}
+.course-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+
+.course-range::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: hsl(var(--muted-foreground) / 0.25);
+}
+.course-range::-moz-range-thumb {
+  height: 22px;
+  width: 22px;
+  border-radius: 999px;
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+
+/* Barra de controles que rola no celular sem cortar o último botão. */
+.course-scroll-row {
+  display: flex;
+  gap: 0.375rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  /* o padding lateral evita que o foco corte a borda do 1º/último item */
+  padding: 2px 1px;
+  margin: -2px -1px;
+}
+.course-scroll-row::-webkit-scrollbar { display: none; }
+.course-scroll-row > * { flex: 0 0 auto; scroll-snap-align: start; }
+
+/* Nós da trilha: pulso discreto só na lição atual, e só para quem não pediu
+   redução de movimento. */
+@keyframes course-node-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.45); }
+  50% { box-shadow: 0 0 0 10px hsl(var(--primary) / 0); }
+}
+.course-node-current { animation: course-node-pulse 2.4s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .course-node-current { animation: none; }
+}

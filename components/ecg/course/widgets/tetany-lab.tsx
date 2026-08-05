@@ -99,7 +99,7 @@ export function TetanyLab() {
         />
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="grid gap-3 lg:grid-cols-2 [&>*]:min-w-0">
         {/* Esquelético */}
         <div>
           <p className="mb-1 text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
@@ -114,7 +114,7 @@ export function TetanyLab() {
               <path d={skel.d} fill="none" stroke="#fbbf24" strokeWidth="2.4" strokeLinejoin="round" />
             </svg>
           </div>
-          <div className="mt-1.5 grid grid-cols-2 gap-2">
+          <div className="mt-1.5 grid grid-cols-2 gap-2 [&>*]:min-w-0">
             <Metric label="Período refratário" value="1–5" unit="ms" />
             <Metric label="Regime" value={regime.split(' ')[0]} tone={hz >= 6 ? 'bad' : 'warn'} />
           </div>
@@ -138,7 +138,7 @@ export function TetanyLab() {
               <path d={card.d} fill="none" stroke="#34d399" strokeWidth="2.4" strokeLinejoin="round" />
             </svg>
           </div>
-          <div className="mt-1.5 grid grid-cols-2 gap-2">
+          <div className="mt-1.5 grid grid-cols-2 gap-2 [&>*]:min-w-0">
             <Metric label="Período refratário" value="200–300" unit="ms" />
             <Metric label="Estímulos ignorados" value={blocked} tone={blocked > 0 ? 'bad' : 'good'} />
           </div>

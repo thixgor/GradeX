@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight, Play, Pause, RotateCcw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Play, Pause, RotateCcw, Check } from 'lucide-react'
 import { BEAT, beatPath, xOf, yOf, type StripScale } from '@/lib/ecg/course/strip'
 import { CourseHeart, type HeartPart } from './course-heart'
-import { EcgGrid, LabButton, LabNote, LabShell } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, ScrollRow } from './ui'
 
 /**
  * O construtor do traçado — o laboratório central da trilha.
@@ -200,27 +200,22 @@ export function WaveBuilder() {
 
   return (
     <LabShell>
-      {/* Trilho de etapas */}
-      <div className="mb-3 flex flex-wrap gap-1.5">
+      {/* Trilho de etapas — rola na horizontal no celular */}
+      <ScrollRow className="mb-3" label="Etapas do batimento">
         {STEPS.map((s, idx) => (
-          <button
+          <LabChip
             key={s.id}
-            type="button"
+            active={idx === i}
             onClick={() => { setPlaying(false); setI(idx) }}
-            className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
-              idx === i
-                ? 'bg-primary text-primary-foreground'
-                : idx < i
-                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                  : 'bg-muted/50 text-muted-foreground hover:text-foreground'
-            }`}
+            className={idx < i && idx !== i ? 'text-emerald-600 dark:text-emerald-400' : ''}
           >
+            {idx < i && <Check className="mr-1 h-3 w-3" />}
             {s.chip}
-          </button>
+          </LabChip>
         ))}
-      </div>
+      </ScrollRow>
 
-      <div className="grid gap-3 lg:grid-cols-[1.55fr_1fr]">
+      <div className="grid gap-3 lg:grid-cols-[1.55fr_1fr] [&>*]:min-w-0">
         {/* ── Papel ── */}
         <div>
           <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
@@ -294,8 +289,8 @@ export function WaveBuilder() {
             <LabButton onClick={() => { setPlaying(false); setI(0) }} title="Recomeçar">
               <RotateCcw className="h-4 w-4" />
             </LabButton>
-            <LabButton onClick={() => { setPlaying(false); go(1) }} disabled={isLast} active tone="primary" className="ml-auto">
-              Próxima onda <ChevronRight className="h-4 w-4" />
+            <LabButton onClick={() => { setPlaying(false); go(1) }} disabled={isLast} active tone="primary" className="ml-auto whitespace-nowrap">
+              Próxima<span className="hidden sm:inline">&nbsp;onda</span> <ChevronRight className="h-4 w-4" />
             </LabButton>
           </div>
         </div>
