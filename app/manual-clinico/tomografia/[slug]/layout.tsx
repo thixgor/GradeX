@@ -19,7 +19,7 @@ export async function generateMetadata({
   const secao = getSecaoDaSubsecao(sub)
   const nomes = sub.estruturas.slice(0, 8).map((e) => e.nome).join(', ')
   const titulo = `${sub.titulo} na TC — ${secao?.titulo} | Manual de Tomografia`
-  const descricao = `${sub.subtitulo}. ${sub.totalCortes} cortes interativos e ${sub.estruturas.length} estruturas comentadas: ${nomes}. Densidade em unidades Hounsfield, janela ideal, como identificar, importância clínica e alterações na TC.`
+  const descricao = `${sub.subtitulo}. ${sub.totalCortes} cortes interativos e ${sub.estruturas.length} estruturas comentadas: ${nomes}. Densidade em unidades Hounsfield, janela ideal, como identificar, importância clínica e alterações na TC. Privativo de assinantes do Manual Clínico e contas Plus+.`
 
   return {
     title: titulo,

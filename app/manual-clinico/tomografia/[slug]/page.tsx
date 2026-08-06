@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import {
   ArrowLeft,
   ArrowRight,
@@ -21,6 +21,8 @@ import {
   Lightbulb,
   Syringe,
   RotateCcw,
+  Crown,
+  Loader2,
 } from 'lucide-react'
 import {
   getSubsecao,
@@ -41,6 +43,9 @@ import {
   ROTULO_CATEGORIA,
   tema,
 } from '@/components/tomografia/tema'
+import { PaywallTomografia } from '@/components/tomografia/paywall'
+import { useAcessoTomografia } from '@/components/tomografia/use-acesso'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 type Aba = 'estruturas' | 'roteiro' | 'quiz' | 'treino'
 
@@ -79,6 +84,8 @@ function SerieConteudo() {
   const [folhaAberta, setFolhaAberta] = useState(false)
   const visorRef = useRef<HTMLDivElement>(null)
   const dossieRef = useRef<HTMLDivElement>(null)
+  const { user, loading: carregandoShell } = useAppShell()
+  const { dados, carregado } = useAcessoTomografia()
 
   const chaveProgresso = `tomografia-progresso-${sub.id}`
 
@@ -191,6 +198,49 @@ function SerieConteudo() {
     ? Math.round((sub.estruturas.filter((e) => estudadas.has(e.id)).length / sub.estruturas.length) * 100)
     : 0
 
+  const pronto = carregado && !carregandoShell
+  const temAcesso = dados?.access?.hasFullAccess === true
+
+  if (!pronto) {
+    return (
+      <div className="surface-page flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Sem acesso, a série não renderiza — nem visualizador, nem lista de
+  // estruturas. O link direto cai na mesma página de vendas, mas nomeando a
+  // série que a pessoa tentou abrir: é o momento em que a intenção está mais
+  // clara e o argumento pode ser mais preciso.
+  if (!temAcesso) {
+    return (
+      <div className="surface-page min-h-screen">
+        <div className="border-b border-border bg-muted/30">
+          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
+            <Link
+              href="/manual-clinico/tomografia"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" /> Manual de Tomografia
+            </Link>
+          </div>
+        </div>
+        <div className="container mx-auto max-w-6xl px-4 py-8">
+          <PaywallTomografia
+            onCheckout={() => router.push('/manual-clinico/checkout')}
+            isAuthenticated={!!user}
+            planos={dados?.product?.plans || []}
+            precoAvulso={dados?.product?.currentPrice ?? 0}
+            produtoAtivo={dados?.product?.isActive !== false}
+            resumo={dados?.resumo}
+            serieAlvo={secao ? `${sub.titulo} (${secao.titulo})` : sub.titulo}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="surface-page min-h-screen pb-20 lg:pb-0">
       {/* ══════════ CABEÇALHO ══════════ */}
@@ -225,6 +275,10 @@ function SerieConteudo() {
                   <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                   <span>
                     Sentido {sub.orientacao === 'cranio-caudal' ? 'crânio-caudal' : 'caudo-cranial'}
+                  </span>
+                  <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                  <span className="inline-flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
+                    <Crown className="h-3 w-3" /> {PLUS_LABEL}
                   </span>
                 </div>
               </div>

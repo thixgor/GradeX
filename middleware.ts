@@ -49,8 +49,10 @@ const publicRoutes = [
   '/api/amostra',
   '/manual-clinico',
   '/manual-clinico/farmacologia',
-  // Manual de Tomografia: atlas educacional aberto, como a Anatomia 3D. As
-  // séries individuais (/tomografia/<slug>) entram pela regex em isPublicRoute.
+  // Manual de Tomografia: a página é pública para exibir a vitrine de vendas a
+  // quem não assina; o atlas em si é privativo e quem decide é o handler
+  // /api/manual-clinico/tomografia. As séries (/tomografia/<slug>) entram pela
+  // regex em isPublicRoute, com a mesma lógica.
   '/manual-clinico/tomografia',
   // Manual do Eletrocardiograma: página pública que exibe o paywall a visitantes;
   // o acesso ao simulador é validado no handler /api/manual-clinico/eletrocardiograma.
@@ -153,6 +155,7 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/manual-clinico' ||
     pathname === '/api/manual-clinico/product' ||
     pathname === '/api/manual-clinico/eletrocardiograma' ||
+    pathname === '/api/manual-clinico/tomografia' ||
     pathname === '/api/farmacologia'
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true

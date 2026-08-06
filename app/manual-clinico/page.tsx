@@ -364,7 +364,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="tomografia"]',
     title: 'Manual de Tomografia',
-    body: 'Atlas de TC interativo: role o scroll e percorra os cortes como no aparelho, troque a janela e estude cada estrutura em profundidade — tórax, abdome e crânio.',
+    body: 'Atlas de TC interativo: role o scroll e percorra os cortes como no aparelho, troque a janela e estude cada estrutura em profundidade — tórax, abdome e crânio. Exclusivo de assinantes.',
   },
   {
     target: '[data-tour="ecg"]',
@@ -1059,24 +1059,30 @@ function ManualClinicoContent() {
           <button
             onClick={() => router.push('/manual-clinico/tomografia')}
             data-tour="tomografia"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-sky-500/20 bg-gradient-to-r from-sky-500/[0.06] to-card p-4 text-left transition-colors hover:border-sky-500/40"
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <img
-                  src="/logo_manual_tomografia_domineaqui.svg"
-                  alt="Manual de Tomografia"
-                  width={945}
-                  height={265}
-                  className="block h-auto w-full max-w-[190px] dark:[filter:invert(1)_hue-rotate(180deg)_brightness(1.15)]"
-                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <img
+                    src="/logo_manual_tomografia_domineaqui.svg"
+                    alt="Manual de Tomografia"
+                    width={945}
+                    height={265}
+                    className="block h-auto w-full max-w-[190px] dark:[filter:invert(1)_hue-rotate(180deg)_brightness(1.15)]"
+                  />
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
+                    <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
+                  </span>
+                </div>
                 <p className="mt-1.5 text-xs text-muted-foreground">
                   Atlas tomográfico interativo: TC de tórax, abdome e crânio com os cortes percorridos por
-                  scroll, como no aparelho. Troca de janela, salto para a estrutura, mais de 250 estruturas
-                  com densidade em UH, como identificar, clínica e alterações — com quiz e modo treino.
+                  scroll, como no aparelho. Troca de janela, salto para a estrutura, 272 estruturas com
+                  densidade em UH, como identificar, clínica e alterações — com quiz e modo treino.
+                  Privativo para assinantes.
                 </p>
               </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-sky-500" />
             </div>
           </button>
         )}

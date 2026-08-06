@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { Input } from '@/components/ui/input'
 import {
   ArrowLeft,
@@ -17,6 +17,8 @@ import {
   Target,
   BookOpen,
   Sparkles,
+  Crown,
+  Loader2,
 } from 'lucide-react'
 import {
   SECOES,
@@ -29,6 +31,9 @@ import {
 } from '@/lib/tomografia'
 import { ICONES, ICONE_PADRAO, tema, COR_CATEGORIA, ROTULO_CATEGORIA } from '@/components/tomografia/tema'
 import { LogoTomografia } from '@/components/tomografia/logo'
+import { PaywallTomografia } from '@/components/tomografia/paywall'
+import { useAcessoTomografia } from '@/components/tomografia/use-acesso'
+import { PLUS_LABEL } from '@/lib/account-tier'
 
 export default function TomografiaPage() {
   return (
@@ -41,9 +46,56 @@ export default function TomografiaPage() {
 function TomografiaConteudo() {
   const router = useRouter()
   const [busca, setBusca] = useState('')
+  const { user, loading: carregandoShell } = useAppShell()
+  const { dados, carregado } = useAcessoTomografia()
 
   const resultados = useMemo(() => buscarEstruturas(busca), [busca])
   const buscando = busca.trim().length >= 2
+
+  const pronto = carregado && !carregandoShell
+  const temAcesso = dados?.access?.hasFullAccess === true
+
+  // O middleware manda quem não tem sessão para /comprar (venda por Serial Key,
+  // sem conta). Duplicar essa decisão aqui só criaria outro lugar para
+  // desencontrar da regra do servidor.
+  function irParaCheckout() {
+    router.push('/manual-clinico/checkout')
+  }
+
+  if (!pronto) {
+    return (
+      <div className="surface-page flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!temAcesso) {
+    return (
+      <div className="surface-page min-h-screen">
+        <div className="border-b border-border bg-muted/30">
+          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
+            <button
+              onClick={() => router.push('/manual-clinico')}
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
+            </button>
+          </div>
+        </div>
+        <div className="container mx-auto max-w-6xl px-4 py-8">
+          <PaywallTomografia
+            onCheckout={irParaCheckout}
+            isAuthenticated={!!user}
+            planos={dados?.product?.plans || []}
+            precoAvulso={dados?.product?.currentPrice ?? 0}
+            produtoAtivo={dados?.product?.isActive !== false}
+            resumo={dados?.resumo}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="surface-page min-h-screen">
@@ -85,6 +137,9 @@ function TomografiaConteudo() {
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
+                <Crown className="h-3.5 w-3.5" /> {PLUS_LABEL} · acesso liberado
+              </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
                 {TOTAL_CORTES} cortes reais

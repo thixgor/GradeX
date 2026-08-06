@@ -4,7 +4,7 @@ import { publicIndexingRobots } from '@/lib/seo'
 export const metadata: Metadata = {
   title: 'Manual de Tomografia — Atlas interativo de TC | Manual Clínico',
   description:
-    'Atlas tomográfico interativo com TC de tórax, abdome e crânio: role o scroll e percorra os cortes como no aparelho. Mais de 250 estruturas com morfologia, função, densidade em unidades Hounsfield, janela ideal, como identificar na imagem, importância clínica e o aspecto de cada alteração na TC. Com quiz, roteiro de leitura sistemática e modo treino.',
+    'Atlas tomográfico interativo com TC de tórax, abdome e crânio: role o scroll e percorra os cortes como no aparelho. Mais de 250 estruturas com morfologia, função, densidade em unidades Hounsfield, janela ideal, como identificar na imagem, importância clínica e o aspecto de cada alteração na TC. Com quiz, roteiro de leitura sistemática e modo treino. Privativo de assinantes do Manual Clínico e contas Plus+.',
   robots: publicIndexingRobots,
   openGraph: {
     title: 'Manual de Tomografia — atlas interativo de TC',
