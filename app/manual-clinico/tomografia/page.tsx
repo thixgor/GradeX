@@ -157,7 +157,11 @@ function TomografiaConteudo() {
 
             {/* Busca */}
             <div className="mt-6 max-w-xl">
-              <div className="group relative flex items-center overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors focus-within:border-primary/50">
+              {/* o campo flutua sobre a textura do cabeçalho: é onde o vidro
+                  tem o que refratar, e por isso ele ganha o material aqui e
+                  não nos vinte cartões de série (blur em cada cartão custaria
+                  o scroll do celular). */}
+              <div className="glass-panel group relative flex items-center overflow-hidden rounded-xl transition-colors focus-within:border-primary/50">
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
                 <Input
                   placeholder="Buscar estrutura (veia porta, cápsula interna, apêndice...)"

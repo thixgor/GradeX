@@ -2741,11 +2741,37 @@
     0 8px 24px -10px rgb(0 0 0 / 0.7);
 }
 
+/* Vidro de FOLHA (bottom sheet do celular).
+   Separado do `.glass-panel` por um motivo prático: a folha sobe por cima de
+   uma lista de texto, e com a translucidez do painel (0.09 de branco no tema
+   escuro) os nomes das estruturas atravessavam o vidro e disputavam a leitura
+   com o texto da ficha. Material espesso — desfoque maior e fundo bem mais
+   opaco — mantém a sensação de vidro sem custar legibilidade. */
+.glass-sheet {
+  position: relative;
+  background: linear-gradient(180deg, rgb(252 252 253 / 0.9) 0%, rgb(248 249 251 / 0.86) 100%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.85),
+    0 -10px 40px -12px rgb(15 23 42 / 0.35);
+}
+
+.dark .glass-sheet {
+  background: linear-gradient(180deg, rgb(24 28 34 / 0.9) 0%, rgb(16 19 24 / 0.88) 100%);
+  border-color: rgb(255 255 255 / 0.13);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    0 -10px 40px -12px rgb(0 0 0 / 0.7);
+}
+
 /* Realce de luz na aresta superior — a quina do material pegando luz.
    Fica em ::after e não em ::before para não brigar com pseudo-elementos que
    os utilitários do Tailwind possam usar no mesmo nó. */
 .glass-panel::after,
-.glass-panel-dark::after {
+.glass-panel-dark::after,
+.glass-sheet::after {
   content: '';
   position: absolute;
   /* left/right em vez de inset-inline: o Safari só ganhou a propriedade
@@ -2765,6 +2791,7 @@
 }
 
 .dark .glass-panel::after,
+.dark .glass-sheet::after,
 .glass-panel-dark::after {
   background: linear-gradient(
     90deg,
@@ -2787,11 +2814,18 @@
   .glass-panel-dark {
     background: rgb(12 16 22 / 0.93);
   }
+  .glass-sheet {
+    background: rgb(252 252 253 / 0.98);
+  }
+  .dark .glass-sheet {
+    background: rgb(20 24 30 / 0.98);
+  }
 }
 
 /* O Modo Lite existe para aparelho fraco e rede ruim: blur de fundo é
    justamente o efeito mais caro da página. */
 .lite-mode .glass-panel,
+.lite-mode .glass-sheet,
 .lite-mode .glass-panel-dark {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -2802,7 +2836,11 @@
 .lite-mode .glass-panel-dark {
   background: rgb(12 16 22 / 0.92);
 }
+.lite-mode .glass-sheet {
+  background: hsl(var(--card));
+}
 .lite-mode .glass-panel::after,
+.lite-mode .glass-sheet::after,
 .lite-mode .glass-panel-dark::after {
   display: none;
 }

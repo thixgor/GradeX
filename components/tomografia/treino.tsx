@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Crosshair, Check, X, RotateCcw, Play, Trophy, ArrowRight } from 'lucide-react'
+import { Crosshair, Check, X, RotateCcw, Play, Trophy, ArrowRight, Eye } from 'lucide-react'
 import type { EstruturaTC } from '@/lib/tomografia/tipos'
 
 /**
@@ -27,11 +27,18 @@ interface TreinoProps {
   corteAtual: number
   /** Leva o visualizador a um corte (usado no "mostrar resposta"). */
   onIrParaCorte: (corte: number) => void
+  /**
+   * Traz o visualizador de volta à tela SEM mexer no corte. No celular o visor
+   * fica muito acima da aba, então o enunciado "role o visualizador" apontava
+   * para algo fora de vista — e mudar o corte por conveniência entregaria a
+   * resposta do exercício.
+   */
+  onVerVisor?: () => void
 }
 
 type Fase = 'ocioso' | 'procurando' | 'acertou' | 'errou' | 'fim'
 
-export function ModoTreino({ estruturas, corteAtual, onIrParaCorte }: TreinoProps) {
+export function ModoTreino({ estruturas, corteAtual, onIrParaCorte, onVerVisor }: TreinoProps) {
   // Só entram estruturas cujo corte é conhecido — sem isso não há como corrigir.
   const elegiveis = useMemo(() => estruturas.filter((e) => e.cortes && e.cortes.length > 0), [estruturas])
 
@@ -174,12 +181,24 @@ export function ModoTreino({ estruturas, corteAtual, onIrParaCorte }: TreinoProp
       </p>
 
       {fase === 'procurando' && (
-        <button
-          onClick={conferir}
-          className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98]"
-        >
-          <Crosshair className="h-4 w-4" /> Conferir este corte
-        </button>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          {onVerVisor && (
+            <button
+              onClick={onVerVisor}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-muted/40 px-4 text-sm font-bold transition hover:bg-muted lg:hidden"
+            >
+              <Eye className="h-4 w-4" /> Ver o visualizador
+            </button>
+          )}
+          <button
+            onClick={conferir}
+            /* `sm:flex-1` e não `flex-1`: em coluna, `flex-basis: 0` passa por
+               cima da altura e o botão desaba para a altura do texto. */
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98] sm:flex-1"
+          >
+            <Crosshair className="h-4 w-4" /> Conferir este corte
+          </button>
+        </div>
       )}
 
       {(fase === 'acertou' || fase === 'errou') && (

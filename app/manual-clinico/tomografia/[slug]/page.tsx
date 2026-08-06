@@ -350,7 +350,7 @@ function SerieConteudo() {
           {/* ── Coluna do estudo ── */}
           <div className="min-w-0 space-y-4">
             {/* Abas */}
-            <div className="flex gap-1.5 overflow-x-auto rounded-xl border border-border bg-card p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="glass-panel flex gap-1.5 overflow-x-auto rounded-xl p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {(
                 [
                   ['estruturas', 'Estruturas', Target],
@@ -456,7 +456,7 @@ function SerieConteudo() {
 
                 {/* Ficha no desktop */}
                 {selecionada && (
-                  <div ref={dossieRef} className="hidden max-h-[75vh] scroll-mt-4 lg:block">
+                  <div ref={dossieRef} className="hidden scroll-mt-4 lg:block">
                     <Dossie
                       estrutura={selecionada}
                       corteAtual={corte}
@@ -475,7 +475,13 @@ function SerieConteudo() {
             {aba === 'quiz' && <QuizTC key={sub.id} questoes={sub.quiz} />}
 
             {aba === 'treino' && (
-              <ModoTreino key={sub.id} estruturas={sub.estruturas} corteAtual={corte} onIrParaCorte={irParaCorte} />
+              <ModoTreino
+                key={sub.id}
+                estruturas={sub.estruturas}
+                corteAtual={corte}
+                onIrParaCorte={irParaCorte}
+                onVerVisor={() => visorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              />
             )}
           </div>
         </div>
@@ -528,7 +534,8 @@ function SerieConteudo() {
             onClick={() => setFolhaAberta(false)}
             aria-label="Fechar ficha"
           />
-          <div className="relative max-h-[82vh] w-full animate-fade-in-up">
+          {/* a folha define a própria altura máxima; aqui só o posicionamento */}
+          <div className="relative w-full animate-fade-in-up">
             <Dossie
               estrutura={selecionada}
               corteAtual={corte}

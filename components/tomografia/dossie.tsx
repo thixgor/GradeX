@@ -59,9 +59,27 @@ export function Dossie({
   const cortes = estrutura.cortes || []
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card">
+    /* A altura máxima fica AQUI, no próprio contêiner flex, e não no wrapper de
+       fora. Com `h-full` dentro de um pai de altura automática, a porcentagem
+       resolvia para `auto`: a ficha crescia com o texto, o `flex-1` do corpo
+       nunca ganhava altura para rolar e a folha saía cortada embaixo — a parte
+       de clínica e alterações ficava inalcançável no celular. */
+    <div
+      className={
+        comoFolha
+          ? 'glass-sheet flex max-h-[86vh] flex-col overflow-hidden rounded-t-2xl'
+          : 'flex flex-col overflow-hidden rounded-2xl border border-border bg-card'
+      }
+    >
+      {/* Puxador da folha — sinaliza que o painel rola e que dá para fechar */}
+      {comoFolha && (
+        <div className="flex shrink-0 justify-center pb-1 pt-2.5">
+          <span className="h-1 w-9 rounded-full bg-foreground/20" />
+        </div>
+      )}
+
       {/* Cabeçalho */}
-      <div className="flex items-start gap-3 border-b border-border p-4">
+      <div className="flex shrink-0 items-start gap-3 border-b border-border p-4">
         <div className={`shrink-0 rounded-lg ${t.bg} p-2`}>
           <Icone className={`h-5 w-5 ${t.text}`} />
         </div>
@@ -86,7 +104,7 @@ export function Dossie({
       </div>
 
       {/* Ações */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
+      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
         {cortes.length > 0 && onIrParaCorte && (
           <button
             onClick={() => onIrParaCorte(cortes[Math.floor(cortes.length / 2)])}
@@ -116,7 +134,11 @@ export function Dossie({
       </div>
 
       {/* Corpo */}
-      <div ref={topoRef} className="flex-1 space-y-4 overflow-y-auto p-4">
+      {/* min-h-0: item de flex em coluna nasce com `min-height: auto` e se
+          recusa a encolher abaixo do conteúdo — sem isto o `overflow-y-auto`
+          não tem o que rolar. `overscroll-contain` impede que o fim da rolagem
+          da ficha continue arrastando a página atrás dela. */}
+      <div ref={topoRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4">
         <p className="text-sm leading-relaxed text-foreground/90">{estrutura.resumo}</p>
 
         {cortes.length > 1 && onIrParaCorte && (
@@ -215,7 +237,8 @@ export function Dossie({
           </div>
         )}
 
-        {comoFolha && <div className="h-4" />}
+        {/* respiro no fim da folha, respeitando a faixa do indicador do iPhone */}
+        {comoFolha && <div className="h-[calc(0.5rem+env(safe-area-inset-bottom))]" />}
       </div>
     </div>
   )
