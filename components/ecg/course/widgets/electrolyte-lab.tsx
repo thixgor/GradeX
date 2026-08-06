@@ -13,11 +13,11 @@ import { Chip, EcgGrid, LabButton, LabNote, LabShell, LabSlider, Metric, PaperFr
  * objetivo não é decorar figuras, e sim ver o mecanismo produzir o desenho.
  */
 
-const W = 800
-const H = 330
-const BASE = 250
-const MVU = 133.333          // unidades de viewBox por mV (10 mm/mV × 13,33 u/mm)
-const MM = 13.333            // 25 mm/s → 2400 ms em 60 mm
+const MM = 13.3333           // 1 mm do papel em unidades do viewBox
+const MVU = MM * 10          // 10 mm/mV
+const W = MM * 60            // 60 mm = 2400 ms a 25 mm/s
+const H = MM * 25            // 25 mm de altura
+const BASE = MM * 20         // linha isoelétrica sobre a 4ª linha grossa
 const DUR = 2400
 const xOf = (t: number) => (t / DUR) * W
 const yOf = (mv: number) => BASE - mv * MVU

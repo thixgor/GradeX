@@ -14,10 +14,10 @@ import { EcgGrid, LabButton, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPap
  * exatamente o impulso morreu.
  */
 
-const MM = 8
-const W = 1000
-const STRIP_H = 150
-const SC: StripScale = { width: W, height: STRIP_H, durationMs: 5000, mvSpan: 1, baseline: 104 }
+const MM = 8              // 1 mm do papel em unidades do viewBox
+const W = MM * 125        // 125 mm = 5 segundos a 25 mm/s
+const STRIP_H = MM * 25   // 25 mm de altura
+const SC: StripScale = { width: W, height: STRIP_H, durationMs: 5000, mvSpan: (STRIP_H / 2) / (10 * MM), baseline: MM * 15 }
 const xOf = (ms: number) => (ms / SC.durationMs) * W
 
 interface LadderBeat {

@@ -11,10 +11,10 @@ import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, PaperFrame, Scr
  * batimento — o que muda é só a régua com que ele é impresso.
  */
 
-const MM = 16
-const W = 640
-const H = 320
-const BASELINE = 224
+const MM = 16          // 1 mm do papel em unidades do viewBox
+const W = MM * 40      // 40 mm = 1600 ms a 25 mm/s
+const H = MM * 20      // 20 mm = 4 quadradões de altura
+const BASELINE = MM * 15  // a linha isoelétrica cai SOBRE uma linha grossa
 
 const PATTERN: EcgPattern = {
   id: 'paper', rate: 68, rhythm: 'sinus', pr: 160,

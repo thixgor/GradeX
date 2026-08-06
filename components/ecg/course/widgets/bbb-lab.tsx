@@ -15,10 +15,13 @@ import { EcgGrid, LabButton, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPap
  * ao caminho que o impulso foi obrigado a tomar.
  */
 
-const MM = 10
-const W = 320
-const H = 190
-const SC: StripScale = { width: W, height: H, durationMs: 1280, mvSpan: 1.5, baseline: 118 }
+const MM = 10            // 1 mm do papel em unidades do viewBox
+const W = MM * 60        // 60 mm = 2400 ms a 25 mm/s
+const H = MM * 40        // 40 mm de altura
+/* mvSpan = (H/2) / (10 mm/mV × MM) — é o que faz um quadradinho valer 0,1 mV.
+   A base fica a 20 mm do topo, sobre uma linha grossa, com 2 mV de folga para
+   cima (R do BRE em V6) e 2 mV para baixo (QS do BRE em V1). */
+const SC: StripScale = { width: W, height: H, durationMs: 2400, mvSpan: (H / 2) / (10 * MM), baseline: MM * 20 }
 
 interface Case {
   key: string

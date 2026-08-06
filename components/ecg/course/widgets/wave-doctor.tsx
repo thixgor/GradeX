@@ -12,12 +12,12 @@ import { EcgGrid, LabButton, LabChip, LabNote, LabShell, PaperFrame, ScrollRow, 
  * figuras soltas.
  */
 
-const W = 420
-const H = 210
-const BASE = 150
-const MVU = 84
-const MM = 8.4          // 25 mm/s: 1200 ms em 50 mm
-const DUR = 1200
+const MM = 8.4          // 1 mm do papel em unidades do viewBox
+const MVU = MM * 10     // 10 mm/mV
+const W = MM * 50       // 50 mm = 1000 ms a 50 mm/s
+const H = MM * 35       // 35 mm de altura
+const BASE = MM * 25    // linha isoelétrica sobre a 5ª linha grossa
+const DUR = 1000
 const xOf = (t: number) => (t / DUR) * W
 const yOf = (mv: number) => BASE - mv * MVU
 
@@ -45,7 +45,7 @@ interface Shape {
   epsilon?: number
 }
 
-/** Instante do pico da R dentro da janela de 1200 ms desenhada. */
+/** Instante do pico da R dentro da janela de 1000 ms desenhada. */
 const R0 = 420
 
 /**

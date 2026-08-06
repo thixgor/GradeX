@@ -176,7 +176,14 @@ const SCENARIOS: Scenario[] = [
   },
 ]
 
-const STRIP: StripScale = { width: 640, height: 120, durationMs: 5000, mvSpan: 1.4, baseline: 78 }
+const MM = 8              // 1 mm do papel em unidades do viewBox
+const STRIP: StripScale = {
+  width: MM * 125,        // 125 mm = 5 segundos a 25 mm/s
+  height: MM * 25,        // 25 mm de altura
+  durationMs: 5000,
+  mvSpan: (MM * 25 / 2) / (10 * MM),  // um quadradinho = 0,1 mV
+  baseline: MM * 15,      // linha isoelétrica sobre a 3ª linha grossa
+}
 
 export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks' }) {
   const [selected, setSelected] = useState<HeartPart>('sa')
@@ -240,7 +247,7 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
             <>
               <PaperFrame viewBox={`0 0 ${STRIP.width} ${STRIP.height}`} role="img"
                 aria-label={`Traçado resultante: ${scenario.driver}`}>
-                <EcgGrid mm={16} id="pm-grid" />
+                <EcgGrid mm={MM} id="pm-grid" />
                 <path d={path} fill="none" stroke={scenario.tone === 'bad' ? palette.traceBad : palette.trace}
                   strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
               </PaperFrame>

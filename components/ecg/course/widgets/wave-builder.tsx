@@ -20,7 +20,7 @@ import { EcgGrid, LabButton, LabChip, LabNote, LabShell, PaperFrame, ScrollRow, 
    A janela é de 1000 ms — o ciclo cardíaco inteiro a 60 bpm — para que o
    último passo (segmento TP) caiba na tela junto com a sua medida. */
 const MM = 14
-const SC: StripScale = { width: 700, height: 280, durationMs: 1000, mvSpan: 1, baseline: 196 }
+const SC: StripScale = { width: MM * 50, height: MM * 20, durationMs: 1000, mvSpan: 1, baseline: MM * 15 }
 
 interface BuildStep {
   id: string
@@ -262,7 +262,7 @@ export function WaveBuilder() {
               <g fontSize="16" fontWeight="900" fontFamily="ui-monospace, monospace" fill={palette.annot.sky}>
                 {step.tEnd >= BEAT.pOff && <text x={xOf(BEAT.pPeak, SC)} y={yOf(0.16, SC) - 12} textAnchor="middle">P</text>}
                 {step.tEnd >= BEAT.qPeak + 8 && <text x={xOf(BEAT.qPeak, SC) - 8} y={yOf(-0.1, SC) + 22} textAnchor="middle" fill={palette.annot.pink}>Q</text>}
-                {step.tEnd >= BEAT.rPeak + 6 && <text x={xOf(BEAT.rPeak, SC)} y={yOf(1.25, SC) - 10} textAnchor="middle" fill={palette.annot.emerald}>R</text>}
+                {step.tEnd >= BEAT.rPeak + 6 && <text x={xOf(BEAT.rPeak, SC)} y={Math.max(46, yOf(1.25, SC) - 10)} textAnchor="middle" fill={palette.annot.emerald}>R</text>}
                 {step.tEnd >= BEAT.j && <text x={xOf(BEAT.sPeak, SC) + 10} y={yOf(-0.3, SC) + 22} textAnchor="middle" fill={palette.annot.violet}>S</text>}
                 {step.tEnd >= BEAT.tOff && <text x={xOf(BEAT.tPeak, SC)} y={yOf(0.36, SC) - 12} textAnchor="middle" fill={palette.annot.rose}>T</text>}
                 {step.tEnd >= BEAT.uOff && <text x={xOf(BEAT.uPeak, SC)} y={yOf(0.06, SC) - 10} textAnchor="middle" fill={palette.ink}>U</text>}

@@ -16,9 +16,9 @@ import { EcgGrid, LabButton, LabNote, LabShell, Metric, PaperFrame, ScrollRow, u
  */
 
 const MM = 8
-const W = 1200          // 150 mm = 6 segundos a 25 mm/s
-const H = 160
-const BASE = 110
+const W = MM * 150      // 150 mm = 6 segundos a 25 mm/s
+const H = MM * 20       // 20 mm de altura
+const BASE = MM * 15    // linha isoelétrica sobre a 3ª linha grossa
 const SC: StripScale = { width: W, height: H, durationMs: 6000, mvSpan: 1, baseline: BASE }
 
 interface Case {
