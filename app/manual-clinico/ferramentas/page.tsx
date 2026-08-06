@@ -1,0 +1,342 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { AppShell } from '@/components/app-shell'
+import { Input } from '@/components/ui/input'
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Calculator,
+  Loader2,
+  Search,
+  Sigma,
+  Sparkles,
+  AlertTriangle,
+  X,
+} from 'lucide-react'
+import {
+  CATEGORIAS,
+  TOTAL_FERRAMENTAS,
+  buscar,
+  carregarTodas,
+  type Ferramenta,
+} from '@/lib/ferramentas-clinicas'
+import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
+
+export default function FerramentasClinicasPage() {
+  return (
+    <AppShell allowGuest showHeader={false} guestNotice={false}>
+      <Conteudo />
+    </AppShell>
+  )
+}
+
+function Conteudo() {
+  const router = useRouter()
+  const [busca, setBusca] = useState('')
+  const [todas, setTodas] = useState<Ferramenta[] | null>(null)
+  const [carregando, setCarregando] = useState(false)
+
+  // O catálogo completo só é baixado quando a busca começa a valer a pena.
+  // Antes disso, a página inicial não custa nenhum dos 15 chunks de conteúdo.
+  useEffect(() => {
+    if (busca.trim().length < 2 || todas || carregando) return
+    setCarregando(true)
+    carregarTodas()
+      .then(setTodas)
+      .finally(() => setCarregando(false))
+  }, [busca, todas, carregando])
+
+  const resultados = useMemo(() => (todas ? buscar(todas, busca) : []), [todas, busca])
+  const buscando = busca.trim().length >= 2
+
+  return (
+    <div className="surface-page min-h-screen">
+      {/* ══════════════════════════ HERO ══════════════════════════ */}
+      <div className="relative overflow-hidden border-b border-border">
+        <div className="absolute inset-0 bg-muted/30" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.4] dark:opacity-[0.2]"
+          aria-hidden
+          style={{
+            backgroundImage:
+              'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+            color: 'rgb(148 163 184 / 0.16)',
+            maskImage: 'radial-gradient(ellipse 75% 65% at 50% 0%, black, transparent)',
+            WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 0%, black, transparent)',
+          }}
+        />
+
+        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
+          <button
+            onClick={() => router.push('/manual-clinico')}
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
+          </button>
+
+          <div className="max-w-3xl">
+            <p className="editorial-mark mb-3">Manual Clínico · Calculadoras e escores</p>
+            <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              Ferramentas Clínicas
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {TOTAL_FERRAMENTAS} calculadoras e escores que respondem em tempo real, com a conta aberta. Cada
+              uma traz a fórmula, a interpretação do resultado, o fundamento fisiológico por trás dela, as
+              armadilhas que fazem o número mentir e a referência de onde veio.
+            </p>
+
+            <div className="mt-6 flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+                {TOTAL_FERRAMENTAS} ferramentas
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                <Calculator className="h-3.5 w-3.5 text-primary" /> {CATEGORIAS.length} áreas
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                <Sigma className="h-3.5 w-3.5 text-primary" /> Fórmula visível
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                <BookOpen className="h-3.5 w-3.5 text-primary" /> Referenciadas
+              </span>
+            </div>
+
+            <div className="mt-6 max-w-xl">
+              <div className="group relative flex items-center overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors focus-within:border-primary/50">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
+                <Input
+                  placeholder="Buscar (winter, anion gap, CHA2DS2, MELD, Holliday...)"
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                  className="h-14 border-0 bg-transparent pl-12 pr-12 text-base ring-0 placeholder:text-muted-foreground/40 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  aria-label="Buscar ferramenta clínica"
+                />
+                {busca && (
+                  <button
+                    onClick={() => setBusca('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:bg-muted-foreground/20 hover:text-foreground"
+                    aria-label="Limpar busca"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto max-w-6xl px-4 py-8">
+        {buscando ? (
+          <ResultadosBusca termo={busca} resultados={resultados} carregando={carregando && !todas} />
+        ) : (
+          <>
+            <Grade />
+            <ComoFunciona />
+            <Aviso />
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ────────────────────────── Grade de categorias ────────────────────────── */
+
+function Grade() {
+  return (
+    <section>
+      <div className="mb-5">
+        <p className="editorial-mark mb-2">Índice</p>
+        <h2 className="font-heading text-xl font-semibold tracking-tight">Escolha a área</h2>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Uma ferramenta pode aparecer em mais de uma área — o ânion gap serve à gasometria e à nefrologia,
+          o SOFA à infectologia e à terapia intensiva.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {CATEGORIAS.map((c, i) => {
+          const t = tema(c.cor)
+          const Icone = ICONES[c.icone] || ICONE_PADRAO
+          return (
+            <Link
+              key={c.id}
+              href={`/manual-clinico/ferramentas/${c.id}`}
+              prefetch={false}
+              style={{ animationDelay: `${Math.min(i, 12) * 30}ms` }}
+              className={`group relative flex animate-fade-in-up flex-col overflow-hidden rounded-xl border border-border bg-card p-4 opacity-0 transition duration-200 hover:-translate-y-0.5 hover:shadow-md ${t.hoverBorder}`}
+            >
+              <div className={`pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${t.grad}`} aria-hidden />
+              <div className="relative flex items-start gap-3">
+                <div className={`shrink-0 rounded-xl border ${t.border} ${t.bg} p-2.5`}>
+                  <Icone className={`h-5 w-5 ${t.text}`} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm font-bold leading-snug">{c.nome}</h3>
+                  <p className="mt-0.5 text-[11.5px] font-medium text-muted-foreground/80">{c.subtitulo}</p>
+                </div>
+              </div>
+              <p className="relative mt-3 flex-1 text-[12.5px] leading-relaxed text-muted-foreground line-clamp-4">{c.descricao}</p>
+              <div className="relative mt-3 flex items-center justify-between border-t border-border pt-3">
+                <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground/60">
+                  {c.total} ferramenta{c.total !== 1 ? 's' : ''}
+                </span>
+                <span className={`inline-flex items-center gap-1 text-xs font-bold ${t.text}`}>
+                  Abrir <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </div>
+            </Link>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+/* ────────────────────────── Busca ────────────────────────── */
+
+function ResultadosBusca({
+  termo,
+  resultados,
+  carregando,
+}: {
+  termo: string
+  resultados: ReturnType<typeof buscar>
+  carregando: boolean
+}) {
+  if (carregando) {
+    return (
+      <div className="flex items-center justify-center gap-3 py-20 text-sm text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" /> Carregando o catálogo…
+      </div>
+    )
+  }
+  if (resultados.length === 0) {
+    return (
+      <div className="py-16 text-center">
+        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50">
+          <Search className="h-8 w-8 text-muted-foreground/30" />
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Nenhuma ferramenta para &ldquo;{termo}&rdquo;. Tente o nome do escore, a sigla ou o parâmetro que quer calcular.
+        </p>
+      </div>
+    )
+  }
+  return (
+    <div>
+      <p className="mb-5 text-sm text-muted-foreground">
+        {resultados.length} ferramenta{resultados.length !== 1 ? 's' : ''} para &ldquo;{termo}&rdquo;
+      </p>
+      <div className="grid gap-2.5">
+        {resultados.map(({ ferramenta }) => {
+          const categoria = CATEGORIAS.find((c) => c.id === ferramenta.categorias[0])
+          const t = tema(categoria?.cor ?? 'azul')
+          const Icone = ICONES[categoria?.icone ?? 'padrao'] || ICONE_PADRAO
+          return (
+            <Link
+              key={ferramenta.id}
+              href={`/manual-clinico/ferramentas/${ferramenta.categorias[0]}?f=${ferramenta.id}`}
+              prefetch={false}
+              className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
+            >
+              <div className={`mt-0.5 shrink-0 rounded-lg ${t.bg} p-2`}>
+                <Icone className={`h-4 w-4 ${t.text}`} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <p className="font-semibold leading-snug transition-colors group-hover:text-primary">{ferramenta.nome}</p>
+                  {ferramenta.sigla && (
+                    <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${t.bg} ${t.text}`}>{ferramenta.sigla}</span>
+                  )}
+                </div>
+                <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
+                <p className="mt-1.5 text-[11px] font-medium text-muted-foreground/60">{categoria?.nome}</p>
+              </div>
+              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </Link>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/* ────────────────────────── Como funciona ────────────────────────── */
+
+const PASSOS = [
+  {
+    icon: Calculator,
+    t: 'Calcula enquanto você digita',
+    d: 'Não há botão de calcular. O resultado responde a cada tecla, o que transforma a ferramenta em algo mais útil do que conferência de conta: dá para perguntar "e se o bicarbonato fosse 12?" e ver a resposta.',
+  },
+  {
+    icon: Sigma,
+    t: 'A conta fica aberta',
+    d: 'Cada resultado mostra os valores intermediários, não só o número final. A fórmula aparece do lado, em texto — para conferir, para aprender e para reproduzir no papel.',
+  },
+  {
+    icon: AlertTriangle,
+    t: 'Diz quando o número mente',
+    d: 'Toda ferramenta traz as armadilhas de aplicação: o que invalida o cálculo, qual população não foi estudada, que erro sistemático esperar. É a parte que as calculadoras costumam omitir.',
+  },
+  {
+    icon: BookOpen,
+    t: 'Referência para cada uma',
+    d: 'O artigo de derivação, a validação relevante e a diretriz vigente. Quando o consenso mudou, o texto conta o que mudou e por quê.',
+  },
+]
+
+function ComoFunciona() {
+  return (
+    <section className="mt-12">
+      <div className="mb-5">
+        <p className="editorial-mark mb-2">Como usar</p>
+        <h2 className="font-heading text-xl font-semibold tracking-tight">O que cada ferramenta entrega</h2>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {PASSOS.map((p) => (
+          <div key={p.t} className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/30">
+            <p.icon className="mb-2 h-5 w-5 text-primary" />
+            <p className="text-sm font-bold">{p.t}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Aviso() {
+  return (
+    <section className="mt-12 border-t border-border pt-8">
+      <div className="rounded-xl border border-amber-500/25 bg-amber-500/[0.05] p-5">
+        <div className="flex gap-3">
+          <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <div className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+            <p className="font-semibold text-foreground">Antes de usar qualquer número desta seção</p>
+            <p>
+              Escores e calculadoras descrevem <strong className="font-semibold text-foreground">probabilidades em populações</strong>,
+              não destinos individuais. Um escore de alto risco não condena e um de baixo risco não autoriza a alta —
+              os dois entram na decisão ao lado da história, do exame e do contexto.
+            </p>
+            <p>
+              Cada ferramenta foi derivada numa população específica, com um desfecho específico. Aplicá-la fora
+              disso muda o significado do resultado, e é por isso que cada uma traz suas armadilhas escritas.
+            </p>
+            <p>
+              Material educacional. Confira sempre a dose na bula, o protocolo do seu serviço e a diretriz vigente
+              antes de qualquer conduta.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
