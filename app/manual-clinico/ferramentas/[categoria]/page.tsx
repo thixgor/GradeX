@@ -1,0 +1,264 @@
+'use client'
+
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { AppShell } from '@/components/app-shell'
+import { Input } from '@/components/ui/input'
+import { ArrowLeft, ArrowRight, ChevronsDownUp, Loader2, Search, X } from 'lucide-react'
+import {
+  CATEGORIAS,
+  CATEGORIA_POR_ID,
+  buscar,
+  carregarModulo,
+  ehCategoria,
+  ferramentasDaCategoria,
+  normalizar,
+  type CategoriaId,
+  type Ferramenta,
+} from '@/lib/ferramentas-clinicas'
+import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
+import { PainelFerramenta } from '@/components/ferramentas-clinicas/painel'
+
+export default function CategoriaFerramentasPage() {
+  return (
+    <AppShell allowGuest showHeader={false} guestNotice={false}>
+      <Conteudo />
+    </AppShell>
+  )
+}
+
+function Conteudo() {
+  const params = useParams<{ categoria: string }>()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const id = (params?.categoria ?? '') as CategoriaId
+  const valida = ehCategoria(id)
+  const categoria = valida ? CATEGORIA_POR_ID[id] : null
+
+  const [ferramentas, setFerramentas] = useState<Ferramenta[] | null>(null)
+  const [erro, setErro] = useState(false)
+  const [busca, setBusca] = useState('')
+  const [abertos, setAbertos] = useState<Set<string>>(new Set())
+  const [ancorado, setAncorado] = useState<string | null>(null)
+  const ancoraRef = useRef<string | null>(searchParams?.get('f') ?? null)
+
+  /**
+   * Carrega o módulo desta categoria e, se houver, os módulos das ferramentas
+   * emprestadas de outras áreas. É o preço de deixar uma ferramenta aparecer em
+   * mais de um lugar sem duplicá-la: quem abre "Emergência" também paga pelos
+   * chunks de gasometria e cardiologia, mas só uma vez e só ao abrir.
+   */
+  useEffect(() => {
+    if (!valida) return
+    let ativo = true
+    const outras = CATEGORIAS.map((c) => c.id).filter((c) => c !== id)
+    Promise.all([carregarModulo(id), ...outras.map((c) => carregarModulo(c))])
+      .then((listas) => {
+        if (!ativo) return
+        const vistos = new Set<string>()
+        const todas: Ferramenta[] = []
+        for (const lista of listas) {
+          for (const f of lista) {
+            if (vistos.has(f.id)) continue
+            vistos.add(f.id)
+            todas.push(f)
+          }
+        }
+        setFerramentas(ferramentasDaCategoria(todas, id))
+      })
+      .catch(() => ativo && setErro(true))
+    return () => {
+      ativo = false
+    }
+  }, [id, valida])
+
+  // Abre e rola até a ferramenta indicada em `?f=`, uma única vez.
+  useEffect(() => {
+    const alvo = ancoraRef.current
+    if (!alvo || !ferramentas) return
+    if (!ferramentas.some((f) => f.id === alvo)) return
+    setAbertos(new Set([alvo]))
+    setAncorado(alvo)
+    ancoraRef.current = null
+    requestAnimationFrame(() => {
+      document.getElementById(`f-${alvo}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    const timer = setTimeout(() => setAncorado(null), 2600)
+    return () => clearTimeout(timer)
+  }, [ferramentas])
+
+  const visiveis = useMemo(() => {
+    if (!ferramentas) return []
+    const t = normalizar(busca)
+    if (t.length < 2) return ferramentas
+    return buscar(ferramentas, busca, 200).map((r) => r.ferramenta)
+  }, [ferramentas, busca])
+
+  const proprias = useMemo(() => visiveis.filter((f) => f.categorias[0] === id), [visiveis, id])
+  const emprestadas = useMemo(() => visiveis.filter((f) => f.categorias[0] !== id), [visiveis, id])
+
+  if (!valida || !categoria) return null
+  const t = tema(categoria.cor)
+  const Icone = ICONES[categoria.icone] || ICONE_PADRAO
+
+  const alternar = (fid: string) =>
+    setAbertos((atual) => {
+      const novo = new Set(atual)
+      if (novo.has(fid)) novo.delete(fid)
+      else novo.add(fid)
+      return novo
+    })
+
+  const indice = CATEGORIAS.findIndex((c) => c.id === id)
+  const anterior = CATEGORIAS[(indice - 1 + CATEGORIAS.length) % CATEGORIAS.length]
+  const proxima = CATEGORIAS[(indice + 1) % CATEGORIAS.length]
+
+  return (
+    <div className="surface-page min-h-screen">
+      {/* ══════════════════════════ CABEÇALHO ══════════════════════════ */}
+      <div className="relative overflow-hidden border-b border-border">
+        <div className={`absolute inset-0 bg-gradient-to-b ${t.grad}`} aria-hidden />
+        <div className="container relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-8">
+          <button
+            onClick={() => router.push('/manual-clinico/ferramentas')}
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Todas as ferramentas
+          </button>
+
+          <div className="flex items-start gap-4">
+            <div className={`shrink-0 rounded-xl border ${t.border} ${t.bg} p-3`}>
+              <Icone className={`h-6 w-6 ${t.text}`} />
+            </div>
+            <div className="min-w-0">
+              <p className="editorial-mark mb-1.5">Ferramentas Clínicas</p>
+              <h1 className="font-heading text-2xl font-bold leading-tight tracking-tight sm:text-3xl">{categoria.nome}</h1>
+              <p className="mt-0.5 text-xs font-medium text-muted-foreground">
+                {categoria.total} ferramenta{categoria.total !== 1 ? 's' : ''} · {categoria.subtitulo}
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">{categoria.descricao}</p>
+
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="group relative flex flex-1 items-center overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors focus-within:border-primary/50">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+              <Input
+                placeholder={`Filtrar em ${categoria.nome.toLowerCase()}...`}
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="h-11 border-0 bg-transparent pl-10 pr-10 text-sm ring-0 placeholder:text-muted-foreground/40 focus-visible:ring-0 focus-visible:ring-offset-0"
+                aria-label="Filtrar ferramentas desta categoria"
+              />
+              {busca && (
+                <button
+                  onClick={() => setBusca('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label="Limpar filtro"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            {abertos.size > 0 && (
+              <button
+                onClick={() => setAbertos(new Set())}
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/35 hover:text-foreground"
+              >
+                <ChevronsDownUp className="h-4 w-4" /> Fechar todas
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════ LISTA ══════════════════════════ */}
+      <div className="container mx-auto max-w-5xl px-4 py-6">
+        {erro ? (
+          <p className="py-16 text-center text-sm text-muted-foreground">
+            Não foi possível carregar as ferramentas desta área. Recarregue a página.
+          </p>
+        ) : !ferramentas ? (
+          <div className="flex items-center justify-center gap-3 py-20 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" /> Carregando…
+          </div>
+        ) : visiveis.length === 0 ? (
+          <p className="py-16 text-center text-sm text-muted-foreground">
+            Nenhuma ferramenta desta área corresponde a &ldquo;{busca}&rdquo;.
+          </p>
+        ) : (
+          <>
+            <div className="space-y-2.5">
+              {proprias.map((f) => (
+                <PainelFerramenta
+                  key={f.id}
+                  ferramenta={f}
+                  cor={categoria.cor}
+                  aberto={abertos.has(f.id)}
+                  onToggle={() => alternar(f.id)}
+                  ancora={ancorado === f.id}
+                />
+              ))}
+            </div>
+
+            {emprestadas.length > 0 && (
+              <div className="mt-10">
+                <div className="mb-4">
+                  <p className="editorial-mark mb-1.5">Também se aplicam aqui</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Ferramentas que moram em outra área do Manual, mas que fazem parte do raciocínio desta.
+                  </p>
+                </div>
+                <div className="space-y-2.5">
+                  {emprestadas.map((f) => (
+                    <PainelFerramenta
+                      key={f.id}
+                      ferramenta={f}
+                      cor={CATEGORIA_POR_ID[f.categorias[0]]?.cor ?? categoria.cor}
+                      aberto={abertos.has(f.id)}
+                      onToggle={() => alternar(f.id)}
+                      ancora={ancorado === f.id}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ══════════════════════════ NAVEGAÇÃO ══════════════════════════ */}
+        <nav className="mt-12 grid gap-3 border-t border-border pt-6 sm:grid-cols-2">
+          <Link
+            href={`/manual-clinico/ferramentas/${anterior.id}`}
+            prefetch={false}
+            className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/35"
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:-translate-x-0.5" />
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground/60">Anterior</p>
+              <p className="truncate text-sm font-semibold">{anterior.nome}</p>
+            </div>
+          </Link>
+          <Link
+            href={`/manual-clinico/ferramentas/${proxima.id}`}
+            prefetch={false}
+            className="group flex items-center justify-end gap-3 rounded-xl border border-border bg-card p-4 text-right transition-colors hover:border-primary/35"
+          >
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground/60">Próxima</p>
+              <p className="truncate text-sm font-semibold">{proxima.nome}</p>
+            </div>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </nav>
+
+        <p className="mt-8 border-t border-border pt-6 text-center text-xs leading-relaxed text-muted-foreground">
+          Material educacional. Escores descrevem probabilidades em populações e não substituem julgamento clínico,
+          protocolo institucional nem a bula do medicamento.
+        </p>
+      </div>
+    </div>
+  )
+}

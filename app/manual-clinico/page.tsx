@@ -28,6 +28,7 @@ import {
   Target,
   BookOpen,
   Box,
+  Calculator,
   ChevronLeft,
   ChevronRight,
   X,
@@ -1004,6 +1005,32 @@ function ManualClinicoContent() {
               )}
             </div>
           </div>
+        )}
+
+        {/* ══════════ FERRAMENTAS CLÍNICAS ENTRY ══════════ */}
+        {!busca && (
+          <button
+            onClick={() => router.push('/manual-clinico/ferramentas')}
+            data-tour="ferramentas"
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-primary/10 p-2.5">
+                  <Calculator className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold leading-snug">Ferramentas Clínicas</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Mais de 200 calculadoras e escores interativos que respondem enquanto você digita — gasometria,
+                    ventilação mecânica, escores de risco, função renal, sepse, AVC, hepatologia, doses e conversões.
+                    Cada uma com a fórmula à mostra, interpretação do resultado, armadilhas de aplicação e referência.
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </div>
+          </button>
         )}
 
         {/* ══════════ FARMACOLOGIA ENTRY ══════════ */}
