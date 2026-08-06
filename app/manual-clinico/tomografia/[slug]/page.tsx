@@ -246,12 +246,15 @@ function SerieConteudo() {
       {/* ══════════ CABEÇALHO ══════════ */}
       <div className="border-b border-border bg-muted/30">
         <div className="container mx-auto max-w-7xl px-4 pb-5 pt-6">
+          {/* -my-1.5/py-1.5: a linha do texto tem 16 px e nenhum dedo acerta
+              isso. O padding cria o alvo de toque e a margem negativa devolve a
+              altura, então a trilha continua ocupando o mesmo espaço. */}
           <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-            <Link href="/manual-clinico" className="transition-colors hover:text-foreground">
+            <Link href="/manual-clinico" className="-my-1.5 rounded py-1.5 transition-colors hover:text-foreground">
               Manual Clínico
             </Link>
             <ChevronRight className="h-3 w-3 opacity-40" />
-            <Link href="/manual-clinico/tomografia" className="transition-colors hover:text-foreground">
+            <Link href="/manual-clinico/tomografia" className="-my-1.5 rounded py-1.5 transition-colors hover:text-foreground">
               Tomografia
             </Link>
             <ChevronRight className="h-3 w-3 opacity-40" />
@@ -313,7 +316,11 @@ function SerieConteudo() {
       <div className="container mx-auto max-w-7xl px-4 py-6">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
           {/* ── Coluna do visualizador ── */}
-          <div ref={visorRef} className="space-y-5 lg:sticky lg:top-4">
+          {/* min-w-0 nas duas colunas: item de grid tem min-width auto, então o
+              conteúdo mais largo (a régua do visor, a lista de estruturas)
+              empurrava a coluna para 360 px e o corpo cortava a sobra em telas
+              de 320–360 px, onde nada disso podia ser alcançado. */}
+          <div ref={visorRef} className="min-w-0 space-y-5 lg:sticky lg:top-4">
             <VisualizadorTC
               urls={urls}
               corte={corte}
@@ -341,7 +348,7 @@ function SerieConteudo() {
           </div>
 
           {/* ── Coluna do estudo ── */}
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             {/* Abas */}
             <div className="flex gap-1.5 overflow-x-auto rounded-xl border border-border bg-card p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {(
@@ -507,7 +514,7 @@ function SerieConteudo() {
 
         <button
           onClick={() => router.push('/manual-clinico/tomografia')}
-          className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="-m-3 mt-1 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" /> Todas as séries
         </button>
@@ -540,7 +547,7 @@ function SerieConteudo() {
 
       {/* Barra fixa do celular: reabre a ficha da estrutura selecionada */}
       {selecionada && !folhaAberta && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden">
+        <div className="glass-panel fixed inset-x-0 bottom-0 z-40 rounded-none border-x-0 border-b-0 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
           <button
             onClick={() => setFolhaAberta(true)}
             className="flex w-full items-center gap-2.5 rounded-lg bg-primary px-4 py-2.5 text-left text-sm font-bold text-primary-foreground"

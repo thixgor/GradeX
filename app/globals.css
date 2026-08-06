@@ -2667,3 +2667,207 @@
 @media (prefers-reduced-motion: reduce) {
   .course-node-current { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   VIDRO — painéis translúcidos do Manual de Tomografia
+   ═══════════════════════════════════════════════════════════════
+
+   Diferente do `.liquid-glass-bubble`, que é feito para botões flutuantes
+   pequenos e carrega uma borda irisada animada, isto é vidro de PAINEL: um
+   card grande, sóbrio, que precisa continuar legível com texto denso em cima.
+   Por isso não há gradiente cônico girando nem animação — num retângulo de
+   400px aquilo vira ruído visual e custa repaint a cada quadro.
+
+   A receita é a do vidro de sistema da Apple: desfoque forte, saturação
+   aumentada (o que devolve cor ao que está atrás, senão o blur lava tudo),
+   um realce de 1px na aresta superior simulando a luz batendo na quina do
+   material, e sombra difusa e baixa.
+
+   Três cuidados que este bloco resolve:
+
+   1. `backdrop-filter` ainda exige prefixo `-webkit-` no Safari (inclusive no
+      iOS mais recente) — sempre declarado em par.
+   2. Firefox só habilitou `backdrop-filter` por padrão a partir do 103, e há
+      navegadores corporativos travados atrás disso. O `@supports` negativo
+      entrega um fundo sólido o bastante para o texto continuar legível — sem
+      ele, o card ficaria quase transparente sobre a imagem.
+   3. `backdrop-filter` cria camada de composição: aplicado a dezenas de
+      elementos, engasga o scroll no celular. Estas classes existem para ser
+      usadas em POUCOS lugares de destaque, e o Modo Lite as desliga. */
+
+.glass-panel {
+  position: relative;
+  background: linear-gradient(
+    140deg,
+    rgb(255 255 255 / 0.72) 0%,
+    rgb(255 255 255 / 0.52) 55%,
+    rgb(255 255 255 / 0.62) 100%
+  );
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 0.55);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.7),
+    0 1px 2px rgb(15 23 42 / 0.04),
+    0 12px 32px -12px rgb(15 23 42 / 0.14);
+}
+
+.dark .glass-panel {
+  background: linear-gradient(
+    140deg,
+    rgb(255 255 255 / 0.09) 0%,
+    rgb(255 255 255 / 0.04) 55%,
+    rgb(255 255 255 / 0.07) 100%
+  );
+  border-color: rgb(255 255 255 / 0.12);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 12px 32px -12px rgb(0 0 0 / 0.5);
+}
+
+/* Vidro escuro, para sobrepor imagem (HUD e controles do visualizador). */
+.glass-panel-dark {
+  position: relative;
+  background: linear-gradient(140deg, rgb(12 16 22 / 0.72) 0%, rgb(12 16 22 / 0.58) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  /* a última linha (inset embaixo) dá espessura ao material: sem ela a peça
+     lê como um retângulo chapado, não como uma lâmina de vidro. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 -1px 0 rgb(255 255 255 / 0.05),
+    0 8px 24px -10px rgb(0 0 0 / 0.7);
+}
+
+/* Realce de luz na aresta superior — a quina do material pegando luz.
+   Fica em ::after e não em ::before para não brigar com pseudo-elementos que
+   os utilitários do Tailwind possam usar no mesmo nó. */
+.glass-panel::after,
+.glass-panel-dark::after {
+  content: '';
+  position: absolute;
+  /* left/right em vez de inset-inline: o Safari só ganhou a propriedade
+     lógica na 14.1, e este realce precisa aparecer também em iOS antigo. */
+  left: 12%;
+  right: 12%;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.75) 45%,
+    rgb(255 255 255 / 0.55) 60%,
+    transparent
+  );
+}
+
+.dark .glass-panel::after,
+.glass-panel-dark::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.35) 45%,
+    rgb(255 255 255 / 0.22) 60%,
+    transparent
+  );
+}
+
+/* Sem suporte a backdrop-filter, o fundo translúcido some e o texto fica sobre
+   a imagem. Opacidade quase sólida é o que mantém o card utilizável. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background: rgb(255 255 255 / 0.94);
+  }
+  .dark .glass-panel {
+    background: rgb(23 27 33 / 0.94);
+  }
+  .glass-panel-dark {
+    background: rgb(12 16 22 / 0.93);
+  }
+}
+
+/* O Modo Lite existe para aparelho fraco e rede ruim: blur de fundo é
+   justamente o efeito mais caro da página. */
+.lite-mode .glass-panel,
+.lite-mode .glass-panel-dark {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.lite-mode .glass-panel {
+  background: hsl(var(--card));
+}
+.lite-mode .glass-panel-dark {
+  background: rgb(12 16 22 / 0.92);
+}
+.lite-mode .glass-panel::after,
+.lite-mode .glass-panel-dark::after {
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Sliders do visualizador de tomografia (.tc-range)
+   O componente aplica `appearance-none` para tirar o slider nativo, e sem
+   uma regra de polegar isso apaga o polegar inteiro no WebKit e no Firefox:
+   no Safari e no Chrome a régua de cortes ficava sem indicador de posição.
+   Aqui a trilha é desenhada nos pseudo-elementos e o elemento em si vira
+   uma faixa de toque de 24 px — a margem negativa devolve ao fluxo a
+   altura original, para os ticks de marcação continuarem alinhados.
+   ══════════════════════════════════════════════════════════════════ */
+
+.tc-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 24px;
+  margin: -9px 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.tc-range:focus { outline: none; }
+
+.tc-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.15);
+}
+.tc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  margin-top: -6px;
+  border-radius: 999px;
+  background: rgb(52 211 153);
+  border: 2px solid rgb(10 10 10);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+  transition: transform 0.12s ease;
+}
+.tc-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+.tc-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgb(52 211 153 / 0.35);
+}
+
+.tc-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.15);
+}
+.tc-range::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 999px;
+  background: rgb(52 211 153);
+  border: 2px solid rgb(10 10 10);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+}
+.tc-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgb(52 211 153 / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-range::-webkit-slider-thumb { transition: none; }
+}

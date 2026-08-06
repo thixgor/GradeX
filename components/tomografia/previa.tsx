@@ -143,7 +143,10 @@ export function PreviaCine({ regiao, urls }: PreviaProps) {
           />
         </div>
       </div>
-      <figcaption className="mt-2 flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
+      {/* cor fixa clara: esta legenda vive dentro do painel escuro da página de
+          vendas, então `text-muted-foreground` a deixava cinza-sobre-preto no
+          tema claro — praticamente invisível. */}
+      <figcaption className="mt-2 flex items-center justify-center gap-1.5 text-center text-[11px] text-white/55">
         <Layers3 className="h-3 w-3" />
         Amostra de {urls.length} cortes. O atlas completo tem as séries inteiras, com rótulos, janelas e fichas.
       </figcaption>

@@ -67,24 +67,31 @@ function formatBRL(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0))
 }
 
-/** Amostras do mecanismo — uma por região, com poucos cortes de cada série. */
-const AMOSTRAS: { id: string; regiao: string; pasta: string; ext: string; de: number; ate: number }[] = [
-  { id: 'torax', regiao: 'TC de tórax', pasta: '/TC_TORAX/TC_TORAX_CORAÇÃO', ext: 'png', de: 3, ate: 16 },
+/**
+ * Amostras do mecanismo — uma por região.
+ *
+ * Deliberadamente curtas: cinco cortes bastam para demonstrar o gesto de rolar
+ * a pilha, que é o que a vitrine precisa provar. Séries maiores começariam a
+ * entregar o próprio produto — as fatias vêm com os rótulos anatômicos
+ * impressos, então cada corte a mais é conteúdo de graça.
+ */
+const CORTES_AMOSTRA = 5
+
+const AMOSTRAS: { id: string; regiao: string; pasta: string; ext: string; de: number }[] = [
+  { id: 'torax', regiao: 'TC de tórax', pasta: '/TC_TORAX/TC_TORAX_CORAÇÃO', ext: 'png', de: 6 },
   {
     id: 'abdome',
     regiao: 'TC de abdome',
     pasta: '/TC_ABDOME/TC_ABDOME_VISCERAS_PARENQUIMATOSAS',
     ext: 'JPG',
-    de: 16,
-    ate: 32,
+    de: 22,
   },
   {
     id: 'cranio',
     regiao: 'TC de crânio',
     pasta: '/TC_CRANIO/TC_CRANIO_PARENQUIMA_ENCEFALICO',
     ext: 'PNG',
-    de: 5,
-    ate: 18,
+    de: 9,
   },
 ]
 
@@ -189,7 +196,7 @@ export function PaywallTomografia({
 
   const urls = useMemo(
     () =>
-      Array.from({ length: amostra.ate - amostra.de + 1 }, (_, i) =>
+      Array.from({ length: CORTES_AMOSTRA }, (_, i) =>
         encodeURI(`${amostra.pasta}/${amostra.de + i}.${amostra.ext}`),
       ),
     [amostra],
@@ -273,7 +280,7 @@ export function PaywallTomografia({
 
           {/* ── Prévia + preço ── */}
           <div className="space-y-5 lg:sticky lg:top-6">
-            <div className="rounded-2xl border border-border bg-gradient-to-b from-slate-900 to-slate-950 p-4 shadow-sm sm:p-5">
+            <div className="glass-panel-dark overflow-hidden rounded-2xl p-4 sm:p-5">
               <div className="mb-3 flex flex-wrap gap-1.5">
                 {AMOSTRAS.map((a) => (
                   <button
@@ -292,7 +299,7 @@ export function PaywallTomografia({
               <PreviaCine regiao={amostra.regiao} urls={urls} />
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="glass-panel overflow-hidden rounded-2xl p-5 sm:p-6">
               {mostrarPreco ? (
                 <>
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -463,7 +470,7 @@ export function PaywallTomografia({
       </div>
 
       {/* ══════════ BARRA FIXA DO CELULAR ══════════ */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden">
+      <div className="glass-panel fixed inset-x-0 bottom-0 z-40 rounded-none border-x-0 border-b-0 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
         <div className="flex items-center gap-3">
           {mostrarPreco && (
             <div className="min-w-0">

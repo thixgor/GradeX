@@ -386,7 +386,7 @@ export function VisualizadorTC({
         {/* Estrutura em destaque */}
         {destaque && (
           <div className="pointer-events-none absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3">
-            <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-black/70 px-2.5 py-1.5 text-[11px] font-bold text-emerald-200 backdrop-blur-sm sm:text-xs">
+            <span className="glass-panel-dark inline-flex max-w-full items-center gap-1.5 rounded-lg !border-emerald-400/30 px-2.5 py-1.5 text-[11px] font-bold text-emerald-200 sm:text-xs">
               <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-emerald-400" />
               <span className="truncate">{destaque}</span>
             </span>
@@ -535,7 +535,7 @@ export function VisualizadorTC({
 
         {/* Painel de janela */}
         {mostrarAjustes && (
-          <div className="mb-2 rounded-xl border border-white/10 bg-white/[0.04] p-3">
+          <div className="glass-panel-dark mb-2 rounded-xl p-3">
             <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-white/40">Presets de janela</p>
             <div className="flex flex-wrap gap-1.5">
               {JANELAS.map((j, i) => (
@@ -608,7 +608,7 @@ export function VisualizadorTC({
       {/* Atalhos */}
       {mostrarAtalhos && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
-          <div className="max-w-md rounded-2xl border border-white/15 bg-neutral-900 p-5">
+          <div className="glass-panel-dark max-w-md rounded-2xl p-5">
             <div className="mb-3 flex items-center justify-between">
               <h4 className="font-heading text-base font-bold text-white">Atalhos do visualizador</h4>
               <button onClick={() => setMostrarAtalhos(false)} className="rounded-lg p-1 text-white/60 hover:bg-white/10" aria-label="Fechar">

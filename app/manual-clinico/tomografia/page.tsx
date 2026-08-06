@@ -77,7 +77,7 @@ function TomografiaConteudo() {
           <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
             <button
               onClick={() => router.push('/manual-clinico')}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="-m-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
             </button>
@@ -119,7 +119,7 @@ function TomografiaConteudo() {
         <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
           <button
             onClick={() => router.push('/manual-clinico')}
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
           </button>
