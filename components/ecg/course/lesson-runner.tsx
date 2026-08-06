@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import type { Lesson, ModuleColor, Step } from '@/lib/ecg/course/types'
 import { isGraded } from '@/lib/ecg/course/types'
+import { EcgPaperPicker } from '../use-ecg-paper'
 import { TeachView, LabView, QuizView, OrderView, MatchView, FillView } from './lesson-blocks'
 
 /**
@@ -223,6 +224,9 @@ export function LessonRunner({ lesson, moduleTitle, onExit, onComplete, onNext, 
           <span className="min-w-0 flex-1 line-clamp-1 text-[11px] font-semibold text-muted-foreground">
             {moduleTitle} · {lesson.title}
           </span>
+          {/* Troca do papel aqui dentro: é durante a lição que se olha o traçado,
+              e sair para a trilha só para mudar a aparência quebraria o passo. */}
+          <EcgPaperPicker size="sm" className="shrink-0" />
         </div>
       </header>
 

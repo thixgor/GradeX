@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react'
 import type { EcgPattern, LeadName } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
 import { CourseHeart, type HeartPart } from './course-heart'
-import { EcgGrid, LabButton, LabNote, LabShell, ScrollRow } from './ui'
+import { EcgGrid, LabButton, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório dos bloqueios de ramo e fasciculares.
@@ -113,17 +113,22 @@ const CASES: Case[] = [
 
 function LeadPanel({ lead, pattern, label }: { lead: LeadName; pattern: EcgPattern; label: string }) {
   const path = useMemo(() => patternPath(pattern, lead, SC), [pattern, lead])
+  const { palette } = useEcgPaper()
   return (
-    <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-      <div className="flex items-center justify-between border-b border-emerald-500/15 px-2 py-1">
-        <span className="font-mono text-xs font-black text-emerald-400">{lead}</span>
-        <span className="text-[10px] font-bold text-muted-foreground">{label}</span>
-      </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img" aria-label={`Derivação ${lead}`}>
-        <EcgGrid mm={MM} id={`bbb-${lead}`} />
-        <path d={path} fill="none" stroke="#3ff08a" strokeWidth="2.2" strokeLinejoin="round" />
-      </svg>
-    </div>
+    <PaperFrame
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-label={`Derivação ${lead}`}
+      header={(
+        <>
+          <span className="font-mono text-xs font-black">{lead}</span>
+          <span className="text-[10px] font-bold" style={{ color: palette.inkSoft }}>{label}</span>
+        </>
+      )}
+    >
+      <EcgGrid mm={MM} id={`bbb-${lead}`} />
+      <path d={path} fill="none" stroke={palette.trace} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+    </PaperFrame>
   )
 }
 

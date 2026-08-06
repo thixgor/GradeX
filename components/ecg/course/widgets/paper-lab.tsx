@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import type { EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, ScrollRow } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório do papel milimetrado: mostra na prática o que muda quando alguém
@@ -29,6 +29,7 @@ const GAINS = [5, 10, 20]
 export function PaperLab() {
   const [speed, setSpeed] = useState(25)
   const [gain, setGain] = useState(10)
+  const { palette } = useEcgPaper()
 
   const sc: StripScale = useMemo(() => ({
     width: W,
@@ -70,21 +71,18 @@ export function PaperLab() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img"
-          aria-label={`Traçado a ${speed} mm/s e ${gain} mm/mV`}>
-          <EcgGrid mm={MM} id="paper-grid" />
-          {/* pulso de calibração */}
-          <path
-            d={`M6 ${BASELINE} L${6 + MM} ${BASELINE} L${6 + MM} ${BASELINE - calH} L${6 + MM + calW} ${BASELINE - calH} L${6 + MM + calW} ${BASELINE} L${6 + MM + calW + MM} ${BASELINE}`}
-            fill="none" stroke="#fbbf24" strokeWidth="2.2" strokeLinejoin="round"
-          />
-          <text x={8 + MM} y={BASELINE - calH - 6} fontSize="11" fontWeight="800" fill="#fbbf24" fontFamily="ui-monospace, monospace">
-            1 mV
-          </text>
-          <path d={path} fill="none" stroke="#3ff08a" strokeWidth="2.4" strokeLinejoin="round" transform={`translate(${MM * 4},0)`} />
-        </svg>
-      </div>
+      <PaperFrame viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Traçado a ${speed} mm/s e ${gain} mm/mV`}>
+        <EcgGrid mm={MM} id="paper-grid" />
+        {/* pulso de calibração */}
+        <path
+          d={`M6 ${BASELINE} L${6 + MM} ${BASELINE} L${6 + MM} ${BASELINE - calH} L${6 + MM + calW} ${BASELINE - calH} L${6 + MM + calW} ${BASELINE} L${6 + MM + calW + MM} ${BASELINE}`}
+          fill="none" stroke={palette.calibration} strokeWidth="2.2" strokeLinejoin="round"
+        />
+        <text x={8 + MM} y={BASELINE - calH - 6} fontSize="11" fontWeight="800" fill={palette.calibration} fontFamily="ui-monospace, monospace">
+          1 mV
+        </text>
+        <path d={path} fill="none" stroke={palette.trace} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" transform={`translate(${MM * 4},0)`} />
+      </PaperFrame>
 
       <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 [&>*]:min-w-0">
         <Metric label="Quadradinho (tempo)" value={msPerSmall} unit="ms" tone={standard ? 'good' : 'warn'} />

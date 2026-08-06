@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { EcgGrid, LabButton, LabChip, LabNote, LabShell, ScrollRow } from './ui'
+import { beatAt, type BeatSpec, type TShape } from '@/lib/ecg/course/strip'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * "Consultório das ondas": catálogo interativo das deformidades de cada onda.
@@ -28,77 +29,45 @@ interface Shape {
   r?: number
   s?: number
   rprime?: number
+  /** fator de alargamento do QRS (1 = 90 ms) */
   qrsW?: number
   st?: number
   coved?: boolean
   t?: number
   tW?: number
-  tSym?: boolean
-  tPos?: number
+  /** morfologia da T: simétrica (isquemia) ou apiculada (hipercalemia) */
+  tShape?: TShape
+  /** duração do segmento ST (ms) — encurta na hipercalcemia, alonga na hipocalcemia */
+  stW?: number
   u?: number
   j?: number
   delta?: number
   epsilon?: number
 }
 
+/** Instante do pico da R dentro da janela de 1200 ms desenhada. */
 const R0 = 420
 
-function gauss(t: number, a: number, mu: number, sigma: number) {
-  if (!a) return 0
-  const z = (t - mu) / sigma
-  return a * Math.exp(-0.5 * z * z)
+/**
+ * Todo batimento deste catálogo é desenhado pelo MESMO motor de morfologia da
+ * trilha (`beatAt`) — só mudam os parâmetros. É o que garante que a "P
+ * pulmonale" seja a P normal mais alta, e não outra figura desenhada à parte.
+ */
+function specOf(s: Shape): BeatSpec {
+  return {
+    r0: R0,
+    pr: 160,
+    p: s.p, pWidth: s.pW, pNotched: s.pNotched,
+    q: s.q, r: s.r, s: s.s, rPrime: s.rprime,
+    qrsWidth: 90 * (s.qrsW ?? 1),
+    delta: s.delta, jWave: s.j, epsilon: s.epsilon,
+    st: s.st, stCoved: s.coved, stWidth: s.stW,
+    t: s.t, tWidth: s.tW, tShape: s.tShape,
+    u: s.u,
+  }
 }
 
-function value(t: number, s: Shape) {
-  const w = s.qrsW ?? 1
-  const pAmp = s.p ?? 0.15
-  const pW = s.pW ?? 100
-  let v = 0
-
-  if (pAmp !== 0) {
-    if (s.pNotched) {
-      v += gauss(t, pAmp * 0.9, R0 - 165, pW / 6)
-      v += gauss(t, pAmp * 0.9, R0 - 115, pW / 6)
-    } else {
-      v += gauss(t, pAmp, R0 - 145, pW / 4.2)
-    }
-  }
-
-  if (s.delta) {
-    // empastamento inicial lento, encurtando o PR
-    for (let d = 0; d < 50; d += 2) v += gauss(t, s.delta / 25, R0 - 60 + d, 9)
-  }
-
-  v += gauss(t, s.q ?? -0.08, R0 - 26 * w, 7 * w)
-  v += gauss(t, s.r ?? 1.25, R0, 10 * w)
-  v += gauss(t, s.s ?? -0.3, R0 + 28 * w, 11 * w)
-  if (s.rprime) v += gauss(t, s.rprime, R0 + 58 * w, 12 * w)
-  if (s.j) v += gauss(t, s.j, R0 + 50 * w, 14)
-  if (s.epsilon) v += gauss(t, s.epsilon, R0 + 72 * w, 8)
-
-  const jPoint = R0 + 50 * w
-  const tPos = R0 + (s.tPos ?? 210)
-  if (s.st) {
-    if (t > jPoint - 14) {
-      const ramp = Math.min(1, (t - (jPoint - 14)) / 26)
-      const decay = t > tPos ? Math.max(0, 1 - (t - tPos) / 130) : 1
-      const bow = s.coved ? 0.35 * Math.sin(Math.PI * Math.min(1, Math.max(0, (t - jPoint) / (tPos - jPoint)))) : 0
-      v += (s.st + bow * Math.sign(s.st)) * ramp * decay
-    }
-  }
-
-  const tAmp = s.t ?? 0.35
-  const tW = s.tW ?? 165
-  if (s.tSym) {
-    v += gauss(t, tAmp, tPos, tW / 4.6)
-  } else {
-    v += gauss(t, tAmp * 0.55, tPos - tW * 0.18, tW / 3.4)
-    v += gauss(t, tAmp * 0.75, tPos + tW * 0.1, tW / 4.6)
-  }
-
-  v += gauss(t, s.u ?? 0.05, tPos + 155, 34)
-  return v
-}
+const value = (t: number, s: Shape) => beatAt(t, specOf(s))
 
 interface Entry {
   group: Group
@@ -195,12 +164,12 @@ const ENTRIES: Entry[] = [
     meaning: 'Horizontal ou descendente ≥ 0,5 mm é isquemia até prova em contrário. Ao contrário do supra, geralmente NÃO localiza a artéria. Infra difuso com supra em aVR: lesão de tronco ou triarterial.',
   },
   {
-    group: 'st', name: 'T apiculada (hipercalemia)', shape: { t: 1.15, tW: 78, tSym: true }, tone: 'bad',
+    group: 'st', name: 'T apiculada (hipercalemia)', shape: { t: 1.15, tW: 120, tShape: 'peaked' }, tone: 'bad',
     cause: 'A hipercalemia aumenta a condutância de IKr e acelera a fase 3.',
     meaning: 'Alta, ESTREITA, simétrica e de base estreita ("em tenda"). Diferencie da T hiperaguda da isquemia, que é alta mas LARGA e de base larga.',
   },
   {
-    group: 'st', name: 'T invertida simétrica (isquemia)', shape: { t: -0.55, tSym: true }, tone: 'bad',
+    group: 'st', name: 'T invertida simétrica (isquemia)', shape: { t: -0.55, tShape: 'symmetric' }, tone: 'bad',
     cause: 'A isquemia subepicárdica inverte o gradiente de repolarização: o epicárdio deixa de repolarizar primeiro.',
     meaning: 'Profunda e SIMÉTRICA. Diferencie do "strain" da sobrecarga, que é assimétrico e vem com infra de ST. T bifásica ou profundamente invertida em V2–V3 sem dor = Wellens: descendente anterior proximal crítica.',
   },
@@ -217,7 +186,7 @@ const ENTRIES: Entry[] = [
     meaning: 'Normal se < 25% da altura da T. Cresce na hipocalemia, hipercalcemia, bradicardia, hipertrofia de VE e com quinidina/amiodarona. U INVERTIDA é achado sutil e específico de isquemia de tronco ou de descendente anterior.',
   },
   {
-    group: 'especiais', name: 'Onda J de Osborn (hipotermia)', shape: { j: 0.45, tPos: 265 }, tone: 'bad',
+    group: 'especiais', name: 'Onda J de Osborn (hipotermia)', shape: { j: 0.45, stW: 150 }, tone: 'bad',
     cause: 'O frio acentua a corrente Ito da fase 1 no epicárdio, mas não no endocárdio, criando um gradiente transmural no fim do QRS.',
     meaning: 'Entalhe positivo no ponto J, que surge abaixo de 32 °C e cresce conforme a temperatura cai. Vem com bradicardia, prolongamento de PR/QRS/QT e tremor no traçado. Também ocorre em hipercalcemia, lesão de SNC e repolarização precoce.',
   },
@@ -232,7 +201,7 @@ const ENTRIES: Entry[] = [
     meaning: 'Pequena deflexão logo APÓS o QRS em V1–V2. Critério maior da displasia arritmogênica do ventrículo direito — causa importante de morte súbita em jovens e atletas.',
   },
   {
-    group: 'especiais', name: 'Infra "em colher" (digital)', shape: { st: -0.16, t: 0.1, tPos: 175 }, tone: 'warn',
+    group: 'especiais', name: 'Infra "em colher" (digital)', shape: { st: -0.16, t: 0.1, tW: 190, stW: 55 }, tone: 'warn',
     cause: 'A digoxina inibe a bomba Na⁺/K⁺-ATPase e encurta a repolarização ventricular.',
     meaning: 'Infra côncavo com descida suave, QT curto e T achatada. É EFEITO terapêutico, não intoxicação. A intoxicação digitálica se manifesta por arritmias — a mais típica é a taquicardia atrial com bloqueio.',
   },
@@ -243,6 +212,7 @@ export function WaveDoctor({ focus = 'p' }: { focus?: Group }) {
   const list = ENTRIES.filter((e) => e.group === group)
   const [name, setName] = useState(list[0]?.name ?? '')
   const entry = list.find((e) => e.name === name) ?? list[0]
+  const { palette } = useEcgPaper()
 
   const normalPath = useMemo(() => {
     let d = ''
@@ -279,17 +249,17 @@ export function WaveDoctor({ focus = 'p' }: { focus?: Group }) {
 
       <div className="grid gap-3 lg:grid-cols-[0.85fr_1.15fr] [&>*]:min-w-0">
         <div>
-          <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-            <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img" aria-label={entry.name}>
-              <EcgGrid mm={MM} id="wd-grid" />
-              <line x1={0} y1={BASE} x2={W} y2={BASE} stroke="rgba(148,163,184,0.25)" strokeWidth="1" strokeDasharray="4 6" />
-              <path d={normalPath} fill="none" stroke="rgba(148,163,184,0.35)" strokeWidth="1.6" strokeDasharray="4 4" />
-              <path d={path} fill="none" stroke="#3ff08a" strokeWidth="2.4" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <p className="mt-1 text-center text-[11px] text-muted-foreground">
-            Tracejado cinza = batimento normal para comparação
-          </p>
+          <PaperFrame
+            viewBox={`0 0 ${W} ${H}`}
+            role="img"
+            aria-label={entry.name}
+            caption="Tracejado = batimento normal, para comparação"
+          >
+            <EcgGrid mm={MM} id="wd-grid" />
+            <line x1={0} y1={BASE} x2={W} y2={BASE} stroke={palette.baseline} strokeWidth="1" strokeDasharray="4 6" />
+            <path d={normalPath} fill="none" stroke={palette.ghost} strokeWidth="1.6" strokeDasharray="4 4" />
+            <path d={path} fill="none" stroke={palette.trace} strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" />
+          </PaperFrame>
         </div>
 
         <div className="space-y-2">

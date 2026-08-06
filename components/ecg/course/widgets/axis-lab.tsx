@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { LabButton, LabNote, LabShell, LabSlider, Metric, ScrollRow } from './ui'
+import { LabButton, LabNote, LabShell, LabSlider, Metric, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório do eixo elétrico.
@@ -45,6 +45,7 @@ const gauss = (t: number, a: number, mu: number, sigma: number) => a * Math.exp(
  * como aconteceria projetando um vetor só.
  */
 function MiniLead({ name, axis, leadAngle }: { name: string; axis: number; leadAngle: number }) {
+  const { palette } = useEcgPaper()
   const W = 96, H = 58, base = 30
   const main = Math.cos(toRad(axis - leadAngle))
   const term = Math.cos(toRad(axis + 155 - leadAngle))
@@ -67,18 +68,18 @@ function MiniLead({ name, axis, leadAngle }: { name: string; axis: number; leadA
   const net = main * 1.2 - term * 0.5
   const positive = net > 0.25
   const negative = net < -0.25
-  const tone = positive ? '#34d399' : negative ? '#fb7185' : '#facc15'
+  const tone = positive ? palette.annot.emerald : negative ? palette.annot.rose : palette.annot.amber
 
   return (
-    <div className="rounded-lg border border-border bg-[#07100c] p-1">
+    <div className="rounded-lg border p-1" style={{ backgroundColor: palette.bg, borderColor: palette.border }}>
       <div className="flex items-center justify-between px-1">
-        <span className="font-mono text-[10px] font-black text-muted-foreground">{name}</span>
+        <span className="font-mono text-[10px] font-black" style={{ color: palette.inkSoft }}>{name}</span>
         <span className="font-mono text-[10px] font-black" style={{ color: tone }}>
           {positive ? '+' : negative ? '−' : '±'}
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full">
-        <line x1={0} y1={base} x2={W} y2={base} stroke="rgba(148,163,184,0.25)" strokeWidth="0.8" />
+        <line x1={0} y1={base} x2={W} y2={base} stroke={palette.baseline} strokeWidth="0.8" />
         <path d={d} fill="none" stroke={tone} strokeWidth="1.8" strokeLinejoin="round" />
       </svg>
     </div>

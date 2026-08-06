@@ -4,7 +4,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Play, Pause, RotateCcw, Check } from 'lucide-react'
 import { BEAT, beatPath, xOf, yOf, type StripScale } from '@/lib/ecg/course/strip'
 import { CourseHeart, type HeartPart } from './course-heart'
-import { EcgGrid, LabButton, LabChip, LabNote, LabShell, ScrollRow } from './ui'
+import { withAlpha, type EcgAnnotColors } from '@/lib/ecg/paper'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * O construtor do traçado — o laboratório central da trilha.
@@ -16,9 +17,10 @@ import { EcgGrid, LabButton, LabChip, LabNote, LabShell, ScrollRow } from './ui'
  */
 
 /* Escala: 50 mm/s e 10 mm/mV, 14 unidades de viewBox por milímetro.
-   Assim x = t(ms) × 0,7 e y = 196 − mV × 140. */
+   A janela é de 1000 ms — o ciclo cardíaco inteiro a 60 bpm — para que o
+   último passo (segmento TP) caiba na tela junto com a sua medida. */
 const MM = 14
-const SC: StripScale = { width: 560, height: 280, durationMs: 800, mvSpan: 1, baseline: 196 }
+const SC: StripScale = { width: 700, height: 280, durationMs: 1000, mvSpan: 1, baseline: 196 }
 
 interface BuildStep {
   id: string
@@ -156,20 +158,14 @@ const STEPS: BuildStep[] = [
   },
 ]
 
-const SPAN_COLORS: Record<string, string> = {
-  p: 'rgba(56,189,248,0.20)',
-  pr: 'rgba(250,204,21,0.18)',
-  q: 'rgba(244,114,182,0.20)',
-  r: 'rgba(52,211,153,0.20)',
-  s: 'rgba(167,139,250,0.20)',
-  st: 'rgba(251,146,60,0.20)',
-  t: 'rgba(248,113,113,0.20)',
-  u: 'rgba(226,232,240,0.16)',
-  tp: 'rgba(148,163,184,0.14)',
-  base: 'transparent',
+/** Cor de cada trecho, por chave da paleta — resolvida conforme o papel. */
+const SPAN_TONES: Record<string, keyof EcgAnnotColors> = {
+  p: 'sky', pr: 'amber', q: 'pink', r: 'emerald', s: 'violet',
+  st: 'orange', t: 'rose', u: 'slate', tp: 'slate',
 }
 
 export function WaveBuilder() {
+  const { palette } = useEcgPaper()
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState(false)
   const step = STEPS[i]
@@ -197,6 +193,7 @@ export function WaveBuilder() {
   const span = step.span
   const spanX = span ? xOf(span[0], SC) : 0
   const spanW = span ? xOf(span[1], SC) - xOf(span[0], SC) : 0
+  const spanTone = SPAN_TONES[step.id] ? palette.annot[SPAN_TONES[step.id]] : palette.ink
 
   return (
     <LabShell>
@@ -218,44 +215,43 @@ export function WaveBuilder() {
       <div className="grid gap-3 lg:grid-cols-[1.55fr_1fr] [&>*]:min-w-0">
         {/* ── Papel ── */}
         <div>
-          <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-            <svg viewBox={`0 0 ${SC.width} ${SC.height}`} className="block h-auto w-full text-emerald-400" role="img"
-              aria-label={`Construção do eletrocardiograma: ${step.title}`}>
+          <PaperFrame viewBox={`0 0 ${SC.width} ${SC.height}`} role="img"
+            aria-label={`Construção do eletrocardiograma: ${step.title}`}>
               <EcgGrid mm={MM} id="wb-grid" />
 
               {/* faixa do trecho atual */}
               {span && (
-                <rect x={spanX} y={0} width={spanW} height={SC.height} fill={SPAN_COLORS[step.id] || 'rgba(255,255,255,0.08)'} />
+                <rect x={spanX} y={0} width={spanW} height={SC.height} fill={withAlpha(spanTone, 0.18)} />
               )}
 
               {/* linha isoelétrica */}
-              <line x1={0} y1={SC.baseline} x2={SC.width} y2={SC.baseline} stroke="rgba(148,163,184,0.35)" strokeWidth="1" strokeDasharray="4 5" />
+              <line x1={0} y1={SC.baseline} x2={SC.width} y2={SC.baseline} stroke={palette.baseline} strokeWidth="1" strokeDasharray="4 5" />
 
               {/* restante do batimento, ainda não explicado */}
               {step.tEnd < BEAT.end && (
-                <path d={ghost} fill="none" stroke="rgba(148,163,184,0.22)" strokeWidth="2" strokeDasharray="3 5" strokeLinejoin="round" />
+                <path d={ghost} fill="none" stroke={palette.ghost} strokeWidth="2" strokeDasharray="3 5" strokeLinejoin="round" />
               )}
 
               {/* traçado construído */}
-              <path d={drawn} fill="none" stroke="#3ff08a" strokeWidth="2.8" strokeLinejoin="round" strokeLinecap="round" />
+              <path d={drawn} fill="none" stroke={palette.trace} strokeWidth="2.8" strokeLinejoin="round" strokeLinecap="round" />
 
               {/* linha vertical marcando até onde o traçado já foi construído */}
               {step.tEnd < BEAT.end && (
                 <line
                   x1={xOf(step.tEnd, SC)} y1={0} x2={xOf(step.tEnd, SC)} y2={SC.height}
-                  stroke="#3ff08a" strokeWidth="1.2" strokeOpacity="0.5" strokeDasharray="2 4"
+                  stroke={palette.trace} strokeWidth="1.2" strokeOpacity="0.5" strokeDasharray="2 4"
                 />
               )}
 
               {/* colchete de medida do trecho */}
               {span && (
                 <g>
-                  <line x1={spanX} y1={30} x2={spanX + spanW} y2={30} stroke="#e2e8f0" strokeWidth="1.4" />
-                  <line x1={spanX} y1={24} x2={spanX} y2={36} stroke="#e2e8f0" strokeWidth="1.4" />
-                  <line x1={spanX + spanW} y1={24} x2={spanX + spanW} y2={36} stroke="#e2e8f0" strokeWidth="1.4" />
+                  <line x1={spanX} y1={30} x2={spanX + spanW} y2={30} stroke={palette.ink} strokeWidth="1.4" />
+                  <line x1={spanX} y1={24} x2={spanX} y2={36} stroke={palette.ink} strokeWidth="1.4" />
+                  <line x1={spanX + spanW} y1={24} x2={spanX + spanW} y2={36} stroke={palette.ink} strokeWidth="1.4" />
                   <text
                     x={spanX + spanW / 2} y={20} textAnchor="middle"
-                    fontSize="14" fontWeight="800" fill="#e2e8f0" fontFamily="ui-monospace, monospace"
+                    fontSize="14" fontWeight="800" fill={palette.ink} fontFamily="ui-monospace, monospace"
                   >
                     {Math.round(span[1] - span[0])} ms
                   </text>
@@ -263,16 +259,15 @@ export function WaveBuilder() {
               )}
 
               {/* rótulos das ondas já desenhadas */}
-              <g fontSize="16" fontWeight="900" fontFamily="ui-monospace, monospace" fill="#7dd3fc">
+              <g fontSize="16" fontWeight="900" fontFamily="ui-monospace, monospace" fill={palette.annot.sky}>
                 {step.tEnd >= BEAT.pOff && <text x={xOf(BEAT.pPeak, SC)} y={yOf(0.16, SC) - 12} textAnchor="middle">P</text>}
-                {step.tEnd >= BEAT.qPeak + 8 && <text x={xOf(BEAT.qPeak, SC) - 8} y={yOf(-0.1, SC) + 22} textAnchor="middle" fill="#f9a8d4">Q</text>}
-                {step.tEnd >= BEAT.rPeak + 6 && <text x={xOf(BEAT.rPeak, SC)} y={yOf(1.25, SC) - 10} textAnchor="middle" fill="#6ee7b7">R</text>}
-                {step.tEnd >= BEAT.j && <text x={xOf(BEAT.sPeak, SC) + 10} y={yOf(-0.3, SC) + 22} textAnchor="middle" fill="#c4b5fd">S</text>}
-                {step.tEnd >= BEAT.tOff && <text x={xOf(BEAT.tPeak, SC)} y={yOf(0.36, SC) - 12} textAnchor="middle" fill="#fca5a5">T</text>}
-                {step.tEnd >= BEAT.uOff && <text x={xOf(BEAT.uPeak, SC)} y={yOf(0.06, SC) - 10} textAnchor="middle" fill="#e2e8f0">U</text>}
+                {step.tEnd >= BEAT.qPeak + 8 && <text x={xOf(BEAT.qPeak, SC) - 8} y={yOf(-0.1, SC) + 22} textAnchor="middle" fill={palette.annot.pink}>Q</text>}
+                {step.tEnd >= BEAT.rPeak + 6 && <text x={xOf(BEAT.rPeak, SC)} y={yOf(1.25, SC) - 10} textAnchor="middle" fill={palette.annot.emerald}>R</text>}
+                {step.tEnd >= BEAT.j && <text x={xOf(BEAT.sPeak, SC) + 10} y={yOf(-0.3, SC) + 22} textAnchor="middle" fill={palette.annot.violet}>S</text>}
+                {step.tEnd >= BEAT.tOff && <text x={xOf(BEAT.tPeak, SC)} y={yOf(0.36, SC) - 12} textAnchor="middle" fill={palette.annot.rose}>T</text>}
+                {step.tEnd >= BEAT.uOff && <text x={xOf(BEAT.uPeak, SC)} y={yOf(0.06, SC) - 10} textAnchor="middle" fill={palette.ink}>U</text>}
               </g>
-            </svg>
-          </div>
+          </PaperFrame>
 
           <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
             Traçado ampliado a 50 mm/s e 10 mm/mV · quadradinho = 20 ms e 0,1 mV

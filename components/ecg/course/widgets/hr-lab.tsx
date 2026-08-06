@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react'
 import { Dices, Check, X } from 'lucide-react'
 import type { EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabNote, LabShell, Metric, ScrollRow } from './ui'
+import { EcgGrid, LabButton, LabNote, LabShell, Metric, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório de frequência cardíaca.
@@ -63,6 +63,7 @@ export function HeartRateLab({ mode = 'practice' }: { mode?: 'demo' | 'practice'
   const [checked, setChecked] = useState(false)
   const [helpers, setHelpers] = useState(mode === 'demo')
   const [method, setMethod] = useState('300')
+  const { palette } = useEcgPaper()
 
   const path = useMemo(() => patternPath(c.pattern, 'II', SC), [c])
   const rrMs = 60000 / c.rate
@@ -82,48 +83,47 @@ export function HeartRateLab({ mode = 'practice' }: { mode?: 'demo' | 'practice'
 
   return (
     <LabShell>
-      <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img"
-          aria-label="Tira de ritmo de 6 segundos para cálculo da frequência">
-          <EcgGrid mm={MM} id="hr-grid" />
+      <PaperFrame
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label="Tira de ritmo de 6 segundos para cálculo da frequência"
+        caption="Tira de 6 segundos · 25 mm/s · quadradinho = 40 ms, quadradão = 200 ms"
+      >
+        <EcgGrid mm={MM} id="hr-grid" />
 
-          {/* janela de 6 segundos */}
-          {helpers && method === '6s' && (
-            <>
-              <rect x={0} y={0} width={W} height={H} fill="rgba(56,189,248,0.08)" />
-              <line x1={W - 1} y1={0} x2={W - 1} y2={H} stroke="#38bdf8" strokeWidth="2" />
-              <text x={W / 2} y={14} textAnchor="middle" fontSize="12" fontWeight="900" fill="#38bdf8" fontFamily="ui-monospace, monospace">
-                janela de 6 segundos = 30 quadradões
-              </text>
-            </>
-          )}
+        {/* janela de 6 segundos */}
+        {helpers && method === '6s' && (
+          <>
+            <rect x={0} y={0} width={W} height={H} fill={palette.annot.sky} opacity="0.1" />
+            <line x1={W - 1} y1={0} x2={W - 1} y2={H} stroke={palette.annot.sky} strokeWidth="2" />
+            <text x={W / 2} y={14} textAnchor="middle" fontSize="12" fontWeight="900" fill={palette.annot.sky} fontFamily="ui-monospace, monospace">
+              janela de 6 segundos = 30 quadradões
+            </text>
+          </>
+        )}
 
-          {/* marcação dos quadradões entre as duas primeiras R (só ritmo regular) */}
-          {helpers && !c.irregular && method !== '6s' && (
-            <g>
-              <rect
-                x={(500 / SC.durationMs) * W}
-                y={0}
-                width={(rrMs / SC.durationMs) * W}
-                height={H}
-                fill="rgba(250,204,21,0.10)"
-              />
-              <text
-                x={(500 / SC.durationMs) * W + ((rrMs / SC.durationMs) * W) / 2}
-                y={16} textAnchor="middle" fontSize="12" fontWeight="900" fill="#facc15" fontFamily="ui-monospace, monospace"
-              >
-                1 ciclo RR = {bigSquares.toFixed(1).replace('.', ',')} quadradões
-              </text>
-            </g>
-          )}
+        {/* marcação dos quadradões entre as duas primeiras R (só ritmo regular) */}
+        {helpers && !c.irregular && method !== '6s' && (
+          <g>
+            <rect
+              x={(500 / SC.durationMs) * W}
+              y={0}
+              width={(rrMs / SC.durationMs) * W}
+              height={H}
+              fill={palette.annot.amber}
+              opacity="0.12"
+            />
+            <text
+              x={(500 / SC.durationMs) * W + ((rrMs / SC.durationMs) * W) / 2}
+              y={16} textAnchor="middle" fontSize="12" fontWeight="900" fill={palette.annot.amber} fontFamily="ui-monospace, monospace"
+            >
+              1 ciclo RR = {bigSquares.toFixed(1).replace('.', ',')} quadradões
+            </text>
+          </g>
+        )}
 
-          <path d={path} fill="none" stroke="#3ff08a" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
-      </div>
-
-      <p className="mt-1 text-center text-[11px] text-muted-foreground">
-        Tira de 6 segundos · 25 mm/s · quadradinho = 40 ms, quadradão = 200 ms
-      </p>
+        <path d={path} fill="none" stroke={palette.trace} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      </PaperFrame>
 
       <ScrollRow className="mt-3" label="Método">
         {METHODS.map((m) => (

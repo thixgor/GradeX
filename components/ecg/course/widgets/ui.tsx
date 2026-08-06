@@ -1,6 +1,9 @@
 'use client'
 
 import React from 'react'
+import { useEcgPaper } from '../../use-ecg-paper'
+
+export { useEcgPaper }
 
 /**
  * Peças visuais compartilhadas pelos laboratórios da trilha.
@@ -10,7 +13,9 @@ import React from 'react'
  *  - barras de controle rolam na horizontal no celular em vez de quebrar em
  *    quatro linhas;
  *  - nada de `title` como única fonte de informação (não existe hover no
- *    celular) — o rótulo sempre aparece em texto.
+ *    celular) — o rótulo sempre aparece em texto;
+ *  - nenhuma cor de papel escrita à mão: tudo sai da paleta de `useEcgPaper`,
+ *    para que o traçado troque entre papel claro e monitor verde de uma vez só.
  */
 
 /* ───────────────────────── papel milimetrado SVG ───────────────────────── */
@@ -23,17 +28,18 @@ import React from 'react'
  * no servidor e no cliente, e a hidratação quebraria.
  */
 export function EcgGrid({ mm = 8, id }: { mm?: number; id?: string }) {
+  const { palette } = useEcgPaper()
   const auto = React.useId().replace(/:/g, '')
   const uid = id || `ecgrid-${auto}`
   return (
     <>
       <defs>
         <pattern id={`${uid}-fine`} width={mm} height={mm} patternUnits="userSpaceOnUse">
-          <path d={`M ${mm} 0 L 0 0 0 ${mm}`} fill="none" stroke="currentColor" strokeOpacity="0.16" strokeWidth="0.6" />
+          <path d={`M ${mm} 0 L 0 0 0 ${mm}`} fill="none" stroke={palette.gridFine} strokeWidth="0.6" />
         </pattern>
         <pattern id={`${uid}-bold`} width={mm * 5} height={mm * 5} patternUnits="userSpaceOnUse">
           <rect width={mm * 5} height={mm * 5} fill={`url(#${uid}-fine)`} />
-          <path d={`M ${mm * 5} 0 L 0 0 0 ${mm * 5}`} fill="none" stroke="currentColor" strokeOpacity="0.34" strokeWidth="1" />
+          <path d={`M ${mm * 5} 0 L 0 0 0 ${mm * 5}`} fill="none" stroke={palette.gridBold} strokeWidth="1" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${uid}-bold)`} />
@@ -41,31 +47,54 @@ export function EcgGrid({ mm = 8, id }: { mm?: number; id?: string }) {
   )
 }
 
-/** Moldura escura do "papel" com o traçado dentro. */
-export function Paper({
-  children, viewBox, className = '', ariaLabel, caption,
-}: {
-  children: React.ReactNode
+/**
+ * Moldura do "papel" com o traçado dentro.
+ *
+ * Recebe os mesmos props de um <svg> (ref, handlers de ponteiro, viewBox) —
+ * o paquímetro do laboratório de intervalos precisa deles — e cuida do fundo,
+ * da borda e da legenda conforme o papel escolhido.
+ */
+export const PaperFrame = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement> & {
   viewBox: string
-  className?: string
-  ariaLabel?: string
-  caption?: string
-}) {
+  frameClassName?: string
+  caption?: React.ReactNode
+  /** faixa de cabeçalho dentro da moldura (nome da derivação, por exemplo) */
+  header?: React.ReactNode
+}>(function PaperFrame(
+  { viewBox, children, className = '', frameClassName = '', caption, header, ...svgProps }, ref,
+) {
+  const { palette } = useEcgPaper()
   return (
-    <figure className={`m-0 ${className}`}>
-      <div className="overflow-hidden rounded-xl border border-emerald-500/25 bg-[#07100c] shadow-inner">
-        <svg viewBox={viewBox} className="block h-auto w-full text-emerald-400" role="img" aria-label={ariaLabel}>
+    <figure className="m-0">
+      <div
+        className={`overflow-hidden rounded-xl border ${frameClassName}`}
+        style={{ backgroundColor: palette.bg, borderColor: palette.border }}
+      >
+        {header != null && (
+          <div
+            className="flex items-center justify-between px-2 py-1"
+            style={{ borderBottom: `1px solid ${palette.border}`, color: palette.ink }}
+          >
+            {header}
+          </div>
+        )}
+        <svg
+          ref={ref}
+          viewBox={viewBox}
+          className={`block h-auto w-full ${className}`}
+          {...svgProps}
+        >
           {children}
         </svg>
       </div>
-      {caption && (
+      {caption != null && (
         <figcaption className="mt-1.5 text-center text-[10.5px] leading-snug text-muted-foreground sm:text-[11px]">
           {caption}
         </figcaption>
       )}
     </figure>
   )
-}
+})
 
 /* ───────────────────────── controles ───────────────────────── */
 

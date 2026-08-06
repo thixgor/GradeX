@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { buildTimeline, type EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
-import { EcgGrid, LabButton, LabNote, LabShell, ScrollRow } from './ui'
+import { EcgGrid, LabButton, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório dos bloqueios atrioventriculares.
@@ -209,6 +209,7 @@ export function BlockLab() {
   const [key, setKey] = useState('normal')
   const c = CASES.find((x) => x.key === key) || CASES[0]
   const path = useMemo(() => patternPath(c.pattern, 'II', SC), [c])
+  const { palette } = useEcgPaper()
 
   return (
     <LabShell>
@@ -220,12 +221,10 @@ export function BlockLab() {
         ))}
       </ScrollRow>
 
-      <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-        <svg viewBox={`0 0 ${W} ${STRIP_H}`} className="block h-auto w-full text-emerald-400" role="img" aria-label={`Traçado: ${c.name}`}>
-          <EcgGrid mm={MM} id="blk-grid" />
-          <path d={path} fill="none" stroke="#3ff08a" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
-      </div>
+      <PaperFrame viewBox={`0 0 ${W} ${STRIP_H}`} role="img" aria-label={`Traçado: ${c.name}`}>
+        <EcgGrid mm={MM} id="blk-grid" />
+        <path d={path} fill="none" stroke={palette.trace} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      </PaperFrame>
 
       <div className="mt-2 overflow-hidden rounded-xl border border-border bg-muted/20 p-1">
         <Ladder c={c} />

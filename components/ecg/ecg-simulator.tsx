@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
-  Sun, Moon, GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
+  GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
   X, ListFilter, Gauge, Star, StickyNote, ChevronRight, HelpCircle, FlaskConical,
   BookOpen,
 } from 'lucide-react'
@@ -14,6 +14,7 @@ import { measureEcg } from '@/lib/ecg/measure'
 import { conductionFor } from '@/lib/ecg/conduction'
 import { useEcg12 } from './use-ecg-signal'
 import { useEcgFavorites } from './use-ecg-favorites'
+import { EcgPaperPicker, useEcgPaper } from './use-ecg-paper'
 import { EcgLeadCanvas, type Fiducial } from './ecg-lead-canvas'
 import { Ecg12Lead } from './ecg-12-lead'
 import { ConductionSystem, type WallKey } from './conduction-system'
@@ -93,7 +94,9 @@ export function EcgSimulator() {
   const [gain, setGain] = useState(10)
   const [zoom, setZoom] = useState(1)
   const [live, setLive] = useState(false)
-  const [dark, setDark] = useState(true)
+  // Papel do traçado: preferência única do Manual (padrão CLARO, o papel
+  // impresso), compartilhada com a trilha de ensino e guardada no aparelho.
+  const { dark } = useEcgPaper()
   const [calipers, setCalipers] = useState(false)
   const [teaching, setTeaching] = useState(false)
   const [compare, setCompare] = useState(false)
@@ -337,9 +340,7 @@ export function EcgSimulator() {
               <button onClick={() => setPlaygroundOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 px-3 py-2 text-xs font-bold text-white shadow-sm transition hover:brightness-110" title="Laboratório vivo — sliders interativos">
                 <FlaskConical className="h-3.5 w-3.5" /> Laboratório vivo
               </button>
-              <button onClick={() => setDark((v) => !v)} className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-black/20 px-3 py-2 text-xs font-bold text-muted-foreground hover:text-foreground" title="Tema hospitalar / claro">
-                {dark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />} {dark ? 'Claro' : 'Hospitalar'}
-              </button>
+              <EcgPaperPicker className="ml-auto" size="sm" />
             </div>
 
             {compare && entry.id !== 'sinus-normal' && (

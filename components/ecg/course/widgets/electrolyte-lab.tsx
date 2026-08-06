@@ -2,7 +2,8 @@
 
 import React, { useMemo, useState } from 'react'
 import { RotateCcw } from 'lucide-react'
-import { Chip, EcgGrid, LabButton, LabNote, LabShell, LabSlider, Metric, ScrollRow } from './ui'
+import { beatAt, type BeatSpec, type TShape } from '@/lib/ecg/course/strip'
+import { Chip, EcgGrid, LabButton, LabNote, LabShell, LabSlider, Metric, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório de eletrólitos e temperatura.
@@ -27,41 +28,40 @@ interface Shape {
   pr: number
   qrsW: number
   stOffset: number
+  /** posição do PICO da onda T, em ms após a R — é o que o cálcio move */
   tPos: number
   tAmp: number
   tW: number
   uAmp: number
   jAmp: number
+  tShape: TShape
 }
 
-function gauss(t: number, a: number, mu: number, sigma: number) {
-  if (a === 0) return 0
-  const z = (t - mu) / sigma
-  return a * Math.exp(-0.5 * z * z)
-}
-
-/** Um batimento, com o R ancorado em `r0` (ms). */
-function beat(t: number, r0: number, s: Shape) {
-  const w = s.qrsW
-  let v = 0
-  const pCenter = r0 - s.pr + 50
-  v += gauss(t, s.pAmp, pCenter, 24)
-  v += gauss(t, -0.08, r0 - 26 * w, 7 * w)
-  v += gauss(t, 1.25, r0, 10 * w)
-  v += gauss(t, -0.3, r0 + 28 * w, 11 * w)
-  // onda J (Osborn) logo após o fim do QRS
-  v += gauss(t, s.jAmp, r0 + 48 * w, 15)
-  // segmento ST
-  const j = r0 + 50 * w
-  if (s.stOffset !== 0 && t > j - 14) {
-    const ramp = Math.min(1, (t - (j - 14)) / 26)
-    const decay = t > r0 + s.tPos ? Math.max(0, 1 - (t - (r0 + s.tPos)) / 130) : 1
-    v += s.stOffset * ramp * decay
+/**
+ * Um batimento, com o R ancorado em `r0` (ms).
+ *
+ * A forma sai do mesmo motor da trilha: aqui só traduzimos os efeitos dos íons
+ * (que o laboratório calcula em `derive`) para os parâmetros do batimento.
+ * O segmento ST é derivado da posição da T — é exatamente assim que o cálcio
+ * age: ele não mexe na onda T, mexe na duração do platô que vem antes dela.
+ */
+function specOf(r0: number, s: Shape): BeatSpec {
+  const qrsWidth = 90 * s.qrsW
+  const stWidth = Math.max(12, s.tPos - 0.56 * qrsWidth - s.tW * (s.tShape === 'normal' ? 0.58 : 0.5))
+  return {
+    r0,
+    pr: s.pr,
+    p: s.pAmp,
+    q: -0.08, r: 1.25, s: -0.3,
+    qrsWidth,
+    jWave: s.jAmp,
+    st: s.stOffset, stWidth,
+    t: s.tAmp, tWidth: s.tW, tShape: s.tShape,
+    u: s.uAmp,
   }
-  v += gauss(t, s.tAmp, r0 + s.tPos, s.tW / 4.2)
-  v += gauss(t, s.uAmp, r0 + s.tPos + 150, 34)
-  return v
 }
+
+const beat = (t: number, r0: number, s: Shape) => beatAt(t, specOf(r0, s))
 
 interface Finding { text: string; tone: 'good' | 'warn' | 'bad' | 'info' }
 
@@ -69,13 +69,15 @@ function derive(k: number, ca: number, temp: number) {
   const findings: Finding[] = []
   const s: Shape = {
     hr: 70, pAmp: 0.15, pr: 160, qrsW: 1, stOffset: 0,
-    tPos: 205, tAmp: 0.35, tW: 165, uAmp: 0.05, jAmp: 0,
+    tPos: 205, tAmp: 0.35, tW: 165, uAmp: 0.05, jAmp: 0, tShape: 'normal',
   }
 
   /* ── Potássio ── */
   if (k >= 5.5) {
     s.tAmp = 0.35 + (k - 5.5) * 0.42
     s.tW = Math.max(58, 165 - (k - 5.5) * 26)
+    // a T da hipercalemia deixa de ser assimétrica: vira "tenda" simétrica
+    s.tShape = 'peaked'
     findings.push({ text: `Onda T apiculada, estreita e simétrica ("em tenda") — a hipercalemia aumenta a condutância de IKr e ACELERA a repolarização.`, tone: 'warn' })
   }
   if (k >= 6.5) {
@@ -166,6 +168,7 @@ export function ElectrolyteLab({ scenario = 'todos' }: { scenario?: Scenario }) 
   const [temp, setTemp] = useState(36.8)
 
   const { shape, findings } = useMemo(() => derive(k, ca, temp), [k, ca, temp])
+  const { palette } = useEcgPaper()
 
   const path = useMemo(() => {
     const rr = 60000 / shape.hr
@@ -206,15 +209,13 @@ export function ElectrolyteLab({ scenario = 'todos' }: { scenario?: Scenario }) 
         </LabButton>
       </ScrollRow>
 
-      <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full text-emerald-400" role="img"
-          aria-label="Traçado alterado por eletrólitos e temperatura">
-          <EcgGrid mm={MM} id="elec-grid" />
-          <line x1={0} y1={BASE} x2={W} y2={BASE} stroke="rgba(148,163,184,0.25)" strokeWidth="1" strokeDasharray="4 6" />
-          <path d={path} fill="none" stroke="#3ff08a" strokeWidth="2.3" strokeLinejoin="round" />
-        </svg>
-      </div>
-      <p className="mt-1 text-center text-[11px] text-muted-foreground">25 mm/s · 10 mm/mV · quadradinho = 40 ms e 0,1 mV</p>
+      <PaperFrame viewBox={`0 0 ${W} ${H}`} role="img"
+        aria-label="Traçado alterado por eletrólitos e temperatura"
+        caption="25 mm/s · 10 mm/mV · quadradinho = 40 ms e 0,1 mV">
+        <EcgGrid mm={MM} id="elec-grid" />
+        <line x1={0} y1={BASE} x2={W} y2={BASE} stroke={palette.baseline} strokeWidth="1" strokeDasharray="4 6" />
+        <path d={path} fill="none" stroke={palette.trace} strokeWidth="2.3" strokeLinejoin="round" strokeLinecap="round" />
+      </PaperFrame>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-3 [&>*]:min-w-0">
         {showK && (

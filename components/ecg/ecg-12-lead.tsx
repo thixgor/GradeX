@@ -6,7 +6,8 @@ import {
   ECG_THEME_DARK, ECG_THEME_LIGHT, STANDARD_12_LAYOUT, type RenderConfig,
 } from '@/lib/ecg/render'
 import { LEADS, type LeadName } from '@/lib/ecg/engine'
-import { INTERVAL_NAMES, KIND_COLOR, type Fiducial, type FiducialKind } from './ecg-lead-canvas'
+import { ECG_PAPER_GREEN, ECG_PAPER_LIGHT } from '@/lib/ecg/paper'
+import { INTERVAL_NAMES, kindColor, type Fiducial, type FiducialKind } from './ecg-lead-canvas'
 
 interface Props {
   signals: Record<LeadName, Float32Array>
@@ -39,6 +40,7 @@ export function Ecg12Lead({ signals, fs, speedMmS, gainMmMv, zoom, dark, live, r
   const [width, setWidth] = useState(760)
   const [caliper, setCaliper] = useState<Caliper>({ x1: null, x2: null, k1: null, k2: null })
 
+  const palette = dark ? ECG_PAPER_GREEN : ECG_PAPER_LIGHT
   const theme = dark ? ECG_THEME_DARK : ECG_THEME_LIGHT
   const pxPerMm = BASE_PX_PER_MM * zoom
   const cfg: RenderConfig = { pxPerMm, speedMmS, gainMmMv, theme }
@@ -128,7 +130,7 @@ export function Ecg12Lead({ signals, fs, speedMmS, gainMmMv, zoom, dark, live, r
       for (const f of fiducials) {
         const fx = stripX0 + f.ms * pxPerMs
         if (fx < stripX0 || fx > width - 4) continue
-        ctx.strokeStyle = KIND_COLOR[f.kind]; ctx.globalAlpha = 0.4; ctx.lineWidth = 1; ctx.setLineDash([1, 3])
+        ctx.strokeStyle = kindColor(f.kind, palette); ctx.globalAlpha = 0.4; ctx.lineWidth = 1; ctx.setLineDash([1, 3])
         ctx.beginPath(); ctx.moveTo(fx, rhythmY); ctx.lineTo(fx, rhythmY + rhythmH); ctx.stroke()
         ctx.globalAlpha = 1; ctx.setLineDash([])
       }

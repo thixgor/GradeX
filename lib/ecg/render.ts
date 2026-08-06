@@ -6,6 +6,7 @@
  *  - traçado desenhado ponto a ponto a partir do sinal sintetizado (mV).
  */
 import type { LeadName } from './engine'
+import { ECG_PAPER_GREEN, ECG_PAPER_LIGHT, type EcgPaperPalette } from './paper'
 
 export interface GridTheme {
   bg: string
@@ -15,21 +16,13 @@ export interface GridTheme {
   text: string
 }
 
-export const ECG_THEME_LIGHT: GridTheme = {
-  bg: '#fff5f5',
-  fine: 'rgba(244, 114, 114, 0.35)',
-  bold: 'rgba(220, 60, 60, 0.55)',
-  trace: '#111111',
-  text: '#7a1f1f',
+/** Converte a paleta compartilhada no formato que o <canvas> consome. */
+export function gridThemeOf(p: EcgPaperPalette): GridTheme {
+  return { bg: p.bg, fine: p.gridFine, bold: p.gridBold, trace: p.trace, text: p.ink }
 }
 
-export const ECG_THEME_DARK: GridTheme = {
-  bg: '#0a0f0d',
-  fine: 'rgba(45, 160, 90, 0.16)',
-  bold: 'rgba(45, 200, 110, 0.32)',
-  trace: '#3ff08a',
-  text: 'rgba(120, 230, 160, 0.85)',
-}
+export const ECG_THEME_LIGHT: GridTheme = gridThemeOf(ECG_PAPER_LIGHT)
+export const ECG_THEME_DARK: GridTheme = gridThemeOf(ECG_PAPER_GREEN)
 
 export interface RenderConfig {
   pxPerMm: number       // pixels por milímetro (zoom base × zoom do usuário)

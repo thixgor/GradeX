@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { MousePointerClick } from 'lucide-react'
 import { beatValue } from '@/lib/ecg/course/strip'
-import { LabChip, LabNote, LabShell, ScrollRow } from './ui'
+import { LabChip, LabNote, LabShell, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /** Instantes de interesse, para quem está no celular e não quer mirar no pixel. */
 const SHORTCUTS = [
@@ -110,6 +110,7 @@ function zoneAt(t: number): ZoneSpec {
 }
 
 export function RefractoryLab({ focus = 'stimulate' }: { focus?: 'phases' | 'refractory' | 'stimulate' }) {
+  const { palette } = useEcgPaper()
   const [stim, setStim] = useState<number | null>(null)
   const [hoverPhase, setHoverPhase] = useState<string | null>(null)
 
@@ -150,77 +151,75 @@ export function RefractoryLab({ focus = 'stimulate' }: { focus?: 'phases' | 'ref
         </p>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-[#080d14]">
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          className="block h-auto w-full cursor-crosshair"
-          onClick={handleClick}
-          role="img"
-          aria-label="Potencial de ação cardíaco alinhado ao eletrocardiograma"
-        >
-          {/* zonas refratárias */}
-          {showZones && ZONES.map((z) => (
-            <rect key={z.key} x={xOf(z.from)} y={AP_TOP - 6} width={xOf(z.to) - xOf(z.from)} height={AP_H + 12} fill={z.color} />
-          ))}
+      <PaperFrame
+        viewBox={`0 0 ${W} ${H}`}
+        className="cursor-crosshair"
+        onClick={handleClick}
+        role="img"
+        aria-label="Potencial de ação cardíaco alinhado ao eletrocardiograma"
+      >
+        {/* zonas refratárias */}
+        {showZones && ZONES.map((z) => (
+          <rect key={z.key} x={xOf(z.from)} y={AP_TOP - 6} width={xOf(z.to) - xOf(z.from)} height={AP_H + 12} fill={z.color} />
+        ))}
 
-          {/* eixos */}
-          {[-100, -50, 0, 20].map((mv) => (
-            <g key={mv}>
-              <line x1={0} y1={mvY(mv)} x2={W} y2={mvY(mv)} stroke="rgba(148,163,184,0.16)" strokeWidth="1" strokeDasharray="3 5" />
-              <text x={4} y={mvY(mv) - 3} fontSize="9" fill="rgba(148,163,184,0.7)" fontFamily="ui-monospace, monospace">{mv} mV</text>
-            </g>
-          ))}
-
-          {/* curva do potencial de ação */}
-          <path d={apPath} fill="none" stroke="#60a5fa" strokeWidth="2.6" strokeLinejoin="round" />
-
-          {/* rótulos das fases */}
-          {PHASES.map((p) => (
-            <g key={p.n} onMouseEnter={() => setHoverPhase(p.n)} onMouseLeave={() => setHoverPhase(null)}>
-              <rect x={xOf(p.from)} y={AP_TOP - 6} width={Math.max(6, xOf(p.to) - xOf(p.from))} height={AP_H + 12} fill="transparent" />
-              <text
-                x={xOf((p.from + p.to) / 2)} y={AP_TOP + AP_H + 10} textAnchor="middle"
-                fontSize="12" fontWeight="900" fill={hoverPhase === p.n ? '#93c5fd' : 'rgba(148,163,184,0.85)'}
-                fontFamily="ui-monospace, monospace"
-              >
-                {p.n}
-              </text>
-            </g>
-          ))}
-
-          {/* zonas rotuladas */}
-          {showZones && (
-            <g fontSize="9.5" fontWeight="800" fontFamily="ui-sans-serif, system-ui">
-              <text x={xOf(130)} y={AP_TOP + 12} textAnchor="middle" fill="rgba(251,113,133,0.95)">ABSOLUTO</text>
-              <text x={xOf(296)} y={AP_TOP + 12} textAnchor="middle" fill="rgba(250,204,21,0.95)">RELATIVO</text>
-              <text x={xOf(326)} y={AP_TOP + 26} textAnchor="middle" fill="rgba(56,189,248,0.95)">SN</text>
-            </g>
-          )}
-
-          {/* separador */}
-          <line x1={0} y1={ECG_TOP - 10} x2={W} y2={ECG_TOP - 10} stroke="rgba(148,163,184,0.2)" strokeWidth="1" />
-
-          {/* ECG alinhado */}
-          <path d={ecgPath} fill="none" stroke="#3ff08a" strokeWidth="2.2" strokeLinejoin="round" />
-          <g fontSize="10" fontWeight="800" fill="rgba(148,163,184,0.8)" fontFamily="ui-monospace, monospace">
-            <text x={xOf(20)} y={ECG_TOP + 6}>QRS</text>
-            <text x={xOf(140)} y={ECG_TOP + 6}>ST</text>
-            <text x={xOf(250)} y={ECG_TOP + 6}>T</text>
-            <text x={xOf(380)} y={ECG_TOP + 6}>TP</text>
+        {/* eixos */}
+        {[-100, -50, 0, 20].map((mv) => (
+          <g key={mv}>
+            <line x1={0} y1={mvY(mv)} x2={W} y2={mvY(mv)} stroke={palette.baseline} strokeOpacity="0.6" strokeWidth="1" strokeDasharray="3 5" />
+            <text x={4} y={mvY(mv) - 3} fontSize="9" fill={palette.inkSoft} fontFamily="ui-monospace, monospace">{mv} mV</text>
           </g>
+        ))}
 
-          {/* estímulo aplicado */}
-          {stim != null && (
-            <g>
-              <line x1={xOf(stim)} y1={AP_TOP - 8} x2={xOf(stim)} y2={H - 4} stroke="#f472b6" strokeWidth="2" strokeDasharray="5 4" />
-              <circle cx={xOf(stim)} cy={mvY(ap(stim))} r="5" fill="#f472b6" />
-              <text x={xOf(stim)} y={H - 6} textAnchor="middle" fontSize="10" fontWeight="900" fill="#f472b6" fontFamily="ui-monospace, monospace">
-                {stim} ms
-              </text>
-            </g>
-          )}
-        </svg>
-      </div>
+        {/* curva do potencial de ação */}
+        <path d={apPath} fill="none" stroke={palette.annot.sky} strokeWidth="2.6" strokeLinejoin="round" />
+
+        {/* rótulos das fases */}
+        {PHASES.map((p) => (
+          <g key={p.n} onMouseEnter={() => setHoverPhase(p.n)} onMouseLeave={() => setHoverPhase(null)}>
+            <rect x={xOf(p.from)} y={AP_TOP - 6} width={Math.max(6, xOf(p.to) - xOf(p.from))} height={AP_H + 12} fill="transparent" />
+            <text
+              x={xOf((p.from + p.to) / 2)} y={AP_TOP + AP_H + 10} textAnchor="middle"
+              fontSize="12" fontWeight="900" fill={hoverPhase === p.n ? palette.annot.sky : palette.inkSoft}
+              fontFamily="ui-monospace, monospace"
+            >
+              {p.n}
+            </text>
+          </g>
+        ))}
+
+        {/* zonas rotuladas */}
+        {showZones && (
+          <g fontSize="9.5" fontWeight="800" fontFamily="ui-sans-serif, system-ui">
+            <text x={xOf(130)} y={AP_TOP + 12} textAnchor="middle" fill={palette.annot.rose}>ABSOLUTO</text>
+            <text x={xOf(296)} y={AP_TOP + 12} textAnchor="middle" fill={palette.annot.amber}>RELATIVO</text>
+            <text x={xOf(326)} y={AP_TOP + 26} textAnchor="middle" fill={palette.annot.sky}>SN</text>
+          </g>
+        )}
+
+        {/* separador */}
+        <line x1={0} y1={ECG_TOP - 10} x2={W} y2={ECG_TOP - 10} stroke={palette.baseline} strokeWidth="1" />
+
+        {/* ECG alinhado */}
+        <path d={ecgPath} fill="none" stroke={palette.trace} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+        <g fontSize="10" fontWeight="800" fill={palette.inkSoft} fontFamily="ui-monospace, monospace">
+          <text x={xOf(20)} y={ECG_TOP + 6}>QRS</text>
+          <text x={xOf(140)} y={ECG_TOP + 6}>ST</text>
+          <text x={xOf(250)} y={ECG_TOP + 6}>T</text>
+          <text x={xOf(380)} y={ECG_TOP + 6}>TP</text>
+        </g>
+
+        {/* estímulo aplicado */}
+        {stim != null && (
+          <g>
+            <line x1={xOf(stim)} y1={AP_TOP - 8} x2={xOf(stim)} y2={H - 4} stroke={palette.annot.pink} strokeWidth="2" strokeDasharray="5 4" />
+            <circle cx={xOf(stim)} cy={mvY(ap(stim))} r="5" fill={palette.annot.pink} />
+            <text x={xOf(stim)} y={H - 6} textAnchor="middle" fontSize="10" fontWeight="900" fill={palette.annot.pink} fontFamily="ui-monospace, monospace">
+              {stim} ms
+            </text>
+          </g>
+        )}
+      </PaperFrame>
 
       {focus !== 'phases' && (
         <ScrollRow className="mt-2" label="Disparar um estímulo em">

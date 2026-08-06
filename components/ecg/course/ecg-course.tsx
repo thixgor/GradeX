@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { COURSE, COURSE_TOTALS, findLesson, lessonAfter } from '@/lib/ecg/course/curriculum'
 import type { CourseModule, Lesson, ModuleColor } from '@/lib/ecg/course/types'
+import { EcgPaperPicker } from '../use-ecg-paper'
 import { useCourseProgress } from './use-course-progress'
 import { LessonRunner } from './lesson-runner'
 
@@ -302,6 +303,15 @@ function CourseHud({
             ? 'Todas as lições liberadas. Desligue para voltar ao caminho guiado.'
             : 'Cada lição abre a próxima. Ative o modo livre para navegar fora de ordem.'}
         </p>
+
+        {/* Aparência do papel — vale para os traçados de toda a trilha e também
+            para o simulador, porque a preferência é uma só. */}
+        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3">
+          <EcgPaperPicker label="Papel" />
+          <span className="text-[10.5px] leading-snug text-muted-foreground">
+            Vale para todos os traçados, inclusive o simulador.
+          </span>
+        </div>
       </div>
     </section>
   )

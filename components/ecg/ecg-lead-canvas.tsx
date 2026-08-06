@@ -6,6 +6,7 @@ import {
   ECG_THEME_DARK, ECG_THEME_LIGHT, type RenderConfig,
 } from '@/lib/ecg/render'
 import type { LeadName } from '@/lib/ecg/engine'
+import { ECG_PAPER_GREEN, ECG_PAPER_LIGHT, type EcgPaperPalette } from '@/lib/ecg/paper'
 
 export type FiducialKind = 'Pon' | 'Poff' | 'Qon' | 'J' | 'Tend' | 'R'
 
@@ -28,8 +29,18 @@ export const INTERVAL_NAMES: Record<string, string> = {
   'R>R': 'RR',
   'Pon>Poff': 'onda P', 'Poff>Pon': 'onda P',
 }
-export const KIND_COLOR: Record<FiducialKind, string> = {
-  Pon: '#38bdf8', Poff: '#38bdf8', Qon: '#f472b6', J: '#fbbf24', Tend: '#fb923c', R: '#e5e7eb',
+/**
+ * Cor de cada ponto fiducial, legível sobre o papel em uso — no papel claro as
+ * pastilhas pastel do monitor sumiriam contra o branco.
+ */
+export function kindColor(kind: FiducialKind, pal: EcgPaperPalette): string {
+  switch (kind) {
+    case 'Pon': case 'Poff': return pal.annot.sky
+    case 'Qon': return pal.annot.pink
+    case 'J': return pal.annot.amber
+    case 'Tend': return pal.annot.orange
+    default: return pal.ink
+  }
 }
 
 interface Props {
@@ -72,6 +83,7 @@ export function EcgLeadCanvas({
   const [width, setWidth] = useState(600)
   const [caliper, setCaliper] = useState<Caliper>({ active: false, x1: null, x2: null, k1: null, k2: null })
 
+  const palette = dark ? ECG_PAPER_GREEN : ECG_PAPER_LIGHT
   const theme = dark ? ECG_THEME_DARK : ECG_THEME_LIGHT
   const pxPerMm = BASE_PX_PER_MM * zoom
   const cfg: RenderConfig = { pxPerMm, speedMmS, gainMmMv, theme }
@@ -127,19 +139,19 @@ export function EcgLeadCanvas({
     if (animate) {
       const visMs = visibleDurationMs(width - x0, cfg)
       const sweepX = x0 + ((offsetMs % visMs) / visMs) * (width - x0)
-      ctx.fillStyle = dark ? 'rgba(63,240,138,0.10)' : 'rgba(0,0,0,0.05)'
+      ctx.fillStyle = dark ? 'rgba(63,240,138,0.10)' : 'rgba(23,18,15,0.06)'
       ctx.fillRect(sweepX, 0, 22, height)
     }
 
     // overlay didático (anatomia do ECG) — estático, ancorado nos pontos fiduciais
-    if (teaching) drawTeaching(ctx, { x0, width: width - x0, baselineY, height, theme, dark, pxPerMs, fiducials })
+    if (teaching) drawTeaching(ctx, { x0, width: width - x0, baselineY, height, palette, pxPerMs, fiducials })
 
     // marcadores fiduciais (pontos onde o paquímetro "gruda") — modo estático
     if (snapOn && fiducials) {
       for (const f of fiducials) {
         const fx = x0 + f.ms * pxPerMs
         if (fx < x0 || fx > width) continue
-        ctx.strokeStyle = KIND_COLOR[f.kind]
+        ctx.strokeStyle = kindColor(f.kind, palette)
         ctx.globalAlpha = 0.35
         ctx.lineWidth = 1
         ctx.setLineDash([1, 3])
@@ -242,10 +254,10 @@ function drawTeaching(
   ctx: CanvasRenderingContext2D,
   o: {
     x0: number; width: number; baselineY: number; height: number
-    theme: { text: string }; dark: boolean; pxPerMs: number; fiducials?: Fiducial[]
+    palette: EcgPaperPalette; pxPerMs: number; fiducials?: Fiducial[]
   },
 ) {
-  const { x0, width, baselineY, height, pxPerMs, dark, fiducials } = o
+  const { x0, width, baselineY, height, pxPerMs, palette, fiducials } = o
   if (!fiducials || fiducials.length === 0) return
   const toX = (ms: number) => x0 + ms * pxPerMs
   const visEndMs = width / pxPerMs
@@ -277,23 +289,23 @@ function drawTeaching(
     ctx.font = 'bold 10px ui-sans-serif, system-ui'
     const tw = ctx.measureText(label).width
     const mid = (xa + xb) / 2
-    ctx.fillStyle = dark ? '#0a0f0d' : '#fff5f5'
+    ctx.fillStyle = palette.bg
     ctx.fillRect(mid - tw / 2 - 3, y + 1, tw + 6, 12)
     ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'top'
     ctx.fillText(label, mid, y + 2)
     ctx.textAlign = 'left'
   }
-  bracket(pOn, qOn, 'PR', '#a78bfa', 0)
-  bracket(qOn, tEnd, 'QT', '#34d399', 1)
+  bracket(pOn, qOn, 'PR', palette.annot.violet, 0)
+  bracket(qOn, tEnd, 'QT', palette.annot.emerald, 1)
 
   // ── rótulos das ondas acima do traçado (duas fileiras alternadas) ──
   // extensão aproximada da onda P (não temos Poff nos fiduciais): ~100 ms a partir de Pon
   const pEnd = pOn != null ? Math.min(pOn + 100, qOn) : null
   const waves: { label: string; a: number | null; b: number | null; color: string }[] = [
-    { label: 'P', a: pOn, b: pEnd, color: '#38bdf8' },
-    { label: 'QRS', a: qOn, b: j, color: '#f472b6' },
-    { label: 'ST', a: j, b: tEnd != null ? (j + tEnd) / 2 : null, color: '#fbbf24' },
-    { label: 'T', a: tEnd != null ? (j + tEnd) / 2 : null, b: tEnd, color: '#fb923c' },
+    { label: 'P', a: pOn, b: pEnd, color: palette.annot.sky },
+    { label: 'QRS', a: qOn, b: j, color: palette.annot.pink },
+    { label: 'ST', a: j, b: tEnd != null ? (j + tEnd) / 2 : null, color: palette.annot.amber },
+    { label: 'T', a: tEnd != null ? (j + tEnd) / 2 : null, b: tEnd, color: palette.annot.orange },
   ]
   ctx.font = 'bold 10px ui-sans-serif, system-ui'
   waves.forEach((w, i) => {
@@ -308,7 +320,7 @@ function drawTeaching(
     ctx.setLineDash([]); ctx.globalAlpha = 1
     ctx.fillStyle = w.color
     ctx.fillRect(mid - tw / 2 - 4, rowY, tw + 8, 13)
-    ctx.fillStyle = dark ? '#0a0f0d' : '#fff5f5'
+    ctx.fillStyle = palette.bg
     ctx.textAlign = 'center'; ctx.textBaseline = 'top'
     ctx.fillText(w.label, mid, rowY + 2)
     ctx.textAlign = 'left'

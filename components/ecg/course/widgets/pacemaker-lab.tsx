@@ -5,7 +5,7 @@ import { Zap, ShieldAlert } from 'lucide-react'
 import type { EcgPattern } from '@/lib/ecg/engine'
 import { patternPath, type StripScale } from '@/lib/ecg/course/strip'
 import { CourseHeart, HEART_PARTS, type HeartPart } from './course-heart'
-import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, ScrollRow } from './ui'
+import { EcgGrid, LabButton, LabChip, LabNote, LabShell, Metric, PaperFrame, ScrollRow, useEcgPaper } from './ui'
 
 /**
  * Laboratório da hierarquia de marca-passos.
@@ -185,6 +185,7 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
   const info = INFO[selected]
 
   const path = useMemo(() => patternPath(scenario.pattern, 'II', STRIP), [scenario])
+  const { palette } = useEcgPaper()
 
   const showBlocks = mode === 'blocks'
 
@@ -237,13 +238,12 @@ export function PacemakerLab({ mode = 'explore' }: { mode?: 'explore' | 'blocks'
         <div className="space-y-3">
           {showBlocks ? (
             <>
-              <div className="overflow-hidden rounded-xl border border-emerald-500/20 bg-[#07100c]">
-                <svg viewBox={`0 0 ${STRIP.width} ${STRIP.height}`} className="block h-auto w-full text-emerald-400" role="img"
-                  aria-label={`Traçado resultante: ${scenario.driver}`}>
-                  <EcgGrid mm={16} id="pm-grid" />
-                  <path d={path} fill="none" stroke={scenario.tone === 'bad' ? '#fb7185' : '#3ff08a'} strokeWidth="2.2" strokeLinejoin="round" />
-                </svg>
-              </div>
+              <PaperFrame viewBox={`0 0 ${STRIP.width} ${STRIP.height}`} role="img"
+                aria-label={`Traçado resultante: ${scenario.driver}`}>
+                <EcgGrid mm={16} id="pm-grid" />
+                <path d={path} fill="none" stroke={scenario.tone === 'bad' ? palette.traceBad : palette.trace}
+                  strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+              </PaperFrame>
               <div className="grid grid-cols-3 gap-2 [&>*]:min-w-0">
                 <Metric label="Comando" value={scenario.driver.split(' ')[0]} />
                 <Metric label="Frequência" value={scenario.rate.split(' ')[0]} unit="bpm" tone={scenario.tone === 'bad' ? 'bad' : scenario.tone === 'warn' ? 'warn' : 'good'} />
