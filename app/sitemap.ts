@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { CANONICAL_ORIGIN } from '@/lib/seo'
+import { TODAS_SUBSECOES } from '@/lib/tomografia'
 
 function canonical(path = '/') {
   return `${CANONICAL_ORIGIN}${path.startsWith('/') ? path : `/${path}`}`
@@ -53,5 +54,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  return staticRoutes
+  // Cada série do Manual de Tomografia é uma página com título e descrição
+  // próprios (ver o generateMetadata da rota), então vale indexar uma a uma.
+  const tomografia: MetadataRoute.Sitemap = [
+    {
+      url: canonical('/manual-clinico/tomografia'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    ...TODAS_SUBSECOES.map((sub) => ({
+      url: canonical(`/manual-clinico/tomografia/${sub.id}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  ]
+
+  return [...staticRoutes, ...tomografia]
 }

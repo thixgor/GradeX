@@ -49,6 +49,9 @@ const publicRoutes = [
   '/api/amostra',
   '/manual-clinico',
   '/manual-clinico/farmacologia',
+  // Manual de Tomografia: atlas educacional aberto, como a Anatomia 3D. As
+  // séries individuais (/tomografia/<slug>) entram pela regex em isPublicRoute.
+  '/manual-clinico/tomografia',
   // Manual do Eletrocardiograma: página pública que exibe o paywall a visitantes;
   // o acesso ao simulador é validado no handler /api/manual-clinico/eletrocardiograma.
   '/manual-clinico/eletrocardiograma',
@@ -137,6 +140,8 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/mapa-mental\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
+  // Séries do Manual de Tomografia (/manual-clinico/tomografia/<slug>).
+  if (/^\/manual-clinico\/tomografia\/[a-z0-9-]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||
@@ -394,7 +399,10 @@ export const config = {
      * - favicon.ico, favicon.jpg
      * - public folder files (img/)
      * - landing pages served directly from public/
+     * - séries de imagens do Manual de Tomografia (TC_*): são centenas de
+     *   requisições de imagem por série, e passar cada uma pelo middleware só
+     *   adicionaria latência a um asset estático já público.
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|ldpg-mnclinico).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|logo_manual_tomografia|ldpg-mnclinico).*)',
   ],
 }

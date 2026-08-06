@@ -362,6 +362,11 @@ const TOUR_STEPS: TourStep[] = [
     body: 'Atlas 3D interativo: modelos rotacionáveis em 360° com explicação anatômica aprofundada.',
   },
   {
+    target: '[data-tour="tomografia"]',
+    title: 'Manual de Tomografia',
+    body: 'Atlas de TC interativo: role o scroll e percorra os cortes como no aparelho, troque a janela e estude cada estrutura em profundidade — tórax, abdome e crânio.',
+  },
+  {
     target: '[data-tour="ecg"]',
     title: 'Manual do Eletrocardiograma',
     body: 'Simulador de ECG com 12 derivações, papel milimetrado real, medidas automáticas e banco de traçados. Exclusivo de assinantes.',
@@ -1043,6 +1048,33 @@ function ManualClinicoContent() {
                     Atlas 3D interativo com dezenas de modelos rotacionáveis em 360° — coração, cardiopatias congênitas, pulmões, coluna torácica, ossos e mais — cada um com explicação anatômica aprofundada. Fonte: Universidade de Dundee.
                   </p>
                 </div>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </div>
+          </button>
+        )}
+
+        {/* ══════════ TOMOGRAFIA ENTRY ══════════ */}
+        {!busca && (
+          <button
+            onClick={() => router.push('/manual-clinico/tomografia')}
+            data-tour="tomografia"
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <img
+                  src="/logo_manual_tomografia_domineaqui.svg"
+                  alt="Manual de Tomografia"
+                  width={945}
+                  height={265}
+                  className="block h-auto w-full max-w-[190px] dark:[filter:invert(1)_hue-rotate(180deg)_brightness(1.15)]"
+                />
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  Atlas tomográfico interativo: TC de tórax, abdome e crânio com os cortes percorridos por
+                  scroll, como no aparelho. Troca de janela, salto para a estrutura, mais de 250 estruturas
+                  com densidade em UH, como identificar, clínica e alterações — com quiz e modo treino.
+                </p>
               </div>
               <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
             </div>
