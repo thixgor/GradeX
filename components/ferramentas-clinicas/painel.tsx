@@ -10,6 +10,7 @@ import {
   Link2,
   RotateCcw,
   Sigma,
+  Star,
 } from 'lucide-react'
 import type { Campo, Ferramenta, Valores } from '@/lib/ferramentas-clinicas/tipos'
 import { estiloNivel, tema } from './tema'
@@ -37,12 +38,16 @@ export function PainelFerramenta({
   aberto,
   onToggle,
   ancora,
+  favorito,
+  onFavoritar,
 }: {
   ferramenta: Ferramenta
   cor: string
   aberto: boolean
   onToggle: () => void
   ancora?: boolean
+  favorito?: boolean
+  onFavoritar?: () => void
 }) {
   const t = tema(cor)
   const [valores, setValores] = useState<Valores>(() => valoresIniciais(ferramenta.campos))
@@ -89,34 +94,75 @@ export function PainelFerramenta({
   const est = estiloNivel(resultado?.nivel)
 
   return (
+    /* Sem `overflow-hidden`: ele criaria um contexto de rolagem e a barra fixa
+       de resultado do celular deixaria de grudar. O arredondamento passa a ser
+       declarado nos filhos das pontas. */
     <section
       id={`f-${ferramenta.id}`}
-      className={`scroll-mt-24 overflow-hidden rounded-xl border bg-card transition-colors ${
+      className={`scroll-mt-20 rounded-xl border bg-card transition-colors ${
         aberto ? `${t.border} shadow-sm` : `border-border ${t.hoverBorder}`
       } ${ancora ? 'ring-2 ring-primary/30' : ''}`}
     >
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={aberto}
-        className="flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-muted/40 sm:p-5"
-      >
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <h3 className="font-heading text-[15px] font-semibold leading-snug tracking-tight sm:text-base">{ferramenta.nome}</h3>
-            {ferramenta.sigla && (
-              <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
-                {ferramenta.sigla}
-              </span>
-            )}
+      <div className="flex items-stretch">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={aberto}
+          className={`flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left transition-colors hover:bg-muted/40 sm:py-5 sm:pl-5 ${
+            aberto ? 'rounded-tl-xl' : 'rounded-l-xl'
+          }`}
+        >
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <h3 className="font-heading text-[15px] font-semibold leading-snug tracking-tight sm:text-base">{ferramenta.nome}</h3>
+              {ferramenta.sigla && (
+                <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
+                  {ferramenta.sigla}
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
           </div>
-          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
-        </div>
-        <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${aberto ? 'rotate-180' : ''}`} />
-      </button>
+          <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${aberto ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* Botão irmão, não aninhado: um <button> dentro de outro é HTML
+            inválido e quebra o teclado e o leitor de tela. */}
+        {onFavoritar && (
+          <button
+            type="button"
+            onClick={onFavoritar}
+            aria-pressed={!!favorito}
+            aria-label={favorito ? `Remover ${ferramenta.nome} dos favoritos` : `Salvar ${ferramenta.nome} nos favoritos`}
+            title={favorito ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+            className={`flex shrink-0 items-start justify-center py-4 pl-1.5 pr-3.5 transition-colors sm:py-5 sm:pr-4 ${
+              aberto ? 'rounded-tr-xl' : 'rounded-r-xl'
+            } ${favorito ? 'text-amber-500' : 'text-muted-foreground/30 hover:text-amber-500'}`}
+          >
+            <Star className={`mt-0.5 h-5 w-5 transition-transform ${favorito ? 'scale-110 fill-current' : ''}`} />
+          </button>
+        )}
+      </div>
 
       {aberto && (
         <div className="border-t border-border">
+          {/* No celular as colunas viram pilha e o resultado cai abaixo dos
+              campos — longe de quem está digitando. Esta faixa mantém o número
+              à vista enquanto se percorre o formulário. O `top-14` livra os
+              botões flutuantes do AppShell, que ocupam os 52px do topo. */}
+          {resultado && (
+            <div className="sticky top-14 z-20 flex items-center gap-2.5 border-b border-border bg-card/95 px-4 py-2.5 backdrop-blur lg:hidden">
+              <span className={`h-2 w-2 shrink-0 rounded-full ${est.barra}`} aria-hidden />
+              <p className="min-w-0 flex-1 truncate text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                {resultado.titulo || 'Resultado'}
+              </p>
+              <span className={`max-w-[58%] shrink-0 truncate font-heading text-base font-bold leading-tight tracking-tight ${est.valor}`}>
+                {resultado.valor}
+                {resultado.unidade && <span className="ml-1 text-[11px] font-medium text-muted-foreground">{resultado.unidade}</span>}
+              </span>
+            </div>
+          )}
+
           <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
             {/* ─────────── Entrada ─────────── */}
             <div className="border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
@@ -125,7 +171,7 @@ export function PainelFerramenta({
                 <button
                   type="button"
                   onClick={limpar}
-                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="-mr-1.5 inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:-mr-1 sm:h-8 sm:px-2"
                 >
                   <RotateCcw className="h-3 w-3" /> Limpar
                 </button>
@@ -141,12 +187,12 @@ export function PainelFerramenta({
             <div className="bg-muted/20 p-4 sm:p-5">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <p className="editorial-mark">Resultado</p>
-                <div className="flex items-center gap-1">
+                <div className="-mr-1.5 flex items-center gap-0.5 sm:-mr-1">
                   <button
                     type="button"
                     onClick={() => copiar('resultado')}
                     disabled={!resultado}
-                    className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40 sm:h-8 sm:px-2"
                   >
                     {copiado === 'resultado' ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
                     {copiado === 'resultado' ? 'Copiado' : 'Copiar'}
@@ -154,7 +200,7 @@ export function PainelFerramenta({
                   <button
                     type="button"
                     onClick={() => copiar('link')}
-                    className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:h-8 sm:w-8"
                     aria-label="Copiar link direto para esta ferramenta"
                   >
                     {copiado === 'link' ? <Check className="h-3 w-3 text-emerald-600" /> : <Link2 className="h-3 w-3" />}
@@ -176,7 +222,7 @@ export function PainelFerramenta({
                   <div className={`rounded-xl border p-4 ${est.cartao}`}>
                     {resultado.titulo && <p className="text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">{resultado.titulo}</p>}
                     <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
-                      <span className={`font-heading text-3xl font-bold leading-tight tracking-tight sm:text-4xl ${est.valor}`}>{resultado.valor}</span>
+                      <span className={`min-w-0 break-words font-heading text-[26px] font-bold leading-tight tracking-tight sm:text-3xl md:text-4xl ${est.valor}`}>{resultado.valor}</span>
                       {resultado.unidade && <span className="text-sm font-medium text-muted-foreground">{resultado.unidade}</span>}
                     </div>
                     {resultado.rotuloNivel && (
@@ -226,7 +272,7 @@ export function PainelFerramenta({
                           <thead>
                             <tr className="border-b border-border">
                               {resultado.tabela.colunas.map((c, i) => (
-                                <th key={i} className="whitespace-nowrap px-3 py-2 font-semibold text-muted-foreground">
+                                <th key={i} className="whitespace-nowrap px-2.5 py-2 font-semibold text-muted-foreground sm:px-3">
                                   {c}
                                 </th>
                               ))}
@@ -239,7 +285,7 @@ export function PainelFerramenta({
                                 className={`border-b border-border/60 last:border-0 ${resultado.tabela!.destaque === i ? `${t.bg} font-semibold` : ''}`}
                               >
                                 {linha.map((celula, j) => (
-                                  <td key={j} className="px-3 py-2 align-top leading-relaxed">
+                                  <td key={j} className="px-2.5 py-2 align-top leading-relaxed sm:px-3">
                                     <TextoRico>{celula}</TextoRico>
                                   </td>
                                 ))}
@@ -289,7 +335,7 @@ export function PainelFerramenta({
           </div>
 
           {/* ─────────── Fundamento, fórmula, armadilhas e referências ─────────── */}
-          <div className="border-t border-border bg-background p-4 sm:p-5">
+          <div className="rounded-b-xl border-t border-border bg-background p-4 sm:p-5">
             <div className="grid gap-5 lg:grid-cols-2">
               <div className="space-y-4">
                 {ferramenta.formula && ferramenta.formula.length > 0 && (
@@ -298,7 +344,7 @@ export function PainelFerramenta({
                       <Sigma className="h-3 w-3" /> Fórmula
                     </p>
                     <div className="overflow-x-auto rounded-lg border border-border bg-muted/40 p-3">
-                      <pre className="whitespace-pre font-mono text-[12px] leading-relaxed text-foreground">{ferramenta.formula.join('\n')}</pre>
+                      <pre className="whitespace-pre font-mono text-[11.5px] leading-relaxed text-foreground sm:text-[12px]">{ferramenta.formula.join('\n')}</pre>
                     </div>
                   </div>
                 )}

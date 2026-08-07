@@ -19,6 +19,7 @@ import {
 } from '@/lib/ferramentas-clinicas'
 import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
 import { PainelFerramenta } from '@/components/ferramentas-clinicas/painel'
+import { useFavoritos } from '@/components/ferramentas-clinicas/use-favoritos'
 
 export default function CategoriaFerramentasPage() {
   return (
@@ -42,6 +43,7 @@ function Conteudo() {
   const [abertos, setAbertos] = useState<Set<string>>(new Set())
   const [ancorado, setAncorado] = useState<string | null>(null)
   const ancoraRef = useRef<string | null>(searchParams?.get('f') ?? null)
+  const { alternar: alternarFavorito, ehFavorito, sincronizar } = useFavoritos()
 
   /**
    * Carrega o módulo desta categoria e, se houver, os módulos das ferramentas
@@ -72,6 +74,13 @@ function Conteudo() {
       ativo = false
     }
   }, [id, valida])
+
+  // Os favoritos guardam um retrato do texto de cada ferramenta. Com o módulo
+  // desta área já carregado, aproveita para renovar o que tiver envelhecido —
+  // `sincronizar` só grava se algo mudou de fato.
+  useEffect(() => {
+    if (ferramentas) sincronizar(ferramentas)
+  }, [ferramentas, sincronizar])
 
   // Abre e rola até a ferramenta indicada em `?f=`, uma única vez.
   useEffect(() => {
@@ -119,10 +128,12 @@ function Conteudo() {
       {/* ══════════════════════════ CABEÇALHO ══════════════════════════ */}
       <div className="relative overflow-hidden border-b border-border">
         <div className={`absolute inset-0 bg-gradient-to-b ${t.grad}`} aria-hidden />
-        <div className="container relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-8">
+        {/* `pt-16` no celular pelo mesmo motivo da página índice: os botões
+            flutuantes do AppShell ocupam os 52px do topo. */}
+        <div className="container relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-16 sm:pt-8">
           <button
             onClick={() => router.push('/manual-clinico/ferramentas')}
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="-m-2 mb-4 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Todas as ferramentas
           </button>
@@ -199,6 +210,8 @@ function Conteudo() {
                   aberto={abertos.has(f.id)}
                   onToggle={() => alternar(f.id)}
                   ancora={ancorado === f.id}
+                  favorito={ehFavorito(f.id)}
+                  onFavoritar={() => alternarFavorito(f)}
                 />
               ))}
             </div>
@@ -220,6 +233,8 @@ function Conteudo() {
                       aberto={abertos.has(f.id)}
                       onToggle={() => alternar(f.id)}
                       ancora={ancorado === f.id}
+                      favorito={ehFavorito(f.id)}
+                      onFavoritar={() => alternarFavorito(f)}
                     />
                   ))}
                 </div>
