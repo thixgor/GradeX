@@ -37,11 +37,37 @@ atrás de `useAcessoTomografia`, `PLUS_LABEL`, checkout ou `account-tier`.
 
 ## 2. Mídia — pendência operacional que bloqueia produção
 
-Os 9.175 objetos (2,56 GiB) **ainda não foram enviados ao Vercel Blob**. Não foi
-possível fazê-lo neste ambiente: os binários do acervo são ponteiros Git LFS
-(`git-lfs` não está instalado) e `BLOB_READ_WRITE_TOKEN` não existe aqui.
+Os objetos **ainda não foram enviados ao Vercel Blob**.
 
-O que já está pronto para o envio:
+### Tentativa de 2026-08-07 e o que ela apurou
+
+O envio foi tentado e falhou por um motivo específico, que precisa ser resolvido
+antes de qualquer nova tentativa:
+
+```
+Vercel Blob: Cannot use public access on a private store.
+The store is configured with private access.
+```
+
+**O store de destino era privado.** Zero arquivos subiram — não há resíduo a
+limpar. E isso não se resolve trocando `access: 'public'` por `'private'` no
+script: um atlas de 9.156 imagens precisa de URLs públicas e cacheáveis pelo
+CDN. Num store privado, cada visualização exigiria uma URL assinada gerada no
+servidor, o que elimina o cache, multiplica a latência e transforma cada `<img>`
+numa chamada autenticada. **É preciso criar um Blob store com acesso público**
+(o acesso é definido na criação e não muda depois).
+
+Também se confirmou nessa tentativa:
+
+- **`git lfs pull` funciona** e materializa 9.156 arquivos (2,10 GiB) sem falha;
+- **só é preciso baixar 2,10 GiB, não 2,56.** Use `git lfs pull --exclude="*.h5p"`:
+  os 19 pacotes H5P (0,46 GiB) são prova de origem dos quizzes e a interface
+  nunca os serve — as questões e imagens já foram extraídas deles na ingestão.
+  O script de envio pula esses pacotes pelo mesmo motivo;
+- **o ambiente de execução é efêmero.** Um contêiner reciclado perde o download,
+  e tudo recomeça do `git lfs pull`. Prefira rodar o envio numa máquina estável.
+
+### O que já está pronto para o envio
 
 - o resolver (`lib/histologia/midia.ts`) monta a URL a partir de `sha256` + `ext`,
   no mesmo esquema de `scripts/enviar-assets-vercel-blob.mjs`;
@@ -53,12 +79,26 @@ O que já está pronto para o envio:
 **Passos para publicar a mídia:**
 
 ```bash
-git lfs pull                                    # materializa os 2,56 GiB
-node public/Manual-Histologia/scripts/validar-acervo.mjs
+# 0. Na Vercel: Storage → Create Database → Blob, com acesso PÚBLICO.
+#    Store privado faz o envio falhar inteiro (ver acima).
+
+git lfs install
+git lfs pull --exclude="*.h5p"                  # 2,10 GiB; pula o que não é servido
+
 BLOB_READ_WRITE_TOKEN=... node public/Manual-Histologia/scripts/enviar-assets-vercel-blob.mjs
-# depois, no ambiente:
+
+# O script imprime, ao final, a linha exata a configurar no ambiente:
 NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE=https://<store>.public.blob.vercel-storage.com
 ```
+
+O envio é **retomável**: o progresso vai para `dados/mapa-assets-blob.json` a
+cada 25 arquivos (ignorado pelo git), e uma segunda execução continua de onde
+parou. O script também recusa ponteiros LFS antes de começar — sem essa
+checagem, um clone sem `git lfs pull` publicaria 9.156 arquivos de texto de
+130 bytes como se fossem imagens, e o erro só apareceria no navegador do aluno.
+
+Como `NEXT_PUBLIC_*` é embutida em tempo de build, **é preciso um novo deploy**
+depois de configurar a variável — defini-la sem redeploy não tem efeito.
 
 Sem `git lfs`, o acervo ainda pode ser **validado** pelos ponteiros: o `oid
 sha256` do ponteiro é o hash do conteúdo real. `__tests__/histologia/acervo.test.ts`
