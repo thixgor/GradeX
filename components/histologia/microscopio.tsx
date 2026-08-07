@@ -34,6 +34,7 @@ import {
   objetivoAtual,
   transformCss,
 } from '@/lib/histologia/viewport'
+import { dossieDaEstrutura } from '@/lib/histologia/dossies'
 import { PALETA, RETICULA } from './tema'
 
 /**
@@ -792,19 +793,7 @@ export function Microscopio({
           )}
 
           {modo === 'estudo' && overlaySelecionado && (
-            <div className="rounded-lg border border-violet-500/25 bg-violet-500/[0.06] p-3">
-              <p className="text-sm font-bold leading-snug">{overlaySelecionado.rotulo}</p>
-              {!overlaySelecionado.traduzido && (
-                <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-700 dark:text-amber-300">
-                  termo ainda no original
-                </p>
-              )}
-              {overlaySelecionado.explicacaoOriginal && (
-                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                  {overlaySelecionado.explicacaoOriginal}
-                </p>
-              )}
-            </div>
+            <DossieDaEstrutura overlay={overlaySelecionado} />
           )}
         </div>
       </div>
@@ -898,6 +887,95 @@ export function Microscopio({
         </p>
       )}
     </section>
+  )
+}
+
+/* ────────────────────────── dossiê ────────────────────────── */
+
+/**
+ * Aprofundamento da estrutura selecionada.
+ *
+ * Combina três fontes distintas, e a distinção importa: o rótulo e a explicação
+ * vêm do acervo; a origem embriológica, a função, os critérios de
+ * reconhecimento e as correlações clínicas são conteúdo próprio
+ * (`lib/histologia/dossies.ts`). Estrutura sem dossiê escrito mostra só o que o
+ * acervo traz — a lacuna aparece, não é preenchida.
+ */
+function DossieDaEstrutura({ overlay }: { overlay: Overlay }) {
+  const dossie = dossieDaEstrutura(overlay.rotuloOriginal)
+
+  return (
+    <div className="rounded-lg border border-violet-500/25 bg-violet-500/[0.06] p-3">
+      <p className="text-sm font-bold leading-snug">{overlay.rotulo}</p>
+      {!overlay.traduzido && (
+        <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-700 dark:text-amber-300">
+          termo ainda no original
+        </p>
+      )}
+
+      {dossie?.funcao && (
+        <BlocoDoDossie titulo="Função">{dossie.funcao}</BlocoDoDossie>
+      )}
+      {dossie?.origemEmbrionaria && (
+        <BlocoDoDossie titulo="Origem embriológica">{dossie.origemEmbrionaria}</BlocoDoDossie>
+      )}
+      {dossie?.comoReconhecer && (
+        <BlocoDoDossie titulo="Como reconhecer">{dossie.comoReconhecer}</BlocoDoDossie>
+      )}
+
+      {dossie?.relacoesClinicas && dossie.relacoesClinicas.length > 0 && (
+        <div className="mt-2.5">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Relações clínicas
+          </p>
+          <dl className="mt-1 space-y-1.5">
+            {dossie.relacoesClinicas.map((relacao) => (
+              <div key={relacao.situacao} className="border-l-2 border-rose-500/40 pl-2">
+                <dt className="text-xs font-semibold">{relacao.situacao}</dt>
+                <dd className="text-xs leading-relaxed text-muted-foreground">
+                  {relacao.consequencia}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      {dossie?.armadilha && (
+        <p className="mt-2.5 rounded border border-amber-500/30 bg-amber-500/[0.07] px-2 py-1.5 text-xs leading-relaxed">
+          <span className="font-semibold">Armadilha: </span>
+          {dossie.armadilha}
+        </p>
+      )}
+
+      {overlay.explicacaoOriginal && (
+        <details className="mt-2.5">
+          <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Descrição do acervo
+          </summary>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            {overlay.explicacaoOriginal}
+          </p>
+        </details>
+      )}
+
+      {!dossie && (
+        <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+          Esta estrutura ainda não tem aprofundamento escrito.
+        </p>
+      )}
+    </div>
+  )
+}
+
+function BlocoDoDossie({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+  return (
+    <div className="mt-2.5">
+      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+        {titulo}
+      </p>
+      <p className="mt-0.5 text-xs leading-relaxed">{children}</p>
+    </div>
   )
 }
 
