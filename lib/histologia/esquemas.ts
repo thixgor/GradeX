@@ -329,6 +329,22 @@ export const esquemaRelatorio = z.object({
    * URLs quebradas, e o pipeline recusa fazê-lo.
    */
   formatoServido: z.enum(['webp', 'original']).default('original'),
+  /** Tamanho publicado no CDN. Menor que `bytesUnicos` quando há recompressão. */
+  bytesServidos: z.number().int().optional(),
+  /**
+   * Referências removidas porque o arquivo de origem não é uma imagem — o
+   * acervo tem um HTML salvo como `.png`. Descartar em silêncio faria os
+   * contadores "baterem" escondendo perda de conteúdo, então o descarte é
+   * explícito e somado de volta na conciliação.
+   */
+  descartados: z
+    .object({
+      assets: z.number().int(),
+      bases: z.number().int(),
+      overlays: z.number().int(),
+      imagensDeQuiz: z.number().int(),
+    })
+    .default({ assets: 0, bases: 0, overlays: 0, imagensDeQuiz: 0 }),
   /** Divergências encontradas na conciliação. Vazio é o único estado aceitável. */
   divergencias: z.array(z.string()),
 })

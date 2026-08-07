@@ -82,7 +82,15 @@ try {
   /* primeira execução */
 }
 
-const pendentes = plano.filter((i) => !derivadas[i.sha256])
+const arquivoInvalidos = path.join(acervo, 'dados/assets-invalidos.json')
+let invalidos = {}
+try {
+  invalidos = JSON.parse(await readFile(arquivoInvalidos, 'utf8'))
+} catch {
+  /* nenhum inválido conhecido ainda */
+}
+
+const pendentes = plano.filter((i) => !derivadas[i.sha256] && !invalidos[i.sha256])
 
 console.log(`Total a converter : ${plano.length.toLocaleString('pt-BR')} arquivos`)
 console.log(`Já convertidos    : ${(plano.length - pendentes.length).toLocaleString('pt-BR')}`)
@@ -152,6 +160,18 @@ async function trabalhador() {
       }
     } catch (erro) {
       falhas++
+      // Arquivo que o decodificador recusa não é "falha de conversão": é dado
+      // ruim na origem. Registramos para o pipeline descartá-lo em vez de
+      // publicar um marcador quebrado.
+      if (/unsupported image format|Input buffer/i.test(erro.message)) {
+        invalidos[item.sha256] = {
+          arquivo: item.arquivoLocal,
+          declarado: item.mime,
+          real: 'desconhecido',
+          motivo: `sharp recusou decodificar: ${erro.message}`,
+          detectadoEm: new Date().toISOString().slice(0, 10),
+        }
+      }
       console.error(`✘ ${item.arquivoLocal} — ${erro.message}`)
       if (falhas > 20) {
         console.error('Falhas demais; abortando.')
@@ -167,6 +187,7 @@ function gib(b) {
 
 await Promise.all(Array.from({ length: concorrencia }, trabalhador))
 await writeFile(manifesto, `${JSON.stringify(derivadas)}\n`, 'utf8')
+await writeFile(arquivoInvalidos, `${JSON.stringify(invalidos, null, 2)}\n`, 'utf8')
 
 /* ────────────────────────── relatório ────────────────────────── */
 
@@ -209,7 +230,15 @@ console.log(
   `✔ Cabe no plano Hobby: ${gib(totalNovo)} de 1,00 GiB ` +
     `(folga de ${(100 * (1 - totalNovo / LIMITE_HOBBY)).toFixed(0)}%).`,
 )
-if (falhas > 0) {
-  console.error(`Atenção: ${falhas} falha(s).`)
+const invalidosNovos = Object.keys(invalidos).length
+if (invalidosNovos > 0) {
+  console.log(
+    `${invalidosNovos} asset(s) recusado(s) por não serem imagem — registrados em ` +
+      'dados/assets-invalidos.json e descartados pelo pipeline.',
+  )
+}
+const outrasFalhas = falhas - invalidosNovos
+if (outrasFalhas > 0) {
+  console.error(`Atenção: ${outrasFalhas} falha(s) não explicada(s).`)
   process.exit(1)
 }

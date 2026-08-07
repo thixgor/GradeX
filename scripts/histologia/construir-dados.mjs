@@ -134,6 +134,27 @@ if (Object.keys(derivadas).length === 0) {
   }
 }
 
+/**
+ * Assets que a origem declara como imagem mas não são.
+ *
+ * Um deles existe: 29 KB de HTML salvos com extensão `.png` pelo scraper
+ * original, referenciados por 8 lâminas. Publicá-lo poria um marcador quebrado
+ * em todas elas. Descartar é a única saída honesta — e o descarte é contado no
+ * relatório, para os números continuarem fechando com o acervo.
+ */
+let assetsInvalidos = {}
+try {
+  assetsInvalidos = JSON.parse(
+    await readFile(path.join(dirAcervo, 'dados/assets-invalidos.json'), 'utf8'),
+  )
+} catch {
+  /* nenhum inválido conhecido */
+}
+
+let overlaysDescartados = 0
+let basesDescartadas = 0
+let imagensDeQuizDescartadas = 0
+
 const assetsPorSha = new Map()
 for (const item of planoBruto) {
   const derivada = derivadas[item.sha256]
@@ -286,6 +307,7 @@ function altDoOverlay(rotulo, titulo) {
 }
 
 function montarMidia(sha, alt, extras = {}) {
+  if (assetsInvalidos[sha]) return null
   const asset = assetsPorSha.get(sha)
   if (!asset) {
     divergencias.push(`Asset sem entrada no plano de blob: ${sha}`)
@@ -318,7 +340,10 @@ for (const bruta of paginasBrutas) {
     const b = bruta.bases[0]
     const sha = localizarSha(diretorio, b.arquivo)
     if (!sha) divergencias.push(`Imagem-base sem hash: ${diretorio}/${b.arquivo}`)
-    else base = montarMidia(sha, altDaBase(bruta, trilhaLegivel))
+    else {
+      base = montarMidia(sha, altDaBase(bruta, trilhaLegivel))
+      if (!base && assetsInvalidos[sha]) basesDescartadas++
+    }
   }
   if (bruta.bases.length > 1) {
     divergencias.push(`Página com mais de uma base (não previsto): ${bruta.id}`)
@@ -337,7 +362,10 @@ for (const bruta of paginasBrutas) {
     const classe = classificarMarcador(rotuloOriginal)
     const traduzido = traduzirTermo(rotuloOriginal)
     const midia = montarMidia(sha, altDoOverlay(traduzido ?? rotuloOriginal, bruta.titulo))
-    if (!midia) continue
+    if (!midia) {
+      if (assetsInvalidos[sha]) overlaysDescartados++
+      continue
+    }
 
     overlays.push({
       id: usadosNoEscopo(slugificar(rotuloOriginal, 48)),
@@ -475,7 +503,7 @@ for (const bruto of quizzesBrutos) {
       enunciado: textoDeHtml(q.enunciado),
       enunciadoOriginal: textoDeHtml(q.enunciado),
       midia: sha
-        ? montarMidia(
+        ? (assetsInvalidos[sha] && ++imagensDeQuizDescartadas, montarMidia(
             sha,
             // Alt que não entrega a resposta: descreve o *tipo* de imagem e o
             // que se pede, jamais a estrutura perguntada.
@@ -483,7 +511,7 @@ for (const bruto of quizzesBrutos) {
             arquivoH5p?.width && arquivoH5p?.height
               ? { largura: arquivoH5p.width, altura: arquivoH5p.height }
               : {},
-          )
+          ))
         : null,
       alternativas,
       multipla: alternativas.filter((a) => a.correta).length > 1,
@@ -679,7 +707,16 @@ const imagensDeQuiz = quizzesConvertidos.reduce(
 )
 const totalQuestoes = quizzesConvertidos.reduce((n, q) => n + q.questoes.length, 0)
 const pacotesH5p = midiaBruta.filter((m) => m.tipo === 'pacote-h5p').length
-const bytesUnicos = [...assetsPorSha.values()].reduce((n, a) => n + a.bytes, 0)
+// Dois totais distintos, que não devem ser confundidos:
+//  - `bytesUnicos` é o tamanho do acervo ORIGINAL, e é o que se compara com o
+//    número anunciado no README;
+//  - `bytesServidos` é o que de fato vai ao CDN depois da recompressão.
+const bytesUnicos = planoBruto.reduce((n, a) => n + a.bytes, 0)
+// Só conta o que o CDN de fato recebe: fora os 19 pacotes H5P (prova de origem,
+// nunca servidos) e os assets recusados por não serem imagem.
+const bytesServidos = planoBruto
+  .filter((a) => a.tipo !== 'pacote-h5p' && !assetsInvalidos[a.sha256])
+  .reduce((n, a) => n + (assetsPorSha.get(a.sha256)?.bytes ?? a.bytes), 0)
 
 const esperado = {
   paginas: 1524,
@@ -692,11 +729,14 @@ const esperado = {
   referenciasDeArquivo: 9500,
   assetsUnicos: 9175,
 }
+// Os contadores comparam com o acervo somando o que foi mantido e o que foi
+// descartado por ser inválido: descartar em silêncio faria os números "baterem"
+// escondendo perda de conteúdo.
 const obtido = {
   paginas: paginasConvertidas.length,
-  imagensBase: totalBases,
-  overlays: totalOverlays,
-  imagensDeQuiz,
+  imagensBase: totalBases + basesDescartadas,
+  overlays: totalOverlays + overlaysDescartados,
+  imagensDeQuiz: imagensDeQuiz + imagensDeQuizDescartadas,
   pacotesH5p,
   quizzes: quizzesConvertidos.length,
   questoes: totalQuestoes,
@@ -749,10 +789,19 @@ const relatorio = {
   referenciasDeArquivo: midiaBruta.length,
   assetsUnicos: assetsPorSha.size,
   bytesUnicos,
+  /** Tamanho efetivamente publicado no CDN, depois da recompressão. */
+  bytesServidos,
   entradasDeBusca: entradasDeBusca.length,
   fragmentos: fragmentos.size,
   /** Formato efetivamente servido pelo CDN. Consultado pela guarda acima. */
   formatoServido: Object.keys(derivadas).length > 0 ? 'webp' : 'original',
+  /** Referências descartadas por o arquivo de origem não ser uma imagem. */
+  descartados: {
+    assets: Object.keys(assetsInvalidos).length,
+    bases: basesDescartadas,
+    overlays: overlaysDescartados,
+    imagensDeQuiz: imagensDeQuizDescartadas,
+  },
   divergencias,
   notas,
 }
@@ -774,10 +823,24 @@ console.log(`  ${'seções (índice)'.padEnd(22)} ${String(secoes).padStart(6)}`
 console.log(`  ${'entradas de busca'.padEnd(22)} ${String(entradasDeBusca.length).padStart(6)}`)
 console.log(`  ${'fragmentos'.padEnd(22)} ${String(fragmentos.size).padStart(6)}  (${(bytesFragmentos / 1e6).toFixed(1)} MB)`)
 console.log(
+  `  ${'bytes originais'.padEnd(22)}${(bytesUnicos / 2 ** 30).toFixed(2).padStart(6)} GiB`,
+)
+console.log(
+  `  ${'bytes no CDN'.padEnd(22)}${(bytesServidos / 2 ** 30).toFixed(2).padStart(6)} GiB` +
+    `  (WebP, sem H5P)`,
+)
+console.log(
   `  ${'rótulos traduzidos'.padEnd(22)} ${String(traduzidos).padStart(6)}  de ${totalOverlays} (${((100 * traduzidos) / totalOverlays).toFixed(1)}%)`,
 )
 console.log('')
 
+if (Object.keys(assetsInvalidos).length > 0) {
+  notas.push(
+    `${Object.keys(assetsInvalidos).length} asset(s) da origem não são imagem e foram ` +
+      `descartados, removendo ${overlaysDescartados} overlay(s), ${basesDescartadas} base(s) e ` +
+      `${imagensDeQuizDescartadas} imagem(ns) de quiz. Ver dados/assets-invalidos.json.`,
+  )
+}
 for (const nota of notas) console.log(`  nota: ${nota}`)
 if (notas.length > 0) console.log('')
 

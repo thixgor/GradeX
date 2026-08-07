@@ -32,16 +32,49 @@ describe('conciliação com o acervo de origem', () => {
    * a interface está mostrando menos (ou mais) do que o acervo tem — e é isso
    * que "os contadores conciliam com o relatório" significa.
    */
-  it('bate os nove contadores anunciados', () => {
+  it('bate os nove contadores anunciados, somando o que foi descartado', () => {
+    /*
+     * Os contadores do relatório informam o que ficou **nos dados**; o que a
+     * origem tinha é o que ficou mais o que foi descartado por não ser imagem.
+     * Somar aqui é o que impede duas falhas opostas: perder conteúdo em
+     * silêncio, e "consertar" o número escondendo a perda.
+     */
+    const d = relatorio.descartados
     expect(relatorio.paginas).toBe(1524)
-    expect(relatorio.imagensBase).toBe(1318)
-    expect(relatorio.overlays).toBe(7775)
-    expect(relatorio.imagensDeQuiz).toBe(388)
+    expect(relatorio.imagensBase + d.bases).toBe(1318)
+    expect(relatorio.overlays + d.overlays).toBe(7775)
+    expect(relatorio.imagensDeQuiz + d.imagensDeQuiz).toBe(388)
     expect(relatorio.pacotesH5p).toBe(19)
     expect(relatorio.quizzes).toBe(19)
     expect(relatorio.questoes).toBe(388)
     expect(relatorio.referenciasDeArquivo).toBe(9500)
     expect(relatorio.assetsUnicos).toBe(9175)
+  })
+
+  it('todo descarte tem justificativa registrada', () => {
+    const invalidos = JSON.parse(
+      readFileSync(path.join(ACERVO, 'dados/assets-invalidos.json'), 'utf8'),
+    )
+    expect(Object.keys(invalidos)).toHaveLength(relatorio.descartados.assets)
+    for (const [sha, registro] of Object.entries<Record<string, string>>(invalidos)) {
+      expect(sha).toMatch(/^[0-9a-f]{64}$/)
+      expect(registro.motivo.length).toBeGreaterThan(30)
+      expect(registro.arquivo).toBeTruthy()
+    }
+  })
+
+  it('nenhum asset descartado sobrou nos dados', () => {
+    const invalidos = Object.keys(
+      JSON.parse(readFileSync(path.join(ACERVO, 'dados/assets-invalidos.json'), 'utf8')),
+    )
+    for (const arquivo of readdirSync(path.join(DADOS, 'paginas'))) {
+      const conteudo: Record<string, { base?: { sha256: string } | null; overlays: Array<{ midia: { sha256: string } }> }> =
+        JSON.parse(readFileSync(path.join(DADOS, 'paginas', arquivo), 'utf8'))
+      for (const pagina of Object.values(conteudo)) {
+        if (pagina.base) expect(invalidos).not.toContain(pagina.base.sha256)
+        for (const o of pagina.overlays) expect(invalidos).not.toContain(o.midia.sha256)
+      }
+    }
   })
 
   it('separa lâminas de nós de índice sem perder páginas', () => {

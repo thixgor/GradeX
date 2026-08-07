@@ -1,0 +1,9 @@
+{
+  "fe41f83dfcfae00c85425670515d9931acff2627099c330b44437601a0646d29": {
+    "arquivo": "acervo-fonte/01_histologia-basica/02_corantes/01_stains-01/imagens/marcadores/marcador-1.png",
+    "declarado": "image/png",
+    "real": "text/html",
+    "motivo": "O arquivo não é uma imagem: são 29.278 bytes começando com '<!doctype html>'. O scraper original salvou uma página HTML com extensão .png. Referenciado por 8 lâminas como 'Marcador 1'/'Marcador 14' — rótulos genéricos, sinal de que a origem também não tinha nome para ele.",
+    "detectadoEm": "2026-08-07"
+  }
+}

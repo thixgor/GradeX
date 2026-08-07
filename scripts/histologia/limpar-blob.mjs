@@ -40,13 +40,26 @@ for (;;) {
   }
 
   bytes += alvos.reduce((n, b) => n + (b.size ?? 0), 0)
-  // `del` aceita até 1000 URLs por chamada.
-  await del(
-    alvos.map((b) => b.url),
-    { token },
-  )
-  apagados += alvos.length
-  console.log(`apagados ${apagados.toLocaleString('pt-BR')}…`)
+
+  // A API aceita até 1000 URLs por chamada, mas aplica rate limit bem antes
+  // disso em lotes grandes. Lotes de 100 com backoff que honra o `retryAfter`
+  // do erro terminam mais rápido do que um lote gigante que é recusado.
+  for (let i = 0; i < alvos.length; i += 100) {
+    const lote = alvos.slice(i, i + 100).map((b) => b.url)
+    for (let tentativa = 1; ; tentativa++) {
+      try {
+        await del(lote, { token })
+        break
+      } catch (erro) {
+        const espera = (erro?.retryAfter ?? 2 ** tentativa) * 1000
+        if (tentativa >= 5) throw erro
+        console.log(`  rate limit; aguardando ${Math.round(espera / 1000)}s…`)
+        await new Promise((r) => setTimeout(r, espera))
+      }
+    }
+    apagados += lote.length
+    if (apagados % 500 === 0) console.log(`apagados ${apagados.toLocaleString('pt-BR')}…`)
+  }
 
   if (!pagina.hasMore) break
   cursor = pagina.cursor
