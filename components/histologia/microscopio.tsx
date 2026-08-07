@@ -100,6 +100,7 @@ export function Microscopio({
   altura = 'auto',
 }: MicroscopioProps) {
   const palcoRef = useRef<HTMLDivElement | null>(null)
+  const imagemRef = useRef<HTMLImageElement | null>(null)
   const idBase = useId()
 
   const [container, setContainer] = useState<Dimensoes>({ largura: 0, altura: 0 })
@@ -155,18 +156,67 @@ export function Microscopio({
     ajustar()
   }, [ajustar])
 
-  // Troca de lâmina reinicia imagem, foco e seleção — mas preserva as
-  // preferências de iluminação, contraste e opacidade, que são do usuário e não
-  // da lâmina.
+  /**
+   * Troca de lâmina reinicia imagem, foco e camadas — mas preserva iluminação,
+   * contraste e opacidade, que são preferência do usuário e não da lâmina.
+   *
+   * A dependência é **só** `lamina.rota`. Ter `overlayInicial` aqui zerava o
+   * estado de carregamento ao escolher uma estrutura na busca, sem que a imagem
+   * recarregasse — e como `onLoad` não dispara de novo para uma imagem já
+   * carregada, o "Iluminando a lâmina…" ficava eterno.
+   */
   useEffect(() => {
     setImagem(null)
     setCarregandoBase(true)
     setErroDeMidia(false)
-    setSelecionado(overlayInicial ?? null)
     setAtivos(new Set())
     setModoOverlay('nenhum')
     setFoco(0)
-  }, [lamina.rota, overlayInicial])
+  }, [lamina.rota])
+
+  // A estrutura destacada vem da busca e muda sem trocar de lâmina.
+  useEffect(() => {
+    setSelecionado(overlayInicial ?? null)
+  }, [overlayInicial])
+
+  /**
+   * Resolve o caso da imagem que já está no cache.
+   *
+   * Se o navegador já tem o arquivo, o `load` pode disparar antes de o React
+   * anexar o manipulador — ou simplesmente não disparar de novo num elemento
+   * reaproveitado. Conferir `complete` depois da renderização cobre os dois.
+   */
+  useEffect(() => {
+    const img = imagemRef.current
+    if (!img || !carregandoBase) return
+    if (img.complete && img.naturalWidth > 0) {
+      setImagem({ largura: img.naturalWidth, altura: img.naturalHeight })
+      setCarregandoBase(false)
+    }
+  })
+
+  /**
+   * Prazo máximo de carregamento.
+   *
+   * As imagens vêm de um servidor de terceiros; uma requisição pendurada não
+   * dispara `load` nem `error`, e o spinner ficaria girando para sempre. Vinte
+   * segundos é folgado para uma lâmina de 1 MB em rede móvel e curto o
+   * suficiente para o aluno não achar que a página morreu.
+   */
+  useEffect(() => {
+    if (!carregandoBase || erroDeMidia) return
+    const prazo = window.setTimeout(() => {
+      const img = imagemRef.current
+      if (img?.complete && img.naturalWidth > 0) {
+        setImagem({ largura: img.naturalWidth, altura: img.naturalHeight })
+        setCarregandoBase(false)
+        return
+      }
+      setCarregandoBase(false)
+      setErroDeMidia(true)
+    }, 20000)
+    return () => window.clearTimeout(prazo)
+  }, [carregandoBase, erroDeMidia, lamina.rota])
 
   /* ────────────────── zoom pela roda ────────────────── */
 
@@ -532,6 +582,11 @@ export function Microscopio({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              // `key` força um nó novo a cada lâmina: sem isso o React
+              // reaproveita o elemento e o navegador pode não emitir `load`
+              // para a nova fonte já cacheada.
+              key={urlBase}
+              ref={imagemRef}
               src={urlBase}
               alt={lamina.base.alt}
               draggable={false}
@@ -595,10 +650,27 @@ export function Microscopio({
           )}
 
           {erroDeMidia && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0d1210] p-6">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#0d1210] p-6">
               <p className="max-w-sm text-center text-xs leading-relaxed text-white/70">
-                Não foi possível carregar esta lâmina. {AVISO_MIDIA_INDISPONIVEL}
+                A lâmina não carregou. Pode ser lentidão do servidor de imagens — tente de novo.
               </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setErroDeMidia(false)
+                  setCarregandoBase(true)
+                  // Recarrega a mesma fonte: reatribuir `src` reinicia a busca
+                  // mesmo quando a URL não mudou.
+                  const img = imagemRef.current
+                  if (img && urlBase) {
+                    img.src = ''
+                    img.src = urlBase
+                  }
+                }}
+                className="min-h-[36px] rounded-md border border-white/25 px-3 text-xs font-semibold text-white/90 transition-colors hover:bg-white/10"
+              >
+                Tentar novamente
+              </button>
             </div>
           )}
 
