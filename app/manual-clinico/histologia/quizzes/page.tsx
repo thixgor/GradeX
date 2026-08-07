@@ -64,9 +64,8 @@ export default function PaginaDeQuizzes() {
           </ul>
 
           <p className="mt-8 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
-            Questões, alternativas e devolutivas vêm dos quizzes H5P do acervo Digital Histology
-            (CC BY-NC-SA 4.0), convertidos em componentes próprios. Os enunciados permanecem no
-            idioma original enquanto a tradução não passar por revisão biomédica.
+            Questões e devolutivas ainda aguardam revisão biomédica; os enunciados sem tradução
+            aparecem marcados. Créditos e licença na página de cada quiz.
           </p>
         </div>
       </div>

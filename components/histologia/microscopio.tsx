@@ -625,10 +625,10 @@ export function Microscopio({
           )}
 
           {/*
-            Não existe barra de escala em µm. O acervo do Digital Histology não
-            declara calibração, e derivá-la do objetivo nominal produziria uma
-            medida plausível e falsa — o erro que o aluno não tem como detectar
-            e levaria para a bancada real. Ver `larguraDaBarraEmMicrometros`.
+            Não existe barra de escala em µm porque o acervo não declara
+            calibração, e derivá-la do objetivo nominal produziria uma medida
+            plausível e falsa — o erro que o aluno não tem como detectar e
+            levaria para a bancada real. Ver `larguraDaBarraEmMicrometros`.
           */}
           <p className="absolute bottom-3 left-3 rounded bg-black/45 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-white/60">
             sem calibração métrica no acervo

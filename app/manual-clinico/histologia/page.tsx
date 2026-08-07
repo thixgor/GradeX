@@ -131,8 +131,12 @@ export default async function HomeDaHistologia() {
                   />
                   <figcaption className="bg-card p-3">
                     <p className="text-xs font-semibold">{hero.titulo}</p>
+                    {/* Crédito mínimo na imagem; o completo vive na gaveta de
+                        créditos de cada lâmina, a um clique. Repetir a
+                        atribuição inteira em toda superfície não cumpre melhor
+                        a licença — só rouba espaço do conteúdo. */}
                     <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
-                      Digital Histology (Virginia Commonwealth University), CC BY-NC-SA 4.0.
+                      Acervo VCU · CC BY-NC-SA 4.0
                     </p>
                   </figcaption>
                 </figure>
