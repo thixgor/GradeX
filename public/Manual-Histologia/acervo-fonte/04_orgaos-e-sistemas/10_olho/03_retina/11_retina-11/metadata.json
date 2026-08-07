@@ -1,0 +1,75 @@
+{
+  "id": 9246,
+  "titulo": "Sensory retina: Optic disc",
+  "titulo_wordpress": "Retina 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 11"
+  ],
+  "descricao_original": "The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-11/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-11.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina: Optic disc', no setor Órgãos e Sistemas > Olho > Retina > Retina 11. Descricao original da pagina: The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Optic disc",
+      "explicacao_original": "The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Optic disc'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-11.jpg'. Destaca a estrutura ou conceito 'Optic disc' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Optic nerve",
+      "explicacao_original": "The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Optic disc'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-11.jpg'. Destaca a estrutura ou conceito 'Optic nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Retina",
+      "explicacao_original": "The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Optic disc'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-11.jpg'. Destaca a estrutura ou conceito 'Retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The optic disc is the site where the optic nerve exits the eye. Axons from retinal ganglion cells course in the nerve fiber layer, converge at the optic disc and then exit the eye, forming the optic nerve (Cranial nerve II). The optic disc is devoid of retinal neurons, including photoreceptors, and, hence, is called the visual blind spot. At the center of the optic disc is the optic papilla. 100x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Retinal blood vessels",
+      "explicacao_original": "Accompanying the optic nerve are the central retinal artery and vein. Retinal vessels fan out in the nerve fiber layer before penetrating the retina to maintain the inner retinal layers. Maintenance of the outer layers is provided by diffusion from vessels in the choriocapillary layer of the choroid.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Optic disc'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-11.jpg'. Destaca a estrutura ou conceito 'Retinal blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Accompanying the optic nerve are the central retinal artery and vein. Retinal vessels fan out in the nerve fiber layer before penetrating the retina to maintain the inner retinal layers. Maintenance of the outer layers is provided by diffusion from vessels in the choriocapillary layer of the choroid.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Vet-Lab-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Vet-Lab-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Optic disc'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-11.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-11/, acesso em 2026-08-07."
+    }
+  ]
+}

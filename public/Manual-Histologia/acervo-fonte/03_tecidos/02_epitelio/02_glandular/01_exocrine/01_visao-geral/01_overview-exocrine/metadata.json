@@ -1,0 +1,115 @@
+{
+  "id": 4238,
+  "titulo": "Overview of exocrine glands",
+  "titulo_wordpress": "Overview (exocrine) 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Visão Geral",
+    "Overview (exocrine) 1"
+  ],
+  "descricao_original": "Glands consist of epithelial cells modified to secrete a product. Exocrine glands secrete onto an epithelial surface; endocrine glands lose their attachment with an epithelium and secrete into the blood stream. Unicellular exocrine glands are individual cells that remain in the epithelium of origin and secrete onto that surface. Multicellular exocrine glands invaginate from the surface epithelium into the underlying connective tissue. These glands remain attached to the epithelium by ducts that transport the secretory product to the surface. Secretory units of exocrine glands are organized either into tubules or spherical acini (sing. acinus), also called alveoli (sing. alveolus).",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "arquivo": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview of exocrine glands', no setor Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Descricao original da pagina: Glands consist of epithelial cells modified to secrete a product. Exocrine glands secrete onto an epithelial surface; endocrine glands lose their attachment with an epithelium and secrete into the blood stream. Unicellular exocrine glands are individual cells that remain in the epithelium of origin and secrete onto that surface. Multicellular exocrine glands invaginate from the surface epithelium into the underlying connective tissue. These glands remain attached to the epithelium by ducts that transport the secretory product to the surface. Secretory units of exocrine glands are organized either into tubules or spherical acini (sing. acinus), also called alveoli (sing. alveolus).. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Unicellular gland",
+      "explicacao_original": "A unicellular gland, the simplest exocrine gland, is a single secretory cell that remains in the epithelium where it forms. Although other examples exist, the most common unicellular exocrine gland is the goblet cell, illustrated here. Goblet cells secrete mucus to lubricate the surface epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Unicellular gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A unicellular gland, the simplest exocrine gland, is a single secretory cell that remains in the epithelium where it forms. Although other examples exist, the most common unicellular exocrine gland is the goblet cell, illustrated here. Goblet cells secrete mucus to lubricate the surface epithelium.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "A sheet gland is a little more complex than a unicellular gland in that all cells of a surface epithelium differentiate into secretory cells, forming a secretory sheet. The only sheet gland in the human lines the lumen of the stomach, where the mucus it secretes protects the stomach from gastric acids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A sheet gland is a little more complex than a unicellular gland in that all cells of a surface epithelium differentiate into secretory cells, forming a secretory sheet. The only sheet gland in the human lines the lumen of the stomach, where the mucus it secretes protects the stomach from gastric acids.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Simple glands",
+      "explicacao_original": "Simple glands invaginate from surface epithelia into the underlying connective tissue to form secretory units. Secretory units of simple glands connect either directly with surface epithelium or via a single duct. Although simple glands may be either tubular or acinar, simple tubular glands predominate in humans. All three glands illustrated here are simple tubular.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Simple glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple glands invaginate from surface epithelia into the underlying connective tissue to form secretory units. Secretory units of simple glands connect either directly with surface epithelium or via a single duct. Although simple glands may be either tubular or acinar, simple tubular glands predominate in humans. All three glands illustrated here are simple tubular.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Simple tubular gland",
+      "explicacao_original": "The least complex of the simple tubular glands consists of a secretory unit shaped like a test tube that connects directly to the surface epithelium without an intervening duct. Mucus is a common product of tubular secretory units, so cells of tubular glands frequently appear pale and frothy. Intestinal glands in the small and large intestine are simple tubular glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Simple tubular gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The least complex of the simple tubular glands consists of a secretory unit shaped like a test tube that connects directly to the surface epithelium without an intervening duct. Mucus is a common product of tubular secretory units, so cells of tubular glands frequently appear pale and frothy. Intestinal glands in the small and large intestine are simple tubular glands.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Simple coiled tubular",
+      "explicacao_original": "gland > A simple coiled tubular gland has a tubular secretory unit (blue oval) that coils on itself like a ball of yarn. Secretory product is conveyed to the surface epithelium by a single duct (blue arrow). The most common simple coiled tubular gland in the human does not secrete mucus, it is specialized to produce sweat.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Simple coiled tubular' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: gland > A simple coiled tubular gland has a tubular secretory unit (blue oval) that coils on itself like a ball of yarn. Secretory product is conveyed to the surface epithelium by a single duct (blue arrow). The most common simple coiled tubular gland in the human does not secrete mucus, it is specialized to produce sweat.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Simple branched tubular gland",
+      "explicacao_original": "In simple branched tubular glands, secretory tubules (red arrow) branch. If a duct (green arrow) is present, it does not branch. Gastric glands are examples of simple branched tubular glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Simple branched tubular gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In simple branched tubular glands, secretory tubules (red arrow) branch. If a duct (green arrow) is present, it does not branch. Gastric glands are examples of simple branched tubular glands.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Compound glands",
+      "explicacao_original": "Compound glands are large, often macroscopic structures with branching ducts. Secretory units may be entirely acinar, entirely tubular or a combination of acinar and tubular. Compound glands can be subdivided into smaller subunits called lobules, each consisting of a duct and its attached secretory units.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Compound glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compound glands are large, often macroscopic structures with branching ducts. Secretory units may be entirely acinar, entirely tubular or a combination of acinar and tubular. Compound glands can be subdivided into smaller subunits called lobules, each consisting of a duct and its attached secretory units.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Compound acinar gland",
+      "explicacao_original": "Compound acinar glands have branching ducts (blue arrows), lobules (oval) and acinar (alveolar) secretory units (magenta spheres). An acinus usually secretes a serous product and in section, resembles a cut grapefruit with each cell representing a grapefruit wedge. Each acinus has a small central lumen (green arrows), sufficient to transport its watery product.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Compound acinar gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compound acinar glands have branching ducts (blue arrows), lobules (oval) and acinar (alveolar) secretory units (magenta spheres). An acinus usually secretes a serous product and in section, resembles a cut grapefruit with each cell representing a grapefruit wedge. Each acinus has a small central lumen (green arrows), sufficient to transport its watery product.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Compound tubuloacinar gland",
+      "explicacao_original": "Compound tubuloacinar glands have branching ducts (blue arrows), lobules (oval), and both acinar (magenta spheres) and tubular (green arrows) secretory units. Fewer ducts are present in the tubular portions because the tubular secretory units act as their own ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1-9-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-1-9-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of exocrine glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Compound tubuloacinar gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compound tubuloacinar glands have branching ducts (blue arrows), lobules (oval), and both acinar (magenta spheres) and tubular (green arrows) secretory units. Fewer ducts are present in the tubular portions because the tubular secretory units act as their own ducts.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-1/, acesso em 2026-08-07."
+    }
+  ]
+}

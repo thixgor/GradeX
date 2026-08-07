@@ -1,0 +1,85 @@
+{
+  "id": 6854,
+  "titulo": "Overview: Gastric mucosa",
+  "titulo_wordpress": "Overview 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Overview of the stomach",
+    "Overview 3"
+  ],
+  "descricao_original": "In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Gastric mucosa', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Descricao original da pagina: In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Gastric mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Gastric mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Gastric mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Gastric mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the gastric mucosa, the epithelium is modified to form a sheet gland. Gastric pits invaginate from this surface, and gastric glands extend from the base of the pits to the muscularis mucosae. The lamina propria is composed of loose connective tissue; a thick muscularis mucosae is visible. 10x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "The three regions of the stomach can be distinguished by the ratio of the length of the gastric pits to the length of the gastric glands. In the cardiac region, pits and glands are roughly equal in length; in the body and fundic regions, the pits are much shorter than the glands; in the pyloric region, the pits are slightly longer than the glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Gastric mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The three regions of the stomach can be distinguished by the ratio of the length of the gastric pits to the length of the gastric glands. In the cardiac region, pits and glands are roughly equal in length; in the body and fundic regions, the pits are much shorter than the glands; in the pyloric region, the pits are slightly longer than the glands.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Gastric glands",
+      "explicacao_original": "Gastric glands are classified as simple, branched tubular glands and consist of a variety of cell types, depending on the region of the stomach in which they are located. Two to seven glands empty into a single gastric pit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Gastric mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Gastric glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric glands are classified as simple, branched tubular glands and consist of a variety of cell types, depending on the region of the stomach in which they are located. Two to seven glands empty into a single gastric pit.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

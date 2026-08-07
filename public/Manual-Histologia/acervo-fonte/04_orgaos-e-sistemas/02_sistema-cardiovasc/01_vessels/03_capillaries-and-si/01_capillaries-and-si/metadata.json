@@ -1,0 +1,84 @@
+{
+  "id": 5298,
+  "titulo": "Capillaries and sinusoids",
+  "titulo_wordpress": "Capillaries and Sinusoids 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 1"
+  ],
+  "descricao_original": "Capillaries extend from the smallest arterioles and connect with the first venules for the venous return of blood to the heart. They branch extensively forming expansive capillary beds. Capillaries are the smallest blood vessels and are composed of a simple squamous epithelium, called endothelium, and its basal lamina. Metabolites, wastes and gases are exchanged between the capillary lumen and extravascular tissues. Based on their function and morphology, capillaries are classified as either continuous, fenestrated, or discontinuous (sometimes referred to as sinusoids).",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Capillaries and sinusoids', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Descricao original da pagina: Capillaries extend from the smallest arterioles and connect with the first venules for the venous return of blood to the heart. They branch extensively forming expansive capillary beds. Capillaries are the smallest blood vessels and are composed of a simple squamous epithelium, called endothelium, and its basal lamina. Metabolites, wastes and gases are exchanged between the capillary lumen and extravascular tissues. Based on their function and morphology, capillaries are classified as either continuous, fenestrated, or discontinuous (sometimes referred to as sinusoids).. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Continuous capillary",
+      "explicacao_original": "Continuous capillaries are the most prevalent type. The endothelial cells form an uninterrupted tube surrounded by their basal laminae. Occluding (tight) junctions attach adjacent cells and a cytoplasmic fold may protrude at that site (arrow).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Capillaries and sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-1.jpg'. Destaca a estrutura ou conceito 'Continuous capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Continuous capillaries are the most prevalent type. The endothelial cells form an uninterrupted tube surrounded by their basal laminae. Occluding (tight) junctions attach adjacent cells and a cytoplasmic fold may protrude at that site (arrow).. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fenestrated capillary",
+      "explicacao_original": "Fenestrated capillaries are characterized by possessing fenestrations or pores (arrows) in the endothelial cells. These fenestrations are not open, they are spanned by a non-membranous diaphragm (colored blue). Fenestrations facilitate transport across the endothelium in organs where abundant and rapid transport is required, such as in the digestive and endocrine systems. Fenestrated capillaries are also present in renal glomeruli, but these lack diaphragms.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Capillaries and sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-1.jpg'. Destaca a estrutura ou conceito 'Fenestrated capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrated capillaries are characterized by possessing fenestrations or pores (arrows) in the endothelial cells. These fenestrations are not open, they are spanned by a non-membranous diaphragm (colored blue). Fenestrations facilitate transport across the endothelium in organs where abundant and rapid transport is required, such as in the digestive and endocrine systems. Fenestrated capillaries are also present in renal glomeruli, but these lack diaphragms.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Discontinuous capillary",
+      "explicacao_original": "Discontinuous capillaries, or sinusoids, have wider diameters and more irregular outlines than other capillary types. These capillaries have large gaps (blue arrows) between individual endothelial cells as well as fenestrations (red arrows) without diaphragms. Discontinuous capillaries are found in the liver, spleen and bone marrow, where greater transport across the endothelium is required.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Capillaries and sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-1.jpg'. Destaca a estrutura ou conceito 'Discontinuous capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Discontinuous capillaries, or sinusoids, have wider diameters and more irregular outlines than other capillary types. These capillaries have large gaps (blue arrows) between individual endothelial cells as well as fenestrations (red arrows) without diaphragms. Discontinuous capillaries are found in the liver, spleen and bone marrow, where greater transport across the endothelium is required.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "A basal lamina (pink) surrounds both continuous and fenestrated capillaries. However, the basal lamina of a discontinuous capillary is incomplete or may even be totally lacking and, therefore, is not illustrated here. The lack of a complete basal lamina in the discontinuous capillaries facilitates transport across these vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Capillaries and sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-1.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A basal lamina (pink) surrounds both continuous and fenestrated capillaries. However, the basal lamina of a discontinuous capillary is incomplete or may even be totally lacking and, therefore, is not illustrated here. The lack of a complete basal lamina in the discontinuous capillaries facilitates transport across these vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Pericyte within basal lamina",
+      "explicacao_original": "Capillaries may be surrounded by pericytes, cells of connective tissue origin that have contractile properties. A pericyte extends along the long axis of a capillary, sending processes around its circumference. Pericytes lie within the basal lamina of the capillary and aid in regulating blood flow through capillaries and participate in blood vessel repair after injury.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Capillaries and sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-1.jpg'. Destaca a estrutura ou conceito 'Pericyte within basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries may be surrounded by pericytes, cells of connective tissue origin that have contractile properties. A pericyte extends along the long axis of a capillary, sending processes around its circumference. Pericytes lie within the basal lamina of the capillary and aid in regulating blood flow through capillaries and participate in blood vessel repair after injury.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "Continuous and fenestrated capillaries are so narrow that red blood cells flow through them in single file. Discontinuous capillaries have much wider lumens, allowing multiple cells to flow through simultaneously. They also transport blood at a slower rate than do smaller diameter capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Capillaries and sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-1.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Continuous and fenestrated capillaries are so narrow that red blood cells flow through them in single file. Discontinuous capillaries have much wider lumens, allowing multiple cells to flow through simultaneously. They also transport blood at a slower rate than do smaller diameter capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-1/, acesso em 2026-08-07."
+    }
+  ]
+}

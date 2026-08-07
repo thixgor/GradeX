@@ -1,0 +1,95 @@
+{
+  "id": 32157,
+  "titulo": "Mitochondria",
+  "titulo_wordpress": "Mitochondria 10",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Mitochondria",
+    "Mitochondria 10"
+  ],
+  "descricao_original": "Mitochondrial are often localized to regions of the cell where energy demands are high, such as the apical region of these intestinal lining cells. In this location, they provide energy for active transport of nutrients and maintenance of the barrier that excludes pathogens. 500x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide in the University of Cincinnati collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "arquivo": "imagens/base/C.S.Mito-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mitochondria', no setor Células > Estruturas > Mitochondria > Mitochondria 10. Descricao original da pagina: Mitochondrial are often localized to regions of the cell where energy demands are high, such as the apical region of these intestinal lining cells. In this location, they provide energy for active transport of nutrients and maintenance of the barrier that excludes pathogens. 500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intestinal villi",
+      "explicacao_original": "The lining of the small intestine has numerous finger-like extensions that increase surface area for absorption.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Intestinal villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lining of the small intestine has numerous finger-like extensions that increase surface area for absorption.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intestinal epithelium",
+      "explicacao_original": "The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Intestinal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-5-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intestinal epithelium consists of a single row of tall (columnar) cells with oval nuclei. Mitochondria are highly clustered in the apical regions for localized energy demands. Also present in the epithelium are mucus-secreting goblet cells.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "The core of each villus consists of loose connective tissue called the lamina propria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-6-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The core of each villus consists of loose connective tissue called the lamina propria.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide in the University of Cincinnati collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-10-7-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Mito-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-10.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide in the University of Cincinnati collection.. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-10/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "id": 16883,
+  "titulo": "Connective tissue proper classification overview",
+  "titulo_wordpress": "Overview 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Classification",
+    "Visão Geral",
+    "Overview 1"
+  ],
+  "descricao_original": "Connective tissue proper is subdivided into two major categories, loose connective tissue and dense connective tissue. These designations are based on two features: (1) the arrangement and size of the collagen fibers; and (2) the number and types of cells present. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Connective tissue proper classification overview', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Descricao original da pagina: Connective tissue proper is subdivided into two major categories, loose connective tissue and dense connective tissue. These designations are based on two features: (1) the arrangement and size of the collagen fibers; and (2) the number and types of cells present. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Loose connective tissue",
+      "explicacao_original": "Loose connective tissue consists of thin, interlacing and relatively sparse collagen fibers. Additionally, this tissue has a large number and a great variety of cell types surrounded by an abundant, gelatinous ground substance. Loose connective tissue is also called areolar connective tissue, referring to the many holes or spaces between the collagen fibers that allow for diffusion and cell migration. Loose connective tissue also provides delicate padding between tissues and around organs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Loose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Loose connective tissue consists of thin, interlacing and relatively sparse collagen fibers. Additionally, this tissue has a large number and a great variety of cell types surrounded by an abundant, gelatinous ground substance. Loose connective tissue is also called areolar connective tissue, referring to the many holes or spaces between the collagen fibers that allow for diffusion and cell migration. Loose connective tissue also provides delicate padding between tissues and around organs.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dense connective tissue",
+      "explicacao_original": "Dense connective tissue consist of thicker, more robust and densely arranged collagen fibers. This tissue has few cells, almost all of which are fibroblasts, and a sparse amount of ground substance. Dense connective tissue provides great strength because of its abundant collagen fiber content and is further subdivided into regular and irregular subdivisions based on the arrangement of its collagen fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Dense connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dense connective tissue consist of thicker, more robust and densely arranged collagen fibers. This tissue has few cells, almost all of which are fibroblasts, and a sparse amount of ground substance. Dense connective tissue provides great strength because of its abundant collagen fiber content and is further subdivided into regular and irregular subdivisions based on the arrangement of its collagen fibers.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Collagen fibers assemble from individual collagen fibrils and stain with eosin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Collagen fibers assemble from individual collagen fibrils and stain with eosin.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collagen bundles",
+      "explicacao_original": "Collagen bundles, also eosinophilic, consist of larger aggregation of collagen fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Collagen bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Collagen bundles, also eosinophilic, consist of larger aggregation of collagen fibers.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Active fibroblast nuclei",
+      "explicacao_original": "In most cases, the fibroblast cytoplasm is not well differentiated from the surrounding extracellular matrix. Thus, identification is based on nuclear morphology. These fibroblasts are active, indicated by their large, euchromatic nuclei.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Active fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, the fibroblast cytoplasm is not well differentiated from the surrounding extracellular matrix. Thus, identification is based on nuclear morphology. These fibroblasts are active, indicated by their large, euchromatic nuclei.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Inactive fibroblast nuclei",
+      "explicacao_original": "Compared with active fibroblasts, inactive fibroblasts have smaller, more heterochromatic nuclei.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-6-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Inactive fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compared with active fibroblasts, inactive fibroblasts have smaller, more heterochromatic nuclei.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery. The lipid is extracted during tissue processing and, therefore, the cells appear empty.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-7-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes are found individually or in small clusters in loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery. The lipid is extracted during tissue processing and, therefore, the cells appear empty.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Mast cells",
+      "explicacao_original": "Mast cells are spherical to oval-shaped with a centrally-located, spherical nucleus. The cytoplasm of mast cells is filled with numerous granules that contain mediators of the inflammatory response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1-8-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-1-8-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-1.jpg'. Destaca a estrutura ou conceito 'Mast cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells are spherical to oval-shaped with a centrally-located, spherical nucleus. The cytoplasm of mast cells is filled with numerous granules that contain mediators of the inflammatory response.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

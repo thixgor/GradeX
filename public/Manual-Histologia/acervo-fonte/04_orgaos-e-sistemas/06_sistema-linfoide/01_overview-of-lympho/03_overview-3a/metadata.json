@@ -1,0 +1,83 @@
+{
+  "id": 28218,
+  "titulo": "Overview: Cells of the immune system",
+  "titulo_wordpress": "Overview 3A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Overview 3A"
+  ],
+  "descricao_original": "A number of different cell types participate in providing the innate and adaptive immune responses. These cells may be resident in the tissue or recruited in response to local exposure to pathogens. For a more detailed description of these cell types, link to: Cells of Connective Tissues Proper .",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Cells of the immune system', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Descricao original da pagina: A number of different cell types participate in providing the innate and adaptive immune responses. These cells may be resident in the tissue or recruited in response to local exposure to pathogens. For a more detailed description of these cell types, link to: Cells of Connective Tissues Proper .. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Macrophage",
+      "explicacao_original": "Macrophages are the major resident phagocytic cell in connective tissue. They are derived from blood-borne monocytes that migrate into the tissue. Macrophage nuclei are oval to elongated and frequently indented, reflecting the cell’s origin from a monocyte. Macrophages are major effectors of innate immunity and also process and present antigens to lymphocytes to initiate an adaptive immune response. They also secrete chemotactic factors to recruit additional cells to infection sites. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cells of the immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-12.jpg'. Destaca a estrutura ou conceito 'Macrophage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Macrophages are the major resident phagocytic cell in connective tissue. They are derived from blood-borne monocytes that migrate into the tissue. Macrophage nuclei are oval to elongated and frequently indented, reflecting the cell’s origin from a monocyte. Macrophages are major effectors of innate immunity and also process and present antigens to lymphocytes to initiate an adaptive immune response. They also secrete chemotactic factors to recruit additional cells to infection sites. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mast cell",
+      "explicacao_original": "Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical or elongated with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response and allergic reactions, including heparin, histamine and protease enzymes. H & E, Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cells of the immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-12.jpg'. Destaca a estrutura ou conceito 'Mast cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical or elongated with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response and allergic reactions, including heparin, histamine and protease enzymes. H & E, Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Neutrophil",
+      "explicacao_original": "Neutrophils, or polymorphonuclear (PMN) leukocytes, are highly motile, granular white blood cells that migrate in large numbers from blood (left image) into the connective tissue at sites of infection. Each cell has a distinctive, 3-5 lobed nucleus. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus. They also secrete chemotactic factors to recruit additional cells to sites of infection. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-12-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cells of the immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-12.jpg'. Destaca a estrutura ou conceito 'Neutrophil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophils, or polymorphonuclear (PMN) leukocytes, are highly motile, granular white blood cells that migrate in large numbers from blood (left image) into the connective tissue at sites of infection. Each cell has a distinctive, 3-5 lobed nucleus. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus. They also secrete chemotactic factors to recruit additional cells to sites of infection. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Eosinophil",
+      "explicacao_original": "Eosinophils are granular white blood cells that migrate from the blood (left image) into connective tissues. They are phagocytic and function in parasitic infections. Eosinophils have intensely eosinophilic granules in their cytoplasm and a bi-lobed nucleus. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-12-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cells of the immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-12.jpg'. Destaca a estrutura ou conceito 'Eosinophil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophils are granular white blood cells that migrate from the blood (left image) into connective tissues. They are phagocytic and function in parasitic infections. Eosinophils have intensely eosinophilic granules in their cytoplasm and a bi-lobed nucleus. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lymphocyte",
+      "explicacao_original": "Lymphocytes are the main effector cells of the adaptive immune response. They are small, spherical white blood cells with rounded, highly heterochromatic nuclei and minimal, agranular cytoplasm. Lymphocytes are classified as either T or B lymphocytes but can only be distinguished by immunohistochemical staining methods. Thymus-derived (T) lymphocytes provide cell-mediated immunity and consist of a number of subtypes including natural killer cells; B lymphocytes transform into plasma cells after entering the connective tissue and secrete antibodies. Both types form memory cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-12-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cells of the immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-12.jpg'. Destaca a estrutura ou conceito 'Lymphocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphocytes are the main effector cells of the adaptive immune response. They are small, spherical white blood cells with rounded, highly heterochromatic nuclei and minimal, agranular cytoplasm. Lymphocytes are classified as either T or B lymphocytes but can only be distinguished by immunohistochemical staining methods. Thymus-derived (T) lymphocytes provide cell-mediated immunity and consist of a number of subtypes including natural killer cells; B lymphocytes transform into plasma cells after entering the connective tissue and secrete antibodies. Both types form memory cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Plasma cell",
+      "explicacao_original": "Plasma cells differentiate from activated B lymphocytes and reside in connective tissues. Plasma cells secrete antibodies, (immunoglobulins) that specifically recognize and bind to antigens. Plasma cells are considered to have limited migratory ability.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-12-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cells of the immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-12.jpg'. Destaca a estrutura ou conceito 'Plasma cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plasma cells differentiate from activated B lymphocytes and reside in connective tissues. Plasma cells secrete antibodies, (immunoglobulins) that specifically recognize and bind to antigens. Plasma cells are considered to have limited migratory ability.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-12/, acesso em 2026-08-07."
+    }
+  ]
+}

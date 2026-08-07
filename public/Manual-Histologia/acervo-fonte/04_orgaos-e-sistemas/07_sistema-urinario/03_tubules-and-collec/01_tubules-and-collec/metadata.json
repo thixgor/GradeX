@@ -1,0 +1,163 @@
+{
+  "id": 10807,
+  "titulo": "Nephron",
+  "titulo_wordpress": "Tubules and collecting system 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 1"
+  ],
+  "descricao_original": "The nephron is the functional unit of the kidney. In order of urine flow, structures included in a nephron are Bowman’s capsule (surrounding the glomerulus), proximal tubule (convoluted and straight portions), thin limb, and distal tubule (straight and convoluted portions). The term uriniferous tubule includes both nephron and collecting ducts into which the nephron drains. 20x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nephron', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Descricao original da pagina: The nephron is the functional unit of the kidney. In order of urine flow, structures included in a nephron are Bowman’s capsule (surrounding the glomerulus), proximal tubule (convoluted and straight portions), thin limb, and distal tubule (straight and convoluted portions). The term uriniferous tubule includes both nephron and collecting ducts into which the nephron drains. 20x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Renal corpuscle",
+      "explicacao_original": "The renal corpuscle is composed of a tuft of capillaries called the glomerulus (blue arrows) which is surrounded by the double-walled Bowman’s capsule (red arrows). The space of Bowman’s capsule receives the filtrate of blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Renal corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The renal corpuscle is composed of a tuft of capillaries called the glomerulus (blue arrows) which is surrounded by the double-walled Bowman’s capsule (red arrows). The space of Bowman’s capsule receives the filtrate of blood.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Proximal convoluted tubule",
+      "explicacao_original": "The proximal convoluted tubule continues from Bowman’s capsule and is located in the convoluted portion of the renal cortex. The proximal convoluted tubule constitutes the longest segment of the nephron in the cortex and, therefore, numerous sectional profiles are visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Proximal convoluted tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The proximal convoluted tubule continues from Bowman’s capsule and is located in the convoluted portion of the renal cortex. The proximal convoluted tubule constitutes the longest segment of the nephron in the cortex and, therefore, numerous sectional profiles are visible.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Proximal straight tubule",
+      "explicacao_original": "The proximal tubule enters the medullary ray, where it is called the proximal straight tubule. This segment can also be called the thick descending limb of the loop of Henle. It descends through the medullary ray of the cortex to enter the medulla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Proximal straight tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The proximal tubule enters the medullary ray, where it is called the proximal straight tubule. This segment can also be called the thick descending limb of the loop of Henle. It descends through the medullary ray of the cortex to enter the medulla.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Thin limb",
+      "explicacao_original": "The thin limb of Henle’s loop, continuing from the proximal straight tubule, is usually located in the medulla, forming the bend in the loop of Henle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Thin limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin limb of Henle’s loop, continuing from the proximal straight tubule, is usually located in the medulla, forming the bend in the loop of Henle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ascending thick limb",
+      "explicacao_original": "The ascending thick limb (sometimes called the distal straight tubule) continues from the thin limb and ascends through the medulla to enter a medullary ray of the cortex. At the level of its parent renal corpuscle, the thick limb leaves the ray and moves into the convoluted region and contacts the afferent arteriole at the vascular pole of the renal corpuscle (black arrow). Here, its cells are modified to form the macula densa of the juxtaglomerular apparatus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.OV-4-5-NEW-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-4-5-NEW-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Ascending thick limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ascending thick limb (sometimes called the distal straight tubule) continues from the thin limb and ascends through the medulla to enter a medullary ray of the cortex. At the level of its parent renal corpuscle, the thick limb leaves the ray and moves into the convoluted region and contacts the afferent arteriole at the vascular pole of the renal corpuscle (black arrow). Here, its cells are modified to form the macula densa of the juxtaglomerular apparatus.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Loop of Henle",
+      "explicacao_original": "The loop of Henle (boxes) consists of a thick descending limb (proximal straight tubule), a thick ascending limb (distal straight tubule) and a thin, looped segment (thin limb) that interconnects the two.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Loop of Henle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The loop of Henle (boxes) consists of a thick descending limb (proximal straight tubule), a thick ascending limb (distal straight tubule) and a thin, looped segment (thin limb) that interconnects the two.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Distal convoluted tubule",
+      "explicacao_original": "The continuation of the ascending thick limb beyond the juxtaglomerular apparatus is distal convoluted tubule. It is much shorter than the proximal convoluted tubule and eventually joins with the collecting passageways.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.OV-4-7-NEW-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-4-7-NEW-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Distal convoluted tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The continuation of the ascending thick limb beyond the juxtaglomerular apparatus is distal convoluted tubule. It is much shorter than the proximal convoluted tubule and eventually joins with the collecting passageways.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Collecting passageways",
+      "explicacao_original": "Urine passes out of the nephron into a series of collecting tubules, consisting of connecting tubules, collecting ducts and papillary ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Collecting passageways' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Urine passes out of the nephron into a series of collecting tubules, consisting of connecting tubules, collecting ducts and papillary ducts.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Connecting tubule",
+      "explicacao_original": "In the convoluted region of the cortex, a distal convoluted tubule continues as a connecting tubule that arches into a medullary ray and joins a collecting duct to descend into the medulla. Cells forming collecting ducts increase from cuboidal to columnar along their path from cortex to medulla. The largest ducts, papillary ducts of Bellini, open into the minor calyx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Connecting tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the convoluted region of the cortex, a distal convoluted tubule continues as a connecting tubule that arches into a medullary ray and joins a collecting duct to descend into the medulla. Cells forming collecting ducts increase from cuboidal to columnar along their path from cortex to medulla. The largest ducts, papillary ducts of Bellini, open into the minor calyx.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Collecting duct",
+      "explicacao_original": "In the convoluted region of the cortex, a distal convoluted tubule continues as a connecting tubule that arches into a medullary ray and joins a collecting duct to descend into the medulla. Cells forming collecting ducts increase from cuboidal to columnar along their path from cortex to medulla. The largest ducts, papillary ducts of Bellini, open into the minor calyx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-10-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Collecting duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the convoluted region of the cortex, a distal convoluted tubule continues as a connecting tubule that arches into a medullary ray and joins a collecting duct to descend into the medulla. Cells forming collecting ducts increase from cuboidal to columnar along their path from cortex to medulla. The largest ducts, papillary ducts of Bellini, open into the minor calyx.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Papillary duct",
+      "explicacao_original": "In the convoluted region of the cortex, a distal convoluted tubule continues as a connecting tubule that arches into a medullary ray and joins a collecting duct to descend into the medulla. Cells forming collecting ducts increase from cuboidal to columnar along their path from cortex to medulla. The largest ducts, papillary ducts of Bellini, open into the minor calyx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Papillary duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the convoluted region of the cortex, a distal convoluted tubule continues as a connecting tubule that arches into a medullary ray and joins a collecting duct to descend into the medulla. Cells forming collecting ducts increase from cuboidal to columnar along their path from cortex to medulla. The largest ducts, papillary ducts of Bellini, open into the minor calyx.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Medullary ray",
+      "explicacao_original": "The medullary ray contains the straight portions of the proximal and distal tubules and the collecting ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-12-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Medullary ray' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medullary ray contains the straight portions of the proximal and distal tubules and the collecting ducts.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Interlobular artery",
+      "explicacao_original": "Interlobular arteries branch from arcuate arteries and travel through the center of the convoluted portions of the cortex, where they give off afferent arterioles supplying the glomerular capillaries. Interlobular arteries indicate the perimeter of the renal lobule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-13-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Interlobular artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interlobular arteries branch from arcuate arteries and travel through the center of the convoluted portions of the cortex, where they give off afferent arterioles supplying the glomerular capillaries. Interlobular arteries indicate the perimeter of the renal lobule.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Afferent arteriole",
+      "explicacao_original": "Interlobular arteries branch from arcuate arteries and travel through the center of the convoluted portions of the cortex, where they give off afferent arterioles supplying the glomerular capillaries. Interlobular arteries indicate the perimeter of the renal lobule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-1-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-1-14-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nephron'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-1.jpg'. Destaca a estrutura ou conceito 'Afferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interlobular arteries branch from arcuate arteries and travel through the center of the convoluted portions of the cortex, where they give off afferent arterioles supplying the glomerular capillaries. Interlobular arteries indicate the perimeter of the renal lobule.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-1/, acesso em 2026-08-07."
+    }
+  ]
+}

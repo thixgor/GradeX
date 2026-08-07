@@ -1,0 +1,104 @@
+{
+  "id": 16795,
+  "titulo": "Connective tissue proper overview",
+  "titulo_wordpress": "Overview 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Overview of connective tissue proper",
+    "Overview 2"
+  ],
+  "descricao_original": "The components of connective tissue proper are cells and an extracellular matrix consisting of fibers and ground substance. Varying the types and quantities of each of these components results in the formation of the different types of connective tissue proper. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "arquivo": "imagens/base/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Connective tissue proper overview', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Descricao original da pagina: The components of connective tissue proper are cells and an extracellular matrix consisting of fibers and ground substance. Varying the types and quantities of each of these components results in the formation of the different types of connective tissue proper. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cells of connective tissue",
+      "explicacao_original": "Many different types of connective tissue cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-1-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Cells of connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Many different types of connective tissue cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibroblasts",
+      "explicacao_original": "Many different types of CT cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-2-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Many different types of CT cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "Many different types of CT cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-3-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Many different types of CT cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Macrophages -",
+      "explicacao_original": "Many different types of CT cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-4-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Macrophages -' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Many different types of CT cells exist. Fibroblasts produce both fibers and ground substance; adipocytes store fat; a variety of white blood cells and their derivatives are involved in phagocytosis and in immune and inflammatory responses.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Extracellular matrix",
+      "explicacao_original": "The extracellular matrix is composed of fibers (black arrows), and a gelatinous ground substance (blue arrows) rich in proteoglycans and tissue fluid. Both the ground substance and fibers are synthesized by fibroblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-5-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Extracellular matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The extracellular matrix is composed of fibers (black arrows), and a gelatinous ground substance (blue arrows) rich in proteoglycans and tissue fluid. Both the ground substance and fibers are synthesized by fibroblasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fibers",
+      "explicacao_original": "Three fiber types are located in the extracellular matrix: Collagen fibers (arrows), which do not stretch, provide great tensile strength to a tissue; reticular fibers which are also inelastic, provide delicate strength to a tissue; and elastic fibers which allow connective tissues to stretch and rebound. Reticular and elastic fibers often require special stains in order to distinguishing them from collagen fibers, and therefore, cannot be identified in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-6-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three fiber types are located in the extracellular matrix: Collagen fibers (arrows), which do not stretch, provide great tensile strength to a tissue; reticular fibers which are also inelastic, provide delicate strength to a tissue; and elastic fibers which allow connective tissues to stretch and rebound. Reticular and elastic fibers often require special stains in order to distinguishing them from collagen fibers, and therefore, cannot be identified in this image.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ground substance",
+      "explicacao_original": "In connective tissue proper, the ground substance is present as a gel. Such a consistency provides excellent padding around connective tissue cells and fibers, as well as between layers of other tissues and organs. The molecules composing ground substance attract water, maintaining the hydration of the matrix. Numerous blood vessels course through the ground substance.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-7-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-7-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Ground substance' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In connective tissue proper, the ground substance is present as a gel. Such a consistency provides excellent padding around connective tissue cells and fibers, as well as between layers of other tissues and organs. The molecules composing ground substance attract water, maintaining the hydration of the matrix. Numerous blood vessels course through the ground substance.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "In connective tissue proper, the ground substance is present as a gel. Such a consistency provides excellent padding around connective tissue cells and fibers, as well as between layers of other tissues that connective tissue frequently separates. The molecules composing ground substance attract water, maintaining the hydration of the matrix. Numerous blood vessels course through the ground substance.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-2-8-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-2-8-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In connective tissue proper, the ground substance is present as a gel. Such a consistency provides excellent padding around connective tissue cells and fibers, as well as between layers of other tissues that connective tissue frequently separates. The molecules composing ground substance attract water, maintaining the hydration of the matrix. Numerous blood vessels course through the ground substance.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

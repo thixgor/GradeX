@@ -1,0 +1,53 @@
+{
+  "id": 2026,
+  "titulo": "Glycogen",
+  "titulo_wordpress": "Glycogen 7",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Glycogen",
+    "Glycogen 7"
+  ],
+  "descricao_original": "Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/glycogen/glycogen-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7.jpg",
+      "arquivo": "imagens/base/C.S.Gly-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Glycogen', no setor Células > Estruturas > Glycogen > Glycogen 7. Descricao original da pagina: Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glycogen granules",
+      "explicacao_original": "Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-7-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-7.jpg'. Destaca a estrutura ou conceito 'Glycogen granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x. Contexto setorial: Células > Estruturas > Glycogen > Glycogen 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Bundles of contractile proteins (myofibrils)",
+      "explicacao_original": "Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-7-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-7.jpg'. Destaca a estrutura ou conceito 'Bundles of contractile proteins (myofibrils)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x. Contexto setorial: Células > Estruturas > Glycogen > Glycogen 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-7-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-7.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nearly all cells contain some amount of glycogen; however, glycogen accumulations are commonly seen in very active cells, such as this cardiac muscle cell. In this electron micrograph, glycogen is present between the bundles of contractile filaments which fill the cytoplasm. 15,000x. Contexto setorial: Células > Estruturas > Glycogen > Glycogen 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-7/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": 30211,
+  "titulo": "Bone: the organ - compact bone",
+  "titulo_wordpress": "As an organ 6A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 6A"
+  ],
+  "descricao_original": "Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "arquivo": "imagens/base/6-Green-box.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ - compact bone', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Descricao original da pagina: Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Haversian systems",
+      "explicacao_original": "Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.6-Haversian-sys.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.6-Haversian-sys.png",
+      "imagem_base": "imagens/base/6-Green-box.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - compact bone'. Deve ser sobreposta, sem redimensionamento independente, a '6-Green-box.jpg'. Destaca a estrutura ou conceito 'Haversian systems' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.6-Haversian-canal.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.6-Haversian-canal.png",
+      "imagem_base": "imagens/base/6-Green-box.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - compact bone'. Deve ser sobreposta, sem redimensionamento independente, a '6-Green-box.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.6-Osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.6-Osteocytes.png",
+      "imagem_base": "imagens/base/6-Green-box.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - compact bone'. Deve ser sobreposta, sem redimensionamento independente, a '6-Green-box.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocyte lacunae",
+      "explicacao_original": "Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.6-Lacunae.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.6-Lacunae.png",
+      "imagem_base": "imagens/base/6-Green-box.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - compact bone'. Deve ser sobreposta, sem redimensionamento independente, a '6-Green-box.jpg'. Destaca a estrutura ou conceito 'Osteocyte lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Canaliculi",
+      "explicacao_original": "Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.6-Canaliculi.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.6-Canaliculi.png",
+      "imagem_base": "imagens/base/6-Green-box.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - compact bone'. Deve ser sobreposta, sem redimensionamento independente, a '6-Green-box.jpg'. Destaca a estrutura ou conceito 'Canaliculi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone forms the majority of the diaphysis and is seen in cross section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). 200x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Endosteum",
+      "explicacao_original": "Within compact bone, endosteum lines Haversian and Volkmann’s canals. It does not extend into lacunae or canaliculi.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.6-Endosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.6-Endosteum.png",
+      "imagem_base": "imagens/base/6-Green-box.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/6-Green-box.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - compact bone'. Deve ser sobreposta, sem redimensionamento independente, a '6-Green-box.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Within compact bone, endosteum lines Haversian and Volkmann’s canals. It does not extend into lacunae or canaliculi.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 6A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-6a/, acesso em 2026-08-07."
+    }
+  ]
+}

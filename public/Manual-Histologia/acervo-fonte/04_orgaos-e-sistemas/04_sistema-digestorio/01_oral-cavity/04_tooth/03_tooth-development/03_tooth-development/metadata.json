@@ -1,0 +1,107 @@
+{
+  "id": 29265,
+  "titulo": "Laminae, bud and cap stages",
+  "titulo_wordpress": "Tooth development 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 3"
+  ],
+  "descricao_original": "Derivatives of the oral ectoderm are shown at higher magnification in this image. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/",
+  "creditos_identificados": [
+    "Image source: This image was taken of slide in the University of South Dakota slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "arquivo": "imagens/base/Image-3-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Laminae, bud and cap stages', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Descricao original da pagina: Derivatives of the oral ectoderm are shown at higher magnification in this image. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dental lamina",
+      "explicacao_original": "The dental laminae above the developing mandible and maxilla invaginate at sites corresponding to the location of the deciduous teeth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dental-lamina-new.png",
+      "arquivo": "imagens/marcadores/Dental-lamina-new.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Dental lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental laminae above the developing mandible and maxilla invaginate at sites corresponding to the location of the deciduous teeth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Bud stage",
+      "explicacao_original": "The bud stage is the first canonical stage in the process of tooth formation and resembles a small rounded mass connected to the overlying epithelium. The bud is surrounded by ectomesenchyme.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Bud-stage.png",
+      "arquivo": "imagens/marcadores/Bud-stage.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Bud stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bud stage is the first canonical stage in the process of tooth formation and resembles a small rounded mass connected to the overlying epithelium. The bud is surrounded by ectomesenchyme.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cap stage",
+      "explicacao_original": "The cap stage results from a differential rate of cell proliferation in the bud, resulting in a concave structure resembling a cup. At this stage of tooth development, histodifferentiation occurs leading to the formation of the enamel organ and dental papilla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Cap-stage.png",
+      "arquivo": "imagens/marcadores/Cap-stage.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Cap stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cap stage results from a differential rate of cell proliferation in the bud, resulting in a concave structure resembling a cup. At this stage of tooth development, histodifferentiation occurs leading to the formation of the enamel organ and dental papilla.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Enamel organ",
+      "explicacao_original": "The enamel organ is formed from ectoderm during the cap stage of tooth development and consists of inner and the outer enamel epithelia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Enamel-organ-1.png",
+      "arquivo": "imagens/marcadores/Enamel-organ-1.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Enamel organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The enamel organ is formed from ectoderm during the cap stage of tooth development and consists of inner and the outer enamel epithelia.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dental papilla",
+      "explicacao_original": "The bulk of the ectomesenchymal cells that differentiate into the dental papilla will eventually form the dental pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Papilla.png",
+      "arquivo": "imagens/marcadores/Papilla.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Dental papilla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of the ectomesenchymal cells that differentiate into the dental papilla will eventually form the dental pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dental follicle",
+      "explicacao_original": "The ectomesenchymal stem cells that surround the apical part of the tooth germ form the dental follicle. These cells differentiate into cementoblasts that deposit cementum, fibroblasts that deposit collagen fibers as part of the periodontal ligament, and osteoblasts that deposit the alveolar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Follicle.png",
+      "arquivo": "imagens/marcadores/Follicle.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Dental follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectomesenchymal stem cells that surround the apical part of the tooth germ form the dental follicle. These cells differentiate into cementoblasts that deposit cementum, fibroblasts that deposit collagen fibers as part of the periodontal ligament, and osteoblasts that deposit the alveolar bone.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Vestibular lamina",
+      "explicacao_original": "The vestibular lamina is located in the lateral aspect of the primordial oral cavity. It extends a furrow that develops into the vestibule of the oral cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Vestibular-lamina-1.png",
+      "arquivo": "imagens/marcadores/Vestibular-lamina-1.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Vestibular lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibular lamina is located in the lateral aspect of the primordial oral cavity. It extends a furrow that develops into the vestibule of the oral cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of slide in the University of South Dakota slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/SD-Image-source.png",
+      "arquivo": "imagens/marcadores/SD-Image-source.png",
+      "imagem_base": "imagens/base/Image-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Laminae, bud and cap stages'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-3-fix.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide in the University of South Dakota slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-3/, acesso em 2026-08-07."
+    }
+  ]
+}

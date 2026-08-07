@@ -1,0 +1,64 @@
+{
+  "id": 13733,
+  "titulo": "Vestibule",
+  "titulo_wordpress": "Vestibule 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Vestibule",
+    "Vestibule 1"
+  ],
+  "descricao_original": "The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.01.jpg",
+      "arquivo": "imagens/base/O.E.IE_.V.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Vestibule', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 1. Descricao original da pagina: The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.01.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.01.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.01.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Utricle",
+      "explicacao_original": "The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.01.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.01.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.01.jpg'. Destaca a estrutura ou conceito 'Utricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Saccule",
+      "explicacao_original": "The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.01.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.01.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.01.jpg'. Destaca a estrutura ou conceito 'Saccule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Maculae",
+      "explicacao_original": "The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.01.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.01.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.01.jpg'. Destaca a estrutura ou conceito 'Maculae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule, a portion of the osseous labyrinth, is a space in the petrous portion of the temporal bone, filled with perilymph. The utricle and saccule are the components of the membranous labyrinth located in the vestibule. Each possesses a macula, the receptor that responds to linear acceleration and gravitational forces.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-1/, acesso em 2026-08-07."
+    }
+  ]
+}

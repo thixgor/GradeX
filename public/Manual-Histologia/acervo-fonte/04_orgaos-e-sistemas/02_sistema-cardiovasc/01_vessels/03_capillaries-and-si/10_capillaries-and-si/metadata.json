@@ -1,0 +1,74 @@
+{
+  "id": 5316,
+  "titulo": "Continuous capillary",
+  "titulo_wordpress": "Capillaries and Sinusoids 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 10"
+  ],
+  "descricao_original": "This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-9.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Continuous capillary', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 10. Descricao original da pagina: This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endothelial cell",
+      "explicacao_original": "This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-9.jpg'. Destaca a estrutura ou conceito 'Endothelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cell nucleus",
+      "explicacao_original": "This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-9.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-9.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pinocytic vesicles",
+      "explicacao_original": "This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-9.jpg'. Destaca a estrutura ou conceito 'Pinocytic vesicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a high magnification view of the basal surface of an endothelial cell. In a continuous capillary, no pores are present in the endothelium, and macromolecules are transported in both directions through the endothelial cytoplasm via pinocytotic vesicles. This bidirectional process is called transcytosis. Some molecules are able to diffuse across the endothelium, such as small ions, amino acids and gases. The endothelium rests on a basal lamina that it has produced. 45,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Collagen fibrils",
+      "explicacao_original": "The very fine collagen fibrils immediately beneath the basal lamina (blue arrows) comprise the reticular lamina of the basement membrane and are composed of Type III collagen. The larger collagen fibrils (red arrows) are composed of Type I collagen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-9-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-9-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-9.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The very fine collagen fibrils immediately beneath the basal lamina (blue arrows) comprise the reticular lamina of the basement membrane and are composed of Type III collagen. The larger collagen fibrils (red arrows) are composed of Type I collagen.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-10/, acesso em 2026-08-07."
+    }
+  ]
+}

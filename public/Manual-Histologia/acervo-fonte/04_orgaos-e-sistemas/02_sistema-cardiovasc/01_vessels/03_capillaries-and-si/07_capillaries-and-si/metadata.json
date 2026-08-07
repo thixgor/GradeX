@@ -1,0 +1,84 @@
+{
+  "id": 5310,
+  "titulo": "Continuous capillary",
+  "titulo_wordpress": "Capillaries and Sinusoids 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 7"
+  ],
+  "descricao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Continuous capillary', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Descricao original da pagina: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capillary",
+      "explicacao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-6.jpg'. Destaca a estrutura ou conceito 'Capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cell nucleus",
+      "explicacao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-6.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endothelial cell cytoplasm",
+      "explicacao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-6.jpg'. Destaca a estrutura ou conceito 'Endothelial cell cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-6.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cell junctions",
+      "explicacao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/Or.CV_.V.Caps-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-6.jpg'. Destaca a estrutura ou conceito 'Cell junctions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Red blood cell",
+      "explicacao_original": "Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-6.jpg'. Destaca a estrutura ou conceito 'Red blood cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries, the smallest vessels, are composed of endothelial cells and their basal laminae. Generally, only a single endothelial cell nucleus is seen in section, however, multiple cells form a mosaic as they extend around the lumen, forming the capillary tube. Junctions between the endothelial cells are also visible. Endothelial cells are extremely thin to facilitate gas and nutrient exchange with surrounding tissue. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-7/, acesso em 2026-08-07."
+    }
+  ]
+}

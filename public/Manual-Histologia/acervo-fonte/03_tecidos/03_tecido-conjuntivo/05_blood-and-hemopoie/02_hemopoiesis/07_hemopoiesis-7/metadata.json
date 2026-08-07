@@ -1,0 +1,44 @@
+{
+  "id": 9672,
+  "titulo": "Bone marrow smear",
+  "titulo_wordpress": "Hemopoiesis 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 7"
+  ],
+  "descricao_original": "Identifying specific stages of erythrocyte and granulocyte development is very difficult in tissue sections of bone marrow. That task is much easier using bone marrow smears. Several stages of erythrocyte and granulocyte development are visible in this image, each process will be described in greater detail in the following images. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-7.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone marrow smear', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 7. Descricao original da pagina: Identifying specific stages of erythrocyte and granulocyte development is very difficult in tissue sections of bone marrow. That task is much easier using bone marrow smears. Several stages of erythrocyte and granulocyte development are visible in this image, each process will be described in greater detail in the following images. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Developing and mature erythrocytes",
+      "explicacao_original": "Identifying specific stages of erythrocyte and granulocyte development is very difficult in tissue sections of bone marrow. That task is much easier using bone marrow smears. Several stages of erythrocyte and granulocyte development are visible in this image, each process will be described in greater detail in the following images. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow smear'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-7.jpg'. Destaca a estrutura ou conceito 'Developing and mature erythrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Identifying specific stages of erythrocyte and granulocyte development is very difficult in tissue sections of bone marrow. That task is much easier using bone marrow smears. Several stages of erythrocyte and granulocyte development are visible in this image, each process will be described in greater detail in the following images. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Developing granulocytes",
+      "explicacao_original": "Identifying specific stages of erythrocyte and granulocyte development is very difficult in tissue sections of bone marrow. That task is much easier using bone marrow smears. Several stages of erythrocyte and granulocyte development are visible in this image, each process will be described in greater detail in the following images. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow smear'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-7.jpg'. Destaca a estrutura ou conceito 'Developing granulocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Identifying specific stages of erythrocyte and granulocyte development is very difficult in tissue sections of bone marrow. That task is much easier using bone marrow smears. Several stages of erythrocyte and granulocyte development are visible in this image, each process will be described in greater detail in the following images. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-7/, acesso em 2026-08-07."
+    }
+  ]
+}

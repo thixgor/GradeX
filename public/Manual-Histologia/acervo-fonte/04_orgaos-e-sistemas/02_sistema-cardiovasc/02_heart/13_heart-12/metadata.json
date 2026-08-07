@@ -1,0 +1,53 @@
+{
+  "id": 5382,
+  "titulo": "Atrioventricular valve",
+  "titulo_wordpress": "Heart 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Heart",
+    "Heart 12"
+  ],
+  "descricao_original": "The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosus. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.H-12.jpg",
+      "arquivo": "imagens/base/Or.CV_.H-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Atrioventricular valve', no setor Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 12. Descricao original da pagina: The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosus. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endothelium",
+      "explicacao_original": "The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosis. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.H-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Atrioventricular valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-12.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosis. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosis. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.H-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Atrioventricular valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-12.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosis. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Attachment of chordae tendineae",
+      "explicacao_original": "The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosis. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-12-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-12-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.H-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Atrioventricular valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-12.jpg'. Destaca a estrutura ou conceito 'Attachment of chordae tendineae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The leaflets of atrioventricular valves are folds of endocardium covered with endothelium on their free surfaces. The core of each leaflet consists of dense irregular connective tissue that is continuous with the annulus fibrosis. Also seen is the attachment point for one of the chordae tendineae, fibrous cords which extend from the valve leaflet to one of the papillary muscles. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-12/, acesso em 2026-08-07."
+    }
+  ]
+}

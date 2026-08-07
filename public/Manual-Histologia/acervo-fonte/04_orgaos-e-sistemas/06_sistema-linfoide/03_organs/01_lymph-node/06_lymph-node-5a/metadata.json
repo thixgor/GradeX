@@ -1,0 +1,94 @@
+{
+  "id": 30616,
+  "titulo": "Lymph node: secondary nodule",
+  "titulo_wordpress": "Lymph node 5A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Lymph Node",
+    "Lymph node 5A"
+  ],
+  "descricao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymph node: secondary nodule', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Descricao original da pagina: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secondary nodule",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Secondary nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Germinal center",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dark zone",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Dark zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Light zone",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Light zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mantle",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Mantle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capsule",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-6-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-6-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Subcapsular sinus",
+      "explicacao_original": "This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-8A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: secondary nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-8A.jpg'. Destaca a estrutura ou conceito 'Subcapsular sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This secondary nodule demonstrates the zonation visible within the germinal center. In the dark zone, B cells proliferate and undergo random mutations of their antibody-producing genes. These B cells are then selected in the light zone, based on their antibody’s ability to bind to an antigen. Those with high-affinity antibodies undergo further proliferation and form large, pale-staining immunoblasts. Progeny of these cells become plasma cells and B memory cells. Cells with disadvantageous mutations are eliminated by apoptosis and phagocytosis by macrophages. Lymph node, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": 12332,
+  "titulo": "Ovary: secondary follicles",
+  "titulo_wordpress": "Ovary 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 8"
+  ],
+  "descricao_original": "A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: secondary follicles', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Descricao original da pagina: A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary oocyte",
+      "explicacao_original": "A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Primary oocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zona pellucida",
+      "explicacao_original": "A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Zona pellucida' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stratum granulosum",
+      "explicacao_original": "A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Stratum granulosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Antral spaces",
+      "explicacao_original": "A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P05.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Antral spaces' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A secondary follicle forms as antral fluid accumulates in spaces among the proliferating follicle (granulosal) cells. The multiple antral spaces coalesce into a single, fluid-filled antrum. Granulosal cells surrounding the antrum are now called the stratum granulosum. The (non-human) follicle on the left is an earlier secondary follicle than the one on the right. 100x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Theca interna",
+      "explicacao_original": "The theca differentiates into a double layer surrounding the follicle. The theca interna is a highly vascularized layer of steroid-secreting cells located immediately external to the basement membrane; this layer synthesizes and secretes androgens in response to LH stimulation. Theca externa surrounds the interna and serves as a reserve-cell source for the interna.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P06.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Theca interna' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The theca differentiates into a double layer surrounding the follicle. The theca interna is a highly vascularized layer of steroid-secreting cells located immediately external to the basement membrane; this layer synthesizes and secretes androgens in response to LH stimulation. Theca externa surrounds the interna and serves as a reserve-cell source for the interna.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Theca externa",
+      "explicacao_original": "The theca differentiates into a double layer surrounding the follicle. The theca interna is a highly vascularized layer of steroid-secreting cells located immediately external to the basement membrane; this layer synthesizes and secretes androgens in response to LH stimulation. Theca externa surrounds the interna and serves as a reserve-cell source for the interna.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.08.P07.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.08.jpg'. Destaca a estrutura ou conceito 'Theca externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The theca differentiates into a double layer surrounding the follicle. The theca interna is a highly vascularized layer of steroid-secreting cells located immediately external to the basement membrane; this layer synthesizes and secretes androgens in response to LH stimulation. Theca externa surrounds the interna and serves as a reserve-cell source for the interna.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-8/, acesso em 2026-08-07."
+    }
+  ]
+}

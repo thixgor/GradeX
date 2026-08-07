@@ -1,0 +1,164 @@
+{
+  "id": 8543,
+  "titulo": "Lymph node",
+  "titulo_wordpress": "Lymph node 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Lymph Node",
+    "Lymph node 1"
+  ],
+  "descricao_original": "A lymph node is an encapsulated, bean-shaped organ usually located in groups or clusters along lymph vessels. The node, composed of a cortex and medulla, possesses a series of sinuses that filter lymph. Cells of lymph nodes phagocytose particulate matter and initiate an immune response against foreign material and microbes transported in the lymph.",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymph node', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Descricao original da pagina: A lymph node is an encapsulated, bean-shaped organ usually located in groups or clusters along lymph vessels. The node, composed of a cortex and medulla, possesses a series of sinuses that filter lymph. Cells of lymph nodes phagocytose particulate matter and initiate an immune response against foreign material and microbes transported in the lymph.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capsule",
+      "explicacao_original": "A lymph node is surrounded by a dense connective tissue capsule that sends short, supportive trabeculae into the node. Reticular connective tissue provides the stroma for the interior of the lymph node. The hilum is the indentation in the lymph node where arterial blood enters the node and venous blood and efferent lymph vessels exit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lymph node is surrounded by a dense connective tissue capsule that sends short, supportive trabeculae into the node. Reticular connective tissue provides the stroma for the interior of the lymph node. The hilum is the indentation in the lymph node where arterial blood enters the node and venous blood and efferent lymph vessels exit.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Trabeculae",
+      "explicacao_original": "A lymph node is surrounded by a dense connective tissue capsule that sends short, supportive trabeculae into the node. Reticular connective tissue provides the stroma for the interior of the lymph node. The hilum is the indentation in the lymph node where arterial blood enters the node and venous blood and efferent lymph vessels exit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Trabeculae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lymph node is surrounded by a dense connective tissue capsule that sends short, supportive trabeculae into the node. Reticular connective tissue provides the stroma for the interior of the lymph node. The hilum is the indentation in the lymph node where arterial blood enters the node and venous blood and efferent lymph vessels exit.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hilum",
+      "explicacao_original": "A lymph node is surrounded by a dense connective tissue capsule that sends short, supportive trabeculae into the node. Reticular connective tissue provides the stroma for the interior of the lymph node. The hilum is the indentation in the lymph node where arterial blood enters the node and venous blood and efferent lymph vessels exit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Hilum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lymph node is surrounded by a dense connective tissue capsule that sends short, supportive trabeculae into the node. Reticular connective tissue provides the stroma for the interior of the lymph node. The hilum is the indentation in the lymph node where arterial blood enters the node and venous blood and efferent lymph vessels exit.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cortex",
+      "explicacao_original": "The cortex of a lymph node is composed of two subdivisions, outer cortex and deep cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cortex of a lymph node is composed of two subdivisions, outer cortex and deep cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Outer cortex",
+      "explicacao_original": "The outer cortex (superficial cortex, nodular cortex) is filled with lymphoid nodules that are populated mostly by B lymphocytes. The inner paracortex (deep cortex) (dashed, black ovals) resembles diffuse lymphoid tissue and is populated mostly by T lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Outer cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer cortex (superficial cortex, nodular cortex) is filled with lymphoid nodules that are populated mostly by B lymphocytes. The inner paracortex (deep cortex) (dashed, black ovals) resembles diffuse lymphoid tissue and is populated mostly by T lymphocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Deep cortex",
+      "explicacao_original": "The outer cortex (superficial cortex, nodular cortex) is filled with lymphoid nodules that are populated mostly by B lymphocytes. The inner paracortex (deep cortex) (dashed, black ovals) resembles diffuse lymphoid tissue and is populated mostly by T lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Deep cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer cortex (superficial cortex, nodular cortex) is filled with lymphoid nodules that are populated mostly by B lymphocytes. The inner paracortex (deep cortex) (dashed, black ovals) resembles diffuse lymphoid tissue and is populated mostly by T lymphocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Medulla",
+      "explicacao_original": "The medulla consists of a series of medullary cords (B-dependent areas), that are finger-like projections of lymphoid tissue, and large channels, called medullary sinuses, that receive lymph from the cortical sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla consists of a series of medullary cords (B-dependent areas), that are finger-like projections of lymphoid tissue, and large channels, called medullary sinuses, that receive lymph from the cortical sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Medullary cords",
+      "explicacao_original": "The medulla consists of a series of medullary cords (B-dependent areas), that are finger-like projections of lymphoid tissue, and large channels, called medullary sinuses, that receive lymph from the cortical sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Medullary cords' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla consists of a series of medullary cords (B-dependent areas), that are finger-like projections of lymphoid tissue, and large channels, called medullary sinuses, that receive lymph from the cortical sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Medullary sinuses",
+      "explicacao_original": "The medulla consists of a series of medullary cords (B-dependent areas), that are finger-like projections of lymphoid tissue, and large channels, called medullary sinuses that receive lymph from the cortical sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Medullary sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla consists of a series of medullary cords (B-dependent areas), that are finger-like projections of lymphoid tissue, and large channels, called medullary sinuses that receive lymph from the cortical sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Afferent lymphatics",
+      "explicacao_original": "Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to the foreign materials it contains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-10-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Afferent lymphatics' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to the foreign materials it contains.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Subcapsular sinus",
+      "explicacao_original": "Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to the foreign materials it contains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Subcapsular sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to the foreign materials it contains.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Trabecular sinuses",
+      "explicacao_original": "Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to foreign materials it contains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-12-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Trabecular sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to foreign materials it contains.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Efferent lymphatic",
+      "explicacao_original": "Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to foreign materials it contains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-13-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Efferent lymphatic' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymphatics enter from the convex surface, penetrate the capsule and enter the subcapsular sinus. From this sinus lymph and lymph-borne immune cells percolate through trabecular sinuses lying adjacent to trabeculae and enter medullary sinuses. Medullary sinuses drain into efferent lymphatics that exit at the hilum. Sinuses filter lymph and respond to foreign materials it contains.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Blood supply",
+      "explicacao_original": "Arterioles (green arrows), supplying blood, enter the cortex and divide into capillary plexuses (yellow arrows) in the outer cortex. Many of the post-capillary venules draining these capillaries, particularly in the paracortex, are high-endothelial venules, allowing lymphocytes to pass from the blood into the parenchyma of the node. Venules (blue arrows) exit at the hilum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-1-14-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-1.jpg'. Destaca a estrutura ou conceito 'Blood supply' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Arterioles (green arrows), supplying blood, enter the cortex and divide into capillary plexuses (yellow arrows) in the outer cortex. Many of the post-capillary venules draining these capillaries, particularly in the paracortex, are high-endothelial venules, allowing lymphocytes to pass from the blood into the parenchyma of the node. Venules (blue arrows) exit at the hilum.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-1/, acesso em 2026-08-07."
+    }
+  ]
+}

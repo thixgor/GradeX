@@ -1,0 +1,104 @@
+{
+  "id": 13105,
+  "titulo": "Placenta: 3rd trimester",
+  "titulo_wordpress": "Placenta 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 7"
+  ],
+  "descricao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "arquivo": "imagens/base/O.R.F.P.07.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Placenta: 3rd trimester', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Descricao original da pagina: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intervillous space",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P01.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Intervillous space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Floating villi",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Floating villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Fetal connective tissue",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P03.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Fetal connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fetal blood vessels",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P04.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Fetal blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cytotrophoblast",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P05.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Cytotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Syncytiotrophoblast",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P06.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Syncytiotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Clumped nuclei",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P07.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Clumped nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Fibrinoid",
+      "explicacao_original": "Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.07.P08.png",
+      "imagem_base": "imagens/base/O.R.F.P.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.07.jpg'. Destaca a estrutura ou conceito 'Fibrinoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Features of the late placental villi are: a thinned syncytiotrophoblastic layer with areas of clumped nuclei; numerous fetal capillaries adjacent to the syncytial layer; a discontinuous layer of cytotrophoblastic cells; fibrinoid; and condensed fetal connective tissue in the villi. 400X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-7/, acesso em 2026-08-07."
+    }
+  ]
+}

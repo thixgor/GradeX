@@ -1,0 +1,62 @@
+{
+  "id": 281,
+  "titulo": "Overview",
+  "titulo_wordpress": "Overview of connective tissues",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Visão Geral"
+  ],
+  "descricao_original": "Connective tissue is characterized by an abundant extracellular matrix surrounding cells. The matrix is composed of fibers, ground substance and tissue fluid. Variation in type, consistency and quantity of these components, in addition to variation in cell type and numbers, imparts characteristics and functions unique to each of the four major connective tissue subdivisions.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/overview/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.Ov-1.jpg",
+      "arquivo": "imagens/base/T.CT_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Tecidos > Tecido Conjuntivo > Visão Geral. Descricao original da pagina: Connective tissue is characterized by an abundant extracellular matrix surrounding cells. The matrix is composed of fibers, ground substance and tissue fluid. Variation in type, consistency and quantity of these components, in addition to variation in cell type and numbers, imparts characteristics and functions unique to each of the four major connective tissue subdivisions.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/overview/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Blood",
+      "explicacao_original": "In blood, a specialized connective tissue, the ground substance (X) of the extracellular matrix is a liquid that is not preserved during histological procedures. Fibers, which could impede blood flow, are present only when clotting occurs. The cellular component of blood (arrows) consists of red blood cells, white blood cells and cell fragments called platelets.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.OV-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.OV-1-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Blood' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In blood, a specialized connective tissue, the ground substance (X) of the extracellular matrix is a liquid that is not preserved during histological procedures. Fibers, which could impede blood flow, are present only when clotting occurs. The cellular component of blood (arrows) consists of red blood cells, white blood cells and cell fragments called platelets.. Contexto setorial: Tecidos > Tecido Conjuntivo > Visão Geral. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Connective tissue proper",
+      "explicacao_original": "In connective tissue proper, the ground substance (black arrows) is a gel, providing padding qualities to the tissue. Fibers (blue arrows), such as collagen, elastic and reticular, provide strength and elasticity. Thirdly, are numerous cells (green arrows) including fibroblasts that produce the extracellular matrix, white blood cells, macrophages, mast cells and adipocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.OV-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.OV-1-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Connective tissue proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In connective tissue proper, the ground substance (black arrows) is a gel, providing padding qualities to the tissue. Fibers (blue arrows), such as collagen, elastic and reticular, provide strength and elasticity. Thirdly, are numerous cells (green arrows) including fibroblasts that produce the extracellular matrix, white blood cells, macrophages, mast cells and adipocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Visão Geral. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cartilage",
+      "explicacao_original": "In cartilage, the ground substance (blue arrow) is a flexible solid, providing deformable support. Fibers (green arrows) vary with cartilage type. Cartilage cells (red arrows) are called chondroblasts when they lie on the surface of cartilage and chondrocytes when they are embedded in the cartilage matrix. Both cell types produce cartilage matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.OV-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.OV-1-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In cartilage, the ground substance (blue arrow) is a flexible solid, providing deformable support. Fibers (green arrows) vary with cartilage type. Cartilage cells (red arrows) are called chondroblasts when they lie on the surface of cartilage and chondrocytes when they are embedded in the cartilage matrix. Both cell types produce cartilage matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Visão Geral. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bone",
+      "explicacao_original": "In bone, ground substance is similar to cartilage but is impregnated with calcium phosphate to provide rigidity; collagen is the primary fiber type. This extracellular matrix is indicated by black arrows. Three cell types are present in bone: osteoblasts which lie on bone surfaces and produce matrix; osteocytes (blue arrows) which are mature cells transformed from osteoblasts and surrounded by matrix; and osteoclasts which resorb bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.OV-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.OV-1-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In bone, ground substance is similar to cartilage but is impregnated with calcium phosphate to provide rigidity; collagen is the primary fiber type. This extracellular matrix is indicated by black arrows. Three cell types are present in bone: osteoblasts which lie on bone surfaces and produce matrix; osteocytes (blue arrows) which are mature cells transformed from osteoblasts and surrounded by matrix; and osteoclasts which resorb bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Visão Geral. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/overview/, acesso em 2026-08-07."
+    }
+  ]
+}

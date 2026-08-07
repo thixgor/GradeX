@@ -1,0 +1,44 @@
+{
+  "id": 31658,
+  "titulo": "Pulmonary vein",
+  "titulo_wordpress": "Pulmonary vein 3A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Blood Supply",
+    "Pulmonary Vein",
+    "Pulmonary vein 3A"
+  ],
+  "descricao_original": "This longitudinal section of a large pulmonary vein will join others to form two main pulmonary veins that exit the lung at the hilum, accompanied by a primary bronchus and a pulmonary artery. Blood in pulmonary veins returns to the left atrium of the heart, joining the general systemic circulation. A portion of the pleura has detached from the surface of the lung. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-3a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.03-NEW.jpg",
+      "arquivo": "imagens/base/O.R.B.PV_.03-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pulmonary vein', no setor Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 3A. Descricao original da pagina: This longitudinal section of a large pulmonary vein will join others to form two main pulmonary veins that exit the lung at the hilum, accompanied by a primary bronchus and a pulmonary artery. Blood in pulmonary veins returns to the left atrium of the heart, joining the general systemic circulation. A portion of the pleura has detached from the surface of the lung. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-3a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pulmonary vein",
+      "explicacao_original": "This longitudinal section of a large pulmonary vein will join others to form two main pulmonary veins that exit the lung at the hilum, accompanied by a primary bronchus and a pulmonary artery. Blood in pulmonary veins returns to the left atrium of the heart, joining the general systemic circulation. A portion of the pleura has detached from the surface of the lung. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.03-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.PV_.03-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.B.PV_.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pulmonary vein'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.PV_.03-NEW.jpg'. Destaca a estrutura ou conceito 'Pulmonary vein' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This longitudinal section of a large pulmonary vein will join others to form two main pulmonary veins that exit the lung at the hilum, accompanied by a primary bronchus and a pulmonary artery. Blood in pulmonary veins returns to the left atrium of the heart, joining the general systemic circulation. A portion of the pleura has detached from the surface of the lung. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Visceral pleura",
+      "explicacao_original": "This longitudinal section of a large pulmonary vein will join others to form two main pulmonary veins that exit the lung at the hilum, accompanied by a primary bronchus and a pulmonary artery. Blood in pulmonary veins returns to the left atrium of the heart, joining the general systemic circulation. A portion of the pleura has detached from the surface of the lung. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.03-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.PV_.03-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.B.PV_.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pulmonary vein'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.PV_.03-NEW.jpg'. Destaca a estrutura ou conceito 'Visceral pleura' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This longitudinal section of a large pulmonary vein will join others to form two main pulmonary veins that exit the lung at the hilum, accompanied by a primary bronchus and a pulmonary artery. Blood in pulmonary veins returns to the left atrium of the heart, joining the general systemic circulation. A portion of the pleura has detached from the surface of the lung. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-3a/, acesso em 2026-08-07."
+    }
+  ]
+}

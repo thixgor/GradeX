@@ -1,0 +1,64 @@
+{
+  "id": 4848,
+  "titulo": "Adrenal cortex",
+  "titulo_wordpress": "Adrenal 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Adrenal",
+    "Adrenal 5"
+  ],
+  "descricao_original": "Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-5.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Ad-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Adrenal cortex', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 5. Descricao original da pagina: Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory cells",
+      "explicacao_original": "Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-5.jpg'. Destaca a estrutura ou conceito 'Secretory cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-5-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-5-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-5.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-5-3-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-5-3-ping-1.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-5.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells of zona fasciculata display the vacuolated cytoplasm resulting from the extraction of lipid during tissue processing. In addition to the lipid droplets, these steroid-secreting cells also have mitochondria with tubular cristae, abundant SER and secrete by diffusion into the surrounding capillaries. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Section location",
+      "explicacao_original": "The location of this image is indicated in the inset panel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-5-4-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-5-4-ping-1.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-5.jpg'. Destaca a estrutura ou conceito 'Section location' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The location of this image is indicated in the inset panel.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-5/, acesso em 2026-08-07."
+    }
+  ]
+}

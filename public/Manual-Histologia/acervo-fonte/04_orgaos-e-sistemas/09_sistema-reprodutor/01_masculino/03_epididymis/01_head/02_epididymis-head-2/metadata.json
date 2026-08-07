@@ -1,0 +1,95 @@
+{
+  "id": 15763,
+  "titulo": "Epididymis: head",
+  "titulo_wordpress": "Epididymis head 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Epididymis",
+    "Head",
+    "Epididymis head 2"
+  ],
+  "descricao_original": "The testis lies anterior to the comma-shaped epididymis. Only a portion of the head of the epididymis is present in this image. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "arquivo": "imagens/base/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Epididymis: head', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Descricao original da pagina: The testis lies anterior to the comma-shaped epididymis. Only a portion of the head of the epididymis is present in this image. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Seminiferous tubules",
+      "explicacao_original": "The testis lies anterior to the comma-shaped epididymis. Only a portion of the head of the epididymis is present in this image. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Seminiferous tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis lies anterior to the comma-shaped epididymis. Only a portion of the head of the epididymis is present in this image. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The testis lies anterior to the comma-shaped epididymis. Only a portion of the head of the epididymis is present in this image. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.E.H.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02.P02.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis lies anterior to the comma-shaped epididymis. Only a portion of the head of the epididymis is present in this image. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Head of epididymis",
+      "explicacao_original": "The head of the epididymis is composed of the efferent ducts coiled into cone shapes (coni vasculosi) and the beginning of the duct of the epididymis (not shown in this image).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Head of epididymis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The head of the epididymis is composed of the efferent ducts coiled into cone shapes (coni vasculosi) and the beginning of the duct of the epididymis (not shown in this image).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Efferent ducts",
+      "explicacao_original": "The efferent ducts are coiled into 12-20 cone-shaped structures, the coni vasculosi, composed of the efferent ducts, as well as the connective tissue and abundant vasculature surrounding them. The apex of each cone faces the testis; each base faces the posterior surface of the epididymis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Efferent ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The efferent ducts are coiled into 12-20 cone-shaped structures, the coni vasculosi, composed of the efferent ducts, as well as the connective tissue and abundant vasculature surrounding them. The apex of each cone faces the testis; each base faces the posterior surface of the epididymis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Coni vasculosi",
+      "explicacao_original": "The efferent ducts are coiled into 12-20 cone-shaped structures, the coni vasculosi, composed of the efferent ducts, as well as the connective tissue and abundant vasculature surrounding them. The apex of each cone faces the testis; each base faces the posterior surface of the epididymis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.E.H.02.P05.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02.P05.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Coni vasculosi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The efferent ducts are coiled into 12-20 cone-shaped structures, the coni vasculosi, composed of the efferent ducts, as well as the connective tissue and abundant vasculature surrounding them. The apex of each cone faces the testis; each base faces the posterior surface of the epididymis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.E.H.02.P06.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02.P06.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Marcador 7",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.H.02-4-ping-2.png",
+      "imagem_base": "imagens/base/O.R.M.E.H.02A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.E.H.02A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: head'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.H.02A.jpg'. Destaca a estrutura ou conceito 'Marcador 7' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Head > Epididymis head 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/head/epididymis-head-2/, acesso em 2026-08-07."
+    }
+  ]
+}

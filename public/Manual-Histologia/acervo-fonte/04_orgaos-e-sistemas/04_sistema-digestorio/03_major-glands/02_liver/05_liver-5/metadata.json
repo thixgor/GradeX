@@ -1,0 +1,54 @@
+{
+  "id": 6998,
+  "titulo": "Liver: central veins",
+  "titulo_wordpress": "Liver 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Liver",
+    "Liver 5"
+  ],
+  "descricao_original": "A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Liv-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Liver: central veins', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 5. Descricao original da pagina: A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Central veins",
+      "explicacao_original": "A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: central veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-5.jpg'. Destaca a estrutura ou conceito 'Central veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sinusoids",
+      "explicacao_original": "A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: central veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-5.jpg'. Destaca a estrutura ou conceito 'Sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hepatocytes",
+      "explicacao_original": "A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: central veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-5.jpg'. Destaca a estrutura ou conceito 'Hepatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A central vein is located at the center of a classic liver lobule. Blood from the hepatic portal vein and hepatic artery in the portal triad percolates through the sinusoids of a lobule and empties into its central vein. The entrances of several sinusoids into the central vein are visible. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-5/, acesso em 2026-08-07."
+    }
+  ]
+}

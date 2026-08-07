@@ -1,0 +1,194 @@
+{
+  "id": 27342,
+  "titulo": "Veins",
+  "titulo_wordpress": "Veins 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Veins",
+    "Veins 1"
+  ],
+  "descricao_original": "Blood from capillaries flows into the venous system as veins. The smallest veins, venules, transition to small veins, medium veins, then to large veins. Venules initially resemble large-diameter capillaries and as they enlarge, additional components are added in their walls. Veins display the most variability of all vessels, and the three tunics are not always well demarcated. Examples of venous structures are shown here.",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Veins', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Descricao original da pagina: Blood from capillaries flows into the venous system as veins. The smallest veins, venules, transition to small veins, medium veins, then to large veins. Venules initially resemble large-diameter capillaries and as they enlarge, additional components are added in their walls. Veins display the most variability of all vessels, and the three tunics are not always well demarcated. Examples of venous structures are shown here.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Venules",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-1-ping-venu.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-1-ping-venu.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-2-ping-endo.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-2-ping-endo.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Arterioles",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-3-ping-art.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-3-ping-art.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Arterioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-4-ping-endo.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-4-ping-endo.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica media",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-5-ping-t-med.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-5-ping-t-med.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Nerve",
+      "explicacao_original": "The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-17-ping-NN.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-17-ping-NN.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smallest post-capillary venules resemble large-diameter capillaries. Their thin tunica intima consists of an endothelium and a thin subendothelial layer. No additional tunics are present. Accompanying arterioles are also shown.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Small vein",
+      "explicacao_original": "As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Small vein' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Tunica media",
+      "explicacao_original": "As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-10A-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-10A-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-11A-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-11A-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Valve",
+      "explicacao_original": "As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-8-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Valve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Small artery",
+      "explicacao_original": "As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-9-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Small artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As venules enlarge, they transition through muscular venules to become small veins. Compared to arteries, veins are thin-walled vessels with large and irregular lumens. All three tunics are present: a tunica intima, a tunica media containing 2-3 layers of smooth muscle and a prominent tunica adventitia. Small veins possess valves that prevent the backflow of blood. An accompanying small artery is also present.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Medium vein",
+      "explicacao_original": "Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-12-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Medium vein' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Tunica media",
+      "explicacao_original": "Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-15A-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-15A-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-16A-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-16A-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 16,
+      "rotulo": "Valve",
+      "explicacao_original": "Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-13-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Valve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 17,
+      "rotulo": "Muscular artery",
+      "explicacao_original": "Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-1-Final-14-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-1-Final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-1-Final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Veins'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-1-Final.jpg'. Destaca a estrutura ou conceito 'Muscular artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medium veins accompany muscular arteries and are often named, e.g. radial vein. Tunica media and tunica adventitia are thicker than in small veins, with the tunica adventitia dominant. Valves, crescent-shaped folds of the tunica intima that project into the lumen, are particularly prominent in medium veins of the lower extremities. Medium veins transition to large veins, such as the jugular vein and vena cavae, that form the major portals for blood return to the heart.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": 4780,
+  "titulo": "Individual endocrine cells",
+  "titulo_wordpress": "Cells and Clusters 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Cells and Clusters",
+    "Cells and Clusters 2"
+  ],
+  "descricao_original": "Enteroendocrine cells are members of the diffuse neuroendocrine system (DNES) of cells. They are located at the bases of gastric and intestinal glands, where they intercalate with the exocrine gland cells. The secretory granules of DNES cells are mostly directed away from the lumen of the gland, i.e.,toward the basement membrane surrounding the gland and toward the capillaries which transport their secretions. 1000x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-2-fix.jpg",
+      "arquivo": "imagens/base/Or.Endo_.CC-2-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Individual endocrine cells', no setor Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 2. Descricao original da pagina: Enteroendocrine cells are members of the diffuse neuroendocrine system (DNES) of cells. They are located at the bases of gastric and intestinal glands, where they intercalate with the exocrine gland cells. The secretory granules of DNES cells are mostly directed away from the lumen of the gland, i.e.,toward the basement membrane surrounding the gland and toward the capillaries which transport their secretions. 1000x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Enteroendocrine cells",
+      "explicacao_original": "Enteroendocrine cells are members of the diffuse neuroendocrine system (DNES) of cells. They are located at the bases of gastric and intestinal glands, where they intercalate with the exocrine gland cells. The secretory granules of DNES cells are mostly directed away from the lumen of the gland, i.e.,toward the basement membrane surrounding the gland and toward the capillaries which transport their secretions. 1000x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-2-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-2-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Individual endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-2-fix.jpg'. Destaca a estrutura ou conceito 'Enteroendocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enteroendocrine cells are members of the diffuse neuroendocrine system (DNES) of cells. They are located at the bases of gastric and intestinal glands, where they intercalate with the exocrine gland cells. The secretory granules of DNES cells are mostly directed away from the lumen of the gland, i.e.,toward the basement membrane surrounding the gland and toward the capillaries which transport their secretions. 1000x.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chief cells",
+      "explicacao_original": "Chief cells, the source of digestive enzymes in the stomach, are exocrine gland cells. Their secretory granules are oriented toward the lumen of the gland by which they gain access to stomach contents.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-2-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-2-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Individual endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-2-fix.jpg'. Destaca a estrutura ou conceito 'Chief cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chief cells, the source of digestive enzymes in the stomach, are exocrine gland cells. Their secretory granules are oriented toward the lumen of the gland by which they gain access to stomach contents.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chief cell secretory granules",
+      "explicacao_original": "Chief cells, the source of digestive enzymes in the stomach, are exocrine gland cells. Their secretory granules are oriented toward the lumen of the gland by which they gain access to stomach contents.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-2-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-2-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Individual endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-2-fix.jpg'. Destaca a estrutura ou conceito 'Chief cell secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chief cells, the source of digestive enzymes in the stomach, are exocrine gland cells. Their secretory granules are oriented toward the lumen of the gland by which they gain access to stomach contents.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lumens of gastric glands",
+      "explicacao_original": "Chief cells, the source of digestive enzymes in the stomach, are exocrine gland cells. Their secretory granules are oriented toward the lumen of the gland by which they gain access to stomach contents.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-2-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-2-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Individual endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-2-fix.jpg'. Destaca a estrutura ou conceito 'Lumens of gastric glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chief cells, the source of digestive enzymes in the stomach, are exocrine gland cells. Their secretory granules are oriented toward the lumen of the gland by which they gain access to stomach contents.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-2/, acesso em 2026-08-07."
+    }
+  ]
+}

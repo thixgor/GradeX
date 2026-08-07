@@ -1,0 +1,94 @@
+{
+  "id": 13097,
+  "titulo": "Placenta: 1st trimester",
+  "titulo_wordpress": "Placenta 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 3"
+  ],
+  "descricao_original": "The embryonic surface shows the chorionic plate, chorionic villi, and intervillous space filled with maternal blood. The chorionic plate (embryonic surface) is differentiated from the decidua (maternal surface) by the presence of blood vessels passing between the chorionic plate and the villi and by the lack of the thick trophoblastic shell, fibrinoid, and decidua. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "arquivo": "imagens/base/O.R.F.P.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Placenta: 1st trimester', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Descricao original da pagina: The embryonic surface shows the chorionic plate, chorionic villi, and intervillous space filled with maternal blood. The chorionic plate (embryonic surface) is differentiated from the decidua (maternal surface) by the presence of blood vessels passing between the chorionic plate and the villi and by the lack of the thick trophoblastic shell, fibrinoid, and decidua. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chorionic plate",
+      "explicacao_original": "The chorionic plate, attached to the amnion (not present here) encompassing the embryo, is composed of extraembryonic connective tissue covered by trophoblastic epithelium. The two layers of the trophoblast cannot be differentiated at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P01.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Chorionic plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The chorionic plate, attached to the amnion (not present here) encompassing the embryo, is composed of extraembryonic connective tissue covered by trophoblastic epithelium. The two layers of the trophoblast cannot be differentiated at this magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Embryonic connective tissue",
+      "explicacao_original": "The chorionic plate, attached to the amnion (not present here) encompassing the embryo, is composed of extraembryonic connective tissue covered by trophoblastic epithelium. The two layers of the trophoblast cannot be differentiated at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Embryonic connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The chorionic plate, attached to the amnion (not present here) encompassing the embryo, is composed of extraembryonic connective tissue covered by trophoblastic epithelium. The two layers of the trophoblast cannot be differentiated at this magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Trophoblast",
+      "explicacao_original": "The chorionic plate, attached to the amnion (not present here) encompassing the embryo, is composed of extraembryonic connective tissue covered by trophoblastic epithelium. The two layers of the trophoblast cannot be differentiated at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P03.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Trophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The chorionic plate, attached to the amnion (not present here) encompassing the embryo, is composed of extraembryonic connective tissue covered by trophoblastic epithelium. The two layers of the trophoblast cannot be differentiated at this magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Embryonic blood vessels",
+      "explicacao_original": "Embryonic blood vessels travel through stem villi to supply capillary beds located in the floating villi. Floating villi fill the intervillous space, where they are bathed in maternal blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P04.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Embryonic blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Embryonic blood vessels travel through stem villi to supply capillary beds located in the floating villi. Floating villi fill the intervillous space, where they are bathed in maternal blood.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stem villus",
+      "explicacao_original": "A stem villus, projecting from the chorionic plate, consists of a core of fetal connective tissue covered by the double-layered trophoblast. Each stem villus branches into smaller floatiing villi that fill the intervillous space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P05.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Stem villus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stem villus, projecting from the chorionic plate, consists of a core of fetal connective tissue covered by the double-layered trophoblast. Each stem villus branches into smaller floatiing villi that fill the intervillous space.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Floating villi",
+      "explicacao_original": "A stem villus, projecting from the chorionic plate, consists of a core of fetal connective tissue covered by the double-layered trophoblast. Each stem villus branches into smaller floatiing villi that fill the intervillous space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P06.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Floating villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stem villus, projecting from the chorionic plate, consists of a core of fetal connective tissue covered by the double-layered trophoblast. Each stem villus branches into smaller floatiing villi that fill the intervillous space.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Intervillous space",
+      "explicacao_original": "A stem villus, projecting from the chorionic plate, consists of a core of fetal connective tissue covered by the double-layered trophoblast. Each stem villus branches into smaller floatiing villi that fill the intervillous space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.03.P07.png",
+      "imagem_base": "imagens/base/O.R.F.P.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.03.jpg'. Destaca a estrutura ou conceito 'Intervillous space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stem villus, projecting from the chorionic plate, consists of a core of fetal connective tissue covered by the double-layered trophoblast. Each stem villus branches into smaller floatiing villi that fill the intervillous space.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-3/, acesso em 2026-08-07."
+    }
+  ]
+}

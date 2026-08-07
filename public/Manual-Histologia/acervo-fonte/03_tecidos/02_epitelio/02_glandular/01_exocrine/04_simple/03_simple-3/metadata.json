@@ -1,0 +1,75 @@
+{
+  "id": 4318,
+  "titulo": "Simple tubular gland",
+  "titulo_wordpress": "Simple 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Simple",
+    "Simple 3"
+  ],
+  "descricao_original": "This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-1.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Simp-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple tubular gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 3. Descricao original da pagina: This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple tubular glands",
+      "explicacao_original": "This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-1-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-1.jpg'. Destaca a estrutura ou conceito 'Simple tubular glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Gland lumens",
+      "explicacao_original": "This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-1-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-1.jpg'. Destaca a estrutura ou conceito 'Gland lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-1-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-1.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Absorptive cells",
+      "explicacao_original": "This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-1-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-1.jpg'. Destaca a estrutura ou conceito 'Absorptive cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intestinal lumen",
+      "explicacao_original": "This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-1-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-1.jpg'. Destaca a estrutura ou conceito 'Intestinal lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section is taken from the lower region of the colon, where more mucous lubrication is required. Accordingly, the intestinal glands in this region consist primarily of goblet cells; absorptive cells are more restricted to the surface regions of the epithelium. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-3/, acesso em 2026-08-07."
+    }
+  ]
+}

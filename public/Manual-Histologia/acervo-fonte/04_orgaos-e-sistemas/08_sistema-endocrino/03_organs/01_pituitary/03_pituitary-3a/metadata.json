@@ -1,0 +1,84 @@
+{
+  "id": 28042,
+  "titulo": "Pituitary",
+  "titulo_wordpress": "Pituitary 3A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 3A"
+  ],
+  "descricao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pituitary', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Descricao original da pagina: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Subdivisions",
+      "explicacao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-3A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-3A.jpg'. Destaca a estrutura ou conceito 'Subdivisions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pars nervosa",
+      "explicacao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-3A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-3A.jpg'. Destaca a estrutura ou conceito 'Pars nervosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pars distalis",
+      "explicacao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-3A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-3A.jpg'. Destaca a estrutura ou conceito 'Pars distalis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pars intermedia",
+      "explicacao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-3A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-3A.jpg'. Destaca a estrutura ou conceito 'Pars intermedia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Remnants of Rathke's pouch with colloid",
+      "explicacao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-3A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-3A.jpg'. Destaca a estrutura ou conceito 'Remnants of Rathke's pouch with colloid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capsule",
+      "explicacao_original": "This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-3A-6-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-3A.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a horizontal section through the human pituitary at the level indicated in the previous image. The contrast between the pale-staining neural tissue and the deeply basophilic staining of the glandular adenohypophyseal tissue is evident. The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-3a/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": 11836,
+  "titulo": "Cutaneous membrane",
+  "titulo_wordpress": "Membranes 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Membranas",
+    "Membranes 2"
+  ],
+  "descricao_original": "The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-2-use-bright.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Membr-2-use-bright.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cutaneous membrane', no setor Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 2. Descricao original da pagina: The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epidermis",
+      "explicacao_original": "The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-2-use-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-2-use-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cutaneous membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-2-use-bright.jpg'. Destaca a estrutura ou conceito 'Epidermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Keratinized layer",
+      "explicacao_original": "The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-2-use-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-2-use-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cutaneous membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-2-use-bright.jpg'. Destaca a estrutura ou conceito 'Keratinized layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dermis",
+      "explicacao_original": "The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-2-use-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-2-use-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cutaneous membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-2-use-bright.jpg'. Destaca a estrutura ou conceito 'Dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cutaneous membrane, or skin, covers the exterior of the body. It is composed of an epidermis of stratified squamous keratinized epithelium and its underlying connective tissue, the dermis. 40x, 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-2/, acesso em 2026-08-07."
+    }
+  ]
+}

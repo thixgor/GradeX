@@ -1,0 +1,64 @@
+{
+  "id": 6755,
+  "titulo": "Tongue: Filiform papillae",
+  "titulo_wordpress": "Tongue 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tongue",
+    "Tongue 2"
+  ],
+  "descricao_original": "The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tongue: Filiform papillae', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 2. Descricao original da pagina: The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Filiform papillae",
+      "explicacao_original": "The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.T-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Filiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-2.jpg'. Destaca a estrutura ou conceito 'Filiform papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Filiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-2.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Conical tips of papillae",
+      "explicacao_original": "The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.T-2-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-2-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Filiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-2.jpg'. Destaca a estrutura ou conceito 'Conical tips of papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Connective tissue core",
+      "explicacao_original": "The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Filiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-2.jpg'. Destaca a estrutura ou conceito 'Connective tissue core' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsal and lateral surfaces of the tongue are covered by specialized mucosa forming papillae: filiform, fungiform, circumvallate, and foliate. The tapering filiform papillae seen here are the most numerous type, covering most of the anterior two thirds of the tongue. Each papilla is about two to three millimeters long and is composed of a conical tip of keratinized, stratified squamous epithelium and an underlying core of connective tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-2/, acesso em 2026-08-07."
+    }
+  ]
+}

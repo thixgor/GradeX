@@ -1,0 +1,153 @@
+{
+  "id": 2582,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 17",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 17"
+  ],
+  "descricao_original": "This higher magnification electron micrograph of skeletal muscle shows greater detail of the myofibrils and overlapping myofilaments. 60,000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "arquivo": "imagens/base/T.M.Sk-17.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Descricao original da pagina: This higher magnification electron micrograph of skeletal muscle shows greater detail of the myofibrils and overlapping myofilaments. 60,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Myofibrils contain the contractile thin and thick myofilaments. The overlap of the myofilaments is the basis for the sliding filament mechanism of contraction. The pattern of overlap remains in register across the width of the myofibril, which produces the characteristic banding seen in striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Myofibrils contain the contractile thin and thick myofilaments. The overlap of the myofilaments is the basis for the sliding filament mechanism of contraction. The pattern of overlap remains in register across the width of the myofibril, which produces the characteristic banding seen in striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sarcomeres",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-4-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Sarcomeres' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "A band",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-6-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-6-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'A band' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "H band",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-8-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-8-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'H band' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "M line",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-9-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-9-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'M line' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "I band",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-7-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-7-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'I band' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Z lines",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Z lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscle and extends from one Z line to an adjacent Z line. During contraction, the width of the sarcomere narrows. The width of the A band remains constant, but both the I and H bands narrow as the areas of overlap of thin and thick myofilaments increase.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Thin myofilaments",
+      "explicacao_original": "Thin myofilaments consist primarily of polymerized globular actin molecules. Globular actin polymerizes, forming the filament which has binding sites for myosin of the thick myofilament. Tropomyosin and troponin proteins spiral around the filament, regulating the interaction of myosin with the thin filaments. The thin myofilament is anchored to the Z line, consisting of alpha-actinin and Cap Z proteins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-10-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-10-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Thin myofilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thin myofilaments consist primarily of polymerized globular actin molecules. Globular actin polymerizes, forming the filament which has binding sites for myosin of the thick myofilament. Tropomyosin and troponin proteins spiral around the filament, regulating the interaction of myosin with the thin filaments. The thin myofilament is anchored to the Z line, consisting of alpha-actinin and Cap Z proteins.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Thick myofilaments",
+      "explicacao_original": "Thick myofilaments are composed of myosin II, consisting of two heavy chains and four light chains. Head groups on the myosin bind to the actin of the thin myofilaments. The conformational changes of the head groups move the thin myofilament relative to the thick myofilament, a process referred to as the sliding filament mechanism.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-11-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-11-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Thick myofilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thick myofilaments are composed of myosin II, consisting of two heavy chains and four light chains. Head groups on the myosin bind to the actin of the thin myofilaments. The conformational changes of the head groups move the thin myofilament relative to the thick myofilament, a process referred to as the sliding filament mechanism.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Sarcomere overlay",
+      "explicacao_original": "Diagrammatic representation of the major structural elements of the sarcomere.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk17-12-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-12-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Sarcomere overlay' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diagrammatic representation of the major structural elements of the sarcomere.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Triad",
+      "explicacao_original": "The triad is a structural feature of skeletal muscle that is responsible for the regulation of excitation-contraction coupling. It is formed by the close apposition of the T-tubule and expanded cisterns of the sarcoplasmic reticulum. Each skeletal muscle fiber has many thousands of triads which in skeletal muscle are located at the level of the junction of the A and I bands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk17-13-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-13-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Triad' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The triad is a structural feature of skeletal muscle that is responsible for the regulation of excitation-contraction coupling. It is formed by the close apposition of the T-tubule and expanded cisterns of the sarcoplasmic reticulum. Each skeletal muscle fiber has many thousands of triads which in skeletal muscle are located at the level of the junction of the A and I bands.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "T tubules",
+      "explicacao_original": "The T tubule is an invagination of the sarcolemma and serves to carry the membrane depolarization into the depths of the cell. This rapid transmission into the center of the cell insures a coordinated contraction across its width.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk17-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-1A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'T tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The T tubule is an invagination of the sarcolemma and serves to carry the membrane depolarization into the depths of the cell. This rapid transmission into the center of the cell insures a coordinated contraction across its width.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Sarcoplasmic reticulum",
+      "explicacao_original": "The smooth endoplasmic in muscle fibers is called the sarcoplasmic reticulum. Two cisterns of the sarcoplasmic reticulum lie immediately adjacent the T tubule, thereby forming the triad. These cisterns serve as calcium stores. The depolarization carried by the T tubules causes the release of this calcium into the cytoplasm. Increased intracellular calcium is the signal that initiates muscle contraction. The sarcoplasmic reticulum also takes up calcium after contraction.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk17-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk17-2A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-17.jpg'. Destaca a estrutura ou conceito 'Sarcoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The smooth endoplasmic in muscle fibers is called the sarcoplasmic reticulum. Two cisterns of the sarcoplasmic reticulum lie immediately adjacent the T tubule, thereby forming the triad. These cisterns serve as calcium stores. The depolarization carried by the T tubules causes the release of this calcium into the cytoplasm. Increased intracellular calcium is the signal that initiates muscle contraction. The sarcoplasmic reticulum also takes up calcium after contraction.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 17. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-17/, acesso em 2026-08-07."
+    }
+  ]
+}

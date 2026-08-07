@@ -1,0 +1,95 @@
+{
+  "id": 20836,
+  "titulo": "Urethra: Male",
+  "titulo_wordpress": "Excretory passageways 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Excretory passageways",
+    "Excretory passageways 9"
+  ],
+  "descricao_original": "The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset)",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/",
+  "creditos_identificados": [
+    "Image credits: Images were taken from slides in the Drexel University and the University of Iowa slide collections."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "arquivo": "imagens/base/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Urethra: Male', no setor Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Descricao original da pagina: The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Penis",
+      "explicacao_original": "The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Penis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset). Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Corpora cavernosa",
+      "explicacao_original": "The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Corpora cavernosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset). Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Corpus spongiosum",
+      "explicacao_original": "The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Corpus spongiosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset). Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Urethral lumen",
+      "explicacao_original": "The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Urethral lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urethra is a fibromuscular tube that conveys urine from the bladder to the external urethra orifice. In males, the urethra is about 20 cm long and begins with the prostatic region at the neck of the bladder. Subsequent subdivisions are a short membranous urethra, which leads into the long penile (spongy) urethra. The penile urethra travels in the corpus spongiosum on the ventral side of the penis. 40x, 400x, 200x, 1000x (inset). Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epithelium of urethra",
+      "explicacao_original": "For most of its length, the spongy urethra is lined by a stratified columnar epithelium; however, patches of stratified squamous moist epithelium (red double arrows) are common. At its distal end, the epithelium of the spongy urethral epithelium blends with that of the glans penis to become stratified squamous.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Epithelium of urethra' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For most of its length, the spongy urethra is lined by a stratified columnar epithelium; however, patches of stratified squamous moist epithelium (red double arrows) are common. At its distal end, the epithelium of the spongy urethral epithelium blends with that of the glans penis to become stratified squamous.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Glands of Littre",
+      "explicacao_original": "The surface of the mucosa has numerous infoldings that extend into the lamina propria as the mucus-secreting glands of Littre (urethral glands).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Glands of Littre' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The surface of the mucosa has numerous infoldings that extend into the lamina propria as the mucus-secreting glands of Littre (urethral glands).. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image credits",
+      "explicacao_original": "Images were taken from slides in the Drexel University and the University of Iowa slide collections.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.UB-6-7A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-6-7A-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urethra: Male'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-6.jpg'. Destaca a estrutura ou conceito 'Image credits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Images were taken from slides in the Drexel University and the University of Iowa slide collections.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-9/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "id": 30105,
+  "titulo": "Bone tissue: microscopic preparation",
+  "titulo_wordpress": "As a tissue 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 3"
+  ],
+  "descricao_original": "Bone tissue can be processed for microscopic observation using two methods, compared in this composite. While each procedure has advantages, neither presents a complete image of bone. Therefore, when studying bone, try to imagine the appearance of both preparations, while viewing only one. 300x, 300x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/",
+  "creditos_identificados": [
+    "Image credits: Images taken of slides in the Nova Southeastern University and University of Michigan slide collections."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "arquivo": "imagens/base/T.C.B.T.3A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone tissue: microscopic preparation', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Descricao original da pagina: Bone tissue can be processed for microscopic observation using two methods, compared in this composite. While each procedure has advantages, neither presents a complete image of bone. Therefore, when studying bone, try to imagine the appearance of both preparations, while viewing only one. 300x, 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Decalcified bone",
+      "explicacao_original": "In a decalcified bone preparation, the organic matrix (fibers and ground substance) and cells are preserved (fixed). The inorganic matrix of calcium phosphate is removed either by treatment with dilute acids or calcium chelating agents. The tissue is then prepared like any other non-calcified tissue. While the cells and organic matrix are well preserved, the fine structure of the matrix is less evident.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Decalcified-bone.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Decalcified-bone.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Decalcified bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In a decalcified bone preparation, the organic matrix (fibers and ground substance) and cells are preserved (fixed). The inorganic matrix of calcium phosphate is removed either by treatment with dilute acids or calcium chelating agents. The tissue is then prepared like any other non-calcified tissue. While the cells and organic matrix are well preserved, the fine structure of the matrix is less evident.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ground bone",
+      "explicacao_original": "In a ground bone preparation, organic components are not preserved, so bone cells and organic matrix are not present. What remains is the inorganic matrix of calcium phosphate (hydroxyapatite). Internal spaces within the bone appear black in this preparation. To prepare this tissue, an unfixed bone is finely ground until it is thin enough to transmit light. The fine structure of the matrix is seen in excellent detail.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Ground-bone.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Ground-bone.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Ground bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In a ground bone preparation, organic components are not preserved, so bone cells and organic matrix are not present. What remains is the inorganic matrix of calcium phosphate (hydroxyapatite). Internal spaces within the bone appear black in this preparation. To prepare this tissue, an unfixed bone is finely ground until it is thin enough to transmit light. The fine structure of the matrix is seen in excellent detail.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Osteocytes are retained in the decalcified preparation between layers of matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Osteocytes.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes are retained in the decalcified preparation between layers of matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocyte lacunae",
+      "explicacao_original": "Osteocytes are not retained in the ground bone preparation. The lacunae in which they are located appear as elongated black spaces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Lacunae.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Lacunae.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Osteocyte lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes are not retained in the ground bone preparation. The lacunae in which they are located appear as elongated black spaces.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Matrix",
+      "explicacao_original": "The matrix of mature bone is highly ordered, organized into sheets or lamellae. Lamellae on the inner and outer surfaces of a bone are arranged as flattened plates. In other areas, lamellae are concentrically arranged into cylinders (Haversian systems) that surround a lumen. For both, osteocytes are located in lacunae between the lamellae. Lamellae are better visualized in the ground bone preparation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Matrix.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Matrix.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The matrix of mature bone is highly ordered, organized into sheets or lamellae. Lamellae on the inner and outer surfaces of a bone are arranged as flattened plates. In other areas, lamellae are concentrically arranged into cylinders (Haversian systems) that surround a lumen. For both, osteocytes are located in lacunae between the lamellae. Lamellae are better visualized in the ground bone preparation.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Parallel lamellae",
+      "explicacao_original": "Bone tissue on the inner and outer surfaces of a bone can be organized into flattened, plates that extend around the periphery of the bone (outer circumferential lamellae) or encircle the marrow space (inner circumferential lamellae). Only outer circumferential lamellae are shown here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Plates.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Plates.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Parallel lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone tissue on the inner and outer surfaces of a bone can be organized into flattened, plates that extend around the periphery of the bone (outer circumferential lamellae) or encircle the marrow space (inner circumferential lamellae). Only outer circumferential lamellae are shown here.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Concentric lamella",
+      "explicacao_original": "In regions between the inner and outer circumferential lamella, the matrix is organized into the concentrically arranged lamellae that form Haversian systems.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Concentric.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Concentric.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Concentric lamella' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In regions between the inner and outer circumferential lamella, the matrix is organized into the concentrically arranged lamellae that form Haversian systems.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Haversian systems",
+      "explicacao_original": "In regions between the inner and outer circumferential lamella, the matrix is organized into the concentrically arranged lamellae that form Haversian systems.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A-Haversian.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.3A-Haversian.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Haversian systems' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In regions between the inner and outer circumferential lamella, the matrix is organized into the concentrically arranged lamellae that form Haversian systems.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image credits",
+      "explicacao_original": "Images taken of slides in the Nova Southeastern University and University of Michigan slide collections.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Nova-Mich.png",
+      "arquivo": "imagens/marcadores/Nova-Mich.png",
+      "imagem_base": "imagens/base/T.C.B.T.3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: microscopic preparation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.3A.jpg'. Destaca a estrutura ou conceito 'Image credits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Images taken of slides in the Nova Southeastern University and University of Michigan slide collections.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-3a/, acesso em 2026-08-07."
+    }
+  ]
+}

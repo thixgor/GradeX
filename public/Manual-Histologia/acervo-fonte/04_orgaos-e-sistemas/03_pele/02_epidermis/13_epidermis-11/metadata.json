@@ -1,0 +1,63 @@
+{
+  "id": 6106,
+  "titulo": "Stratum spinosum",
+  "titulo_wordpress": "Epidermis 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 11"
+  ],
+  "descricao_original": "Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-11.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum spinosum', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 11. Descricao original da pagina: Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Keratinocyte nuclei",
+      "explicacao_original": "Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-11.jpg'. Destaca a estrutura ou conceito 'Keratinocyte nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-11.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Desmosomes",
+      "explicacao_original": "Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-11.jpg'. Destaca a estrutura ou conceito 'Desmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tonofibrils",
+      "explicacao_original": "Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-11.jpg'. Destaca a estrutura ou conceito 'Tonofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Keratinocytes of stratum spinosum are firmly attached to each other by numerous desmosomes, which anchor the cells against physical abrasion. Desmosomes are associated with large numbers of tonofibrils that extend into the cytoplasm. The presence of these desmosomes produces the spiny appearance of stratum spinosum. 6000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-11/, acesso em 2026-08-07."
+    }
+  ]
+}

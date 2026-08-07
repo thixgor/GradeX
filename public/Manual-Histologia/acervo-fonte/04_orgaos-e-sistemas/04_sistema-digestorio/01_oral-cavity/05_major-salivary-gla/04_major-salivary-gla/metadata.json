@@ -1,0 +1,84 @@
+{
+  "id": 6791,
+  "titulo": "Parotid gland",
+  "titulo_wordpress": "Major salivary glands 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 4"
+  ],
+  "descricao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Parotid gland', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Descricao original da pagina: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lobule",
+      "explicacao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-4.jpg'. Destaca a estrutura ou conceito 'Lobule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acini",
+      "explicacao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-4-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-4-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-4.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Intercalated ducts",
+      "explicacao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-4.jpg'. Destaca a estrutura ou conceito 'Intercalated ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intralobular (striated) ducts",
+      "explicacao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-4.jpg'. Destaca a estrutura ou conceito 'Intralobular (striated) ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-4.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Interlobular connective tissue",
+      "explicacao_original": "A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-4.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single lobule shows the relationship of the secretory acini and the draining duct system. Intercalated ducts drain individual acini and then form intralobular, striated ducts. Striated ducts converge at the center of the lobule eventually forming an interlobular duct that exists the lobule. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": 30200,
+  "titulo": "Bone: the organ, compact bone",
+  "titulo_wordpress": "As an organ 5A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 5A"
+  ],
+  "descricao_original": "Compact bone forms the majority of the diaphysis and is seen in longitudinal section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). Haversian systems (osteons), are oriented longitudinally in the shaft and comprise most of the shaft’s width, providing great strength to resist vertical stress. 100x, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "arquivo": "imagens/base/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ, compact bone', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Descricao original da pagina: Compact bone forms the majority of the diaphysis and is seen in longitudinal section of a decalcified bone preparation (above right) and in a ground bone preparation (below right). Haversian systems (osteons), are oriented longitudinally in the shaft and comprise most of the shaft’s width, providing great strength to resist vertical stress. 100x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Haversian systems",
+      "explicacao_original": "Haversian systems are better seen in the ground bone section, where the organization of the matrix is more clearly visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.5-Haversian-sys-NEW.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.5-Haversian-sys-NEW.png",
+      "imagem_base": "imagens/base/T.C.B.O.05BOX.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ, compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.05BOX.jpg'. Destaca a estrutura ou conceito 'Haversian systems' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Haversian systems are better seen in the ground bone section, where the organization of the matrix is more clearly visible.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Haverian canals",
+      "explicacao_original": "Haversian canals are centrally located in each osteon and possess a blood vessel needed for maintenance of the bone. Branches of these vessels travel in horizontally-oriented Volkmann’s canals. Both Haversian and Volkmann’s canals are lined by endosteum which is continuous with the endosteum of the marrow cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.5-Haversian-canals-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.5-Haversian-canals-1.png",
+      "imagem_base": "imagens/base/T.C.B.O.05BOX.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ, compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.05BOX.jpg'. Destaca a estrutura ou conceito 'Haverian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Haversian canals are centrally located in each osteon and possess a blood vessel needed for maintenance of the bone. Branches of these vessels travel in horizontally-oriented Volkmann’s canals. Both Haversian and Volkmann’s canals are lined by endosteum which is continuous with the endosteum of the marrow cavity.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Volkmann's canals",
+      "explicacao_original": "Haversian canals are centrally located in each osteon and possess a blood vessel needed for maintenance of the bone. Branches of these vessels travel in horizontally-oriented Volkmann’s canals. Both Haversian and Volkmann’s canals are lined by endosteum which is continuous with the endosteum of the marrow cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.5-Volkmanns.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.5-Volkmanns.png",
+      "imagem_base": "imagens/base/T.C.B.O.05BOX.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ, compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.05BOX.jpg'. Destaca a estrutura ou conceito 'Volkmann's canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Haversian canals are centrally located in each osteon and possess a blood vessel needed for maintenance of the bone. Branches of these vessels travel in horizontally-oriented Volkmann’s canals. Both Haversian and Volkmann’s canals are lined by endosteum which is continuous with the endosteum of the marrow cavity.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nutrient vessel",
+      "explicacao_original": "A nutrient vessel is visible entering from the marrow cavity. The space it occupies is lined by endosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.5-Nutrient.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.5-Nutrient.png",
+      "imagem_base": "imagens/base/T.C.B.O.05BOX.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ, compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.05BOX.jpg'. Destaca a estrutura ou conceito 'Nutrient vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A nutrient vessel is visible entering from the marrow cavity. The space it occupies is lined by endosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endosteum",
+      "explicacao_original": "The endosteum lines the marrow cavity and also extends to line the nutritive foramen, Haversian canals and Volkmann’s canals. Endosteum is not present in lacunae or canaliculi.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.5-Endosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.5-Endosteum.png",
+      "imagem_base": "imagens/base/T.C.B.O.05BOX.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ, compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.05BOX.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum lines the marrow cavity and also extends to line the nutritive foramen, Haversian canals and Volkmann’s canals. Endosteum is not present in lacunae or canaliculi.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Circumferential lamellae",
+      "explicacao_original": "Compact bone is also be deposited in layers on exterior and interior bony surfaces, forming circumferential lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.5-Lamellae.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.5-Lamellae.png",
+      "imagem_base": "imagens/base/T.C.B.O.05BOX.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.05BOX.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ, compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.05BOX.jpg'. Destaca a estrutura ou conceito 'Circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone is also be deposited in layers on exterior and interior bony surfaces, forming circumferential lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 5A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

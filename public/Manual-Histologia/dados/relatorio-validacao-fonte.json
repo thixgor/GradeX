@@ -1,0 +1,24 @@
+{
+  "data_acesso": "2026-08-07",
+  "paginas_atlas": 1524,
+  "quizzes": 19,
+  "questoes_quiz": 388,
+  "arquivos_referenciados": 9500,
+  "arquivos_unicos_por_url": 9385,
+  "arquivos_baixados": 9500,
+  "bytes_unicos": 2792828927,
+  "por_tipo": {
+    "imagem-base": 1318,
+    "imagem-de-quiz": 388,
+    "marcador-overlay": 7775,
+    "pacote-h5p": 19
+  },
+  "ausentes": [],
+  "falhas": [],
+  "exclusoes": [
+    "Additional Resources",
+    "Review Textbook",
+    "Introductory Video",
+    "Randomize"
+  ]
+}

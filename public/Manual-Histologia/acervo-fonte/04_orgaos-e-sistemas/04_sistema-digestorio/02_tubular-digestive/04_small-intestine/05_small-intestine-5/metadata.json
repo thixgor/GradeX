@@ -1,0 +1,114 @@
+{
+  "id": 28497,
+  "titulo": "Mucosa: Villi",
+  "titulo_wordpress": "Small intestine 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 5"
+  ],
+  "descricao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosa: Villi', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Descricao original da pagina: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enterocytes",
+      "explicacao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Enterocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Higher magnification of the mucosa shows its three components: a simple columnar epithelium of absorptive enterocytes and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle. Beneath the mucosa is the submucosa. Trichrome stain, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Villi",
+      "explicacao_original": "Villi are distinguishing features of the small intestine. They are finger-like projections from the surface of the small intestine into the lumen of the organ. Villi are composed of a central core of lamina propria covered by its overlying surface epithelium. The presence of villi is diagnostic for the small intestine.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi are distinguishing features of the small intestine. They are finger-like projections from the surface of the small intestine into the lumen of the organ. Villi are composed of a central core of lamina propria covered by its overlying surface epithelium. The presence of villi is diagnostic for the small intestine.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Lacteals",
+      "explicacao_original": "Lacteals are blind-ended lymphatic capillaries that extend into each villus. They function in fat absorption.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Lacteals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lacteals are blind-ended lymphatic capillaries that extend into each villus. They function in fat absorption.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosa consists of dense connective tissue which stains green in this trichrome-stained preparation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-5-NEW-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-5-NEW.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa consists of dense connective tissue which stains green in this trichrome-stained preparation.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-5/, acesso em 2026-08-07."
+    }
+  ]
+}

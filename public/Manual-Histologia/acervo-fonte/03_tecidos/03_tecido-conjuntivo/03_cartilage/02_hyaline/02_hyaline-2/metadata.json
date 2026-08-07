@@ -1,0 +1,84 @@
+{
+  "id": 11592,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 2"
+  ],
+  "descricao_original": "A higher magnification of the wall of the trachea shows the lumen with its epithelial lining in the lower left of the image. Most of the image is occupied by a section of hyaline cartilage and its surrounding two-layered perichondrium. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "arquivo": "imagens/base/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Descricao original da pagina: A higher magnification of the wall of the trachea shows the lumen with its epithelial lining in the lower left of the image. Most of the image is occupied by a section of hyaline cartilage and its surrounding two-layered perichondrium. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Perichondrium",
+      "explicacao_original": "The perichondrium surrounds cartilage and consists of two layers, an outer fibrous layer and an inner chondrogenic layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/2-ping-1.png",
+      "arquivo": "imagens/marcadores/2-ping-1.png",
+      "imagem_base": "imagens/base/T.C.C.H.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.02-1.jpg'. Destaca a estrutura ou conceito 'Perichondrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perichondrium surrounds cartilage and consists of two layers, an outer fibrous layer and an inner chondrogenic layer.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibrous layer",
+      "explicacao_original": "The fibrous layer of the perichondrium is composed of dense connective tissue proper and contains flattened, multipotential cells resembling fibroblasts. These cells round up and differentiate into chondroblasts located in the chondrogenic layer. The fibrous layer serves as a reserve-cell source for the chondrogenic layer and as protection for the cartilage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/2-ping-2.png",
+      "arquivo": "imagens/marcadores/2-ping-2.png",
+      "imagem_base": "imagens/base/T.C.C.H.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.02-1.jpg'. Destaca a estrutura ou conceito 'Fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibrous layer of the perichondrium is composed of dense connective tissue proper and contains flattened, multipotential cells resembling fibroblasts. These cells round up and differentiate into chondroblasts located in the chondrogenic layer. The fibrous layer serves as a reserve-cell source for the chondrogenic layer and as protection for the cartilage.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chondrogenic layer",
+      "explicacao_original": "The chondrogenic layer of the perichondrium is interposed between the fibrous layer and cartilage tissue proper. This layer contains chondroblasts lying adjacent to the cartilage. Chondroblasts surround themselves with cartilage matrix, at which point they are called chondrocytes. Continued deposition of the matrix by these chrondrocytes increases the size of the cartilage at the surface. This growth at the surface is called appositional growth. Growth from within the cartilage is called interstitial growth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/2-ping-3.png",
+      "arquivo": "imagens/marcadores/2-ping-3.png",
+      "imagem_base": "imagens/base/T.C.C.H.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.02-1.jpg'. Destaca a estrutura ou conceito 'Chondrogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The chondrogenic layer of the perichondrium is interposed between the fibrous layer and cartilage tissue proper. This layer contains chondroblasts lying adjacent to the cartilage. Chondroblasts surround themselves with cartilage matrix, at which point they are called chondrocytes. Continued deposition of the matrix by these chrondrocytes increases the size of the cartilage at the surface. This growth at the surface is called appositional growth. Growth from within the cartilage is called interstitial growth.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Hyaline cartilage",
+      "explicacao_original": "Hyaline cartilage proper is composed of cells (chondrocytes) and their surrounding extracellular matrix. Chondrocytes are usually present as isogenous groups. The glassy (hyaline) extracellular matrix is composed of a firm-rubber ground substance and collagen Type II fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02.P03.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.02.P03.png",
+      "imagem_base": "imagens/base/T.C.C.H.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.02-1.jpg'. Destaca a estrutura ou conceito 'Hyaline cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hyaline cartilage proper is composed of cells (chondrocytes) and their surrounding extracellular matrix. Chondrocytes are usually present as isogenous groups. The glassy (hyaline) extracellular matrix is composed of a firm-rubber ground substance and collagen Type II fibrils.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The epithelium lining the lumen in the lower left corner of the image is classified as pseudostratified columnar epithelium with cilia and goblet cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02.P04-1.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.02.P04-1.png",
+      "imagem_base": "imagens/base/T.C.C.H.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.02-1.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium lining the lumen in the lower left corner of the image is classified as pseudostratified columnar epithelium with cilia and goblet cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next Image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02.P05-2.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.02.P05-2.png",
+      "imagem_base": "imagens/base/T.C.C.H.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.02-1.jpg'. Destaca a estrutura ou conceito 'Next Image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-2/, acesso em 2026-08-07."
+    }
+  ]
+}

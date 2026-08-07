@@ -1,0 +1,64 @@
+{
+  "id": 2420,
+  "titulo": "Telophase",
+  "titulo_wordpress": "Mitosis light micrographs 10",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Light Micrographs",
+    "Mitosis light micrographs 10"
+  ],
+  "descricao_original": "These images of the lining of the esophagus show two cells with clear evidence of cytokinesis underway. For the most part, the chromosomes, which have fully migrated into the two eventual daughter cells, are still highly condensed; however, the cell in the right panel shows initial stages of nuclear envelope reformation. Esophageal epithelium, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-10-new.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.LM-10-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Telophase', no setor Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 10. Descricao original da pagina: These images of the lining of the esophagus show two cells with clear evidence of cytokinesis underway. For the most part, the chromosomes, which have fully migrated into the two eventual daughter cells, are still highly condensed; however, the cell in the right panel shows initial stages of nuclear envelope reformation. Esophageal epithelium, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chromosomes",
+      "explicacao_original": "These images of the lining of the esophagus show two cells with clear evidence of cytokinesis underway. For the most part, the chromosomes, which have fully migrated into the two eventual daughter cells, are still highly condensed; however, the cell in the right panel shows initial stages of nuclear envelope reformation. Esophageal epithelium, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-10-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-10-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-10-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-10-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-10-new.jpg'. Destaca a estrutura ou conceito 'Chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images of the lining of the esophagus show two cells with clear evidence of cytokinesis underway. For the most part, the chromosomes, which have fully migrated into the two eventual daughter cells, are still highly condensed; however, the cell in the right panel shows initial stages of nuclear envelope reformation. Esophageal epithelium, 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "These images of the lining of the esophagus show two cells with clear evidence of cytokinesis underway. For the most part, the chromosomes, which have fully migrated into the two eventual daughter cells, are still highly condensed; however, the cell in the right panel shows initial stages of nuclear envelope reformation. Esophageal epithelium, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-10-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-10-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-10-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-10-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-10-new.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images of the lining of the esophagus show two cells with clear evidence of cytokinesis underway. For the most part, the chromosomes, which have fully migrated into the two eventual daughter cells, are still highly condensed; however, the cell in the right panel shows initial stages of nuclear envelope reformation. Esophageal epithelium, 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cleavage furrow",
+      "explicacao_original": "The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-10-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-10-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-10-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-10-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-10-new.jpg'. Destaca a estrutura ou conceito 'Cleavage furrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Daughter cells",
+      "explicacao_original": "The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-10-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-10-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-10-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-10-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-10-new.jpg'. Destaca a estrutura ou conceito 'Daughter cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-10/, acesso em 2026-08-07."
+    }
+  ]
+}

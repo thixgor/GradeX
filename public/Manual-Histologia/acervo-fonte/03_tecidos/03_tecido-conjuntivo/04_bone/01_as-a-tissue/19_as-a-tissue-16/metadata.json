@@ -1,0 +1,104 @@
+{
+  "id": 30320,
+  "titulo": "Bone classification",
+  "titulo_wordpress": "As a tissue 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 16"
+  ],
+  "descricao_original": "Bone tissue is classified based on two features: (1) its macroscopic appearance, i.e., how it appears to the naked eye, as either compact (cortical) or spongy (cancellous) and (2) its stage of maturation as either woven (immature) or lamellar (mature). A complete classification of bone tissue includes one term from each set, e.g., compact, woven bone or spongy, lamellar bone. 400x (all)",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "arquivo": "imagens/base/Composite.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone classification', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Descricao original da pagina: Bone tissue is classified based on two features: (1) its macroscopic appearance, i.e., how it appears to the naked eye, as either compact (cortical) or spongy (cancellous) and (2) its stage of maturation as either woven (immature) or lamellar (mature). A complete classification of bone tissue includes one term from each set, e.g., compact, woven bone or spongy, lamellar bone. 400x (all). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Compact bone",
+      "explicacao_original": "Compact bone appears as a solid mass to the naked eye. Histologically, the volume of bone exceeds the volume of non-bone tissue within any given area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Compact.png",
+      "arquivo": "imagens/marcadores/Compact.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone appears as a solid mass to the naked eye. Histologically, the volume of bone exceeds the volume of non-bone tissue within any given area.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Spongy bone",
+      "explicacao_original": "Spongy appears resembles a sponge to the naked eye. Histologically, the volume of non-bone tissue (marrow) exceeds the volume of bone within any given area. The bone tissue appears as thin, branching spicules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Spongy.png",
+      "arquivo": "imagens/marcadores/Spongy.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Spongy bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spongy appears resembles a sponge to the naked eye. Histologically, the volume of non-bone tissue (marrow) exceeds the volume of bone within any given area. The bone tissue appears as thin, branching spicules.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Woven bone",
+      "explicacao_original": "The matrix of woven bone is not organized into lamellae, osteocyte lacunae are numerous and rounded, and the matrix often stains faintly bluish. All bone is initially deposited as woven bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Woven.png",
+      "arquivo": "imagens/marcadores/Woven.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The matrix of woven bone is not organized into lamellae, osteocyte lacunae are numerous and rounded, and the matrix often stains faintly bluish. All bone is initially deposited as woven bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamellar bone",
+      "explicacao_original": "The matrix of lamellar bone is organized into lamellae that can be arranged as concentric layers forming osteons; flattened plates on the internal and external surfaces of a bone; or as parallel plates forming spicules of spongy bone. Woven compact and spongy bone are gradually remodeled into lamellar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Lamellar.png",
+      "arquivo": "imagens/marcadores/Lamellar.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The matrix of lamellar bone is organized into lamellae that can be arranged as concentric layers forming osteons; flattened plates on the internal and external surfaces of a bone; or as parallel plates forming spicules of spongy bone. Woven compact and spongy bone are gradually remodeled into lamellar bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Compact, woven bone",
+      "explicacao_original": "A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Compact-woven.png",
+      "arquivo": "imagens/marcadores/Compact-woven.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Compact, woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Compact, lamellar bone",
+      "explicacao_original": "A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Compact-lamellar.png",
+      "arquivo": "imagens/marcadores/Compact-lamellar.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Compact, lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Spongy, woven bone",
+      "explicacao_original": "A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Spongy-woven.png",
+      "arquivo": "imagens/marcadores/Spongy-woven.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Spongy, woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Spongy, lamellar bone",
+      "explicacao_original": "A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Spongy-lamellar.png",
+      "arquivo": "imagens/marcadores/Spongy-lamellar.png",
+      "imagem_base": "imagens/base/Composite.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/Composite.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone classification'. Deve ser sobreposta, sem redimensionamento independente, a 'Composite.jpg'. Destaca a estrutura ou conceito 'Spongy, lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A complete classification of bone tissue includes one term describing its macroscopic appears (compact/spongy) and one referring to is stage of development (woven/lamellar).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-16/, acesso em 2026-08-07."
+    }
+  ]
+}

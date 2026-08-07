@@ -1,0 +1,64 @@
+{
+  "id": 12743,
+  "titulo": "Uterus: secretory phase (Days 14-26)",
+  "titulo_wordpress": "Uterus 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 6"
+  ],
+  "descricao_original": "During the early part of the secretory phase, the endometrium is thicker and the glands are more sacculated than during the proliferative portion of the cycle. Secretory product, just beginning to accumulate in the lumens of some glands, will become more abundant by the time of implantation, about day 21. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.jpg",
+      "arquivo": "imagens/base/O.R.F.U.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: secretory phase (Days 14-26)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 6. Descricao original da pagina: During the early part of the secretory phase, the endometrium is thicker and the glands are more sacculated than during the proliferative portion of the cycle. Secretory product, just beginning to accumulate in the lumens of some glands, will become more abundant by the time of implantation, about day 21. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Basal zone",
+      "explicacao_original": "The basal zone stains darker than the functional zone because cells in this region are smaller and more densely packed. The functional zone continues to thicken under the influence of progesterone and estrogen from the corpus luteum. Simple tubular glands are increasing in size and becoming sacculated; secretions are present in the some of the lumens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.06.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.06.jpg'. Destaca a estrutura ou conceito 'Basal zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basal zone stains darker than the functional zone because cells in this region are smaller and more densely packed. The functional zone continues to thicken under the influence of progesterone and estrogen from the corpus luteum. Simple tubular glands are increasing in size and becoming sacculated; secretions are present in the some of the lumens.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Functional zone",
+      "explicacao_original": "The basal zone stains darker than the functional zone because cells in this region are smaller and more densely packed. The functional zone continues to thicken under the influence of progesterone and estrogen from the corpus luteum. Simple tubular glands are increasing in size and becoming sacculated; secretions are present in the some of the lumens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.06.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.06.jpg'. Destaca a estrutura ou conceito 'Functional zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basal zone stains darker than the functional zone because cells in this region are smaller and more densely packed. The functional zone continues to thicken under the influence of progesterone and estrogen from the corpus luteum. Simple tubular glands are increasing in size and becoming sacculated; secretions are present in the some of the lumens.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Glands",
+      "explicacao_original": "The basal zone stains darker than the functional zone because cells in this region are smaller and more densely packed. The functional zone continues to thicken under the influence of progesterone and estrogen from the corpus luteum. Simple tubular glands are increasing in size and becoming sacculated; secretions are present in the some of the lumens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.06.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.06.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basal zone stains darker than the functional zone because cells in this region are smaller and more densely packed. The functional zone continues to thicken under the influence of progesterone and estrogen from the corpus luteum. Simple tubular glands are increasing in size and becoming sacculated; secretions are present in the some of the lumens.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myometrium",
+      "explicacao_original": "A small portion of the myometrium is visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.06.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.06.jpg'. Destaca a estrutura ou conceito 'Myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A small portion of the myometrium is visible.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-6/, acesso em 2026-08-07."
+    }
+  ]
+}

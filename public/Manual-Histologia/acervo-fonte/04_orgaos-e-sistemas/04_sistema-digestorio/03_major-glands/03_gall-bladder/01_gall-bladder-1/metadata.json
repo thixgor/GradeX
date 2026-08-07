@@ -1,0 +1,96 @@
+{
+  "id": 7014,
+  "titulo": "Gall bladder",
+  "titulo_wordpress": "Gall bladder 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Gall Bladder",
+    "Gall bladder 1"
+  ],
+  "descricao_original": "The gall bladder is a pear-shaped sac located on the undersurface of the liver. It concentrates and stores the bile produced in the liver, releasing it in response to the presence of dietary fat in the duodenum. The gall bladder is composed of a highly folded mucosa (lacking a muscularis mucosae), an irregularly arranged muscularis externa without an intervening submucosa, and either an adventitia binding the gall bladder to the liver or a serosa on its peritoneal surface. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/",
+  "creditos_identificados": [
+    "Image source: Image taken of slide in the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Gall bladder', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Descricao original da pagina: The gall bladder is a pear-shaped sac located on the undersurface of the liver. It concentrates and stores the bile produced in the liver, releasing it in response to the presence of dietary fat in the duodenum. The gall bladder is composed of a highly folded mucosa (lacking a muscularis mucosae), an irregularly arranged muscularis externa without an intervening submucosa, and either an adventitia binding the gall bladder to the liver or a serosa on its peritoneal surface. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosal lining of the gall bladder is thrown into convoluted, branching folds as well infoldings into the deeper layers. The lining epithelium is simple columnar and possesses numerous, short microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal lining of the gall bladder is thrown into convoluted, branching folds as well infoldings into the deeper layers. The lining epithelium is simple columnar and possesses numerous, short microvilli.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The mucosal lining of the gall bladder is thrown into convoluted, branching folds as well infoldings into the deeper layers. The lining epithelium is simple columnar and possesses numerous, short microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal lining of the gall bladder is thrown into convoluted, branching folds as well infoldings into the deeper layers. The lining epithelium is simple columnar and possesses numerous, short microvilli.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Infoldings",
+      "explicacao_original": "The mucosal lining of the gall bladder is thrown into convoluted, branching folds as well infoldings into the deeper layers. The lining epithelium is simple columnar and possesses numerous, short microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Infoldings' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal lining of the gall bladder is thrown into convoluted, branching folds as well infoldings into the deeper layers. The lining epithelium is simple columnar and possesses numerous, short microvilli.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The lamina propria is highly cellular and both a muscularis mucosae and submucosa are absent. The muscularis externa consists of interlacing longitudinal, transverse and oblique smooth muscle fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria is highly cellular and both a muscularis mucosae and submucosa are absent. The muscularis externa consists of interlacing longitudinal, transverse and oblique smooth muscle fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The lamina propria is highly cellular and both a muscularis mucosae and submucosa are absent. The muscularis externa consists of interlacing longitudinal, transverse and oblique smooth muscle fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria is highly cellular and both a muscularis mucosae and submucosa are absent. The muscularis externa consists of interlacing longitudinal, transverse and oblique smooth muscle fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Serosa",
+      "explicacao_original": "Where the gall bladder is not in contact with the liver, it is covered by a serosa with a thick subserosal layer of connective tissue, containing numerous large blood vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Where the gall bladder is not in contact with the liver, it is covered by a serosa with a thick subserosal layer of connective tissue, containing numerous large blood vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of slide in the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.GB-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.GB-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.GB-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.GB-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gall bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.GB-1.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of slide in the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Gall Bladder > Gall bladder 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/gall-bladder/gall-bladder-1/, acesso em 2026-08-07."
+    }
+  ]
+}

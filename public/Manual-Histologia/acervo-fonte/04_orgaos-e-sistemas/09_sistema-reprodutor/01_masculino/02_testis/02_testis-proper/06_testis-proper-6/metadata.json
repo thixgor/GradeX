@@ -1,0 +1,127 @@
+{
+  "id": 27721,
+  "titulo": "Seminiferous tubules: convoluted portion",
+  "titulo_wordpress": "Testis proper 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Testis Proper",
+    "Testis proper 6"
+  ],
+  "descricao_original": "The convoluted portions of the seminiferous tubules form the main mass of the testis and are the site of spermatogenesis. This image shows two regions of the seminiferous epithelium that lines the tubules. The seminiferous epithelium is stratified and consists of several layers of developing germ cells and supporting Sertoli cells. A tunica propria consisting of myoid cells surrounds each tubule.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/",
+  "creditos_identificados": [
+    "Image source: Images taken of a slide from the University of New England College of Osteopathic Medicine slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "arquivo": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Seminiferous tubules: convoluted portion', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Descricao original da pagina: The convoluted portions of the seminiferous tubules form the main mass of the testis and are the site of spermatogenesis. This image shows two regions of the seminiferous epithelium that lines the tubules. The seminiferous epithelium is stratified and consists of several layers of developing germ cells and supporting Sertoli cells. A tunica propria consisting of myoid cells surrounds each tubule.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica propria",
+      "explicacao_original": "A tunica propria surrounds the convoluted portion of each seminiferous tubule. The tunica propria is composed of the basal lamina of the seminiferous epithelium, three to five layers of myoid cells and collagen fibrils. The myoid cells secrete the fibrils and contract in peristaltic waves to propel spermatozoa through the seminiferous tubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Tunica propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A tunica propria surrounds the convoluted portion of each seminiferous tubule. The tunica propria is composed of the basal lamina of the seminiferous epithelium, three to five layers of myoid cells and collagen fibrils. The myoid cells secrete the fibrils and contract in peristaltic waves to propel spermatozoa through the seminiferous tubules.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sertoli cells",
+      "explicacao_original": "Sertoli cells extend the entire thickness of the epithelium. Their cell outline is difficult to discern because of numerous lateral processes extending around developing germ cells. Therefore, Sertoli cells must be identified primarily by their nuclei, which are oval, euchromatic, infolded and display a prominent nucleolus. Lateral extensions from adjacent Sertoli cells form occluding, tight junctions that form the blood-testis barrier.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-2-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Sertoli cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sertoli cells extend the entire thickness of the epithelium. Their cell outline is difficult to discern because of numerous lateral processes extending around developing germ cells. Therefore, Sertoli cells must be identified primarily by their nuclei, which are oval, euchromatic, infolded and display a prominent nucleolus. Lateral extensions from adjacent Sertoli cells form occluding, tight junctions that form the blood-testis barrier.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spermatogonia",
+      "explicacao_original": "Spermatogonia are diploid, somatic cells that always lie on the basal lamina of the epithelium; they are the earliest of the germ cell line. Spermatogonia divide by mitosis to perpetuate themselves or to form primary spermatocytes. The diameter of these nuclei can be used for comparison in identifying the other later germ cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Spermatogonia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia are diploid, somatic cells that always lie on the basal lamina of the epithelium; they are the earliest of the germ cell line. Spermatogonia divide by mitosis to perpetuate themselves or to form primary spermatocytes. The diameter of these nuclei can be used for comparison in identifying the other later germ cells.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Primary spermatocytes",
+      "explicacao_original": "Primary spermatocytes are diploid cells that form in the basal compartment but quickly move through the blood-testis barrier to the adluminal compartment. They contain prominent, condensed chromosomes and many primary spermatocytes are seen because they remain in prophase of the first meiotic division for an extended period of time.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Primary spermatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary spermatocytes are diploid cells that form in the basal compartment but quickly move through the blood-testis barrier to the adluminal compartment. They contain prominent, condensed chromosomes and many primary spermatocytes are seen because they remain in prophase of the first meiotic division for an extended period of time.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secondary spermatocytes",
+      "explicacao_original": "Secondary spermatocytes are haploid cells formed when primary spermatocytes complete the first meiotic division. Secondary spermatocyte nuclei are spherical and equal in diameter to spermatogonia nuclei. Secondary spermatocytes complete the second meiotic division very quickly, so these cells are not frequently seen in sections. The image on the left is at a different developmental stage and lacks secondary spermatocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-5-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Secondary spermatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secondary spermatocytes are haploid cells formed when primary spermatocytes complete the first meiotic division. Secondary spermatocyte nuclei are spherical and equal in diameter to spermatogonia nuclei. Secondary spermatocytes complete the second meiotic division very quickly, so these cells are not frequently seen in sections. The image on the left is at a different developmental stage and lacks secondary spermatocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Spermatids (early)",
+      "explicacao_original": "Spermatids are haploid cells formed when secondary spermatocytes complete the second meiotic division. Early spermatid nuclei are spherical and smaller than spermatogonia nuclei. Spermatids do not divide but differentiate by condensing and elongating their nuclei, developing a flagellum and losing excess cytoplasm. Cytoplasmic continuity between adjacent spermatids is lost during this process. The image on the right is at a different developmental stage and lacks spermatids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-6-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Spermatids (early)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatids are haploid cells formed when secondary spermatocytes complete the second meiotic division. Early spermatid nuclei are spherical and smaller than spermatogonia nuclei. Spermatids do not divide but differentiate by condensing and elongating their nuclei, developing a flagellum and losing excess cytoplasm. Cytoplasmic continuity between adjacent spermatids is lost during this process. The image on the right is at a different developmental stage and lacks spermatids.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Spermatids late",
+      "explicacao_original": "Spermatids are haploid cells formed when secondary spermatocytes complete the second meiotic division. Early spermatid nuclei are spherical and smaller than spermatogonia nuclei. Spermatids do not divide but differentiate by condensing and elongating their nuclei, developing a flagellum and losing excess cytoplasm. Cytoplasmic continuity between adjacent spermatids is lost during this process. The image on the right is at a different developmental stage and lacks spermatids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-7-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Spermatids late' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatids are haploid cells formed when secondary spermatocytes complete the second meiotic division. Early spermatid nuclei are spherical and smaller than spermatogonia nuclei. Spermatids do not divide but differentiate by condensing and elongating their nuclei, developing a flagellum and losing excess cytoplasm. Cytoplasmic continuity between adjacent spermatids is lost during this process. The image on the right is at a different developmental stage and lacks spermatids.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Spermatozoa",
+      "explicacao_original": "At the completion of spermiogenesis, late spermatids are shed into the lumen of the tubule by a process termed spermiation. This process results in free spermatozoa in the lumen, though they are non-motile at this point.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-8-ping-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-8-ping-1.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Spermatozoa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the completion of spermiogenesis, late spermatids are shed into the lumen of the tubule by a process termed spermiation. This process results in free spermatozoa in the lumen, though they are non-motile at this point.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Residual bodies",
+      "explicacao_original": "During spermiogenesis, spermatocytes shed much of their cytoplasm which is visible as residual bodies. They are eventually phagocytosed by Sertoli cells or shed into the lumen of the tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6-9-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-6-9-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Residual bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During spermiogenesis, spermatocytes shed much of their cytoplasm which is visible as residual bodies. They are eventually phagocytosed by Sertoli cells or shed into the lumen of the tubule.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Image source",
+      "explicacao_original": "Images taken of a slide from the University of New England College of Osteopathic Medicine slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/UNE-ping-plural-1.png",
+      "arquivo": "imagens/marcadores/UNE-ping-plural-1.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-6A-lighter-adj2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules: convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-6A-lighter-adj2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Images taken of a slide from the University of New England College of Osteopathic Medicine slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-6-2/, acesso em 2026-08-07."
+    }
+  ]
+}

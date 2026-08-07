@@ -1,0 +1,74 @@
+{
+  "id": 16843,
+  "titulo": "Eosinophil",
+  "titulo_wordpress": "Cells 24",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 24"
+  ],
+  "descricao_original": "Eosinophils are granular white blood cells that migrate into connective tissues from the blood stream. They are phagocytic and function in parasitic infections. An eosinophil has intensely eosinophilic granules in its cytoplasm and a bilobed nucleus. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-22.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Eosinophil', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 24. Descricao original da pagina: Eosinophils are granular white blood cells that migrate into connective tissues from the blood stream. They are phagocytic and function in parasitic infections. An eosinophil has intensely eosinophilic granules in its cytoplasm and a bilobed nucleus. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Eosinophil in circulation",
+      "explicacao_original": "Eosinophils are granular white blood cells that migrate into connective tissues from the blood stream. They are phagocytic and function in parasitic infections. An eosinophil has intensely eosinophilic granules in its cytoplasm and a bilobed nucleus. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-22-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-22.jpg'. Destaca a estrutura ou conceito 'Eosinophil in circulation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophils are granular white blood cells that migrate into connective tissues from the blood stream. They are phagocytic and function in parasitic infections. An eosinophil has intensely eosinophilic granules in its cytoplasm and a bilobed nucleus. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 24. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Bilobed nucleus",
+      "explicacao_original": "A typical eosinophil is seen in this blood smear surrounded by red blood cells. The bilobed nucleus is clearly visible with the lobes connected by a thin chromatin strand (arrow).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-22-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-22.jpg'. Destaca a estrutura ou conceito 'Bilobed nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical eosinophil is seen in this blood smear surrounded by red blood cells. The bilobed nucleus is clearly visible with the lobes connected by a thin chromatin strand (arrow).. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 24. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Granules",
+      "explicacao_original": "A typical eosinophil is seen in this blood smear surrounded by red blood cells. The bilobed nucleus is clearly visible with the lobes connected by a thin chromatin strand (arrow).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-22-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-22.jpg'. Destaca a estrutura ou conceito 'Granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical eosinophil is seen in this blood smear surrounded by red blood cells. The bilobed nucleus is clearly visible with the lobes connected by a thin chromatin strand (arrow).. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 24. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Eosinophils in tissue",
+      "explicacao_original": "The morphological features of eosinophils are clearly evident in tissues, though the connection between the nuclear lobes is not always visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-22-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-22.jpg'. Destaca a estrutura ou conceito 'Eosinophils in tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphological features of eosinophils are clearly evident in tissues, though the connection between the nuclear lobes is not always visible.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 24. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Plasma cells",
+      "explicacao_original": "The morphological features of eosinophils are clearly evident in tissues, though the connection between the nuclear lobes is not always visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22-5-ping-1.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-22-5-ping-1.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-22.jpg'. Destaca a estrutura ou conceito 'Plasma cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphological features of eosinophils are clearly evident in tissues, though the connection between the nuclear lobes is not always visible.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 24. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-24/, acesso em 2026-08-07."
+    }
+  ]
+}

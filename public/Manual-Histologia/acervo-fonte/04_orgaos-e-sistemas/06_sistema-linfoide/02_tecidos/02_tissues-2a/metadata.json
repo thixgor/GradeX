@@ -1,0 +1,53 @@
+{
+  "id": 30429,
+  "titulo": "Diffuse lymphoid tissue",
+  "titulo_wordpress": "Tissues 2A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 2A"
+  ],
+  "descricao_original": "The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-2a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-2A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Diffuse lymphoid tissue', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 2A. Descricao original da pagina: The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-2a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-2A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diffuse lymphoid tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-2A.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Villi",
+      "explicacao_original": "The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-2A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diffuse lymphoid tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-2A.jpg'. Destaca a estrutura ou conceito 'Villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-2A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diffuse lymphoid tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-2A.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diffuse lymphoid tissue shown here is located in the lamina propria of the small intestine. Diffuse lymphoid tissue is a component of MALT and consists mostly of scattered lymphocytes as well as macrophages that filter tissue fluid. Small intestine, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-2a/, acesso em 2026-08-07."
+    }
+  ]
+}

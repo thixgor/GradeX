@@ -1,0 +1,74 @@
+{
+  "id": 4846,
+  "titulo": "Adrenal cortex",
+  "titulo_wordpress": "Adrenal 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Adrenal",
+    "Adrenal 4"
+  ],
+  "descricao_original": "The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-4.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Ad-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Adrenal cortex', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 4. Descricao original da pagina: The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Zona fasciculata",
+      "explicacao_original": "The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-4.jpg'. Destaca a estrutura ou conceito 'Zona fasciculata' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zona reticularis",
+      "explicacao_original": "The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-4.jpg'. Destaca a estrutura ou conceito 'Zona reticularis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-4.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-4.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The heavily vacuolated cells of zona fasciculata are arranged in uniform rows (fascicles), which alternate with wide-diameter, fenestrated capillaries. The cells of zona reticularis form an interlacing network, are smaller and stain more intensely than cells in the zona fasciculata. Cells of zona reticularis are also surrounded by fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Section location",
+      "explicacao_original": "The location of this image is indicated in the inset panel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad-4.jpg'. Destaca a estrutura ou conceito 'Section location' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The location of this image is indicated in the inset panel.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "id": 4541,
+  "titulo": "Structure of compound glands",
+  "titulo_wordpress": "Compound 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 2"
+  ],
+  "descricao_original": "Most simple glands are microscopic or just visible with the naked eye. Most compound glands are macroscopic, even dissectible, organs such as the salivary glands. Because these glands are large, they possess a complex duct system, and the secretory portion is subdivided by connective tissue into lobules. Parotid gland 40x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Structure of compound glands', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 2. Descricao original da pagina: Most simple glands are microscopic or just visible with the naked eye. Most compound glands are macroscopic, even dissectible, organs such as the salivary glands. Because these glands are large, they possess a complex duct system, and the secretory portion is subdivided by connective tissue into lobules. Parotid gland 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lobules",
+      "explicacao_original": "A compound gland is subdivided by connective tissue septa into lobules containing the secretory units, intralobular ducts and intralobular connective tissue. In this parotid salivary gland, the secretory units consist entirely of secretory acini (alveoli) and thus is an example of compound acinar gland, secreting a entirely serous product.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-2-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-2.jpg'. Destaca a estrutura ou conceito 'Lobules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound gland is subdivided by connective tissue septa into lobules containing the secretory units, intralobular ducts and intralobular connective tissue. In this parotid salivary gland, the secretory units consist entirely of secretory acini (alveoli) and thus is an example of compound acinar gland, secreting a entirely serous product.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interlobular connective tissue",
+      "explicacao_original": "A compound acinar gland is subdivided by connective tissue septa into lobules consisting of secretory units, intralobular ducts and intralobular connective tissue. In this parotid salivary gland, the secretory units consist entirely of secretory acini (alveoli) secreting a serous product.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-2-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-2.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound acinar gland is subdivided by connective tissue septa into lobules consisting of secretory units, intralobular ducts and intralobular connective tissue. In this parotid salivary gland, the secretory units consist entirely of secretory acini (alveoli) secreting a serous product.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ducts",
+      "explicacao_original": "Intralobular ducts (yellow arrows), located entirely within a lobule, drain the secretory units of a compound gland. Intralobular ducts merge to form interlobular ducts (blue arrows) that drain multiple lobules and are located in the intervening connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-2-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-2.jpg'. Destaca a estrutura ou conceito 'Ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intralobular ducts (yellow arrows), located entirely within a lobule, drain the secretory units of a compound gland. Intralobular ducts merge to form interlobular ducts (blue arrows) that drain multiple lobules and are located in the intervening connective tissue.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-2/, acesso em 2026-08-07."
+    }
+  ]
+}

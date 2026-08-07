@@ -1,0 +1,65 @@
+{
+  "id": 1259,
+  "titulo": "Nucleolus",
+  "titulo_wordpress": "Nucleus 16",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Núcleo",
+    "Nucleus 16"
+  ],
+  "descricao_original": "These neurons contain a euchromatic nucleus with a well-defined nucleolus. The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells. 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/nucleus/nucleus-16/",
+  "creditos_identificados": [
+    "Image source: Image was taken of a slide from the Virtual Microscopy Laboratory (http://www.histologyguide.com)"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW.jpg",
+      "arquivo": "imagens/base/C.S.N.-16-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nucleolus', no setor Células > Estruturas > Núcleo > Nucleus 16. Descricao original da pagina: These neurons contain a euchromatic nucleus with a well-defined nucleolus. The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nuclei",
+      "explicacao_original": "These neurons contain a euchromatic nucleus with a well-defined nucleolus. The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW2A-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N.-16-NEW2A-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-16-NEW.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These neurons contain a euchromatic nucleus with a well-defined nucleolus. The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells. 1000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 16. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleoli",
+      "explicacao_original": "These neurons contain a euchromatic nucleus with a well-defined nucleolus. The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW3A-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N.-16-NEW3A-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-16-NEW.jpg'. Destaca a estrutura ou conceito 'Nucleoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These neurons contain a euchromatic nucleus with a well-defined nucleolus. The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells. 1000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 16. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nissl substance",
+      "explicacao_original": "Nissl substance is a unique aggregation of rough endoplasmic reticulum and polysomes in neurons.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW1A-ping-1.png",
+      "arquivo": "imagens/marcadores/C.S.N.-16-NEW1A-ping-1.png",
+      "imagem_base": "imagens/base/C.S.N.-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-16-NEW.jpg'. Destaca a estrutura ou conceito 'Nissl substance' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nissl substance is a unique aggregation of rough endoplasmic reticulum and polysomes in neurons.. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 16. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "Image was taken of a slide from the Virtual Microscopy Laboratory (http://www.histologyguide.com)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.ER-10-source-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-10-source-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.N.-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-16-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image was taken of a slide from the Virtual Microscopy Laboratory (http://www.histologyguide.com). Contexto setorial: Células > Estruturas > Núcleo > Nucleus 16. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-16/, acesso em 2026-08-07."
+    }
+  ]
+}

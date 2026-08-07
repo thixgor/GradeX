@@ -1,0 +1,55 @@
+{
+  "id": 10635,
+  "titulo": "Endochondral ossification",
+  "titulo_wordpress": "Endochondral 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Endochondral",
+    "Endochondral 10"
+  ],
+  "descricao_original": "The end of the zone of maturation-hypertrophy-calcification is located at the top of this image. The zone of degeneration is in the middle, and the zone of ossification is at the bottom. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.J.C.B.F.E.09.jpg",
+      "arquivo": "imagens/base/T.J.C.B.F.E.09.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Endochondral ossification', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 10. Descricao original da pagina: The end of the zone of maturation-hypertrophy-calcification is located at the top of this image. The zone of degeneration is in the middle, and the zone of ossification is at the bottom. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Zones of M-H-C",
+      "explicacao_original": "In the zone of maturation-hypertrophy-calcification, linearly arranged chondrocytes increase in size and secrete alkaline phosphatase, thus allowing the matrix to calcify.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-10-MHC.png",
+      "arquivo": "imagens/marcadores/Endo-10-MHC.png",
+      "imagem_base": "imagens/base/T.J.C.B.F.E.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.J.C.B.F.E.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.J.C.B.F.E.09.jpg'. Destaca a estrutura ou conceito 'Zones of M-H-C' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the zone of maturation-hypertrophy-calcification, linearly arranged chondrocytes increase in size and secrete alkaline phosphatase, thus allowing the matrix to calcify.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zone of degeneration",
+      "explicacao_original": "In the zone of degeneration, chondrocytes have died, leaving behind calcified cartilage spicules (red arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-10-Deg.png",
+      "arquivo": "imagens/marcadores/Endo-10-Deg.png",
+      "imagem_base": "imagens/base/T.J.C.B.F.E.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.J.C.B.F.E.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.J.C.B.F.E.09.jpg'. Destaca a estrutura ou conceito 'Zone of degeneration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the zone of degeneration, chondrocytes have died, leaving behind calcified cartilage spicules (red arrows).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Zone of ossification",
+      "explicacao_original": "In the zone of ossification, osteoblasts deposit woven bone (blue arrows), on the calcified cartilage framework. The distinctly red-staining bone is readily distinguishable from the blue-staining calcified cartilage matrix. Because this bone is replacing cartilage, this type of bone formation called endochondral bone formation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-10-Oss.png",
+      "arquivo": "imagens/marcadores/Endo-10-Oss.png",
+      "imagem_base": "imagens/base/T.J.C.B.F.E.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.J.C.B.F.E.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.J.C.B.F.E.09.jpg'. Destaca a estrutura ou conceito 'Zone of ossification' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the zone of ossification, osteoblasts deposit woven bone (blue arrows), on the calcified cartilage framework. The distinctly red-staining bone is readily distinguishable from the blue-staining calcified cartilage matrix. Because this bone is replacing cartilage, this type of bone formation called endochondral bone formation.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-9/, acesso em 2026-08-07."
+    }
+  ]
+}

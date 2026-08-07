@@ -1,0 +1,64 @@
+{
+  "id": 4852,
+  "titulo": "Adrenal medulla",
+  "titulo_wordpress": "Adrenal 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Adrenal",
+    "Adrenal 7"
+  ],
+  "descricao_original": "The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules filled with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad_.-7.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Ad_.-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Adrenal medulla', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 7. Descricao original da pagina: The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules filled with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chromaffin cells",
+      "explicacao_original": "The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad_.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad_.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad_.-7.jpg'. Destaca a estrutura ou conceito 'Chromaffin cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad_.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad_.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad_.-7.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad_.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad_.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad_.-7.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adrenal medulla is composed of chromaffin cells, modified neurons that contain secretory granules with the catecholamines, epinephrine and norepinephrine. Although these neurohormones are produced by different cell populations in the medulla, the individual cells cannot be distinguished in this H&E stained section. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Section location",
+      "explicacao_original": "The location of this image is indicated in the inset panel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ad-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ad-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ad_.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ad_.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adrenal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ad_.-7.jpg'. Destaca a estrutura ou conceito 'Section location' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The location of this image is indicated in the inset panel.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Adrenal > Adrenal 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/adrenal/adrenal-7/, acesso em 2026-08-07."
+    }
+  ]
+}

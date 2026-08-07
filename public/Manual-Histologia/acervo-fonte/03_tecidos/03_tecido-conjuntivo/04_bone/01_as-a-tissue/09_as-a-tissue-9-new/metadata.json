@@ -1,0 +1,114 @@
+{
+  "id": 30698,
+  "titulo": "Bone cells: osteoclasts",
+  "titulo_wordpress": "As a tissue 9 NEW",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 9 NEW"
+  ],
+  "descricao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "arquivo": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone cells: osteoclasts', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Descricao original da pagina: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ruffled border",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-ruffled.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-ruffled.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Ruffled border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Howship's lacunae",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-Howships.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-Howships.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Howship's lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocytes in lacunae",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-osteocytes.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Osteocytes in lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mature bone",
+      "explicacao_original": "The matrix of mature bone is organized in layers or lamellae with osteocytes located in orderly arranged lacunae between the lamellae. This bone is also referred to as lamellar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-lamellar-compact.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-lamellar-compact.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Mature bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The matrix of mature bone is organized in layers or lamellae with osteocytes located in orderly arranged lacunae between the lamellae. This bone is also referred to as lamellar bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Immature bone",
+      "explicacao_original": "Immature bone is usually present only temporarily and is replaced by lamellar bone through the process of remodeling. The matrix of immature bone lacks the orderly arrangement of lamellae and the osteocytes appear randomly arranged. This bone is also referred to as woven bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-woven-compact.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-woven-compact.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Immature bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Immature bone is usually present only temporarily and is replaced by lamellar bone through the process of remodeling. The matrix of immature bone lacks the orderly arrangement of lamellae and the osteocytes appear randomly arranged. This bone is also referred to as woven bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Periosteum",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-periosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-periosteum.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Endosteum",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-endosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-endosteum.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Marrow tissue",
+      "explicacao_original": "These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9A-marrow.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.9A-marrow.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-NEW.jpg'. Destaca a estrutura ou conceito 'Marrow tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show osteoclasts on the surface of compact bone. Multinucleated osteoclasts are located in Howship’s lacunae that result from resorption of the bone matrix adjacent to the cell. The osteoclast on the left is located in the periosteum; the cells on the right are located in the endosteum. 800x, 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-9-new/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "id": 31664,
+  "titulo": "Pleura",
+  "titulo_wordpress": "Pleura 1A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Pleura",
+    "Pleura 1A"
+  ],
+  "descricao_original": "This image compares an illustration of the pleura (left) with a corresponding histological section (right). Each lung projects into an internal body cavity, the pleural cavity, and is covered by a serous membrane (serosa), called visceral pleura. A reflection of visceral pleura, the parietal pleura, lines the inside of the thoracic wall. Visceral and parietal pleura are closely apposed to each other, with a thin fluid-fluid space between them. This arrangement reduces friction during breathing and creates a vacuum (negative pressure) that allows the lungs to expand smoothly with the chest wall during inhalation. Elastin stain, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of California, San Francisco collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "arquivo": "imagens/base/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pleura', no setor Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Descricao original da pagina: This image compares an illustration of the pleura (left) with a corresponding histological section (right). Each lung projects into an internal body cavity, the pleural cavity, and is covered by a serous membrane (serosa), called visceral pleura. A reflection of visceral pleura, the parietal pleura, lines the inside of the thoracic wall. Visceral and parietal pleura are closely apposed to each other, with a thin fluid-fluid space between them. This arrangement reduces friction during breathing and creates a vacuum (negative pressure) that allows the lungs to expand smoothly with the chest wall during inhalation. Elastin stain, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Visceral pleura",
+      "explicacao_original": "Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Visceral pleura' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mesothelium",
+      "explicacao_original": "Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Mesothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue layer",
+      "explicacao_original": "Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-3A-CT-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-3A-CT-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Connective tissue layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Parietal pleura",
+      "explicacao_original": "Parietal pleura lines the inner walls of the thoracic cavity, diaphragm, and mediastinum. Composed of a mesothelium and a layer of loose connective tissue, it is tightly adherent to underlying structures and functions with the visceral pleura to maintain the negative pressure required for normal breathing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Parietal pleura' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parietal pleura lines the inner walls of the thoracic cavity, diaphragm, and mediastinum. Composed of a mesothelium and a layer of loose connective tissue, it is tightly adherent to underlying structures and functions with the visceral pleura to maintain the negative pressure required for normal breathing.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Mesothelium",
+      "explicacao_original": "Parietal pleura lines the inner walls of the thoracic cavity, diaphragm, and mediastinum. Composed of a mesothelium and a layer of loose connective tissue, it is tightly adherent to underlying structures and functions with the visceral pleura to maintain the negative pressure required for normal breathing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-7-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Mesothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parietal pleura lines the inner walls of the thoracic cavity, diaphragm, and mediastinum. Composed of a mesothelium and a layer of loose connective tissue, it is tightly adherent to underlying structures and functions with the visceral pleura to maintain the negative pressure required for normal breathing.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Pleural space",
+      "explicacao_original": "The visceral and parietal pleura are closely apposed to each other with a potential fluid-filled space (pleural space or pleural cavity) between them.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-8-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Pleural space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The visceral and parietal pleura are closely apposed to each other with a potential fluid-filled space (pleural space or pleural cavity) between them.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Alveoli",
+      "explicacao_original": "The visceral and parietal pleura are closely apposed to each other with a potential fluid-filled space (pleural space or pleural cavity) between them.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-9-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-9-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The visceral and parietal pleura are closely apposed to each other with a potential fluid-filled space (pleural space or pleural cavity) between them.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of California, San Francisco collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW-10-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.01-NEW-10-ping.png",
+      "imagem_base": "imagens/base/O.R.P.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.01-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of California, San Francisco collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

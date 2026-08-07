@@ -1,0 +1,64 @@
+{
+  "id": 9680,
+  "titulo": "Neutrophilic myelocyte and metamyelocyte",
+  "titulo_wordpress": "Hemopoiesis 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 11"
+  ],
+  "descricao_original": "Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-11.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Neutrophilic myelocyte and metamyelocyte', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 11. Descricao original da pagina: Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neutrophilic myelocyte",
+      "explicacao_original": "Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophilic myelocyte and metamyelocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-11.jpg'. Destaca a estrutura ou conceito 'Neutrophilic myelocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Neutrophilic metamyelocytes",
+      "explicacao_original": "Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophilic myelocyte and metamyelocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-11.jpg'. Destaca a estrutura ou conceito 'Neutrophilic metamyelocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophilic myelocyte and metamyelocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-11.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophilic myelocytes are the first definitive cell type in the neutrophilic lineage. At this stage, the cells begin to synthesize neutrophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The spherical nucleus of neutrophilic myelocytes develops a distinct indentation at which point they become metamyelocytes. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Granules",
+      "explicacao_original": "Specific, or secondary, granules in neutrophils contain a variety of proteins including collagenase and lysozyme, enzymes important for migration and destruction of phagocytosed bacteria. Azurophilic (primary) granules, lysosomes, are a nonspecific, granule present in all granulocytes, monocytes and platelets. Specific granules are unique to a single type of granulocyte.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophilic myelocyte and metamyelocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-11.jpg'. Destaca a estrutura ou conceito 'Granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Specific, or secondary, granules in neutrophils contain a variety of proteins including collagenase and lysozyme, enzymes important for migration and destruction of phagocytosed bacteria. Azurophilic (primary) granules, lysosomes, are a nonspecific, granule present in all granulocytes, monocytes and platelets. Specific granules are unique to a single type of granulocyte.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-11/, acesso em 2026-08-07."
+    }
+  ]
+}

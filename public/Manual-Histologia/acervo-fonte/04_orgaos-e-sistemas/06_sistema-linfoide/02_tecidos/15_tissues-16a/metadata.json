@@ -1,0 +1,53 @@
+{
+  "id": 30565,
+  "titulo": "High endothelial venules",
+  "titulo_wordpress": "Tissues 16A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 16A"
+  ],
+  "descricao_original": "The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel)",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-17A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'High endothelial venules', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16A. Descricao original da pagina: The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "High endothelial venules",
+      "explicacao_original": "The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-17A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-17A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'High endothelial venules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-17A.jpg'. Destaca a estrutura ou conceito 'High endothelial venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-17A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-17A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'High endothelial venules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-17A.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Migrating lymphocytes",
+      "explicacao_original": "The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-17A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-17A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-17A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'High endothelial venules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-17A.jpg'. Destaca a estrutura ou conceito 'Migrating lymphocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of high endothelial venules (HEVs) is shown to advantage in these thin plastic sections. The unique cuboidal-shaped endothelial cells facilitate the migration (diapedesis) of lymphocytes from the blood into the surrounding tissues. These venules are surrounded by diffuse lymphoid tissue. HEVs are present in all secondary lymphoid tissues and organs except the spleen. The two images on the left show cross sections; the image on the right is a longitudinal section. Lymph node, 600x (left panels); 400x (right panel). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16a/, acesso em 2026-08-07."
+    }
+  ]
+}

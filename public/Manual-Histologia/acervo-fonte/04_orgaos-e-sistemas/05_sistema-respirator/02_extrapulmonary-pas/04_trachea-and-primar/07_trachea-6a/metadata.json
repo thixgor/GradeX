@@ -1,0 +1,84 @@
+{
+  "id": 30991,
+  "titulo": "Trachea and primary bronchus",
+  "titulo_wordpress": "Trachea 6A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Trachea and Primary Bronchus",
+    "Trachea 6A"
+  ],
+  "descricao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "arquivo": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Trachea and primary bronchus', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Descricao original da pagina: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Goblet cell",
+      "explicacao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW-1.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.06-NEW-1.png",
+      "imagem_base": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.06-NEW.jpg'. Destaca a estrutura ou conceito 'Goblet cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucin granules",
+      "explicacao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW-2.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.06-NEW-2.png",
+      "imagem_base": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.06-NEW.jpg'. Destaca a estrutura ou conceito 'Mucin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucus",
+      "explicacao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW-3.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.06-NEW-3.png",
+      "imagem_base": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.06-NEW.jpg'. Destaca a estrutura ou conceito 'Mucus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ciliated cells",
+      "explicacao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW-4.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.06-NEW-4.png",
+      "imagem_base": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.06-NEW.jpg'. Destaca a estrutura ou conceito 'Ciliated cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cilia",
+      "explicacao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW-5.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.06-NEW-5.png",
+      "imagem_base": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.06-NEW.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW-6.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.06-NEW-6.png",
+      "imagem_base": "imagens/base/O.R.E.T.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.06-NEW.jpg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows the surface of the respiratory epithelium. The expanded upper portion of a goblet cell is visible along with the ciliated epithelial cells. Goblet cells release mucus onto the surface where it traps inhaled particulate matter. Rhythmic beating of the cilia move the layer of mucus upwards, to be swallowed or coughed out. This mechanism is often referred to as the “muco-ciliary escalator”. 8000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-6a/, acesso em 2026-08-07."
+    }
+  ]
+}

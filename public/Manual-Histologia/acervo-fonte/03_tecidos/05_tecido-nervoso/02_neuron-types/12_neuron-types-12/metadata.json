@@ -1,0 +1,63 @@
+{
+  "id": 2993,
+  "titulo": "Pseudounipolar neuron",
+  "titulo_wordpress": "Neuron types 12",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 12"
+  ],
+  "descricao_original": "The low magnification inset of the spinal cord shows the dorsal root ganglia (DRG) on either side, connected by dorsal and ventral roots. A region of the DRG is enlarged in the rest of the image. The DRG is composed of many pseudounipolar sensory neurons and their axons, as they pass through the ganglion. Each nerve cell body is surrounded by satellite Schwann cells. 15x, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-11-HE.jpg",
+      "arquivo": "imagens/base/T.N.Type-11-HE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pseudounipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 12. Descricao original da pagina: The low magnification inset of the spinal cord shows the dorsal root ganglia (DRG) on either side, connected by dorsal and ventral roots. A region of the DRG is enlarged in the rest of the image. The DRG is composed of many pseudounipolar sensory neurons and their axons, as they pass through the ganglion. Each nerve cell body is surrounded by satellite Schwann cells. 15x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dorsal root ganglia",
+      "explicacao_original": "A dorsal root ganglion is located on either site of the spinal cord and contains a collection of pseudounipolar neurons. The neurons have a peripheral process that enters the ganglion from the periphery via the spinal nerve. The central process of the cell forms the dorsal root and extends into the spinal cord.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-11-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-11-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-11-HE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-11-HE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-11-HE.jpg'. Destaca a estrutura ou conceito 'Dorsal root ganglia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A dorsal root ganglion is located on either site of the spinal cord and contains a collection of pseudounipolar neurons. The neurons have a peripheral process that enters the ganglion from the periphery via the spinal nerve. The central process of the cell forms the dorsal root and extends into the spinal cord.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 12. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pseudounipolar neurons",
+      "explicacao_original": "Pseudounipolar neurons, exclusively sensory in function, are found almost entirely in the peripheral nervous system. The cell body has a single process that divides near the cell body into a peripheral and a central process, both of which resemble an axon. The peripheral process carries sensory stimuli from the periphery, which by-pass the cell body and continue into the spinal cord.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-11-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-11-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-11-HE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-11-HE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-11-HE.jpg'. Destaca a estrutura ou conceito 'Pseudounipolar neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons, exclusively sensory in function, are found almost entirely in the peripheral nervous system. The cell body has a single process that divides near the cell body into a peripheral and a central process, both of which resemble an axon. The peripheral process carries sensory stimuli from the periphery, which by-pass the cell body and continue into the spinal cord.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 12. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axons",
+      "explicacao_original": "Pseudounipolar neurons, exclusively sensory in function, are found almost entirely in the peripheral nervous system. The cell body has a single process that divides near the cell body into a peripheral and a central process, both of which resemble an axon. The peripheral process carries sensory stimuli from the periphery, which by-pass the cell body and continue into the spinal cord.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-11-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-11-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-11-HE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-11-HE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-11-HE.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons, exclusively sensory in function, are found almost entirely in the peripheral nervous system. The cell body has a single process that divides near the cell body into a peripheral and a central process, both of which resemble an axon. The peripheral process carries sensory stimuli from the periphery, which by-pass the cell body and continue into the spinal cord.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 12. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Schwann cells",
+      "explicacao_original": "Numerous satellite Schwann cells surround each dorsal root ganglion; their cytoplasmic processes form a capsule around the cell body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-11-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-11-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-11-HE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-11-HE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-11-HE.jpg'. Destaca a estrutura ou conceito 'Schwann cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Numerous satellite Schwann cells surround each dorsal root ganglion; their cytoplasmic processes form a capsule around the cell body.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 12. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-12/, acesso em 2026-08-07."
+    }
+  ]
+}

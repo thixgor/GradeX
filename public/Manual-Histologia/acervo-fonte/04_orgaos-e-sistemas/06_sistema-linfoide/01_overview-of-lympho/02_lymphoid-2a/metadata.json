@@ -1,0 +1,93 @@
+{
+  "id": 28245,
+  "titulo": "Overview: The immune system",
+  "titulo_wordpress": "Lymphoid 2A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Lymphoid 2A"
+  ],
+  "descricao_original": "The immune system is a complex, integrated and multilayered defense mechanism that monitors body fluids for pathogens, foreign antigens and transformed cells. The system consists of two major components, innate (non-specific) immunity and adaptive (specific) immunity.",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "arquivo": "imagens/base/New-main-jpg.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: The immune system', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Descricao original da pagina: The immune system is a complex, integrated and multilayered defense mechanism that monitors body fluids for pathogens, foreign antigens and transformed cells. The system consists of two major components, innate (non-specific) immunity and adaptive (specific) immunity.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Innate immunity",
+      "explicacao_original": "Innate immunity, the so-called “first line of defense”, consists of components that are present at birth as well as others that develop over the lifespan of an individual. Responses of the innate immune system are rapid (minutes to hours) and less specific than those of the adaptive immune system, which can require weeks. The innate system can also inform and modulate the adaptive immune response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-10-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Innate immunity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Innate immunity, the so-called “first line of defense”, consists of components that are present at birth as well as others that develop over the lifespan of an individual. Responses of the innate immune system are rapid (minutes to hours) and less specific than those of the adaptive immune system, which can require weeks. The innate system can also inform and modulate the adaptive immune response.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Physical barriers",
+      "explicacao_original": "The innate immune system initially consists of physical barriers to pathogens, such as the skin and mucus membranes, as well as chemical defenses including digestive enzymes and stomach acid that destroy microorganisms.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-11-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Physical barriers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The innate immune system initially consists of physical barriers to pathogens, such as the skin and mucus membranes, as well as chemical defenses including digestive enzymes and stomach acid that destroy microorganisms.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Internal defenses",
+      "explicacao_original": "Pathogens that evade the physical barriers and enter the body are met with a variety of internal defenses consisting of phagocytic and natural killer cells as well as chemical defenses including complement activation and inflammation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-12-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Internal defenses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pathogens that evade the physical barriers and enter the body are met with a variety of internal defenses consisting of phagocytic and natural killer cells as well as chemical defenses including complement activation and inflammation.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Adaptive immunity",
+      "explicacao_original": "Adaptive immunity takes longer to develop but is highly specific for a particular pathogen or toxin. The presence of an antigen, defined as any substance capable of eliciting an adaptive immune response, leads to the activation of effector lymphocytes, B cells and T cells. Adaptive immunity has two components, humoral and cell-mediated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-13-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Adaptive immunity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adaptive immunity takes longer to develop but is highly specific for a particular pathogen or toxin. The presence of an antigen, defined as any substance capable of eliciting an adaptive immune response, leads to the activation of effector lymphocytes, B cells and T cells. Adaptive immunity has two components, humoral and cell-mediated.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Humoral immunity",
+      "explicacao_original": "Humoral immunity entails the secretion of antibodies (immunoglobulins) by activated B lymphocytes. Antibodies are multimeric proteins that recognize and bind to specific antigens. They can inactivate viruses and microbial toxins, as well as marking invading pathogens for destruction by phagocytic cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-14-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Humoral immunity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Humoral immunity entails the secretion of antibodies (immunoglobulins) by activated B lymphocytes. Antibodies are multimeric proteins that recognize and bind to specific antigens. They can inactivate viruses and microbial toxins, as well as marking invading pathogens for destruction by phagocytic cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cellular immunity",
+      "explicacao_original": "Cellular immunity entails the activation of T cells that can react against a foreign antigen present on the surface of a cell. T cells are capable of killing virus-infected host cells as well as transformed cancer cells. Additionally, T cell activation can lead to the production of signaling molecules that activate macrophages to destroy invading microbes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-15-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-15-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Cellular immunity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cellular immunity entails the activation of T cells that can react against a foreign antigen present on the surface of a cell. T cells are capable of killing virus-infected host cells as well as transformed cancer cells. Additionally, T cell activation can lead to the production of signaling molecules that activate macrophages to destroy invading microbes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Immunological memory",
+      "explicacao_original": "The adaptive immune response system can remember specific antigens to which is has been exposed, thereby providing long-lasting defense and protection. Subsequent exposure to an antigen, results in a much swifter response to prevent infection. Vaccination is a method to produce immunological memory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-1-NEW-16-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-NEW-16-ping.png",
+      "imagem_base": "imagens/base/New-main-jpg.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/New-main-jpg.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: The immune system'. Deve ser sobreposta, sem redimensionamento independente, a 'New-main-jpg.jpg'. Destaca a estrutura ou conceito 'Immunological memory' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adaptive immune response system can remember specific antigens to which is has been exposed, thereby providing long-lasting defense and protection. Subsequent exposure to an antigen, results in a much swifter response to prevent infection. Vaccination is a method to produce immunological memory.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-13/, acesso em 2026-08-07."
+    }
+  ]
+}

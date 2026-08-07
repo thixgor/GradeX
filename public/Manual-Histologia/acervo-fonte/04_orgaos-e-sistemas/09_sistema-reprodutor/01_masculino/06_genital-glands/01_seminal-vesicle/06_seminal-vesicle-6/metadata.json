@@ -1,0 +1,67 @@
+{
+  "id": 15807,
+  "titulo": "Seminal vesicle",
+  "titulo_wordpress": "Seminal vesicle 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Genital Glands",
+    "Seminal Vesicle",
+    "Seminal vesicle 6"
+  ],
+  "descricao_original": "These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-6/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from The University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.jpg",
+      "arquivo": "imagens/base/O.R.M.GG_.SV_.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Seminal vesicle', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 6. Descricao original da pagina: These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen",
+      "explicacao_original": "These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.SV_.06.P01.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.SV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.SV_.06.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pseudostratified epithelium",
+      "explicacao_original": "These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.SV_.06.P02.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.SV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.SV_.06.jpg'. Destaca a estrutura ou conceito 'Pseudostratified epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.SV_.06.P03.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.SV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.SV_.06.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These two images of the seminal vesicle show the spaces formed by the arching of the epithelium and its underlying lamina propria. Pseudostratified epithelium in nonsecretory stages (left) is lower than that seen during active secretion (right). Smooth muscle surrounds the periphery of the gland. 200x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from The University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Michigan-source-ping-half-frame-rt.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-half-frame-rt.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.SV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.SV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.SV_.06.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from The University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-6/, acesso em 2026-08-07."
+    }
+  ]
+}

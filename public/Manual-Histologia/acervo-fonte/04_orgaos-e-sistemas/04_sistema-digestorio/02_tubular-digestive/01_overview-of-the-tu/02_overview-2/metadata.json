@@ -1,0 +1,154 @@
+{
+  "id": 6825,
+  "titulo": "Tunics",
+  "titulo_wordpress": "Overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Overview of the tubular digestive system",
+    "Overview 2"
+  ],
+  "descricao_original": "Any organ of the tubular GI tract is composed of four tunics. The mucosa is the innermost tunic and surrounds the lumen. Beneath the mucosa is a submucosa, beyond which is a muscularis externa. The outermost tunic is either an adventitia, if the organ does not protrude into the peritoneal cavity, or a serosa, if it does.",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "arquivo": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tunics', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Descricao original da pagina: Any organ of the tubular GI tract is composed of four tunics. The mucosa is the innermost tunic and surrounds the lumen. Beneath the mucosa is a submucosa, beyond which is a muscularis externa. The outermost tunic is either an adventitia, if the organ does not protrude into the peritoneal cavity, or a serosa, if it does.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa (or mucous membrane) is the most interior of the tunics, lining the lumen. The mucosa has three layers: an innermost epithelium; a lamina propria of loose connective tissue; and a muscularis mucosae of smooth muscle, which is not always present. Frequently, mucus-secreting glands are associated with this tunic, giving origin to its name.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa (or mucous membrane) is the most interior of the tunics, lining the lumen. The mucosa has three layers: an innermost epithelium; a lamina propria of loose connective tissue; and a muscularis mucosae of smooth muscle, which is not always present. Frequently, mucus-secreting glands are associated with this tunic, giving origin to its name.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "An epithelium (either stratified squamous or simple columnar) forms the innermost layer of the digestive mucosa, the epithelial type varying with the organ and its function. This epithelium also serves as a barrier to foreign agents entering the body. The simple columnar epithelia may possess microvilli and/or unicellular glands or may be modified to form a sheet gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An epithelium (either stratified squamous or simple columnar) forms the innermost layer of the digestive mucosa, the epithelial type varying with the organ and its function. This epithelium also serves as a barrier to foreign agents entering the body. The simple columnar epithelia may possess microvilli and/or unicellular glands or may be modified to form a sheet gland.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The lamina propria (yellow arrows) is a layer of loose connective tissue immediately beneath the epithelium. Frequently, glands (blue arrow) will be present in this layer; these glands open onto the surface of the epithelium. Diffuse and nodular lymphoid tissue (MALT, mucosa-associated lymphoid tissue) may be located in the lamina propria also.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria (yellow arrows) is a layer of loose connective tissue immediately beneath the epithelium. Frequently, glands (blue arrow) will be present in this layer; these glands open onto the surface of the epithelium. Diffuse and nodular lymphoid tissue (MALT, mucosa-associated lymphoid tissue) may be located in the lamina propria also.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The muscularis mucosae (literally, muscle of the mucosa) is composed of smooth muscle; this layer may be lacking or incomplete in some organs of the digestive tract.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis mucosae (literally, muscle of the mucosa) is composed of smooth muscle; this layer may be lacking or incomplete in some organs of the digestive tract.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosa (black arrows) is composed of dense connective tissue. Glands (blue arrows) may be present in the submucosa; these glands also open onto the epithelial surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa (black arrows) is composed of dense connective tissue. Glands (blue arrows) may be present in the submucosa; these glands also open onto the epithelial surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The muscularis externa, the third tunic, is usually composed of smooth muscle. Most frequently, this smooth muscle is arranged into an inner circular and an outer longitudinal layer. It is responsible for producing propulsive peristaltic waves of contraction as well as mixing of the luminal contents (segmentation).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis externa, the third tunic, is usually composed of smooth muscle. Most frequently, this smooth muscle is arranged into an inner circular and an outer longitudinal layer. It is responsible for producing propulsive peristaltic waves of contraction as well as mixing of the luminal contents (segmentation).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Inner circular layer",
+      "explicacao_original": "The muscularis externa, the third tunic, is usually composed of smooth muscle. Most frequently, this smooth muscle is arranged into an inner circular and an outer longitudinal layer. It is responsible for producing propulsive peristaltic waves of contraction as well as mixing of the luminal contents (segmentation).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-7-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Inner circular layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis externa, the third tunic, is usually composed of smooth muscle. Most frequently, this smooth muscle is arranged into an inner circular and an outer longitudinal layer. It is responsible for producing propulsive peristaltic waves of contraction as well as mixing of the luminal contents (segmentation).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Outer longitudinal layer",
+      "explicacao_original": "The muscularis externa, the third tunic, is usually composed of smooth muscle. Most frequently, this smooth muscle is arranged into an inner circular and an outer longitudinal layer. It is responsible for producing propulsive peristaltic waves of contraction as well as mixing of the luminal contents (segmentation).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-8-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Outer longitudinal layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis externa, the third tunic, is usually composed of smooth muscle. Most frequently, this smooth muscle is arranged into an inner circular and an outer longitudinal layer. It is responsible for producing propulsive peristaltic waves of contraction as well as mixing of the luminal contents (segmentation).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Outermost tunic: Adventitia",
+      "explicacao_original": "The outermost tunic is either an adventitia or a serosa. The adventitia is a layer of connective tissue that becomes continuous with the connective tissue of the posterior body wall where organs contact that surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-9a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-9a-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Outermost tunic: Adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outermost tunic is either an adventitia or a serosa. The adventitia is a layer of connective tissue that becomes continuous with the connective tissue of the posterior body wall where organs contact that surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Outermost tunic: Serosa",
+      "explicacao_original": "Where organs either face or protrude into the peritoneal cavity (diagrammed here), the adventitia is covered by a simple squamous epithelium (mesothelium, red arrows). Together, the adventitia (black arrows) and the mesothelium constitute the serosa (serous membrane).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-9b-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-9b-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Outermost tunic: Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Where organs either face or protrude into the peritoneal cavity (diagrammed here), the adventitia is covered by a simple squamous epithelium (mesothelium, red arrows). Together, the adventitia (black arrows) and the mesothelium constitute the serosa (serous membrane).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Mesentery",
+      "explicacao_original": "A mesentery is a double layer of serosa that suspends the tubular GI tract in the peritoneal cavity. For a complete review of serosa versus adventitia and mesentery, see “Organs & Systems, General Concepts, Membranes.”",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-9c-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-9c-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Mesentery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A mesentery is a double layer of serosa that suspends the tubular GI tract in the peritoneal cavity. For a complete review of serosa versus adventitia and mesentery, see “Organs & Systems, General Concepts, Membranes.”. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Glands",
+      "explicacao_original": "Glands opening onto surface epithelium may be located in several positions within the tunics of the tubular digestive organs: epithelium (red arrow); lamina propria (green arrow); or submucosa (blue arrows). Also, glands (circled), such as liver or pancreas, may lie external to the tubular digestive system with a duct (black arrow) leading onto the epithelial surface of the tube.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-10-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Glands opening onto surface epithelium may be located in several positions within the tunics of the tubular digestive organs: epithelium (red arrow); lamina propria (green arrow); or submucosa (blue arrows). Also, glands (circled), such as liver or pancreas, may lie external to the tubular digestive system with a duct (black arrow) leading onto the epithelial surface of the tube.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Plicae circulares",
+      "explicacao_original": "Plicae circulares are folds of submucosa and overlying mucosa that extend around the circumference of the small intestine to increase surface area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-2-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-2-11-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tunics'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-2.jpg'. Destaca a estrutura ou conceito 'Plicae circulares' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plicae circulares are folds of submucosa and overlying mucosa that extend around the circumference of the small intestine to increase surface area.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

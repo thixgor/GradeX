@@ -1,0 +1,125 @@
+{
+  "id": 28331,
+  "titulo": "Overview: Aggregates of lymphoid nodules",
+  "titulo_wordpress": "Lymphoid 9A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Lymphoid 9A"
+  ],
+  "descricao_original": "Aggregates of lymphoid nodules are present in certain organs, including tonsils, distal regions of the small intestine (Peyer’s patches) and appendix. 50x, 10x, 20x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the Oklahoma State University slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Aggregates of lymphoid nodules', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Descricao original da pagina: Aggregates of lymphoid nodules are present in certain organs, including tonsils, distal regions of the small intestine (Peyer’s patches) and appendix. 50x, 10x, 20x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tonsil",
+      "explicacao_original": "Tonsils consists of aggregations of diffuse and nodular lymphoid tissues located in the lamina propria of the oral and pharyngeal mucosae. They are partially surrounded by a connective tissue capsule. The three types of tonsils (palatine, pharyngeal and lingual) form a ring, called “Waldeyer’s ring”, around the entrances of the nasal and oral cavities into the pharynx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Tonsil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tonsils consists of aggregations of diffuse and nodular lymphoid tissues located in the lamina propria of the oral and pharyngeal mucosae. They are partially surrounded by a connective tissue capsule. The three types of tonsils (palatine, pharyngeal and lingual) form a ring, called “Waldeyer’s ring”, around the entrances of the nasal and oral cavities into the pharynx.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "Tonsils consists of aggregations of diffuse and nodular lymphoid tissues located in the lamina propria of the oral and pharyngeal mucosae. They are partially surrounded by a connective tissue capsule. The three types of tonsils (palatine, pharyngeal and lingual) form a ring, called “Waldeyer’s ring”, around the entrances of the nasal and oral cavities into the pharynx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tonsils consists of aggregations of diffuse and nodular lymphoid tissues located in the lamina propria of the oral and pharyngeal mucosae. They are partially surrounded by a connective tissue capsule. The three types of tonsils (palatine, pharyngeal and lingual) form a ring, called “Waldeyer’s ring”, around the entrances of the nasal and oral cavities into the pharynx.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secondary nodules",
+      "explicacao_original": "Tonsils consists of aggregations of diffuse and nodular lymphoid tissues located in the lamina propria of the oral and pharyngeal mucosae. They are partially surrounded by a connective tissue capsule. The three types of tonsils (palatine, pharyngeal and lingual) form a ring, called “Waldeyer’s ring”, around the entrances of the nasal and oral cavities into the pharynx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Secondary nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tonsils consists of aggregations of diffuse and nodular lymphoid tissues located in the lamina propria of the oral and pharyngeal mucosae. They are partially surrounded by a connective tissue capsule. The three types of tonsils (palatine, pharyngeal and lingual) form a ring, called “Waldeyer’s ring”, around the entrances of the nasal and oral cavities into the pharynx.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Tonsilar tissue is surfaced by the moist, stratified squamous epithelium of the oral and pharyngeal mucosae. Beneath the tonsil is connective tissue of the submucosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tonsilar tissue is surfaced by the moist, stratified squamous epithelium of the oral and pharyngeal mucosae. Beneath the tonsil is connective tissue of the submucosa.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Tonsilar tissue is surfaced by the moist, stratified squamous epithelium of the oral and pharyngeal mucosae. Beneath the tonsil is a partial capsule consisting of submucosal connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tonsilar tissue is surfaced by the moist, stratified squamous epithelium of the oral and pharyngeal mucosae. Beneath the tonsil is a partial capsule consisting of submucosal connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Peyer’s patch",
+      "explicacao_original": "The lamina propria in the distal portions of the small intestine contains accumulations of MALT called Peyer’s patches, as seen in this section of the ileum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Peyer’s patch' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria in the distal portions of the small intestine contains accumulations of MALT called Peyer’s patches, as seen in this section of the ileum.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Appendix",
+      "explicacao_original": "The appendix, an appendage of the large intestine, is heavily infiltrated with MALT forming large numbers of lymphoid nodules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Appendix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The appendix, an appendage of the large intestine, is heavily infiltrated with MALT forming large numbers of lymphoid nodules.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "The appendix, an appendage of the large intestine, is heavily infiltrated with MALT forming large numbers of lymphoid nodules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The appendix, an appendage of the large intestine, is heavily infiltrated with MALT forming large numbers of lymphoid nodules.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Secondary nodules",
+      "explicacao_original": "The appendix, an appendage of the large intestine, is heavily infiltrated with MALT forming large numbers of lymphoid nodules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Secondary nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The appendix, an appendage of the large intestine, is heavily infiltrated with MALT forming large numbers of lymphoid nodules.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the Oklahoma State University slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW-7A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-7-NEW-7A-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Aggregates of lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-7-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the Oklahoma State University slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 9A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-18/, acesso em 2026-08-07."
+    }
+  ]
+}

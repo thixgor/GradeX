@@ -1,0 +1,94 @@
+{
+  "id": 28548,
+  "titulo": "Mucosa: Epithelium",
+  "titulo_wordpress": "Small intestine 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 8"
+  ],
+  "descricao_original": "The small intestine is lined by a simple columnar epithelium of absorptive cells (enterocytes with microvilli) and goblet cells. Microvilli, which form a brush border on the apical surface of the absorptive cells are shown in greater detail in the electron micrograph. 1000x, 25,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosa: Epithelium', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Descricao original da pagina: The small intestine is lined by a simple columnar epithelium of absorptive cells (enterocytes with microvilli) and goblet cells. Microvilli, which form a brush border on the apical surface of the absorptive cells are shown in greater detail in the electron micrograph. 1000x, 25,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium of absorptive cells (enterocytes with microvilli) and goblet cells. Microvilli, which form a brush border on the apical surface of the absorptive cells are shown in greater detail in the electron micrograph. 1000x, 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium of absorptive cells (enterocytes with microvilli) and goblet cells. Microvilli, which form a brush border on the apical surface of the absorptive cells are shown in greater detail in the electron micrograph. 1000x, 25,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enterocytes",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium of absorptive cells (enterocytes with microvilli) and goblet cells. Microvilli, which form a brush border on the apical surface of the absorptive cells are shown in greater detail in the electron micrograph. 1000x, 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Enterocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium of absorptive cells (enterocytes with microvilli) and goblet cells. Microvilli, which form a brush border on the apical surface of the absorptive cells are shown in greater detail in the electron micrograph. 1000x, 25,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Microvilli",
+      "explicacao_original": "The luminal surfaces of enterocytes are covered by microvilli that greatly increase the surface area for absorption. Each cells may have up to 1000 mcrovilli, collectively forming a brush border (striated border).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The luminal surfaces of enterocytes are covered by microvilli that greatly increase the surface area for absorption. Each cells may have up to 1000 mcrovilli, collectively forming a brush border (striated border).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glycocalyx",
+      "explicacao_original": "Extending from the microvilli is the glycocalyx, consisting of highly branched carbohydrate molecules that sequester enzymes important in digestion and in the transport of nutrients. The glycocalyx also aids in retention of the bacterial flora present in the intestinal lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Glycocalyx' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Extending from the microvilli is the glycocalyx, consisting of highly branched carbohydrate molecules that sequester enzymes important in digestion and in the transport of nutrients. The glycocalyx also aids in retention of the bacterial flora present in the intestinal lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "Goblet cells are the second cell type in the epithelium. Mucin droplets produced by these cells accumulate in the bulging apex, while the nucleus and remaining cytoplasm form the “stem” of each goblet. Goblet cells, found throughout the small and large intestines, produce mucus that lubricates the surface of the intestines.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Goblet cells are the second cell type in the epithelium. Mucin droplets produced by these cells accumulate in the bulging apex, while the nucleus and remaining cytoplasm form the “stem” of each goblet. Goblet cells, found throughout the small and large intestines, produce mucus that lubricates the surface of the intestines.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lymphocytes and macrophages",
+      "explicacao_original": "Also present in the epithelium are wandering lymphocytes and macrophages that provide immune surveillance.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Lymphocytes and macrophages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also present in the epithelium are wandering lymphocytes and macrophages that provide immune surveillance.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "A lamina propria of loose connective tissue underlies the epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-7-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lamina propria of loose connective tissue underlies the epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-8/, acesso em 2026-08-07."
+    }
+  ]
+}

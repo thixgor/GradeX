@@ -1,0 +1,55 @@
+{
+  "id": 10522,
+  "titulo": "Bone: intramembranous formation",
+  "titulo_wordpress": "Intramembranous 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Intramembranous",
+    "Intramembranous 6"
+  ],
+  "descricao_original": "The spongy bone (left) and a forming Haversian system in a long bone (right) are each lined by endosteum. Any lamellae deposited by this layer, such as additional lamellae to the spongy bone or to the osteon, are formed by intramembranous bone formation. 200x, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.jpg",
+      "arquivo": "imagens/base/T.C.B.F.I.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: intramembranous formation', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 6. Descricao original da pagina: The spongy bone (left) and a forming Haversian system in a long bone (right) are each lined by endosteum. Any lamellae deposited by this layer, such as additional lamellae to the spongy bone or to the osteon, are formed by intramembranous bone formation. 200x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spongy, lamellar bone",
+      "explicacao_original": "When this trabeculum was being formed, the surface cells were osteoblasts that deposited laminae of spongy lamellar bone onto the surface of existing bone, conforming to the original shape that was present. Such bone deposition is called intramembranous bone formation. As this spicule is no longer growing, the surface osteoblasts have been replaced by flattened lining cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.06.P01.png",
+      "imagem_base": "imagens/base/T.C.B.F.I.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I.06.jpg'. Destaca a estrutura ou conceito 'Spongy, lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When this trabeculum was being formed, the surface cells were osteoblasts that deposited laminae of spongy lamellar bone onto the surface of existing bone, conforming to the original shape that was present. Such bone deposition is called intramembranous bone formation. As this spicule is no longer growing, the surface osteoblasts have been replaced by flattened lining cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Forming osteon",
+      "explicacao_original": "Osteoblasts lining an internal bony space deposit concentric lamellae centripetally by intramembranous ossification, forming an osteon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.06.P02.png",
+      "imagem_base": "imagens/base/T.C.B.F.I.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I.06.jpg'. Destaca a estrutura ou conceito 'Forming osteon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts lining an internal bony space deposit concentric lamellae centripetally by intramembranous ossification, forming an osteon.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Canaliculi",
+      "explicacao_original": "Canaliculi can be seen radiating from some of the osteocyte lacunae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.06.P04.png",
+      "imagem_base": "imagens/base/T.C.B.F.I.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.I.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I.06.jpg'. Destaca a estrutura ou conceito 'Canaliculi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Canaliculi can be seen radiating from some of the osteocyte lacunae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-6/, acesso em 2026-08-07."
+    }
+  ]
+}

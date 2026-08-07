@@ -1,0 +1,74 @@
+{
+  "id": 12755,
+  "titulo": "Uterus: pre-menstrual phase (Days 26-28)",
+  "titulo_wordpress": "Uterus 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 12"
+  ],
+  "descricao_original": "The functional zone continues to decline. The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma; and predecidual cells can be seen beneath the surface epithelium. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12AAA-flip.jpg",
+      "arquivo": "imagens/base/O.R.F.U.12AAA-flip.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: pre-menstrual phase (Days 26-28)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 12. Descricao original da pagina: The functional zone continues to decline. The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma; and predecidual cells can be seen beneath the surface epithelium. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glands",
+      "explicacao_original": "The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.12.P06.png",
+      "imagem_base": "imagens/base/O.R.F.U.12AAA-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12AAA-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.12AAA-flip.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Degeneration",
+      "explicacao_original": "The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.12.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.12AAA-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12AAA-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.12AAA-flip.jpg'. Destaca a estrutura ou conceito 'Degeneration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Extravasated blood",
+      "explicacao_original": "The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.12.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.12AAA-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12AAA-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.12AAA-flip.jpg'. Destaca a estrutura ou conceito 'Extravasated blood' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Predecidual cells",
+      "explicacao_original": "The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.12.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.12AAA-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12AAA-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.12AAA-flip.jpg'. Destaca a estrutura ou conceito 'Predecidual cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sacculated glands show precipitated secretory product; areas of degeneration are obvious; extravasated blood is present in the stroma and predecidual cells can be seen beneath the surface of the organ. The pre-menstrual phase is also known as the ischemic portion of the secretory phase. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Graphic: pre-menstrual",
+      "explicacao_original": "phase > The premenstrual phase (ischemic portion of secretory phase) occurs on days 26-28. The corpus luteum decreases its production of progesterone and estrogen that stimulate the functional zone of the uterus. Lack of ovarian hormones results in ischemia, death and sloughing of the functional zone that, in turn, leads to menstruation. Note the stage of the ovarian cycle at this time.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.12.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.12.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.12AAA-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.12AAA-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.12AAA-flip.jpg'. Destaca a estrutura ou conceito 'Graphic: pre-menstrual' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: phase > The premenstrual phase (ischemic portion of secretory phase) occurs on days 26-28. The corpus luteum decreases its production of progesterone and estrogen that stimulate the functional zone of the uterus. Lack of ovarian hormones results in ischemia, death and sloughing of the functional zone that, in turn, leads to menstruation. Note the stage of the ovarian cycle at this time.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-12/, acesso em 2026-08-07."
+    }
+  ]
+}

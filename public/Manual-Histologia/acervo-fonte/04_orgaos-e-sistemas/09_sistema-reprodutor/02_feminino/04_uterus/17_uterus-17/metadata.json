@@ -1,0 +1,74 @@
+{
+  "id": 12765,
+  "titulo": "Uterus: phases of the menstrual cycle",
+  "titulo_wordpress": "Uterus 17",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 17"
+  ],
+  "descricao_original": "The four phases of the menstrual cycle are shown here at the same magnification to demonstrate both glandular changes and variation in thickness of the endometrium during the menstrual cycle. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.jpg",
+      "arquivo": "imagens/base/O.R.F.U.17.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: phases of the menstrual cycle', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 17. Descricao original da pagina: The four phases of the menstrual cycle are shown here at the same magnification to demonstrate both glandular changes and variation in thickness of the endometrium during the menstrual cycle. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Proliferative phase",
+      "explicacao_original": "(days 6-14) The proliferative phase (days 6-14) shows straight glands with no secretory product in the lumens, no evidence of spiral arteries, and a relatively thin endometrium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.17.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: phases of the menstrual cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.17.jpg'. Destaca a estrutura ou conceito 'Proliferative phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: (days 6-14) The proliferative phase (days 6-14) shows straight glands with no secretory product in the lumens, no evidence of spiral arteries, and a relatively thin endometrium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory phase",
+      "explicacao_original": "(days 15-25) Endometrium in the secretory phase (days 15-25) reaches maximal thickness. Spiral arteries are readily identifiable; glands become secretory. Predecidual cells appear around day 24.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.17.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: phases of the menstrual cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.17.jpg'. Destaca a estrutura ou conceito 'Secretory phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: (days 15-25) Endometrium in the secretory phase (days 15-25) reaches maximal thickness. Spiral arteries are readily identifiable; glands become secretory. Predecidual cells appear around day 24.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pre-menstrual phase",
+      "explicacao_original": "(days 26-28) During the pre-menstrual phase (ischemic portion of the secretory phase, days 26-28), the endometrium shrinks and necrotic tissue is obvious. Other characteristics of the secretory phase continue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.17.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: phases of the menstrual cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.17.jpg'. Destaca a estrutura ou conceito 'Pre-menstrual phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: (days 26-28) During the pre-menstrual phase (ischemic portion of the secretory phase, days 26-28), the endometrium shrinks and necrotic tissue is obvious. Other characteristics of the secretory phase continue.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Menstrual phase",
+      "explicacao_original": "(days 1-5) The menstrual phase (days 1-5) demonstrates sloughing of the functional zone until only the basal zone remains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.17.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: phases of the menstrual cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.17.jpg'. Destaca a estrutura ou conceito 'Menstrual phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: (days 1-5) The menstrual phase (days 1-5) demonstrates sloughing of the functional zone until only the basal zone remains.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumen",
+      "explicacao_original": "The uterine lumen is visible at the top of each section.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.17.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: phases of the menstrual cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.17.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The uterine lumen is visible at the top of each section.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-17/, acesso em 2026-08-07."
+    }
+  ]
+}

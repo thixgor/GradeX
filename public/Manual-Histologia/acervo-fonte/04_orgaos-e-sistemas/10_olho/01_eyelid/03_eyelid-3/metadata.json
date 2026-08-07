@@ -1,0 +1,93 @@
+{
+  "id": 9188,
+  "titulo": "Eyelid: Meibomium gland",
+  "titulo_wordpress": "Eyelid 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Eyelid",
+    "Eyelid 3"
+  ],
+  "descricao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Eyelid: Meibomium gland', no setor Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Descricao original da pagina: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Meibomium gland",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Meibomium gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Duct of Meibomium gland",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Duct of Meibomium gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Acini",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Skin",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Palpebral conjunctiva",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Palpebral conjunctiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tarsus",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Tarsus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Orbicularis oculi muscle",
+      "explicacao_original": "This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-3-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-3-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid: Meibomium gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-3.jpg'. Destaca a estrutura ou conceito 'Orbicularis oculi muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image of a Meibomium gland (tarsal gland) shows its simple, branched acinar structure. Each acinus empties into an unbranched duct that opens at the margin of the eyelid. There are numerous Meibomium glands in each eyelid, with a larger number in the upper eyelid. Meibomian glands secrete an oily material by the holocrine mode of secretion.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-3/, acesso em 2026-08-07."
+    }
+  ]
+}

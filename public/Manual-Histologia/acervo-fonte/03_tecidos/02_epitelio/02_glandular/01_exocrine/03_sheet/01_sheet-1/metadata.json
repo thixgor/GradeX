@@ -1,0 +1,55 @@
+{
+  "id": 4352,
+  "titulo": "Sheet gland",
+  "titulo_wordpress": "Sheet 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Sheet",
+    "Sheet 1"
+  ],
+  "descricao_original": "The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sheet gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 1. Descricao original da pagina: The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-New-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-1-New-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-1-new.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tubular glands",
+      "explicacao_original": "The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-New-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-1-New-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-1-new.jpg'. Destaca a estrutura ou conceito 'Tubular glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stomach lumen",
+      "explicacao_original": "The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-New-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-1-New-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-1-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-1-new.jpg'. Destaca a estrutura ou conceito 'Stomach lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundic region of the stomach possesses a sheet gland, which forms the lining of the stomach. The multicellular sheet gland is an epithelial layer composed entirely of mucus-secreting cells. The mucus produced by this layer protects the stomach tissues from the acidic contents of the organ. Fundic stomach 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-1/, acesso em 2026-08-07."
+    }
+  ]
+}

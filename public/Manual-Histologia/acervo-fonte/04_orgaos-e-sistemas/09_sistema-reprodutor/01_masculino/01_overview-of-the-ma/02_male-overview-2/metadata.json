@@ -1,0 +1,134 @@
+{
+  "id": 15713,
+  "titulo": "Overview",
+  "titulo_wordpress": "Male overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Overview of the male reproductive system",
+    "Male overview 2"
+  ],
+  "descricao_original": "Gametogenesis, the formation of haploid (1N) ova and sperm, is a multistage process that includes both mitosis and meiosis. While chromosomal events producing sperm (spermatogenesis) and ova (oogenesis) have similar cytoplasmic stages, the timing of divisions and the number of gametes formed is different between the male and the female. [“N” designates a single set of 23 chromosomes in humans and, thus, represents one-half the DNA content of a somatic cell.]",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "arquivo": "imagens/base/O.R.M.O.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Descricao original da pagina: Gametogenesis, the formation of haploid (1N) ova and sperm, is a multistage process that includes both mitosis and meiosis. While chromosomal events producing sperm (spermatogenesis) and ova (oogenesis) have similar cytoplasmic stages, the timing of divisions and the number of gametes formed is different between the male and the female. [“N” designates a single set of 23 chromosomes in humans and, thus, represents one-half the DNA content of a somatic cell.]. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Comparison",
+      "explicacao_original": "A side-by-side comparison of the stages of spermatogenesis and oogenesis shows somatic diploid cells (spermatogonia and oogonia, respectively, blue box) progressing through multiple phases of mitosis, meiosis, and cell maturation to generate haploid gametes (multiple spermatozoa and a single (usually) ovum, respectively, red boxes).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P01.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Comparison' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A side-by-side comparison of the stages of spermatogenesis and oogenesis shows somatic diploid cells (spermatogonia and oogonia, respectively, blue box) progressing through multiple phases of mitosis, meiosis, and cell maturation to generate haploid gametes (multiple spermatozoa and a single (usually) ovum, respectively, red boxes).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Spermatogenesis",
+      "explicacao_original": "Spermatogenesis, sperm production, occurs in several phases, indicated in purple across the top. Phase 1: Spermatocytogenesis, when precursor cells (spermatogonia) divide by mitosis to form primary spermatocytes. Phase 2: Meiosis, a two-step process. In meiosis I, diploid, primary spermatocytes divide, forming haploid secondary spermatocytes. In meiosis II secondary spermatocytes divide to form spermatids without reducing chromosomal number. Phase 3: Spermiogenesis, when spermatids undergo morphological changes with no further cell division. Phase 4: Spermiation, when spermatozoa are released into the lumen of the seminiferous tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P02.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Spermatogenesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis, sperm production, occurs in several phases, indicated in purple across the top. Phase 1: Spermatocytogenesis, when precursor cells (spermatogonia) divide by mitosis to form primary spermatocytes. Phase 2: Meiosis, a two-step process. In meiosis I, diploid, primary spermatocytes divide, forming haploid secondary spermatocytes. In meiosis II secondary spermatocytes divide to form spermatids without reducing chromosomal number. Phase 3: Spermiogenesis, when spermatids undergo morphological changes with no further cell division. Phase 4: Spermiation, when spermatozoa are released into the lumen of the seminiferous tubule.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mitosis",
+      "explicacao_original": "Beginning at puberty and continuing throughout a man’s lifetime, diploid precursor cells (spermatogonia) in the seminiferous tubules of the testis begin to divide by mitosis, producing primary spermatocytes, as well as renewing their own cell line . This reservoir of stem cells allows for spermatogenesis to occur throughout a man’s life. Note that the primary spermatocytes remain attached to each other (incomplete cytokinesis, red box). This attachment remains through successive divisions until final release of spermatozoa (spermiation).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P03.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Mitosis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beginning at puberty and continuing throughout a man’s lifetime, diploid precursor cells (spermatogonia) in the seminiferous tubules of the testis begin to divide by mitosis, producing primary spermatocytes, as well as renewing their own cell line . This reservoir of stem cells allows for spermatogenesis to occur throughout a man’s life. Note that the primary spermatocytes remain attached to each other (incomplete cytokinesis, red box). This attachment remains through successive divisions until final release of spermatozoa (spermiation).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Meiosis I",
+      "explicacao_original": "The second phase of spermatogenesis is meiosis, which begins with meiosis I. During this phase, diploid primary spermatocytes divide to form haploid secondary spermatocytes. Because this division results in a decrease in chromosome number, this phase is also called the reductional phase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P04.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Meiosis I' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The second phase of spermatogenesis is meiosis, which begins with meiosis I. During this phase, diploid primary spermatocytes divide to form haploid secondary spermatocytes. Because this division results in a decrease in chromosome number, this phase is also called the reductional phase.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Meiosis II",
+      "explicacao_original": "During meiosis II, haploid secondary spermatocytes (1N) divide to form haploid spermatids (1N). Because this division does not change the chromosome number, it is also called the equational phase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P05.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P05.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Meiosis II' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During meiosis II, haploid secondary spermatocytes (1N) divide to form haploid spermatids (1N). Because this division does not change the chromosome number, it is also called the equational phase.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Spermiogenesis",
+      "explicacao_original": "The third stage of spermatogenesis is spermiogenesis, during which spherical spermatids undergo morphological changes with no further cell division. This transformation results in the formation of tadpole-shaped haploid spermatids, still attached to each other.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P06-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P06-1.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Spermiogenesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The third stage of spermatogenesis is spermiogenesis, during which spherical spermatids undergo morphological changes with no further cell division. This transformation results in the formation of tadpole-shaped haploid spermatids, still attached to each other.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Spermiation",
+      "explicacao_original": "Spermiation is the final, maturation step in spermatogenesis. Spermatids break their attachments with each other and are released from Sertoli cells as haploid spermatozoa to lie free in the lumen of the seminiferous tubule. Prior to spermiation, primary spermatocytes and all their progeny have remained connected by cytoplasmic bridges,",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P07.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P07.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Spermiation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermiation is the final, maturation step in spermatogenesis. Spermatids break their attachments with each other and are released from Sertoli cells as haploid spermatozoa to lie free in the lumen of the seminiferous tubule. Prior to spermiation, primary spermatocytes and all their progeny have remained connected by cytoplasmic bridges,. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Oogenesis",
+      "explicacao_original": "Oogenesis is the process of ovum production and, like spermatogenesis, occurs in several stages involving mitosis and meiosis. The timing of divisions and the number of gametes formed is different between male and female. Diploid, precursor cells, oogonia, are the only germ cells present in the ovary and before birth, they divide by mitosis, producing primary oocytes, which arrest in Meiosis I. Usually only one primary oocyte completes meiosis I each month – to be ovulated as a secondary oocyte. This cell arrests in Meiosis II and must be fertilized (blue arrow) before a mature ovum is formed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P08.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P08.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Oogenesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Oogenesis is the process of ovum production and, like spermatogenesis, occurs in several stages involving mitosis and meiosis. The timing of divisions and the number of gametes formed is different between male and female. Diploid, precursor cells, oogonia, are the only germ cells present in the ovary and before birth, they divide by mitosis, producing primary oocytes, which arrest in Meiosis I. Usually only one primary oocyte completes meiosis I each month – to be ovulated as a secondary oocyte. This cell arrests in Meiosis II and must be fertilized (blue arrow) before a mature ovum is formed.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Mitosis",
+      "explicacao_original": "Diploid oogonia divide by mitosis during fetal development to produce primary oocytes. However, unlike spermatogonia, which are formed throughout life, oogonia do not duplicate themselves and a reservoir of oogonia is not formed. Consequently, only diploid primary oocytes are present in the ovary at birth, and no further generation of germ cells occurs. Primary oocytes begin meiosis I during fetal development, but arrest in prophase of that division before birth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P09.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P09.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Mitosis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diploid oogonia divide by mitosis during fetal development to produce primary oocytes. However, unlike spermatogonia, which are formed throughout life, oogonia do not duplicate themselves and a reservoir of oogonia is not formed. Consequently, only diploid primary oocytes are present in the ovary at birth, and no further generation of germ cells occurs. Primary oocytes begin meiosis I during fetal development, but arrest in prophase of that division before birth.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Meiosis",
+      "explicacao_original": "During a woman’s reproductive life, usually only one primary oocyte resumes the first meiotic division each month before ovulation, forming a secondary oocyte and a nonfunctional polar body (red arrow). This oocyte arrests in meiosis II, and it and its polar body are ovulated and transported into the oviduct for fertilization. If fertilization does not occur, oogenesis is not completed and a mature ovum is never formed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P10.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P10.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Meiosis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During a woman’s reproductive life, usually only one primary oocyte resumes the first meiotic division each month before ovulation, forming a secondary oocyte and a nonfunctional polar body (red arrow). This oocyte arrests in meiosis II, and it and its polar body are ovulated and transported into the oviduct for fertilization. If fertilization does not occur, oogenesis is not completed and a mature ovum is never formed.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Fertilization",
+      "explicacao_original": "If fertilization occurs (blue arrow), the secondary oocyte completes meiosis II, forming an ovum and a second polar body (red arrow). The resulting ovum is present only transiently, as male and female haploid nuclei (N, pronuclei) form and fuse to create a diploid zygote. The first polar body may also divide during meiosis II, as shown here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/11/O.R.M.O.02.P11.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.02.P11.png",
+      "imagem_base": "imagens/base/O.R.M.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/10/O.R.M.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.02.jpg'. Destaca a estrutura ou conceito 'Fertilization' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: If fertilization occurs (blue arrow), the secondary oocyte completes meiosis II, forming an ovum and a second polar body (red arrow). The resulting ovum is present only transiently, as male and female haploid nuclei (N, pronuclei) form and fuse to create a diploid zygote. The first polar body may also divide during meiosis II, as shown here.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

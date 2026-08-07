@@ -1,0 +1,74 @@
+{
+  "id": 12330,
+  "titulo": "Ovary: primary multilaminar follicle",
+  "titulo_wordpress": "Ovary 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 7"
+  ],
+  "descricao_original": "A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.07.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: primary multilaminar follicle', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 7. Descricao original da pagina: A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary oocyte",
+      "explicacao_original": "A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.07.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary multilaminar follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.07.jpg'. Destaca a estrutura ou conceito 'Primary oocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zona pellucida",
+      "explicacao_original": "A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.07.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary multilaminar follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.07.jpg'. Destaca a estrutura ou conceito 'Zona pellucida' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Granulosa cells",
+      "explicacao_original": "A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.07.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary multilaminar follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.07.jpg'. Destaca a estrutura ou conceito 'Granulosa cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.07.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary multilaminar follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.07.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Theca folliculi",
+      "explicacao_original": "A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.07.P05.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary multilaminar follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.07.jpg'. Destaca a estrutura ou conceito 'Theca folliculi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A primary multilaminar follicle is formed when follicular cells, now termed granulosa cells, increase in volume and number, forming a stratified epithelial layer. Zona pellucida, a highly refractile, glycoproteinaceous layer, is prominent around the oocyte at this stage. Stromal cells surrounding the follicle differentiate into the theca (theca folliculi). 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-7/, acesso em 2026-08-07."
+    }
+  ]
+}

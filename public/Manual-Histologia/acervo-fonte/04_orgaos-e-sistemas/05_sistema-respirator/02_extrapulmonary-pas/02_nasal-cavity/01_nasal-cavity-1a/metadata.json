@@ -1,0 +1,96 @@
+{
+  "id": 30853,
+  "titulo": "Nasal cavities",
+  "titulo_wordpress": "Nasal cavity 1A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Nasal Cavity",
+    "Nasal cavity 1A"
+  ],
+  "descricao_original": "The nasal cavities are shown in the diagram (left) and in a histological image (right). The blue shaded areas in the diagram represent spaces within the nasal cavity, pharynx, larynx and trachea. The image on the right shows the nasal cavity in a frontal section of the head. The symmetry in this image was digitally generated for illustration purposes from a single hemisection. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/",
+  "creditos_identificados": [
+    "Image source: The image on the right was taken of a slide in the University of New England College of Osteopathic Medicine slide collection. The symmetry in this image was digitally generated for illustration purposes from a single hemisection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "arquivo": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nasal cavities', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Descricao original da pagina: The nasal cavities are shown in the diagram (left) and in a histological image (right). The blue shaded areas in the diagram represent spaces within the nasal cavity, pharynx, larynx and trachea. The image on the right shows the nasal cavity in a frontal section of the head. The symmetry in this image was digitally generated for illustration purposes from a single hemisection. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Area shown on the right",
+      "explicacao_original": "The nasal cavities are shown in the diagram (left) and in a histological image (right). The blue shaded areas in the diagram represent spaces within the nasal cavity, pharynx, larynx and trachea. The image on the right shows the nasal cavity in a frontal section of the head. The symmetry in this image was digitally generated for illustration purposes from a single hemisection. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-1.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-1.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Area shown on the right' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nasal cavities are shown in the diagram (left) and in a histological image (right). The blue shaded areas in the diagram represent spaces within the nasal cavity, pharynx, larynx and trachea. The image on the right shows the nasal cavity in a frontal section of the head. The symmetry in this image was digitally generated for illustration purposes from a single hemisection. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nasal cavities",
+      "explicacao_original": "The nasal cavities are extrapulmonary passages that are part of the conducting portion of the respiratory system. The two nasal cavities are separated by the nasal septum and their lateral walls are formed by the bony nasal conchae (turbinate bones). Most of the nasal cavities are lined by respiratory epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-2.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-2.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Nasal cavities' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nasal cavities are extrapulmonary passages that are part of the conducting portion of the respiratory system. The two nasal cavities are separated by the nasal septum and their lateral walls are formed by the bony nasal conchae (turbinate bones). Most of the nasal cavities are lined by respiratory epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nasal septum",
+      "explicacao_original": "The two nasal cavities are separated by the nasal septum which is formed by hyaline cartilage in its anterior region and bone posteriorly.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-3.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-3.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Nasal septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The two nasal cavities are separated by the nasal septum which is formed by hyaline cartilage in its anterior region and bone posteriorly.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Conchae (turbinates)",
+      "explicacao_original": "Conchae are shelves of bone that protrude into the nasal cavity. The three pairs of conchae, inferior, middle and superior, are mostly lined by respiratory mucosa that serves to warm and moisten inspired air.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-4.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-4.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Conchae (turbinates)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Conchae are shelves of bone that protrude into the nasal cavity. The three pairs of conchae, inferior, middle and superior, are mostly lined by respiratory mucosa that serves to warm and moisten inspired air.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Olfactory epithelium",
+      "explicacao_original": "Highly specialized olfactory epithelium lines the upper portions of the nasal septum and the upper portions of the superior turbinate bones. Olfactory epithelium contains neurons that detect odorants in the air, transmitting that information to the brain for the perception of smell. The remainder of the nasal cavity is lined by respiratory epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-5.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-5.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Olfactory epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Highly specialized olfactory epithelium lines the upper portions of the nasal septum and the upper portions of the superior turbinate bones. Olfactory epithelium contains neurons that detect odorants in the air, transmitting that information to the brain for the perception of smell. The remainder of the nasal cavity is lined by respiratory epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Paranasal sinuses",
+      "explicacao_original": "Paranasal sinuses are air-filled cavities within the skull bones that extend from the nasal cavities. They are lined by respiratory epithelium and serve to humidify the air and lighten the skull.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-6A.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-6A.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Paranasal sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Paranasal sinuses are air-filled cavities within the skull bones that extend from the nasal cavities. They are lined by respiratory epithelium and serve to humidify the air and lighten the skull.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "The image on the right was taken of a slide in the University of New England College of Osteopathic Medicine slide collection. The symmetry in this image was digitally generated for illustration purposes from a single hemisection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW-7.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.01-NEW-7.png",
+      "imagem_base": "imagens/base/O.R.E.N.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.01-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image on the right was taken of a slide in the University of New England College of Osteopathic Medicine slide collection. The symmetry in this image was digitally generated for illustration purposes from a single hemisection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

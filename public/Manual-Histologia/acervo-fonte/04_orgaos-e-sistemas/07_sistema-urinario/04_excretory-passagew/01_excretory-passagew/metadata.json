@@ -1,0 +1,93 @@
+{
+  "id": 20819,
+  "titulo": "Excretory passageways",
+  "titulo_wordpress": "Excretory passageways 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Excretory passageways",
+    "Excretory passageways 1"
+  ],
+  "descricao_original": "Urine passes out of the uriniferous tubule at the area cribosa of the renal pyramid and enters a series of passageways that stores and transports it to the exterior of the body. Urine flows sequentially to a minor calyx, a major calyx, and the renal pelvis, located in the renal sinus. Urine leaves each kidney through the ureter to the urinary bladder, where it is stored. Urine is finally voided through the urethra.",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "arquivo": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Excretory passageways', no setor Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Descricao original da pagina: Urine passes out of the uriniferous tubule at the area cribosa of the renal pyramid and enters a series of passageways that stores and transports it to the exterior of the body. Urine flows sequentially to a minor calyx, a major calyx, and the renal pelvis, located in the renal sinus. Urine leaves each kidney through the ureter to the urinary bladder, where it is stored. Urine is finally voided through the urethra.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Renal pyramid",
+      "explicacao_original": "Renal pyramids are conical structures composed of the straight, parallel segments of nephrons and collecting ducts. The base of a pyramid lies adjacent to the cortex, while its apex (papilla) projects into a minor calyx. Human kidneys have 10-18 pyramids (multi-pyramidal).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Renal pyramid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Renal pyramids are conical structures composed of the straight, parallel segments of nephrons and collecting ducts. The base of a pyramid lies adjacent to the cortex, while its apex (papilla) projects into a minor calyx. Human kidneys have 10-18 pyramids (multi-pyramidal).. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Renal papillae",
+      "explicacao_original": "Renal pyramids are conical structures composed of the straight, parallel segments of nephrons and collecting ducts. The base of a pyramid lies adjacent to the cortex, while its apex (papilla) projects into a minor calyx. Human kidneys have 10-18 pyramids (multi-pyramidal).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Renal papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Renal pyramids are conical structures composed of the straight, parallel segments of nephrons and collecting ducts. The base of a pyramid lies adjacent to the cortex, while its apex (papilla) projects into a minor calyx. Human kidneys have 10-18 pyramids (multi-pyramidal).. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Minor calyces",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of renal pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Minor calyces' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of renal pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Major calyx",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of renal pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Major calyx' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of renal pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Renal pelvis",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Renal pelvis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ureter",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Ureter' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis, which continues as the ureter. The bladder and urethra are not depicted in this image.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Renal sinus",
+      "explicacao_original": "The renal sinus, at the indented hilum of the kidney, is filled with loose connective tissue and adipose cells. The excretory passageways are located within the sinus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.ExPass-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.ExPass-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.ExPass-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Excretory passageways'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.ExPass-1.jpg'. Destaca a estrutura ou conceito 'Renal sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The renal sinus, at the indented hilum of the kidney, is filled with loose connective tissue and adipose cells. The excretory passageways are located within the sinus.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-1/, acesso em 2026-08-07."
+    }
+  ]
+}

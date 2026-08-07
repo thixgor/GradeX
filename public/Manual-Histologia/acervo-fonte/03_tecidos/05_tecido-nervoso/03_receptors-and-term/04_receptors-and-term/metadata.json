@@ -1,0 +1,53 @@
+{
+  "id": 3011,
+  "titulo": "Terminals",
+  "titulo_wordpress": "Receptors and terminals 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Receptors and Terminals",
+    "Receptors and terminals 4"
+  ],
+  "descricao_original": "Axons from multipolar, motor neurons terminate on effector structures, such as another neuron, a muscle or a gland. Axons seen here are terminating on skeletal muscle fibers as neuromuscular junctions. Release of the neurotransmitter acetylcholine from these terminals, results in contraction of the muscle fibers. 300x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Rec-4.jpg",
+      "arquivo": "imagens/base/T.N.Rec-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Terminals', no setor Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 4. Descricao original da pagina: Axons from multipolar, motor neurons terminate on effector structures, such as another neuron, a muscle or a gland. Axons seen here are terminating on skeletal muscle fibers as neuromuscular junctions. Release of the neurotransmitter acetylcholine from these terminals, results in contraction of the muscle fibers. 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neuromuscular junctions",
+      "explicacao_original": "Contraction of skeletal muscle is initiated by depolarization of the sarcolemma at the neuromuscular junction (NMJ) or motor end plate. NMJs are specialized synapses between axon terminals of multipolar motor neurons and the sarcolemma beneath them. Here, several axons are terminating in NMJs on skeletal muscle fibers. The motor neuron plus all the skeletal muscle fibers it innervates is a motor unit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-4-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Rec-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-4.jpg'. Destaca a estrutura ou conceito 'Neuromuscular junctions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Contraction of skeletal muscle is initiated by depolarization of the sarcolemma at the neuromuscular junction (NMJ) or motor end plate. NMJs are specialized synapses between axon terminals of multipolar motor neurons and the sarcolemma beneath them. Here, several axons are terminating in NMJs on skeletal muscle fibers. The motor neuron plus all the skeletal muscle fibers it innervates is a motor unit.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Skeletal muscle fibers",
+      "explicacao_original": "Contraction of skeletal muscle is initiated by depolarization of the sarcolemma at the neuromuscular junction (NMJ) or motor end plate. NMJs are specialized synapses between axon terminals of multipolar motor neurons and the sarcolemma beneath them. Here, several axons are terminating in NMJs on skeletal muscle fibers. The motor neuron plus all the skeletal muscle fibers it innervates is a motor unit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-4-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Rec-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-4.jpg'. Destaca a estrutura ou conceito 'Skeletal muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Contraction of skeletal muscle is initiated by depolarization of the sarcolemma at the neuromuscular junction (NMJ) or motor end plate. NMJs are specialized synapses between axon terminals of multipolar motor neurons and the sarcolemma beneath them. Here, several axons are terminating in NMJs on skeletal muscle fibers. The motor neuron plus all the skeletal muscle fibers it innervates is a motor unit.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axons",
+      "explicacao_original": "Contraction of skeletal muscle is initiated by depolarization of the sarcolemma at the neuromuscular junction (NMJ) or motor end plate. NMJs are specialized synapses between axon terminals of multipolar motor neurons and the sarcolemma beneath them. Here, several axons are terminating in NMJs on skeletal muscle fibers. The motor neuron plus all the skeletal muscle fibers it innervates is a motor unit.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-4-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Rec-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-4.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Contraction of skeletal muscle is initiated by depolarization of the sarcolemma at the neuromuscular junction (NMJ) or motor end plate. NMJs are specialized synapses between axon terminals of multipolar motor neurons and the sarcolemma beneath them. Here, several axons are terminating in NMJs on skeletal muscle fibers. The motor neuron plus all the skeletal muscle fibers it innervates is a motor unit.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "id": 30472,
+  "titulo": "Secondary lymphoid nodule",
+  "titulo_wordpress": "Tissues 6A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 6A"
+  ],
+  "descricao_original": "This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Virginia slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secondary lymphoid nodule', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Descricao original da pagina: This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secondary nodule",
+      "explicacao_original": "This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Secondary nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Germinal center",
+      "explicacao_original": "This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mantle",
+      "explicacao_original": "This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Mantle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This larger secondary nodule shows an early germinal center surrounded by a mantle of small, unstimulated B lymphocytes. Here, the nodule has infiltrated the muscularis mucosae. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Virginia slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/UVa-source-ping.png",
+      "arquivo": "imagens/marcadores/UVa-source-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Virginia slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Marcador 7",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-1-ping-2.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Marcador 7' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Marcador 8",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-2-ping-2.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Marcador 8' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Marcador 9",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-3-ping-2.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Marcador 9' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Marcador 10",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-6A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-6A-5-ping-2.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A-1.jpg'. Destaca a estrutura ou conceito 'Marcador 10' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-6a/, acesso em 2026-08-07."
+    }
+  ]
+}

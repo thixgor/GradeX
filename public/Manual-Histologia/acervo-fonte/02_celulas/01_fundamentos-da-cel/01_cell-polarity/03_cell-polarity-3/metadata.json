@@ -1,0 +1,63 @@
+{
+  "id": 147,
+  "titulo": "Polarity",
+  "titulo_wordpress": "Cell Polarity 3",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Cell Polarity",
+    "Cell Polarity 3"
+  ],
+  "descricao_original": "These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.",
+  "url_origem": "https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-3.jpg",
+      "arquivo": "imagens/base/C.B.CP-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Polarity', no setor Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 3. Descricao original da pagina: These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gland cells",
+      "explicacao_original": "These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-3-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-3-1-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-3.jpg'. Destaca a estrutura ou conceito 'Gland cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-3-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-3-2-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-3.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-3-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-3-3-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-3.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-3-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-3-4-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-3.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cells in the pituitary gland are examples of non-polarized cells. Note how the secretory granules are homogenously distributed throughout the cytoplasm and not restricted to one region of the cell. This arrangement reflects the fact that these cells can release their secretory product from any site on the cell surface. Pituitary gland, 1000x.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-3/, acesso em 2026-08-07."
+    }
+  ]
+}

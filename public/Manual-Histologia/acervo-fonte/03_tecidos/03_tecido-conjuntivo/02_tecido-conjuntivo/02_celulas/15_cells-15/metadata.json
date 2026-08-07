@@ -1,0 +1,54 @@
+{
+  "id": 16825,
+  "titulo": "Mast cell",
+  "titulo_wordpress": "Cells 15",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 15"
+  ],
+  "descricao_original": "Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response. Two major classes of mast cells are recognized, connective tissue mast cells which are located throughout the body and mucosal mast cells that a present in the respiratory and digestive systems. Masts cells are related, but not identical, to basophils. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/15.jpg",
+      "arquivo": "imagens/base/15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mast cell', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 15. Descricao original da pagina: Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response. Two major classes of mast cells are recognized, connective tissue mast cells which are located throughout the body and mucosal mast cells that a present in the respiratory and digestive systems. Masts cells are related, but not identical, to basophils. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Connective tissue mast cells",
+      "explicacao_original": "Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response. Two major classes of mast cells are recognized, connective tissue mast cells which are located throughout the body and mucosal mast cells that a present in the respiratory and digestive systems. Masts cells are related, but not identical, to basophils. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-15-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-15-1-ping.png",
+      "imagem_base": "imagens/base/15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a '15.jpg'. Destaca a estrutura ou conceito 'Connective tissue mast cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response. Two major classes of mast cells are recognized, connective tissue mast cells which are located throughout the body and mucosal mast cells that a present in the respiratory and digestive systems. Masts cells are related, but not identical, to basophils. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucosal mast cells",
+      "explicacao_original": "Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response. Two major classes of mast cells are recognized, connective tissue mast cells which are located throughout the body and mucosal mast cells that a present in the respiratory and digestive systems. Masts cells are related, but not identical, to basophils. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-15-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-15-2-ping.png",
+      "imagem_base": "imagens/base/15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a '15.jpg'. Destaca a estrutura ou conceito 'Mucosal mast cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells are produced in the bone marrow, enter the circulation and then become fixed, resident cells in connective tissue. These cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain mediators of the inflammatory response. Two major classes of mast cells are recognized, connective tissue mast cells which are located throughout the body and mucosal mast cells that a present in the respiratory and digestive systems. Masts cells are related, but not identical, to basophils. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Granules",
+      "explicacao_original": "Mast cell granules are heterogeneous in size and content. Connective tissue mast cell granules contain heparin and histamine as well as proteases, chymase and tryptase. Mucosal mast cell granules contain tryptase only along with heparin and histamine. Heparin is a heavily sulfated proteoglycan that stains metachromatically with dyes like trypan blue. With H & E staining, the granules stain mostly purplish-red.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-15-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-15-3-ping.png",
+      "imagem_base": "imagens/base/15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a '15.jpg'. Destaca a estrutura ou conceito 'Granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cell granules are heterogeneous in size and content. Connective tissue mast cell granules contain heparin and histamine as well as proteases, chymase and tryptase. Mucosal mast cell granules contain tryptase only along with heparin and histamine. Heparin is a heavily sulfated proteoglycan that stains metachromatically with dyes like trypan blue. With H & E staining, the granules stain mostly purplish-red.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-15/, acesso em 2026-08-07."
+    }
+  ]
+}

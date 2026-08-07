@@ -1,0 +1,112 @@
+{
+  "id": 11821,
+  "titulo": "Organs",
+  "titulo_wordpress": "Tissues and organs 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Tissues and organs 4"
+  ],
+  "descricao_original": "Some organs are not usually thought of as organs, but because they are formed by two or more tissues, they are truly organs. Bone, skin and blood vessels fall into this category. 100x, 100x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "arquivo": "imagens/base/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Organs', no setor Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Descricao original da pagina: Some organs are not usually thought of as organs, but because they are formed by two or more tissues, they are truly organs. Bone, skin and blood vessels fall into this category. 100x, 100x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Bone",
+      "explicacao_original": "Bone is an organ because it is composed of several types of connective tissue (the tissue bone, bone marrow, and a connective tissue covering), blood vessels (composed of epithelium and muscle), and nerves.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone is an organ because it is composed of several types of connective tissue (the tissue bone, bone marrow, and a connective tissue covering), blood vessels (composed of epithelium and muscle), and nerves.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Skin",
+      "explicacao_original": "Skin is composed of an epidermis of epithelial tissue and a dermis of connective tissue. Blood vessels and nerves supply the skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skin is composed of an epidermis of epithelial tissue and a dermis of connective tissue. Blood vessels and nerves supply the skin.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Artery",
+      "explicacao_original": "Blood vessels, like this medium artery, are lined by an epithelium and have a wall composed of muscle and connective tissue. Vessels may even have their own blood and nerve supplies, although neither is visible here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood vessels, like this medium artery, are lined by an epithelium and have a wall composed of muscle and connective tissue. Vessels may even have their own blood and nerve supplies, although neither is visible here.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Two of these organs have a free surface which, therefore, is lined by an epithelium. The free surface of the skin is the exterior surface of the body and the free surface of the artery is the lumen through which blood flows.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two of these organs have a free surface which, therefore, is lined by an epithelium. The free surface of the skin is the exterior surface of the body and the free surface of the artery is the lumen through which blood flows.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Connective tissue proper",
+      "explicacao_original": "Several types of connective tissue are found in these three organs. One type, connective tissue proper, forms a covering for bone, the dermis of skin, the hypodermis beneath the skin, and part of the wall of the artery.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Connective tissue proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several types of connective tissue are found in these three organs. One type, connective tissue proper, forms a covering for bone, the dermis of skin, the hypodermis beneath the skin, and part of the wall of the artery.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bone",
+      "explicacao_original": "Bone, another type of connective tissue, has a firm, calcified matrix that gives bone its rigidity. Bone cells are present within the matrix and on the bone surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone, another type of connective tissue, has a firm, calcified matrix that gives bone its rigidity. Bone cells are present within the matrix and on the bone surface.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bone marrow",
+      "explicacao_original": "The spaces within bone are filled with another type of connective tissue called bone marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-7-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spaces within bone are filled with another type of connective tissue called bone marrow.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Muscle",
+      "explicacao_original": "Muscle is a frequent component of organs and forms a majority of the arterial wall. Muscle also forms an important component in the walls of hollow organs, as seen in the previous image. Muscle is absent in bone, except in the walls of the vessels supplying the bones; except for a band of muscle attached to hair follicles, muscle is also absent in skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-8-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle is a frequent component of organs and forms a majority of the arterial wall. Muscle also forms an important component in the walls of hollow organs, as seen in the previous image. Muscle is absent in bone, except in the walls of the vessels supplying the bones; except for a band of muscle attached to hair follicles, muscle is also absent in skin.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Blood supply",
+      "explicacao_original": "Blood vessels supply all three of these organs, although they are only visible here in the sections of bone and skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.TO-4-9-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.TO-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.TO-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.TO-4.jpg'. Destaca a estrutura ou conceito 'Blood supply' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood vessels supply all three of these organs, although they are only visible here in the sections of bone and skin.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Tissues and organs 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/tissues-and-organs-4/, acesso em 2026-08-07."
+    }
+  ]
+}

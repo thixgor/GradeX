@@ -1,0 +1,147 @@
+{
+  "id": 29086,
+  "titulo": "Developing oral cavity",
+  "titulo_wordpress": "Tooth development 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 2"
+  ],
+  "descricao_original": "This image shows a section of the fetal face between 6-8 weeks of gestation, the time period when tooth development begins. Initially, the ectoderm above the primordial mandible and maxilla thickens and extends two horseshoe-shaped laminar evaginations into the underlying ectomesenchyme: a medial dental lamina, which forms the teeth; and a lateral vestibular lamina that forms the vestibule of the oral cavity. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of South Dakota slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Developing oral cavity', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Descricao original da pagina: This image shows a section of the fetal face between 6-8 weeks of gestation, the time period when tooth development begins. Initially, the ectoderm above the primordial mandible and maxilla thickens and extends two horseshoe-shaped laminar evaginations into the underlying ectomesenchyme: a medial dental lamina, which forms the teeth; and a lateral vestibular lamina that forms the vestibule of the oral cavity. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Oral cavity",
+      "explicacao_original": "This image shows a section of the fetal face between 6-8 weeks of gestation, the time period when tooth development begins. Initially, the ectoderm above the primordial mandible and maxilla thickens and extends two horseshoe-shaped laminar evaginations into the underlying ectomesenchyme: a medial dental lamina, which forms the teeth; and a lateral vestibular lamina that forms the vestibule of the oral cavity. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Oral-cavity.png",
+      "arquivo": "imagens/marcadores/Oral-cavity.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Oral cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a section of the fetal face between 6-8 weeks of gestation, the time period when tooth development begins. Initially, the ectoderm above the primordial mandible and maxilla thickens and extends two horseshoe-shaped laminar evaginations into the underlying ectomesenchyme: a medial dental lamina, which forms the teeth; and a lateral vestibular lamina that forms the vestibule of the oral cavity. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dental lamina",
+      "explicacao_original": "The dental lamina forms a horseshoe-shaped epithelial ridge over the developing mandible and maxilla. Localized proliferative activity in the ridge produces a series of epithelial ingrowths (buds) into the ectomesenchyme at sites corresponding to the positions of the future deciduous teeth. The dental lamina connects the developing tooth bud to the epithelium of the oral cavity. From this point, tooth development proceeds in four stages: bud, cap, bell and crown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Dental-lamina-2.png",
+      "arquivo": "imagens/marcadores/Dental-lamina-2.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Dental lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental lamina forms a horseshoe-shaped epithelial ridge over the developing mandible and maxilla. Localized proliferative activity in the ridge produces a series of epithelial ingrowths (buds) into the ectomesenchyme at sites corresponding to the positions of the future deciduous teeth. The dental lamina connects the developing tooth bud to the epithelium of the oral cavity. From this point, tooth development proceeds in four stages: bud, cap, bell and crown.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tooth bud",
+      "explicacao_original": "The dental lamina forms a horseshoe-shaped epithelial ridge over the developing mandible and maxilla. Localized proliferative activity in the ridge produces a series of epithelial ingrowths (buds) into the ectomesenchyme at sites corresponding to the positions of the future deciduous teeth. The dental lamina connects the developing tooth bud to the epithelium of the oral cavity. From this point, tooth development proceeds in four stages: bud, cap, bell and crown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Tooth-bud.png",
+      "arquivo": "imagens/marcadores/Tooth-bud.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Tooth bud' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental lamina forms a horseshoe-shaped epithelial ridge over the developing mandible and maxilla. Localized proliferative activity in the ridge produces a series of epithelial ingrowths (buds) into the ectomesenchyme at sites corresponding to the positions of the future deciduous teeth. The dental lamina connects the developing tooth bud to the epithelium of the oral cavity. From this point, tooth development proceeds in four stages: bud, cap, bell and crown.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tooth germ",
+      "explicacao_original": "At later stages, the tooth germ develops, consisting of inner and outer enamel epithelia (ectoderm), as well as the dental papillae and dental follicle (ectomesenchyme). The tooth germ is first identifiable at the cap stage of tooth development.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Tooth-germ.png",
+      "arquivo": "imagens/marcadores/Tooth-germ.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Tooth germ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At later stages, the tooth germ develops, consisting of inner and outer enamel epithelia (ectoderm), as well as the dental papillae and dental follicle (ectomesenchyme). The tooth germ is first identifiable at the cap stage of tooth development.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Vestibular lamina",
+      "explicacao_original": "The vestibular lamina is a thickening of the ectoderm in the lateral aspect of the primordial oral cavity. This infolding develops into the vestibule of the oral cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Vestibular-lamina-2.png",
+      "arquivo": "imagens/marcadores/Vestibular-lamina-2.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Vestibular lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibular lamina is a thickening of the ectoderm in the lateral aspect of the primordial oral cavity. This infolding develops into the vestibule of the oral cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tongue",
+      "explicacao_original": "This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Tongue.png",
+      "arquivo": "imagens/marcadores/Tongue.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Tongue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Developing mandible",
+      "explicacao_original": "This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Mandible.png",
+      "arquivo": "imagens/marcadores/Mandible.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Developing mandible' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Palate",
+      "explicacao_original": "This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Palate.png",
+      "arquivo": "imagens/marcadores/Palate.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Palate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Nasal septum",
+      "explicacao_original": "This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Nasal-septum.png",
+      "arquivo": "imagens/marcadores/Nasal-septum.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Nasal septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Nasal cavity",
+      "explicacao_original": "This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Nasal-cavity.png",
+      "arquivo": "imagens/marcadores/Nasal-cavity.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Nasal cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the developing fetal face between 6-8 weeks of gestation. In the primordial jaw, the ectoderm begins to thicken forming a dental lamina in the medial aspect of the primordial oral cavity and a vestibular lamina in its lateral aspect. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "This rectangle indicates the area shown at higher magnification in the next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Next-image.png",
+      "arquivo": "imagens/marcadores/Next-image.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This rectangle indicates the area shown at higher magnification in the next image.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of South Dakota slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/SD-Image-source.png",
+      "arquivo": "imagens/marcadores/SD-Image-source.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TD-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TD-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Developing oral cavity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TD-1.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of South Dakota slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-dev-test/, acesso em 2026-08-07."
+    }
+  ]
+}

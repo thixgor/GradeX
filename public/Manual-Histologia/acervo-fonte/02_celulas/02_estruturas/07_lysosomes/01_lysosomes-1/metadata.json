@@ -1,0 +1,33 @@
+{
+  "id": 1770,
+  "titulo": "Lysosomes",
+  "titulo_wordpress": "Lysosomes 1",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Lysosomes",
+    "Lysosomes 1"
+  ],
+  "descricao_original": "Lysosomes contain hydrolytic enzymes and are the major degradative organelle in the cell. They begin as pre-lysosomal vesicles from the Golgi that fuse with material internalized as endosomes or phagosomes, or with autophagosomes that contain intracellular components that are targeted for degradation. Lysosomes are abundant in cells with high phagocytic activity such as macrophages and certain white blood cells.",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-1.jpg",
+      "arquivo": "imagens/base/C.S.Ly-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lysosomes', no setor Células > Estruturas > Lysosomes > Lysosomes 1. Descricao original da pagina: Lysosomes contain hydrolytic enzymes and are the major degradative organelle in the cell. They begin as pre-lysosomal vesicles from the Golgi that fuse with material internalized as endosomes or phagosomes, or with autophagosomes that contain intracellular components that are targeted for degradation. Lysosomes are abundant in cells with high phagocytic activity such as macrophages and certain white blood cells.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Marcador 1",
+      "explicacao_original": "Lysosomes contain hydrolytic enzymes and are the major degradative organelle in the cell. They begin as pre-lysosomal vesicles from the Golgi that fuse with material internalized as endosomes or phagosomes, or with autophagosomes that contain intracellular components that are targeted for degradation. Lysosomes are abundant in cells with high phagocytic activity such as macrophages and certain white blood cells.",
+      "url": "https://digitalhistology.org/",
+      "arquivo": "imagens/marcadores/marcador-1.png",
+      "imagem_base": "imagens/base/C.S.Ly-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-1.jpg'. Destaca a estrutura ou conceito 'Marcador 1' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes contain hydrolytic enzymes and are the major degradative organelle in the cell. They begin as pre-lysosomal vesicles from the Golgi that fuse with material internalized as endosomes or phagosomes, or with autophagosomes that contain intracellular components that are targeted for degradation. Lysosomes are abundant in cells with high phagocytic activity such as macrophages and certain white blood cells.. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 1. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-1/, acesso em 2026-08-07."
+    }
+  ]
+}

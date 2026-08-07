@@ -1,0 +1,85 @@
+{
+  "id": 4555,
+  "titulo": "Compound acinar gland",
+  "titulo_wordpress": "Compound 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 9"
+  ],
+  "descricao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound acinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Descricao original da pagina: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-8-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-8.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei of secretory cells",
+      "explicacao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-8-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-8-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-8.jpg'. Destaca a estrutura ou conceito 'Nuclei of secretory cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "RER",
+      "explicacao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-8-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-8-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-8.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-8-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-8.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intralobular duct",
+      "explicacao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-8-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-8-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-8.jpg'. Destaca a estrutura ou conceito 'Intralobular duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-8-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-8-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-8.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pancreas is another example of a compound acinar gland. Like the parotid gland, the acini are spherical, with wedge-shaped cells. The cells accumulate eosinophilic secretory granules in their apices and display prominent basophilic rough endoplasmic reticulum at their bases. The compound duct system is also visible in this image. Pancreas 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-9/, acesso em 2026-08-07."
+    }
+  ]
+}

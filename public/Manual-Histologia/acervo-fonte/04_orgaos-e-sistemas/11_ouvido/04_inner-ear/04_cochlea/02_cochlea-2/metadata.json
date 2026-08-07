@@ -1,0 +1,104 @@
+{
+  "id": 14264,
+  "titulo": "Cochlea",
+  "titulo_wordpress": "Cochlea 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 2"
+  ],
+  "descricao_original": "A section of the cochlea shows this bony tube coiled into a spiral. (This non-human tissue shows more than the 2.5 turns present in humans.) The membranous labyrinth, the cochlear duct, is centrally located within the cochlea, dividing it into a scala vestibuli, lying above the cochlear duct, and a scala tympani lying below. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "arquivo": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cochlea', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Descricao original da pagina: A section of the cochlea shows this bony tube coiled into a spiral. (This non-human tissue shows more than the 2.5 turns present in humans.) The membranous labyrinth, the cochlear duct, is centrally located within the cochlea, dividing it into a scala vestibuli, lying above the cochlear duct, and a scala tympani lying below. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cochlear duct",
+      "explicacao_original": "The cochlear duct, part of the membranous labyrinth, is triangular in shape and is centrally located within the spiraling cochlea. Its central position compartmentalizes the cochlea into a scala vestibuli above the cochlear duct and a scala tympani below. The receptor for sound, the organ of Corti, a specialized neuroepithelium, lies in the floor of the cochlear duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Cochlear duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct, part of the membranous labyrinth, is triangular in shape and is centrally located within the spiraling cochlea. Its central position compartmentalizes the cochlea into a scala vestibuli above the cochlear duct and a scala tympani below. The receptor for sound, the organ of Corti, a specialized neuroepithelium, lies in the floor of the cochlear duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Scala vestibuli",
+      "explicacao_original": "The scala vestibuli (black arrows) lies above the cochlear duct and is continuous (red arrow) with the vestibule, hence its name. Scala vestibuli is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala vestibuli is separated from the cochlear duct by the vestibular membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/O.E.IE_.C.02.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Scala vestibuli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The scala vestibuli (black arrows) lies above the cochlear duct and is continuous (red arrow) with the vestibule, hence its name. Scala vestibuli is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala vestibuli is separated from the cochlear duct by the vestibular membrane.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Vestibular membrane",
+      "explicacao_original": "The scala vestibuli (black arrows) lies above the cochlear duct and is continuous (red arrow) with the vestibule, hence its name. Scala vestibuli is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala vestibuli is separated from the cochlear duct by the vestibular membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Vestibular membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The scala vestibuli (black arrows) lies above the cochlear duct and is continuous (red arrow) with the vestibule, hence its name. Scala vestibuli is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala vestibuli is separated from the cochlear duct by the vestibular membrane.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Scala tympani",
+      "explicacao_original": "The scala tympani (black arrows) lies below the cochlear duct and is continuous with scala vestibuli at the helicotrema. Scala tympani is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala tympani is separated from the cochlear duct by the basilar membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Scala tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The scala tympani (black arrows) lies below the cochlear duct and is continuous with scala vestibuli at the helicotrema. Scala tympani is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala tympani is separated from the cochlear duct by the basilar membrane.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basilar membrane",
+      "explicacao_original": "The scala tympani (black arrows) lies below the cochlear duct and is continuous with scala vestibuli at the helicotrema (red arrows). Scala tympani is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala tympani is separated from the cochlear duct by the basilar membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Basilar membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The scala tympani (black arrows) lies below the cochlear duct and is continuous with scala vestibuli at the helicotrema (red arrows). Scala tympani is part of the osseous labyrinth and, therefore, is filled with perilymph. Scala tympani is separated from the cochlear duct by the basilar membrane.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Modiolus",
+      "explicacao_original": "The modiolus, the bony, central framework of the cochlea, resembles the core of a screw. The threads of the screw spiraling around the core are formed by the osseous spiral lamina, a thin, bony process supporting the floor of the cochlear duct. The osseous spiral lamina is wider at the base of the cochlea and narrower at its apex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Modiolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The modiolus, the bony, central framework of the cochlea, resembles the core of a screw. The threads of the screw spiraling around the core are formed by the osseous spiral lamina, a thin, bony process supporting the floor of the cochlear duct. The osseous spiral lamina is wider at the base of the cochlea and narrower at its apex.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Osseous spiral lamina",
+      "explicacao_original": "The modiolus, the bony, central framework of the cochlea, resembles the core of a screw. The threads of the screw spiraling around the core are formed by the osseous spiral lamina, a thin, bony process supporting the floor of the cochlear duct. The osseous spiral lamina is wider at the base of the cochlea and narrower at its apex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'Osseous spiral lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The modiolus, the bony, central framework of the cochlea, resembles the core of a screw. The threads of the screw spiraling around the core are formed by the osseous spiral lamina, a thin, bony process supporting the floor of the cochlear duct. The osseous spiral lamina is wider at the base of the cochlea and narrower at its apex.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "CN VIII",
+      "explicacao_original": "The cochlear division of CN VIII innervates the auditory receptor, the organ of Corti. Peripheral processes leave the receptor and pass through the osseous spiral lamina to reach the spiral ganglion (arrows), where their bipolar nerve cell bodies are located. Central processes form CN VIII (X) and travel through the center of the modiolus to join the vestibular portion of this nerve.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.02.P08.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.02.P08.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.02-useA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.02-useA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.02-useA.jpg'. Destaca a estrutura ou conceito 'CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear division of CN VIII innervates the auditory receptor, the organ of Corti. Peripheral processes leave the receptor and pass through the osseous spiral lamina to reach the spiral ganglion (arrows), where their bipolar nerve cell bodies are located. Central processes form CN VIII (X) and travel through the center of the modiolus to join the vestibular portion of this nerve.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-2/, acesso em 2026-08-07."
+    }
+  ]
+}

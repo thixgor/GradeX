@@ -1,0 +1,84 @@
+{
+  "id": 3042,
+  "titulo": "Oligodendrocytes",
+  "titulo_wordpress": "Supporting cells CNS 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 4"
+  ],
+  "descricao_original": "This section of developing rat spinal cord shows a multipolar, motor neuron surrounded by oligodendrocytes and astrocytes. The oligodendrocyte nuclei are smaller and more heterochromatic than are astrocyte nuclei. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oligodendrocytes', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Descricao original da pagina: This section of developing rat spinal cord shows a multipolar, motor neuron surrounded by oligodendrocytes and astrocytes. The oligodendrocyte nuclei are smaller and more heterochromatic than are astrocyte nuclei. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Oligodendrocytes",
+      "explicacao_original": "Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-4-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-4-darker.jpg'. Destaca a estrutura ou conceito 'Oligodendrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Astrocytes",
+      "explicacao_original": "Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-4-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-4-darker.jpg'. Destaca a estrutura ou conceito 'Astrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myelinated axons",
+      "explicacao_original": "Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-4-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-4-darker.jpg'. Destaca a estrutura ou conceito 'Myelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Multipolar neuron",
+      "explicacao_original": "Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-4-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-4-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-4-darker.jpg'. Destaca a estrutura ou conceito 'Multipolar neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dendrites",
+      "explicacao_original": "Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/04/T.N.SuppCNS-4-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-4-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-4-darker.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nissl bodies",
+      "explicacao_original": "Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/04/T.N.SuppCNS-4-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-4-6-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-4-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-4-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-4-darker.jpg'. Destaca a estrutura ou conceito 'Nissl bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this is a section of developing rat spinal cord, some of the oligodendrocytes are still immature (red arrows). In these cells, the nuclei are larger and more euchromatic and the cytoplasm is more extensive than that in the more mature oligodendrocytes (yellow arrows). Also visible are the pale-staining nuclei of astrocytes.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-4/, acesso em 2026-08-07."
+    }
+  ]
+}

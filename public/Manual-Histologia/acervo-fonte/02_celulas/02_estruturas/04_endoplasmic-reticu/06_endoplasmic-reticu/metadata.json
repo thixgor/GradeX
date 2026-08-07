@@ -1,0 +1,63 @@
+{
+  "id": 1440,
+  "titulo": "Rough endoplasmic reticulum",
+  "titulo_wordpress": "Endoplasmic reticulum 6",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Endoplasmic Reticulum",
+    "Endoplasmic reticulum 6"
+  ],
+  "descricao_original": "This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6.jpg",
+      "arquivo": "imagens/base/C.S.ER-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Rough endoplasmic reticulum', no setor Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 6. Descricao original da pagina: This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "RER cistern",
+      "explicacao_original": "This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-6-1-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-6.jpg'. Destaca a estrutura ou conceito 'RER cistern' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cistern lumen",
+      "explicacao_original": "This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-6-2-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-6.jpg'. Destaca a estrutura ou conceito 'Cistern lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ribosomes",
+      "explicacao_original": "This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-6-3-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-6.jpg'. Destaca a estrutura ou conceito 'Ribosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.S.ER-6-cyto-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-6-cyto-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-6.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows ribosomes aligned along the cytoplasmic surface of the membranes of the endoplasmic reticulum. Ribosomes are approximately 25 nanometers in diameter and synthesize proteins, which are either inserted into the RER membrane or are translocated into the lumen of the cistern. 65,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-6/, acesso em 2026-08-07."
+    }
+  ]
+}

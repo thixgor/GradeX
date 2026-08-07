@@ -1,0 +1,73 @@
+{
+  "id": 2971,
+  "titulo": "Multipolar neuron",
+  "titulo_wordpress": "Neuron types 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 1"
+  ],
+  "descricao_original": "This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1.jpg",
+      "arquivo": "imagens/base/T.N.Type-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Multipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 1. Descricao original da pagina: This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dendrites",
+      "explicacao_original": "This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-1-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-1.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Axon",
+      "explicacao_original": "This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-1-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-1.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cell body",
+      "explicacao_original": "This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-1-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-1.jpg'. Destaca a estrutura ou conceito 'Cell body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-1-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-1.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-1-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-1.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a multipolar neuron in an H&E stained smear of spinal cord, a technique that displays this neuron in its entirety. Note the axon, euchromatic nucleus, nucleolus and numerous dendrites emanating from the cell body. The basophilic material in the cell body and processes is Nissl. Small nuclei are those of neuroglial cells. 200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-1/, acesso em 2026-08-07."
+    }
+  ]
+}

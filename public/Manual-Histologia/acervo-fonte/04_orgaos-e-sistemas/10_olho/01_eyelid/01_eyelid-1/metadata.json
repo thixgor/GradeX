@@ -1,0 +1,145 @@
+{
+  "id": 9184,
+  "titulo": "Eyelid",
+  "titulo_wordpress": "Eyelid 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Eyelid",
+    "Eyelid 1"
+  ],
+  "descricao_original": "The eyelid is an accessory eye structure, not part of the eye proper. The eyelid is a movable fold of tissue that protects the anterior surface of the globe. The eyelid is covered by skin on its external surface and by conjunctiva on the interior. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of New England College of Osteopathic Medicine collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Eyelid', no setor Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Descricao original da pagina: The eyelid is an accessory eye structure, not part of the eye proper. The eyelid is a movable fold of tissue that protects the anterior surface of the globe. The eyelid is covered by skin on its external surface and by conjunctiva on the interior. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Skin",
+      "explicacao_original": "The skin of the eyelid is thin skin containing many small hairs with sebaceous and sweat glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The skin of the eyelid is thin skin containing many small hairs with sebaceous and sweat glands.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tarsus",
+      "explicacao_original": "The tarsus consist of two tarsal plates and is composed of dense connective tissue. The tarsal plates enclose the Meibomium glands and maintain the shape of the eyelid.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Tarsus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tarsus consist of two tarsal plates and is composed of dense connective tissue. The tarsal plates enclose the Meibomium glands and maintain the shape of the eyelid.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Meibomian glands",
+      "explicacao_original": "The Meibomian glands are modified sebaceous glands embedded in the tarsus. The secretions of these glands provide an oily surface layer to the tear film that reduces evaporation of this layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Meibomian glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Meibomian glands are modified sebaceous glands embedded in the tarsus. The secretions of these glands provide an oily surface layer to the tear film that reduces evaporation of this layer.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Palpebral conjunctiva",
+      "explicacao_original": "The conjunctiva is a mucous membrane composed of a stratified columnar epithelium with goblet cells. The palpebral conjunctiva covers the inner surface of the eyelid and is reflected onto the anterior surface of the sclera as bulbar conjunctiva. The epithelium of the bulbar conjunctiva is continuous with that of the cornea.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Palpebral conjunctiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The conjunctiva is a mucous membrane composed of a stratified columnar epithelium with goblet cells. The palpebral conjunctiva covers the inner surface of the eyelid and is reflected onto the anterior surface of the sclera as bulbar conjunctiva. The epithelium of the bulbar conjunctiva is continuous with that of the cornea.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Bulbar conjunctiva",
+      "explicacao_original": "The conjunctiva is a mucous membrane composed of a stratified columnar epithelium with goblet cells. The palpebral conjunctiva covers the inner surface of the eyelid and is reflected onto the anterior surface of the sclera as bulbar conjunctiva. The epithelium of the bulbar conjunctiva is continuous with that of the cornea.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Bulbar conjunctiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The conjunctiva is a mucous membrane composed of a stratified columnar epithelium with goblet cells. The palpebral conjunctiva covers the inner surface of the eyelid and is reflected onto the anterior surface of the sclera as bulbar conjunctiva. The epithelium of the bulbar conjunctiva is continuous with that of the cornea.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fornix",
+      "explicacao_original": "The recess formed by the reflected conjunctiva is called the fornix and encloses the conjunctival sac.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Fornix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The recess formed by the reflected conjunctiva is called the fornix and encloses the conjunctival sac.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Eyelash",
+      "explicacao_original": "The lashes are positioned in two or three rows at the tip of the eyelid. They are distinguished by having no arrector pili muscles. Sebaceous and uncoiled sweat glands terminate in the follicles of these hairs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Eyelash' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lashes are positioned in two or three rows at the tip of the eyelid. They are distinguished by having no arrector pili muscles. Sebaceous and uncoiled sweat glands terminate in the follicles of these hairs.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Orbicularis oculi muscle",
+      "explicacao_original": "The orbicularis oculi is a muscle of facial expression that surrounds the orbit. A portion of this skeletal muscle extends into the core of the eyelid, serving as the sphincter muscle that closes the eyelids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Orbicularis oculi muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The orbicularis oculi is a muscle of facial expression that surrounds the orbit. A portion of this skeletal muscle extends into the core of the eyelid, serving as the sphincter muscle that closes the eyelids.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Lens",
+      "explicacao_original": "Additional structures in the anterior portion of the eye are also visible, including the lens, iris, cornea and pupil.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Additional structures in the anterior portion of the eye are also visible, including the lens, iris, cornea and pupil.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Iris",
+      "explicacao_original": "Additional structures in the anterior portion of the eye are also visible, including the lens, iris, cornea and pupil.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-10-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Iris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Additional structures in the anterior portion of the eye are also visible, including the lens, iris, cornea and pupil.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Cornea",
+      "explicacao_original": "Additional structures in the anterior portion of the eye are also visible, including the lens, iris, cornea and pupil.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Eyelid-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Eyelid-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Cornea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Additional structures in the anterior portion of the eye are also visible, including the lens, iris, cornea and pupil.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of New England College of Osteopathic Medicine collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/UNE-source-ping.png",
+      "arquivo": "imagens/marcadores/UNE-source-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Eyelid-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Eyelid-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eyelid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Eyelid-1.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of New England College of Osteopathic Medicine collection.. Contexto setorial: Órgãos e Sistemas > Olho > Eyelid > Eyelid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/eyelid/eyelid-1/, acesso em 2026-08-07."
+    }
+  ]
+}

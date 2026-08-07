@@ -1,0 +1,113 @@
+{
+  "id": 3068,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 10"
+  ],
+  "descricao_original": "This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. Myelin internodes terminate on either side of the node in a region called the paranode, corresponding to the position of paranodal loops. 40,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "arquivo": "imagens/base/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Descricao original da pagina: This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. Myelin internodes terminate on either side of the node in a region called the paranode, corresponding to the position of paranodal loops. 40,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axon",
+      "explicacao_original": "This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. Myelin internodes terminate on either side of the node in a region called the paranode, corresponding to the position of paranodal loops. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. Myelin internodes terminate on either side of the node in a region called the paranode, corresponding to the position of paranodal loops. 40,000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Node of Ranvier",
+      "explicacao_original": "The node of Ranvier is a specialized region of the axon located in the gap between adjacent paranodes. The plasma membrane of the axon at the node of Ranvier possesses a high concentration of sodium channels, which propagate the action potential.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Node of Ranvier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The node of Ranvier is a specialized region of the axon located in the gap between adjacent paranodes. The plasma membrane of the axon at the node of Ranvier possesses a high concentration of sodium channels, which propagate the action potential.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Internodes",
+      "explicacao_original": "A segmental unit of the myelin sheath consists of an internode and paranodes. The internodal portion (only a small segment of which is visible) contains compacted wrappings of myelin and is flanked by paranodal regions, containing uncompacted membranes that form paranodal loops.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Internodes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A segmental unit of the myelin sheath consists of an internode and paranodes. The internodal portion (only a small segment of which is visible) contains compacted wrappings of myelin and is flanked by paranodal regions, containing uncompacted membranes that form paranodal loops.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Paranode",
+      "explicacao_original": "The paranode is the subdivision of the segmental myelin unit located between the node of Ranvier and the internode. The paranode consists of folds of Schwann cell membrane forming paranodal loops. The paranodal loops contain Schwann cell cytoplasm, and the membranes form attachments that anchor the myelin segment to the axonal plasma membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Paranode' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paranode is the subdivision of the segmental myelin unit located between the node of Ranvier and the internode. The paranode consists of folds of Schwann cell membrane forming paranodal loops. The paranodal loops contain Schwann cell cytoplasm, and the membranes form attachments that anchor the myelin segment to the axonal plasma membrane.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Paranodal loops",
+      "explicacao_original": "The paranode is the subdivision of the segmental myelin unit located between the node of Ranvier and the internode. The paranode consists of folds of Schwann cell membrane forming paranodal loops. The paranodal loops contain Schwann cell cytoplasm, and the membranes form attachments that anchor the myelin segment to the axonal plasma membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-5-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Paranodal loops' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paranode is the subdivision of the segmental myelin unit located between the node of Ranvier and the internode. The paranode consists of folds of Schwann cell membrane forming paranodal loops. The paranodal loops contain Schwann cell cytoplasm, and the membranes form attachments that anchor the myelin segment to the axonal plasma membrane.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Microtubules",
+      "explicacao_original": "Large number of microtubules (red arrows) in the axon condense as they pass through the node. The apparent thinness (green arrow) of the axon in the node of Ranvier is the result of a tangential section through this region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-6-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Large number of microtubules (red arrows) in the axon condense as they pass through the node. The apparent thinness (green arrow) of the axon in the node of Ranvier is the result of a tangential section through this region.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Schwann cell processes",
+      "explicacao_original": "The node of Ranvier is covered by microvillous processes of Schwann cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-7-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Schwann cell processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The node of Ranvier is covered by microvillous processes of Schwann cells.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "External lamina",
+      "explicacao_original": "Schwann cells secrete an external lamina, which is similar to a basal lamina produced by epithelial cells. Surrounding the external lamina are delicate collagen fibrils which contribute to the endoneurium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-8-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-8-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'External lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Schwann cells secrete an external lamina, which is similar to a basal lamina produced by epithelial cells. Surrounding the external lamina are delicate collagen fibrils which contribute to the endoneurium.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Collagen fibrils",
+      "explicacao_original": "Schwann cells secrete an external lamina, which is similar to a basal lamina produced by epithelial cells. Surrounding the external lamina are delicate collagen fibrils which contribute to the endoneurium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-9-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-9-9-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-9-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-9-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-9-USE.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Schwann cells secrete an external lamina, which is similar to a basal lamina produced by epithelial cells. Surrounding the external lamina are delicate collagen fibrils which contribute to the endoneurium.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 10. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-10/, acesso em 2026-08-07."
+    }
+  ]
+}

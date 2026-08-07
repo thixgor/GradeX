@@ -1,0 +1,93 @@
+{
+  "id": 10803,
+  "titulo": "Glomerulus",
+  "titulo_wordpress": "Renal corpuscle 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Renal Corpuscle",
+    "Renal corpuscle 8"
+  ],
+  "descricao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "arquivo": "imagens/base/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Glomerulus', no setor Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Descricao original da pagina: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Podocyte primary process",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Podocyte primary process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pedicels",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Pedicels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Filtration slits",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Filtration slits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bowman’s space",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Bowman’s space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Glomerular capillary lumen",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Glomerular capillary lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fenestrations in endothelium",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Fenestrations in endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Basal laminae",
+      "explicacao_original": "The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-8-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-8-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-8.jpg'. Destaca a estrutura ou conceito 'Basal laminae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal component of the filtration barrier of the glomerulus is the composite basal laminae of the endothelium and the podocyte. The fenestrated endothelium of the glomerular capillaries lack the typical diaphragms. Between alternating pedicels are filtration slits, that are spanned by a membrane that also regulates filtration. 30,000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-8/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": 29279,
+  "titulo": "Bud stage of tooth development",
+  "titulo_wordpress": "Tooth development 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 4"
+  ],
+  "descricao_original": "Tooth development begins with the bud stage, during which the overlying ectoderm of the dental lamina grows down into the underlying ectomesenchyme. Seen here are bud stages from opposites of the developing oral cavity. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/",
+  "creditos_identificados": [
+    "Image source: This image is taken of slide in the University of South Dakota collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Lamina-and-bud-fix.jpg",
+      "arquivo": "imagens/base/Lamina-and-bud-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bud stage of tooth development', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 4. Descricao original da pagina: Tooth development begins with the bud stage, during which the overlying ectoderm of the dental lamina grows down into the underlying ectomesenchyme. Seen here are bud stages from opposites of the developing oral cavity. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ectoderm",
+      "explicacao_original": "The ectoderm of the dental lamina invaginates into the underlying ectomesenchyme forming a structure resembling a flower bud.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Ectoderm.png",
+      "arquivo": "imagens/marcadores/Ectoderm.png",
+      "imagem_base": "imagens/base/Lamina-and-bud-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Lamina-and-bud-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bud stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Lamina-and-bud-fix.jpg'. Destaca a estrutura ou conceito 'Ectoderm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectoderm of the dental lamina invaginates into the underlying ectomesenchyme forming a structure resembling a flower bud.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tooth bud",
+      "explicacao_original": "The ectoderm of the dental lamina invaginates into the underlying ectomesenchyme forming a structure resembling a flower bud.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Tooth-bud-1.png",
+      "arquivo": "imagens/marcadores/Tooth-bud-1.png",
+      "imagem_base": "imagens/base/Lamina-and-bud-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Lamina-and-bud-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bud stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Lamina-and-bud-fix.jpg'. Destaca a estrutura ou conceito 'Tooth bud' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectoderm of the dental lamina invaginates into the underlying ectomesenchyme forming a structure resembling a flower bud.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ectomesenchyme",
+      "explicacao_original": "Ectomesenchyme is a unique tissue that develops from neural crest cells that migrate from the neural tube during embryological development. Ectomesenchyme gives rise to a number of cell types including odontoblasts that form dentin in the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Ectomesenchyme.png",
+      "arquivo": "imagens/marcadores/Ectomesenchyme.png",
+      "imagem_base": "imagens/base/Lamina-and-bud-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Lamina-and-bud-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bud stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Lamina-and-bud-fix.jpg'. Destaca a estrutura ou conceito 'Ectomesenchyme' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ectomesenchyme is a unique tissue that develops from neural crest cells that migrate from the neural tube during embryological development. Ectomesenchyme gives rise to a number of cell types including odontoblasts that form dentin in the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Oral cavity",
+      "explicacao_original": "Tooth development begins with the bud stage, during which the overlying ectoderm of the dental lamina grows down into the underlying ectomesenchyme. Seen here are bud stages from opposites of the developing oral cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Oral-cavity-1.png",
+      "arquivo": "imagens/marcadores/Oral-cavity-1.png",
+      "imagem_base": "imagens/base/Lamina-and-bud-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Lamina-and-bud-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bud stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Lamina-and-bud-fix.jpg'. Destaca a estrutura ou conceito 'Oral cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tooth development begins with the bud stage, during which the overlying ectoderm of the dental lamina grows down into the underlying ectomesenchyme. Seen here are bud stages from opposites of the developing oral cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is taken of slide in the University of South Dakota collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/SD-Image-source.png",
+      "arquivo": "imagens/marcadores/SD-Image-source.png",
+      "imagem_base": "imagens/base/Lamina-and-bud-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Lamina-and-bud-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bud stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Lamina-and-bud-fix.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is taken of slide in the University of South Dakota collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4/, acesso em 2026-08-07."
+    }
+  ]
+}

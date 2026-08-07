@@ -1,0 +1,66 @@
+{
+  "id": 6962,
+  "titulo": "Pancreas",
+  "titulo_wordpress": "Pancreas 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Pancreas",
+    "Pancreas 2"
+  ],
+  "descricao_original": "The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pancreas', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 2. Descricao original da pagina: The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-MS-2.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ducts",
+      "explicacao_original": "The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-MS-2.jpg'. Destaca a estrutura ou conceito 'Ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Islets of Langerhans",
+      "explicacao_original": "The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-MS-2.jpg'. Destaca a estrutura ou conceito 'Islets of Langerhans' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cells of the exocrine pancreas are located in discretely organized acini, whereas cells of the endocrine pancreas are represented by highly vascularized cell clusters called islets of Langerhans. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Mississippi-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-MS-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-MS-2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-2/, acesso em 2026-08-07."
+    }
+  ]
+}

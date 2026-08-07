@@ -1,0 +1,63 @@
+{
+  "id": 2705,
+  "titulo": "Cardiac muscle",
+  "titulo_wordpress": "Cardiac 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Cardiac",
+    "Cardiac 1"
+  ],
+  "descricao_original": "Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/cardiac/cardiac-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-USE.jpg",
+      "arquivo": "imagens/base/T.M.C-1-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cardiac muscle', no setor Tecidos > Tecido Muscular > Cardiac > Cardiac 1. Descricao original da pagina: Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-1-1-ping.png",
+      "imagem_base": "imagens/base/T.M.C-1-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-1-USE.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-1-2-ping.png",
+      "imagem_base": "imagens/base/T.M.C-1-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-1-USE.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-1-3-ping.png",
+      "imagem_base": "imagens/base/T.M.C-1-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-1-USE.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-1-4-ping.png",
+      "imagem_base": "imagens/base/T.M.C-1-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.C-1-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-1-USE.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers comprise the myocardium of the heart and extends into the attachments of the large veins. Cardiac muscle tissue, seen here in cross section, shows numerous fibers with centrally located nuclei and surrounding myofibrils. The presence of these myofibrils and the size of the muscle fiber distinguishes this muscle type from smooth muscle fibers which are smaller and lack myofibrils. 200x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 16809,
+  "titulo": "Inactive fibroblast",
+  "titulo_wordpress": "Cells 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 7"
+  ],
+  "descricao_original": "In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Inactive fibroblast', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 7. Descricao original da pagina: In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nuclei",
+      "explicacao_original": "In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-7-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-7.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Processes",
+      "explicacao_original": "In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-7-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-7.jpg'. Destaca a estrutura ou conceito 'Processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen bundles",
+      "explicacao_original": "In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-7-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-7.jpg'. Destaca a estrutura ou conceito 'Collagen bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ground substance",
+      "explicacao_original": "In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-7-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-7.jpg'. Destaca a estrutura ou conceito 'Ground substance' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this dense irregular connective tissue, numerous inactive fibroblasts are surrounded by large collagen bundles. Fibroblasts are spindle- to stellate-shaped cells with attenuated cellular processes extending from dark, heterochromatic nuclei. The space surrounding the cells and the collagen is filled with ground substance. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-7/, acesso em 2026-08-07."
+    }
+  ]
+}

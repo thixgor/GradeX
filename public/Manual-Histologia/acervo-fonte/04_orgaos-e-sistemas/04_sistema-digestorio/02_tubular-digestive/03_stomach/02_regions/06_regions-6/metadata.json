@@ -1,0 +1,65 @@
+{
+  "id": 6872,
+  "titulo": "Stomach: fundus and body",
+  "titulo_wordpress": "Regions 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 6"
+  ],
+  "descricao_original": "The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: fundus and body', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 6. Descricao original da pagina: The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Parietal cells",
+      "explicacao_original": "The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-6.jpg'. Destaca a estrutura ou conceito 'Parietal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chief cells",
+      "explicacao_original": "The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-6.jpg'. Destaca a estrutura ou conceito 'Chief cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Enteroendocrine cells",
+      "explicacao_original": "The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-6.jpg'. Destaca a estrutura ou conceito 'Enteroendocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-6.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bases of fundic glands, resting on the muscularis mucosae, are embedded in the loose connective tissue of the lamina propria. Although parietal cells are located here too, chief cells and enteroendocrine cells predominate in this area. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-6/, acesso em 2026-08-07."
+    }
+  ]
+}

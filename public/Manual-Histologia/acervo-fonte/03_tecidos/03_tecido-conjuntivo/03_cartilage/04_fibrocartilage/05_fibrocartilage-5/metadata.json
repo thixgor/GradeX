@@ -1,0 +1,84 @@
+{
+  "id": 11965,
+  "titulo": "Fibrocartilage",
+  "titulo_wordpress": "Fibrocartilage 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Fibrocartilage",
+    "Fibrocartilage 5"
+  ],
+  "descricao_original": "This image of the diaphysis of a long bone demonstrates the insertions of two muscles into the bone. Frequently, for extra strength, such insertions show a transition of muscle to tendon to fibrocartilage to bone. 10x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "arquivo": "imagens/base/T.C.C.F.05A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Fibrocartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Descricao original da pagina: This image of the diaphysis of a long bone demonstrates the insertions of two muscles into the bone. Frequently, for extra strength, such insertions show a transition of muscle to tendon to fibrocartilage to bone. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Diaphysis",
+      "explicacao_original": "The diaphysis, or shaft, of a long bone is oriented vertically in this image. The shaft is composed of compact bone. The center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.T.C.E.05B-1-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.05B-1-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.05A.jpg'. Destaca a estrutura ou conceito 'Diaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diaphysis, or shaft, of a long bone is oriented vertically in this image. The shaft is composed of compact bone. The center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Compact bone",
+      "explicacao_original": "The diaphysis, or shaft, of a long bone extends longitudinally down the image. The shaft is composed of compact bone peripherally; the center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.T.C.E.05B-2-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.05B-2-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.05A.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diaphysis, or shaft, of a long bone extends longitudinally down the image. The shaft is composed of compact bone peripherally; the center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spongy bone",
+      "explicacao_original": "The diaphysis, or shaft, of a long bone extends longitudinally down the image. The shaft is composed of compact bone peripherally; the center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.T.C.E.05B-3-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.05B-3-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.05A.jpg'. Destaca a estrutura ou conceito 'Spongy bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diaphysis, or shaft, of a long bone extends longitudinally down the image. The shaft is composed of compact bone peripherally; the center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bone marrow",
+      "explicacao_original": "The diaphysis, or shaft, of a long bone extends longitudinally down the image. The shaft is composed of compact bone peripherally; the center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.T.C.E.05B-6-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.05B-6-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.05A.jpg'. Destaca a estrutura ou conceito 'Bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diaphysis, or shaft, of a long bone extends longitudinally down the image. The shaft is composed of compact bone peripherally; the center of the shaft, the marrow cavity, is composed of spongy bone surrounded by bone marrow.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscle insertions",
+      "explicacao_original": "Two muscles (arrows) insert into this diaphysis. Because the force exerted by a muscle is unidirectional, tendon and the fibrocartilage continuing from it contain collagen fiber bundles arranged in a parallel manner. This pattern, therefore, resembles dense regular connective tissue. The region outlined by the rectangle indicates the transition of tendon to fibrocartilage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.T.C.E.05B-4-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.05B-4-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.05A.jpg'. Destaca a estrutura ou conceito 'Muscle insertions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two muscles (arrows) insert into this diaphysis. Because the force exerted by a muscle is unidirectional, tendon and the fibrocartilage continuing from it contain collagen fiber bundles arranged in a parallel manner. This pattern, therefore, resembles dense regular connective tissue. The region outlined by the rectangle indicates the transition of tendon to fibrocartilage.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next Image",
+      "explicacao_original": "The next image shows a region within this rectangle at higher magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.T.C.E.05B-5-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.05B-5-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.F.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.05A.jpg'. Destaca a estrutura ou conceito 'Next Image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image shows a region within this rectangle at higher magnification.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-5/, acesso em 2026-08-07."
+    }
+  ]
+}

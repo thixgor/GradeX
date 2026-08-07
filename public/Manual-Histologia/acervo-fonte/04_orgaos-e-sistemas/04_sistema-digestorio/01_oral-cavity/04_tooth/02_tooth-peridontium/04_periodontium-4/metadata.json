@@ -1,0 +1,117 @@
+{
+  "id": 29140,
+  "titulo": "Gingival Fibers of the periodontal ligament",
+  "titulo_wordpress": "Periodontium 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth peridontium",
+    "Periodontium 4"
+  ],
+  "descricao_original": "The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Gingival Fibers of the periodontal ligament', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Descricao original da pagina: The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dento-gingival group",
+      "explicacao_original": "The dento-gingival fiber group that connect the cervical cementum to the lamina propria of the gingiva.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Dentinogingival-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Dentinogingival-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Dento-gingival group' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dento-gingival fiber group that connect the cervical cementum to the lamina propria of the gingiva.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Circumferential fibers",
+      "explicacao_original": "The circumferential fiber group encircles the neck of the tooth crown and thus are seen in cross section in this image. These fibers are a component of the transeptal fiber system, that extends over the alveolar bone crest and is embedded in the cementum of adjacent teeth. These fibers form an interdental ligament that maintains alignment and spacing of the teeth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Circumferential-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Circumferential-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Circumferential fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The circumferential fiber group encircles the neck of the tooth crown and thus are seen in cross section in this image. These fibers are a component of the transeptal fiber system, that extends over the alveolar bone crest and is embedded in the cementum of adjacent teeth. These fibers form an interdental ligament that maintains alignment and spacing of the teeth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dento-periosteal group",
+      "explicacao_original": "The dento-periosteal fiber group pass over the alveolar crest to connect the cervical cementum to the periosteum of the supporting compact bone of the alveolar plate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Dentinoperiosteal-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Dentinoperiosteal-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Dento-periosteal group' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dento-periosteal fiber group pass over the alveolar crest to connect the cervical cementum to the periosteum of the supporting compact bone of the alveolar plate.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Alveolar-gingival group",
+      "explicacao_original": "The alveolar-gingival fiber group connects the alveolar crest bone to the lamina propria of the gingiva.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Alveolar-gingival-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Alveolar-gingival-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Alveolar-gingival group' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The alveolar-gingival fiber group connects the alveolar crest bone to the lamina propria of the gingiva.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dentin",
+      "explicacao_original": "The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Dentin-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Dentin-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cementum",
+      "explicacao_original": "The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Cementum-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Cementum-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveolar crest",
+      "explicacao_original": "The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Alveolar-crest-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Alveolar-crest-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Alveolar crest' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Gingiva",
+      "explicacao_original": "The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Gingiva-flip.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Gingiva-flip.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Gingiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingival fibers of the periodontal ligament connect the alveolar bone and the cementum of the tooth to the gingiva and to each other at the cervix (neck) of the tooth. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gingival Fibers of the periodontal ligament'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-4.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-4/, acesso em 2026-08-07."
+    }
+  ]
+}

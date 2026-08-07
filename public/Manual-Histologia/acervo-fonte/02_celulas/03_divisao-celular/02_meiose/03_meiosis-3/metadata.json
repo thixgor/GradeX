@@ -1,0 +1,123 @@
+{
+  "id": 2158,
+  "titulo": "Meiosis I: Prophase",
+  "titulo_wordpress": "Meiosis 3",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Meiose",
+    "Meiosis 3"
+  ],
+  "descricao_original": "Prophase is more protracted than in mitosis, lasting days to years. It consists of five stages and is marked by the close association of homologous chromosomes (synapsis), allowing exchange of homologous regions between maternal and paternal chromosomes. This exchange process, termed crossing over, increases genetic diversity.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "arquivo": "imagens/base/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meiosis I: Prophase', no setor Células > Divisão Celular > Meiose > Meiosis 3. Descricao original da pagina: Prophase is more protracted than in mitosis, lasting days to years. It consists of five stages and is marked by the close association of homologous chromosomes (synapsis), allowing exchange of homologous regions between maternal and paternal chromosomes. This exchange process, termed crossing over, increases genetic diversity.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-2-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-2-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pair of homologous chromosomes",
+      "explicacao_original": "During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Pair of homologous chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-6-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-6-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, centrosomes move to opposite poles of the cell, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Stages",
+      "explicacao_original": "Prophase of meiosis I consists of five stages: leptotene; zygotene; pachytene; diplotene; and diakinesis. Leptotene and zygotene are presented together, as are diplotene and diakinesis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-7-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-7-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Stages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Prophase of meiosis I consists of five stages: leptotene; zygotene; pachytene; diplotene; and diakinesis. Leptotene and zygotene are presented together, as are diplotene and diakinesis.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Leptotene and Zygotene",
+      "explicacao_original": "During leptotene, replicated DNA condenses into visible chromosomes consisting of paired, sister chromatids. During zygotene, synapsis occurs resulting in the close alignment of homologous pairs of chromosomes. The pairs are tightly bound to each other by protein bridges, the synaptonemal complex, forming bivalents of four chromatids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-8-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-8-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Leptotene and Zygotene' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During leptotene, replicated DNA condenses into visible chromosomes consisting of paired, sister chromatids. During zygotene, synapsis occurs resulting in the close alignment of homologous pairs of chromosomes. The pairs are tightly bound to each other by protein bridges, the synaptonemal complex, forming bivalents of four chromatids.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Pachytene",
+      "explicacao_original": "During the pachytene stage of prophase, crossing over occurs in which fragments of homologous regions of maternal and paternal chromosomes are exchanged. A site of crossing over, called a chiasma (plural, chiasmata), resembles an “X” and forms a connection between paired homologous chromosomes. Crossing over leads to greater genetic diversity in the gametes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-9-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-9-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Pachytene' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the pachytene stage of prophase, crossing over occurs in which fragments of homologous regions of maternal and paternal chromosomes are exchanged. A site of crossing over, called a chiasma (plural, chiasmata), resembles an “X” and forms a connection between paired homologous chromosomes. Crossing over leads to greater genetic diversity in the gametes.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Diplotene and Diakinesis",
+      "explicacao_original": "During the diplotene stage, chromosomes further condense and the synaptonemal complex breaks down, leading to a separation of homologous chromosomes. As the chromosomes separate, chiasmata become more apparent. During diakinesis, chromosomes condense to their maximum thickness, the nuclear envelope disappears and the nucleolus fragments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3-10-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-3-10-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-3.jpg'. Destaca a estrutura ou conceito 'Diplotene and Diakinesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the diplotene stage, chromosomes further condense and the synaptonemal complex breaks down, leading to a separation of homologous chromosomes. As the chromosomes separate, chiasmata become more apparent. During diakinesis, chromosomes condense to their maximum thickness, the nuclear envelope disappears and the nucleolus fragments.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-3/, acesso em 2026-08-07."
+    }
+  ]
+}

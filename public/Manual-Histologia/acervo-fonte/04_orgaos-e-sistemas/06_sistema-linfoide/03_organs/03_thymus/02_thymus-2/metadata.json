@@ -1,0 +1,114 @@
+{
+  "id": 8587,
+  "titulo": "Thymus",
+  "titulo_wordpress": "Thymus 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Thymus",
+    "Thymus 2"
+  ],
+  "descricao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thymus', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Descricao original da pagina: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capsule",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Trabeculae",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Trabeculae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cortex",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Medulla",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lymphocytes",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Lymphocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Epithelial reticular cells",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Epithelial reticular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Hassall's corpuscles",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Hassall's corpuscles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark-staining cortex contains densely packed T-lymphocytes and is easily differentiated from the paler-staining medulla, where the lymphocytes are slightly more dispersed. The thymic stroma consists of a meshwork of epithelial reticular cells rather than a connective tissue, and hence, no fibers are present. One diagnostic feature of the thymus, Hassall’s corpuscles, are formed from epithelial reticular cells. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "This area is shown at higher magnification in the next slide.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-2-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-2-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-2.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This area is shown at higher magnification in the next slide.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-2/, acesso em 2026-08-07."
+    }
+  ]
+}

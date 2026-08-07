@@ -1,0 +1,53 @@
+{
+  "id": 1772,
+  "titulo": "Lysosomes",
+  "titulo_wordpress": "Lysosomes 2",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Lysosomes",
+    "Lysosomes 2"
+  ],
+  "descricao_original": "Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-2.jpg",
+      "arquivo": "imagens/base/C.S.Ly-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lysosomes', no setor Células > Estruturas > Lysosomes > Lysosomes 2. Descricao original da pagina: Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lysosomes",
+      "explicacao_original": "Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-2-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Ly-2-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Ly-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-2.jpg'. Destaca a estrutura ou conceito 'Lysosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 2. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-2-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Ly-2-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Ly-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-2.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 2. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "RER",
+      "explicacao_original": "Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-2-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Ly-2-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Ly-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-2.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes are single-membrane organelles and their contents appear amorphous and highly variable, reflecting their composition and stage of degradation. The hydrolytic enzymes in the lysosome are activated by acidification of the contents by proton pumps located in the lysosomal membrane. The decreased internal pH is optimal for the activity of the acid hydrolases. This acidification occurs after fusion of the pre-lysosomal vesicle with the material to be degraded. 30,000x. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 2. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-2/, acesso em 2026-08-07."
+    }
+  ]
+}

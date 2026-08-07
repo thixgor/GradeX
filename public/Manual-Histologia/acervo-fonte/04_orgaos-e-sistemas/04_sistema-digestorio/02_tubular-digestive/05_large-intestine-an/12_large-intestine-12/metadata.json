@@ -1,0 +1,84 @@
+{
+  "id": 6952,
+  "titulo": "Recto-anal junction",
+  "titulo_wordpress": "Large intestine 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Large Intestine and Anus",
+    "Large intestine 12"
+  ],
+  "descricao_original": "The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Recto-anal junction', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Descricao original da pagina: The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Rectum",
+      "explicacao_original": "The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-11.jpg'. Destaca a estrutura ou conceito 'Rectum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Anal canal",
+      "explicacao_original": "The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-11.jpg'. Destaca a estrutura ou conceito 'Anal canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Anus",
+      "explicacao_original": "The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-11.jpg'. Destaca a estrutura ou conceito 'Anus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Recto-anal junction",
+      "explicacao_original": "The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-11.jpg'. Destaca a estrutura ou conceito 'Recto-anal junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Region of junction with anus",
+      "explicacao_original": "The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-11-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-11-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-11.jpg'. Destaca a estrutura ou conceito 'Region of junction with anus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium changes abruptly at the junction of the rectum (simple columnar) with the anal canal (stratified squamous moist). The rectum resembles the rest of the large intestine, having straight intestinal glands with many goblet cells. A more gradual transition of the epithelium occurs between the anal canal and the anus, the latter being lined by a stratified squamous, keratinized epithelium. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image compares these junctional regions at higher magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-11-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-11-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-11.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image compares these junctional regions at higher magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-12/, acesso em 2026-08-07."
+    }
+  ]
+}

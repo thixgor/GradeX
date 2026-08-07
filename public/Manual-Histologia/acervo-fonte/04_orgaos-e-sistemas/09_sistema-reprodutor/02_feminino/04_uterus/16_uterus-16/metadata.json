@@ -1,0 +1,74 @@
+{
+  "id": 12763,
+  "titulo": "Uterus: menstrual phase (Days 1-5)",
+  "titulo_wordpress": "Uterus 16",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 16"
+  ],
+  "descricao_original": "The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16AA-Mississippi.jpg",
+      "arquivo": "imagens/base/O.R.F.U.16AA-Mississippi.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: menstrual phase (Days 1-5)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 16. Descricao original da pagina: The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sloughed tissue + blood",
+      "explicacao_original": "The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.16A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.F.U.16AA-Mississippi.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16AA-Mississippi.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.16AA-Mississippi.jpg'. Destaca a estrutura ou conceito 'Sloughed tissue + blood' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Functional zone",
+      "explicacao_original": "The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.16A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.F.U.16AA-Mississippi.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16AA-Mississippi.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.16AA-Mississippi.jpg'. Destaca a estrutura ou conceito 'Functional zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Basal zone",
+      "explicacao_original": "The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.16A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.F.U.16AA-Mississippi.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16AA-Mississippi.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.16AA-Mississippi.jpg'. Destaca a estrutura ou conceito 'Basal zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myometrium",
+      "explicacao_original": "The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.16A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.F.U.16AA-Mississippi.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16AA-Mississippi.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.16AA-Mississippi.jpg'. Destaca a estrutura ou conceito 'Myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ischemia produced by the contraction of spiral arteries leads to degeneration and sloughing of the functional zone, leaving only the basal zone remaining at the end of menstruation. The menstrual flow contains blood, tissue fragments, and uterine fluids. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Graphic: menstrual phase",
+      "explicacao_original": "Note that the menstrual phase of the uterine cycle overlaps the beginning of the follicular phase of the ovarian cycle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.16.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.16.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.16AA-Mississippi.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.16AA-Mississippi.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.16AA-Mississippi.jpg'. Destaca a estrutura ou conceito 'Graphic: menstrual phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Note that the menstrual phase of the uterine cycle overlaps the beginning of the follicular phase of the ovarian cycle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-16/, acesso em 2026-08-07."
+    }
+  ]
+}

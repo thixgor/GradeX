@@ -1,0 +1,63 @@
+{
+  "id": 30575,
+  "titulo": "Lymphatic capillaries",
+  "titulo_wordpress": "Tissues 19A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 19A"
+  ],
+  "descricao_original": "Lymphatic capillaries are larger than blood capillaries, typically 10 to 60 microns in diameter. They have irregular shapes and are composed of a single layer of endothelial cells without any additional tunics. In addition to their immune functions, lymph capillaries are also critical for maintaining fluid balance throughout the body. Specialized lymphatics in the small intestine, called lacteals, absorb dietary fats. 800x (upper left); 600x (lower left); 400x (right).",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-19a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-19A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymphatic capillaries', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 19A. Descricao original da pagina: Lymphatic capillaries are larger than blood capillaries, typically 10 to 60 microns in diameter. They have irregular shapes and are composed of a single layer of endothelial cells without any additional tunics. In addition to their immune functions, lymph capillaries are also critical for maintaining fluid balance throughout the body. Specialized lymphatics in the small intestine, called lacteals, absorb dietary fats. 800x (upper left); 600x (lower left); 400x (right).. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-19a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lymph capillaries",
+      "explicacao_original": "Lymph capillaries",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-19A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-19A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphatic capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-19A.jpg'. Destaca a estrutura ou conceito 'Lymph capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymph capillaries. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 19A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-19a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Venules",
+      "explicacao_original": "Venules",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-19A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-19A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphatic capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-19A.jpg'. Destaca a estrutura ou conceito 'Venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Venules. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 19A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-19a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Valves",
+      "explicacao_original": "Larger lymph vessels possess valves, visible in this longitudinally section. Valves are formed by the endothelium and prevent the backflow of fluid within the vessel, like their counterparts in veins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-19A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-19A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphatic capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-19A.jpg'. Destaca a estrutura ou conceito 'Valves' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Larger lymph vessels possess valves, visible in this longitudinally section. Valves are formed by the endothelium and prevent the backflow of fluid within the vessel, like their counterparts in veins.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 19A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-19a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Direction of lymph flow",
+      "explicacao_original": "The direction of lymph flow is indicated by the red arrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-19A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-19A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-19A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphatic capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-19A.jpg'. Destaca a estrutura ou conceito 'Direction of lymph flow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The direction of lymph flow is indicated by the red arrow.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 19A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-19a/, acesso em 2026-08-07."
+    }
+  ]
+}

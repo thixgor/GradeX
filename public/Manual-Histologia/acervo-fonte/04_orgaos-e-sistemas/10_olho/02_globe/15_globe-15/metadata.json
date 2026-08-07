@@ -1,0 +1,93 @@
+{
+  "id": 9220,
+  "titulo": "Globe: Choroid",
+  "titulo_wordpress": "Globe 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 15"
+  ],
+  "descricao_original": "The choroid, the third part of the vascular tunic or uvea, lies between the sclera and the retina and consists of three layers. From outer to inner, these layers are: a stroma of loose connective tissue with many blood vessels and melanocytes; the choriocapillary layer, a capillary layer that supplies the retina; and Bruch’s membrane that is shared with the retina. 100x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Choroid', no setor Órgãos e Sistemas > Olho > Globe > Globe 15. Descricao original da pagina: The choroid, the third part of the vascular tunic or uvea, lies between the sclera and the retina and consists of three layers. From outer to inner, these layers are: a stroma of loose connective tissue with many blood vessels and melanocytes; the choriocapillary layer, a capillary layer that supplies the retina; and Bruch’s membrane that is shared with the retina. 100x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sclera",
+      "explicacao_original": "The choroid, the third part of the vascular tunic or uvea, lies between the sclera and the retina and consists of three layers. From outer to inner, these layers are: a stroma of loose connective tissue with many blood vessels and melanocytes; the choriocapillary layer, a capillary layer that supplies the retina; and Bruch’s membrane that is shared with the retina. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroid, the third part of the vascular tunic or uvea, lies between the sclera and the retina and consists of three layers. From outer to inner, these layers are: a stroma of loose connective tissue with many blood vessels and melanocytes; the choriocapillary layer, a capillary layer that supplies the retina; and Bruch’s membrane that is shared with the retina. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Choroid",
+      "explicacao_original": "The choroid, the third part of the vascular tunic or uvea, lies between the sclera and the retina and consists of three layers. From outer to inner, these layers are: a stroma of loose connective tissue with many blood vessels and melanocytes; the choriocapillary layer, a capillary layer that supplies the retina; and Bruch’s membrane that is shared with the retina. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Choroid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroid, the third part of the vascular tunic or uvea, lies between the sclera and the retina and consists of three layers. From outer to inner, these layers are: a stroma of loose connective tissue with many blood vessels and melanocytes; the choriocapillary layer, a capillary layer that supplies the retina; and Bruch’s membrane that is shared with the retina. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Choroidal stroma",
+      "explicacao_original": "The choroidal stroma consists of a loose connective tissue containing large melanocytes and vessels of varying sizes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Choroidal stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroidal stroma consists of a loose connective tissue containing large melanocytes and vessels of varying sizes.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Melanocytes",
+      "explicacao_original": "The choroidal stroma consists of a loose connective tissue containing large melanocytes and vessels of varying sizes.”",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Melanocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroidal stroma consists of a loose connective tissue containing large melanocytes and vessels of varying sizes.”. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Choriocapillary layer",
+      "explicacao_original": "The choriocapillary layer consists of fenestrated capillaries that supply the pigment epithelium and the outer layers of the retina. The basal laminae of these capillaries form the outermost layer of Bruch’s membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Choriocapillary layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choriocapillary layer consists of fenestrated capillaries that supply the pigment epithelium and the outer layers of the retina. The basal laminae of these capillaries form the outermost layer of Bruch’s membrane.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bruch's membrane",
+      "explicacao_original": "Bruch’s membrane forms the interface between the choroid and the retina and insures proximity of a vascular supply to the pigment epithelium of the retina. From inner to outer, Bruch’s membrane consists of the basal lamina of the pigment epithelium of the retina, a layer of collagenous and elastic fibers, and the basal lamina of the choriocapillary endothelial cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Bruch's membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bruch’s membrane forms the interface between the choroid and the retina and insures proximity of a vascular supply to the pigment epithelium of the retina. From inner to outer, Bruch’s membrane consists of the basal lamina of the pigment epithelium of the retina, a layer of collagenous and elastic fibers, and the basal lamina of the choriocapillary endothelial cells.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Retina",
+      "explicacao_original": "The retina, the innermost tunic and light sensing part of the eye, consists of a nonvisual portion (a pigmented epithelium) and a visual portion (a multilayered outgrowth from the brain).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-15-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-15-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Eye_.Globe-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Choroid'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-15.jpg'. Destaca a estrutura ou conceito 'Retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The retina, the innermost tunic and light sensing part of the eye, consists of a nonvisual portion (a pigmented epithelium) and a visual portion (a multilayered outgrowth from the brain).. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-15/, acesso em 2026-08-07."
+    }
+  ]
+}

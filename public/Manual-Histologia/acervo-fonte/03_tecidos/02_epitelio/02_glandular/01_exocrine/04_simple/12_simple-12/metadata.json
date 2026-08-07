@@ -1,0 +1,85 @@
+{
+  "id": 4336,
+  "titulo": "Simple, branched acinar gland",
+  "titulo_wordpress": "Simple 12",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Simple",
+    "Simple 12"
+  ],
+  "descricao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple, branched acinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Descricao original da pagina: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sebaceous glands",
+      "explicacao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-12-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-12-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-12-fix2.jpg'. Destaca a estrutura ou conceito 'Sebaceous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acini",
+      "explicacao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-12-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-12-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-12-fix2.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Proliferative cells",
+      "explicacao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-12-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-12-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-12-fix2.jpg'. Destaca a estrutura ou conceito 'Proliferative cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Degenerating cells",
+      "explicacao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-12-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-12-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-12-fix2.jpg'. Destaca a estrutura ou conceito 'Degenerating cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ducts",
+      "explicacao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-12-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-12-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-12-fix2.jpg'. Destaca a estrutura ou conceito 'Ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Hair follicle",
+      "explicacao_original": "Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-12-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-12-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Simp-12-fix2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-12-fix2.jpg'. Destaca a estrutura ou conceito 'Hair follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each sebaceous gland is composed of multiple acini attached to a single, unbranched duct. Several glands are pictured here. The secretory product, sebum, is composed of a mixture of lipids, that accumulate in the cells as they progress from the periphery to the center of the acinus. Cells are secreted in their entirety or rupture their contents into the hair follicle. 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-12/, acesso em 2026-08-07."
+    }
+  ]
+}

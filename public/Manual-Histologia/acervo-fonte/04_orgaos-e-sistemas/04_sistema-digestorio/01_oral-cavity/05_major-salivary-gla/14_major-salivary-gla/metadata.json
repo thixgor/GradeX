@@ -1,0 +1,64 @@
+{
+  "id": 6811,
+  "titulo": "Submandibular gland",
+  "titulo_wordpress": "Major salivary glands 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 14"
+  ],
+  "descricao_original": "The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-14.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Submandibular gland', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 14. Descricao original da pagina: The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serous acini",
+      "explicacao_original": "The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-14.jpg'. Destaca a estrutura ou conceito 'Serous acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Serous demilunes",
+      "explicacao_original": "The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-14.jpg'. Destaca a estrutura ou conceito 'Serous demilunes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucus tubules",
+      "explicacao_original": "The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-14-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-14-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-14.jpg'. Destaca a estrutura ou conceito 'Mucus tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The difference in staining qualities between serous acini and mucous tubules is obvious. Mucous tubules are elongated and stain palely due to the frothy, mucus content of the tubule cells. In contrast, the cytoplasm of the serous acinar cells stains darkly, reflecting their numerous secretory granules. No ducts are visible here. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mucous tubule lumens",
+      "explicacao_original": "The lumens of mucus tubules are larger than those of acini, allowing passage of the thicker secretory product the tubules produce.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-14-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-14-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-14.jpg'. Destaca a estrutura ou conceito 'Mucous tubule lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lumens of mucus tubules are larger than those of acini, allowing passage of the thicker secretory product the tubules produce.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-14/, acesso em 2026-08-07."
+    }
+  ]
+}

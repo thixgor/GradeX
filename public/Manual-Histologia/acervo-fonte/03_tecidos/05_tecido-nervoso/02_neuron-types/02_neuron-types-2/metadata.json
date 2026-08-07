@@ -1,0 +1,123 @@
+{
+  "id": 2973,
+  "titulo": "Multipolar neuron",
+  "titulo_wordpress": "Neuron types 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 2"
+  ],
+  "descricao_original": "Multipolar neurons possess numerous processes which arise from a polygonal cell body. The multiple dendrites contain Nissl substance and branch at acute angles. The single axon arises from the axon hillock, a region of the cell body with reduced organelle content. Axons lack Nissl and are usually ensheathed by support cells. Kluver-Barrera stain 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "arquivo": "imagens/base/T.N.Type-2A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Multipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Descricao original da pagina: Multipolar neurons possess numerous processes which arise from a polygonal cell body. The multiple dendrites contain Nissl substance and branch at acute angles. The single axon arises from the axon hillock, a region of the cell body with reduced organelle content. Axons lack Nissl and are usually ensheathed by support cells. Kluver-Barrera stain 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cell body",
+      "explicacao_original": "The cell body of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic with a prominent nucleolus. These features reflect the intense protein synthetic activity of these cells. The inset shows a low magnification of the spinal cord and indicates the position of this neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-1A-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Cell body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cell body of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic with a prominent nucleolus. These features reflect the intense protein synthetic activity of these cells. The inset shows a low magnification of the spinal cord and indicates the position of this neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The cell body of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic with a prominent nucleolus. These features reflect the intense protein synthetic activity of these cells. The inset shows a low magnification of the spinal cord and indicates the position of this neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cell body of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic with a prominent nucleolus. These features reflect the intense protein synthetic activity of these cells. The inset shows a low magnification of the spinal cord and indicates the position of this neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "The cell body of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic with a prominent nucleolus. These features reflect the intense protein synthetic activity of these cells. The inset shows a low magnification of the spinal cord and indicates the position of this neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cell body of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic with a prominent nucleolus. These features reflect the intense protein synthetic activity of these cells. The inset shows a low magnification of the spinal cord and indicates the position of this neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Axon hillock",
+      "explicacao_original": "The axon hillock is a specialized region of the cell body that lack basophilia and is the site of origin for the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-8-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-8-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Axon hillock' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The axon hillock is a specialized region of the cell body that lack basophilia and is the site of origin for the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Nissl substance",
+      "explicacao_original": "Nissl substance is an accumulation of RER and polysomes in neuronal cell bodies and dendrites. The presence of Nissl is one characteristic of dendrites which discriminates them from axons.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Nissl substance' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nissl substance is an accumulation of RER and polysomes in neuronal cell bodies and dendrites. The presence of Nissl is one characteristic of dendrites which discriminates them from axons.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dendrites",
+      "explicacao_original": "Multiple dendrites can be seen, containing Nissl bodies, which are large accumulations of rough endoplasmic reticulum and polyribosomes. The presence of these basophilic Nissl bodies distinguishes dendrites from axons. Dendrites branch at acute angles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-6-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multiple dendrites can be seen, containing Nissl bodies, which are large accumulations of rough endoplasmic reticulum and polyribosomes. The presence of these basophilic Nissl bodies distinguishes dendrites from axons. Dendrites branch at acute angles.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Axon",
+      "explicacao_original": "The axon is a singular process that conducts the action potential. It lacks Nissl and originates from the cell body at the axon hillock. The first portion of the axon is the initial segment which is rich in sodium channels and is the initiation site for the action potential.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-7-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The axon is a singular process that conducts the action potential. It lacks Nissl and originates from the cell body at the axon hillock. The first portion of the axon is the initial segment which is rich in sodium channels and is the initiation site for the action potential.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Myelin sheaths",
+      "explicacao_original": "Myelin is an insulating wrapping of axons, produced by oligodendrocytes in the central nervous system. This section is counterstained with Luxol fast blue which stains the myelin sheath turquoise-blue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Myelin sheaths' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Myelin is an insulating wrapping of axons, produced by oligodendrocytes in the central nervous system. This section is counterstained with Luxol fast blue which stains the myelin sheath turquoise-blue.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Glial cell nuclei",
+      "explicacao_original": "Glial cells are the supporting cells in the CNS and are comprised by astrocytes and oligodendrocytes. In most preparations, only the nuclei of these cells are visible. Special stains, such as a silver stain, are required to reveal the cytoplasm and cell processes. Supporting cells dramatically outnumber neurons in the CNS.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-9-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-9-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Glial cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Glial cells are the supporting cells in the CNS and are comprised by astrocytes and oligodendrocytes. In most preparations, only the nuclei of these cells are visible. Special stains, such as a silver stain, are required to reveal the cytoplasm and cell processes. Supporting cells dramatically outnumber neurons in the CNS.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Artifactual space",
+      "explicacao_original": "An artifactual space caused during tissue processing surrounds the neuron. Artifactual spaces often occur when tissue components shrink or swell at different rates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2-10-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-2-10-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-2A.jpg'. Destaca a estrutura ou conceito 'Artifactual space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An artifactual space caused during tissue processing surrounds the neuron. Artifactual spaces often occur when tissue components shrink or swell at different rates.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-2/, acesso em 2026-08-07."
+    }
+  ]
+}

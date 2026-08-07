@@ -1,0 +1,114 @@
+{
+  "id": 8575,
+  "titulo": "Spleen: red and white pulp",
+  "titulo_wordpress": "Spleen 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Spleen",
+    "Spleen 7"
+  ],
+  "descricao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Spleen: red and white pulp', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Descricao original da pagina: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "White pulp",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'White pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Central arterioles",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Central arterioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Periarterial lymphoid sheath (PALS)",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Periarterial lymphoid sheath (PALS)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Germinal center",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Red pulp",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Red pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Splenic cords",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Splenic cords' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Splenic sinuses",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Splenic sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Trabeculum",
+      "explicacao_original": "This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Trabeculum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image demonstrates areas of white pulp surrounded by red pulp. Red pulp is composed of splenic cords (cords of Billroth) separated by splenic sinuses. After passing through vessels in the white pulp, blood continues into the splenic sinuses in the red pulp. Splenic sinuses eventually anastomose to form splenic veins which travel in the trabeculae to exit the spleen. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "This area is shown at higher magnification in the next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-7-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-7-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red and white pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-7.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This area is shown at higher magnification in the next image.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-7/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "id": 6100,
+  "titulo": "Stratum basale: melanocytes",
+  "titulo_wordpress": "Epidermis 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 8"
+  ],
+  "descricao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum basale: melanocytes', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Descricao original da pagina: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Melanocyte",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Melanocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Melanocyte processes",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Melanocyte processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Melanosomes",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Melanosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Rough endoplasmic reticulum",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Keratinocytes",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Keratinocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tonofibrils",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-6-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Tonofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-8-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-8-7-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-8.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Melanocytes in stratum basale synthesize melanin pigment in vesicles called melanosomes. Once formed, these vesicles migrate into melanocyte processes and are transferred to neighboring keratinocytes. Once in keratinocytes, melanin distributes to a supranuclear location, blocking ultraviolet radiation. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-8/, acesso em 2026-08-07."
+    }
+  ]
+}

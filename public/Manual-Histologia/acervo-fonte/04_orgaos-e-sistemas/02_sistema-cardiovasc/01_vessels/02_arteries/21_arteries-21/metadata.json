@@ -1,0 +1,54 @@
+{
+  "id": 5292,
+  "titulo": "Arteriole",
+  "titulo_wordpress": "Arteries 21",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 21"
+  ],
+  "descricao_original": "This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-21/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-21a.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-21a.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Arteriole', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 21. Descricao original da pagina: This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-21/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endothelium of tunica intima",
+      "explicacao_original": "This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-21-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-21-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-21a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-21a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-21a.jpg'. Destaca a estrutura ou conceito 'Endothelium of tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 21. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Smooth muscle cells of tunica media",
+      "explicacao_original": "This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-21-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-21-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-21a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-21a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-21a.jpg'. Destaca a estrutura ou conceito 'Smooth muscle cells of tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 21. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-21-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-21-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-21a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-21a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-21a.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This arteriole was cut in longitudinal section and, hence, the single layer of circularly arranged, smooth muscle fibers in tunica media are cut in cross section. The tunica intima consists of a simple squamous epithelium, which is particularly evident in this orientation. The connective tissue of tunica adventitia blends with the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 21. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-21/, acesso em 2026-08-07."
+    }
+  ]
+}

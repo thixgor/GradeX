@@ -1,0 +1,64 @@
+{
+  "id": 4818,
+  "titulo": "Pars nervosa",
+  "titulo_wordpress": "Pituitary 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 15"
+  ],
+  "descricao_original": "The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-15.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pars nervosa', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 15. Descricao original da pagina: The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Herring bodies with hormone-containing granules",
+      "explicacao_original": "The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-15-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-15-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-15.jpg'. Destaca a estrutura ou conceito 'Herring bodies with hormone-containing granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Axons",
+      "explicacao_original": "The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-15-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-15-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-15.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pituicytes",
+      "explicacao_original": "The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-15-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-15-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-15.jpg'. Destaca a estrutura ou conceito 'Pituicytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillary",
+      "explicacao_original": "The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-15-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-15-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-15.jpg'. Destaca a estrutura ou conceito 'Capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The main hormones released from the pars nervosa are oxytocin and vasopressin, actually synthesized by paraventricular and supraoptic neurons located in the hypothalamus. Hormone-containing granules are transported down the axons of these neurons and accumulate in their expanded terminals called Herring bodies. Pituicytes surround Herring bodies and assist hormone storage and release. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-15/, acesso em 2026-08-07."
+    }
+  ]
+}

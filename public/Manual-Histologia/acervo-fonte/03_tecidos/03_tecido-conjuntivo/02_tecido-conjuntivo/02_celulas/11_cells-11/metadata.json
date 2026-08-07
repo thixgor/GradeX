@@ -1,0 +1,74 @@
+{
+  "id": 16817,
+  "titulo": "Adipocyte",
+  "titulo_wordpress": "Cells 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 11"
+  ],
+  "descricao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Adipocyte', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 11. Descricao original da pagina: Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-11-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-11.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Adipocyte nuclei",
+      "explicacao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-11-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-11.jpg'. Destaca a estrutura ou conceito 'Adipocyte nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Active fibroblast nuclei",
+      "explicacao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-11-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-11.jpg'. Destaca a estrutura ou conceito 'Active fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-11-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-11.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-11-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-11.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes are found individually or in small clusters in loose connective tissue. They can also form an entire tissue, called adipose connective tissue as seen here. The cells are surrounded by a stroma of loose connective tissue. Adipocytes contain a single large lipid droplet that compresses the nucleus and cytoplasm to the periphery of the cell. The lipid is extracted during tissue processing and, therefore, the cells appear empty. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-11/, acesso em 2026-08-07."
+    }
+  ]
+}

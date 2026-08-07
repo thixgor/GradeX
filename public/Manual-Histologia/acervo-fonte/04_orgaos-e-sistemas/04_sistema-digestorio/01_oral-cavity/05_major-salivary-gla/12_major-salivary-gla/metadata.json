@@ -1,0 +1,74 @@
+{
+  "id": 6807,
+  "titulo": "Submandibular gland",
+  "titulo_wordpress": "Major salivary glands 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 12"
+  ],
+  "descricao_original": "Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-12.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Submandibular gland', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 12. Descricao original da pagina: Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucous tubules",
+      "explicacao_original": "Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-12.jpg'. Destaca a estrutura ou conceito 'Mucous tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Serous acini",
+      "explicacao_original": "Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-12.jpg'. Destaca a estrutura ou conceito 'Serous acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Serous demilunes",
+      "explicacao_original": "Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-12-3-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-12-3-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-12.jpg'. Destaca a estrutura ou conceito 'Serous demilunes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intercalated duct",
+      "explicacao_original": "Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-12-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-12-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-12.jpg'. Destaca a estrutura ou conceito 'Intercalated duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Striated duct",
+      "explicacao_original": "Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-12-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-12-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submandibular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-12.jpg'. Destaca a estrutura ou conceito 'Striated duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are arranged in tubules that stain lighter and appear more frothy than do the serous-producing cells. Serous cells may be arranged either in acini or in serous demilunes, half-moon shaped caps of serous-secreting cells located over the ends of mucous tubules. Striated ducts are well developed in this salivary gland. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-12/, acesso em 2026-08-07."
+    }
+  ]
+}

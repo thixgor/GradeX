@@ -1,0 +1,53 @@
+{
+  "id": 761,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 6"
+  ],
+  "descricao_original": "A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-8.jpg",
+      "arquivo": "imagens/base/T.M.Sk-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 6. Descricao original da pagina: A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk8-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-8.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 6. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Bundles of myofibrils",
+      "explicacao_original": "A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk8-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-8.jpg'. Destaca a estrutura ou conceito 'Bundles of myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 6. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk8-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk8-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-8.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of skeletal muscle demonstrates the multiple peripheral nuclei in each fiber. The cytoplasm is filled with bundles of myofibrils.1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 6. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-6/, acesso em 2026-08-07."
+    }
+  ]
+}

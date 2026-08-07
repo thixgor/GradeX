@@ -1,0 +1,153 @@
+{
+  "id": 20556,
+  "titulo": "Muscle types",
+  "titulo_wordpress": "Muscle overview",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Visão Geral",
+    "Muscle overview"
+  ],
+  "descricao_original": "Muscle, one of the four basic tissues of the body, is specialized for contraction. The cells that comprise muscle tissue are referred to as muscle fibers or myocytes. The three types of muscle fibers are compared in this diagram. Skeletal muscle is at the top, cardiac muscle is in the center and smooth muscle is in the lower panel. Longitudinal sections occupy the left portion of the diagram and cross-sectional representations are on the right.",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/overview/muscle-overview/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "arquivo": "imagens/base/T.M.Ov_.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Muscle types', no setor Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Descricao original da pagina: Muscle, one of the four basic tissues of the body, is specialized for contraction. The cells that comprise muscle tissue are referred to as muscle fibers or myocytes. The three types of muscle fibers are compared in this diagram. Skeletal muscle is at the top, cardiac muscle is in the center and smooth muscle is in the lower panel. Longitudinal sections occupy the left portion of the diagram and cross-sectional representations are on the right.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Skeletal muscle fibers",
+      "explicacao_original": "Skeletal muscle fibers are cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Because skeletal muscle is under voluntary control, it is classified as voluntary, striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Skeletal muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers are cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Because skeletal muscle is under voluntary control, it is classified as voluntary, striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Skeletal muscle fibers are cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Because skeletal muscle is under voluntary control, it is classified as voluntary, striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-2-ping-2.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers are cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Because skeletal muscle is under voluntary control, it is classified as voluntary, striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Striations",
+      "explicacao_original": "Fibers show prominent cross-banding (striations), produced by the alignment and overlap of intracellular myofilaments. Myofilaments consist primarily of either, actin or myosin proteins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Striations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fibers show prominent cross-banding (striations), produced by the alignment and overlap of intracellular myofilaments. Myofilaments consist primarily of either, actin or myosin proteins.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Myofilaments are bundled into cylindrical, intracellular structures called myofibrils that are oriented longitudinally in the fiber. They are best seen in cross sections, and in this illustration, appear as tiny dots.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Myofilaments are bundled into cylindrical, intracellular structures called myofibrils that are oriented longitudinally in the fiber. They are best seen in cross sections, and in this illustration, appear as tiny dots.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cardiac muscle fibers",
+      "explicacao_original": "Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Cardiac muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-6-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Striations",
+      "explicacao_original": "Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-7-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Striations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-8-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-8-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are also cylindrical, however, they branch. They have a single, centrally located nucleus and, like skeletal muscle fibers, are striated, but the bands are less prominent. Cardiac muscle is mostly restricted to the wall of the heart and is classified as involuntary, striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Branching fibers",
+      "explicacao_original": "Individual cardiac muscle fibers branch, allowing them to form a dense feltwork that makes up the myocardium of the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-9-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-9-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Branching fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Individual cardiac muscle fibers branch, allowing them to form a dense feltwork that makes up the myocardium of the heart.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Intercalated discs",
+      "explicacao_original": "Cardiac muscle fibers are much shorter than skeletal muscle fibers and form numerous end-to-end junctions with other fibers. These junctions, called intercalated discs, are formed by complex membrane interactions between adjacent fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-10-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-10-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Intercalated discs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are much shorter than skeletal muscle fibers and form numerous end-to-end junctions with other fibers. These junctions, called intercalated discs, are formed by complex membrane interactions between adjacent fibers.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Smooth muscle fibers",
+      "explicacao_original": "Smooth muscle fibers are spindle shaped, i.e., they taper toward their ends. They have a single, centrally located nucleus and are non-striated. Myofilaments are not organized into myofibrils and, thus, no banding pattern is present. Smooth muscle fibers are the smallest fiber type and form much of the wall of hollow organs and blood vessels. Smooth muscle is classified as involuntary, non-striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov-1-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-3a-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Smooth muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Smooth muscle fibers are spindle shaped, i.e., they taper toward their ends. They have a single, centrally located nucleus and are non-striated. Myofilaments are not organized into myofibrils and, thus, no banding pattern is present. Smooth muscle fibers are the smallest fiber type and form much of the wall of hollow organs and blood vessels. Smooth muscle is classified as involuntary, non-striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Smooth muscle fibers are spindle shaped, i.e., they taper toward their ends. They have a single, centrally located nucleus and are non-striated. Myofilaments are not organized into myofibrils and, thus, no banding pattern is present. Smooth muscle fibers are the smallest fiber type and form much of the wall of hollow organs and blood vessels. Smooth muscle is classified as involuntary, non-striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-12-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-12-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Smooth muscle fibers are spindle shaped, i.e., they taper toward their ends. They have a single, centrally located nucleus and are non-striated. Myofilaments are not organized into myofibrils and, thus, no banding pattern is present. Smooth muscle fibers are the smallest fiber type and form much of the wall of hollow organs and blood vessels. Smooth muscle is classified as involuntary, non-striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Striated muscle fibers",
+      "explicacao_original": "The term striated muscle refers to both skeletal and cardiac muscle fibers. The striations result from the orderly overlap of myofilaments, the organization of which is similar in both skeletal and cardiac muscle fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Ov-1-13-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Ov-1-13-ping.png",
+      "imagem_base": "imagens/base/T.M.Ov_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.M.Ov_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle types'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Ov_.jpg'. Destaca a estrutura ou conceito 'Striated muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The term striated muscle refers to both skeletal and cardiac muscle fibers. The striations result from the orderly overlap of myofilaments, the organization of which is similar in both skeletal and cardiac muscle fibers.. Contexto setorial: Tecidos > Tecido Muscular > Visão Geral > Muscle overview. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/overview/muscle-overview/, acesso em 2026-08-07."
+    }
+  ]
+}

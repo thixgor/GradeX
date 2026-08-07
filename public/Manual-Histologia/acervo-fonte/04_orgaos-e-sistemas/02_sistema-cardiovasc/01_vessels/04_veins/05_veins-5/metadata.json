@@ -1,0 +1,96 @@
+{
+  "id": 27401,
+  "titulo": "Venule",
+  "titulo_wordpress": "Veins 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Veins",
+    "Veins 5"
+  ],
+  "descricao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Mississippi slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Venule', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Descricao original da pagina: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Venule",
+      "explicacao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-5A-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Venule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Arteriole",
+      "explicacao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-5A-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A-3-NEW-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-5A-3-NEW-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Internal elastic lamina",
+      "explicacao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-5A-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Internal elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica media",
+      "explicacao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-5A-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-5A-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A larger venule is compared with its accompanying arteriole. The venule displays an irregular outline and its wall consists of an endothelium and clearly visible subendothelial connective tissue. The wall of the venule is much thinner than that of the arteriole it accompanies. The arteriole has a circular outline, a visible internal elastic lamina, and a prominent tunica media consisting of 2-3 layers of smooth muscle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Mississippi slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Mississippi-source-ping.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-5A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Mississippi slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

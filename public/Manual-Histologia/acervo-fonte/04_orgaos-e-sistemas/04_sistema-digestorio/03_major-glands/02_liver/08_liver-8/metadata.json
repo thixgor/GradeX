@@ -1,0 +1,114 @@
+{
+  "id": 7004,
+  "titulo": "Liver: sinusoids",
+  "titulo_wordpress": "Liver 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Liver",
+    "Liver 8"
+  ],
+  "descricao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Liver: sinusoids', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Descricao original da pagina: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endothelium",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fenestrations and discontinuities",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Fenestrations and discontinuities' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Kupffer cell",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Kupffer cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Space of Disse",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Space of Disse' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hepatocytes",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Hepatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cell margins",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Cell margins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Glycogen",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-8-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-8-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-8.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are lined by a fenestrated endothelium with additional gaps between adjacent cells. The discontinuous basal lamina allows easy access between the sinusoid and the space of Disse, located between sinusoids and adjacent hepatocytes. Kupffer cells (liver macrophages) span sinusoids, phagocytosing aged erythrocytes and debris. 5000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-8/, acesso em 2026-08-07."
+    }
+  ]
+}

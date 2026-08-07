@@ -1,0 +1,53 @@
+{
+  "id": 2791,
+  "titulo": "Smooth muscle",
+  "titulo_wordpress": "Smooth 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Smooth",
+    "Smooth 2"
+  ],
+  "descricao_original": "Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/smooth/smooth-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2.jpg",
+      "arquivo": "imagens/base/T.M.Sm-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Smooth muscle', no setor Tecidos > Tecido Muscular > Smooth > Smooth 2. Descricao original da pagina: Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers cross section",
+      "explicacao_original": "Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sm-2-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sm-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Smooth muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sm-2.jpg'. Destaca a estrutura ou conceito 'Muscle fibers cross section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Smooth > Smooth 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Muscle fibers longitudinal section",
+      "explicacao_original": "Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sm-2-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sm-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Smooth muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sm-2.jpg'. Destaca a estrutura ou conceito 'Muscle fibers longitudinal section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Smooth > Smooth 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sm-2-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sm-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Smooth muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sm-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Smooth muscle located in the wall of the digestive tract is arranged in distinct circular and longitudinal layers. In the upper right of the field, the longitudinally oriented fibers are cut in cross section while the remainder of the field contains circularly oriented fibers sectioned longitudinally. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Smooth > Smooth 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-2/, acesso em 2026-08-07."
+    }
+  ]
+}

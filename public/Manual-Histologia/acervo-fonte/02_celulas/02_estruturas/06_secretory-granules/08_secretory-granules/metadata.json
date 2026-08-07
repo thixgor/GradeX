@@ -1,0 +1,33 @@
+{
+  "id": 1695,
+  "titulo": "Secretory granules",
+  "titulo_wordpress": "Secretory granules 8",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Secretory Granules",
+    "Secretory granules 8"
+  ],
+  "descricao_original": "Mast cells are connective tissue cells that can be readily identified by the abundance of secretory granules in the cytoplasm. These granules have a reddish color with H & E staining (left) and a purplish-blue color with toluidine blue (right). Mast cell granules contain heparin, histamine and protease enzymes that function in the inflammatory response. 1000x, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.SG-8-NEW.jpg",
+      "arquivo": "imagens/base/C.S.SG-8-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secretory granules', no setor Células > Estruturas > Secretory Granules > Secretory granules 8. Descricao original da pagina: Mast cells are connective tissue cells that can be readily identified by the abundance of secretory granules in the cytoplasm. These granules have a reddish color with H & E staining (left) and a purplish-blue color with toluidine blue (right). Mast cell granules contain heparin, histamine and protease enzymes that function in the inflammatory response. 1000x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mast cells",
+      "explicacao_original": "Mast cells are connective tissue cells that can be readily identified by the abundance of secretory granules in the cytoplasm. These granules have a reddish color with H & E staining (left) and a purplish-blue color with toluidine blue (right). Mast cell granules contain heparin, histamine and protease enzymes that function in the inflammatory response. 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.SG-8-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.SG-8-NEW-1-ping.png",
+      "imagem_base": "imagens/base/C.S.SG-8-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.SG-8-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory granules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.SG-8-NEW.jpg'. Destaca a estrutura ou conceito 'Mast cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells are connective tissue cells that can be readily identified by the abundance of secretory granules in the cytoplasm. These granules have a reddish color with H & E staining (left) and a purplish-blue color with toluidine blue (right). Mast cell granules contain heparin, histamine and protease enzymes that function in the inflammatory response. 1000x, 1000x. Contexto setorial: Células > Estruturas > Secretory Granules > Secretory granules 8. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-8/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": 28366,
+  "titulo": "Overview: Circulation of body fluids",
+  "titulo_wordpress": "Overview 11A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Overview 11A"
+  ],
+  "descricao_original": "The three main body fluids, plasma, tissue fluid and lymph, are in constant circulation, passing through three distinct compartments: Blood vessels (blood), tissue spaces (tissue fluid) and lymphatic structures (lymph). Fluid derived from the blood plasma enters tissue spaces as tissue fluid. From there, tissue fluid flows into lymphatic vessels as lymph which eventually enters the blood stream. At each level, components of the immune system are monitoring these fluids for pathogens, toxins and foreign antigens.",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-20/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-NEW-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Circulation of body fluids', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 11A. Descricao original da pagina: The three main body fluids, plasma, tissue fluid and lymph, are in constant circulation, passing through three distinct compartments: Blood vessels (blood), tissue spaces (tissue fluid) and lymphatic structures (lymph). Fluid derived from the blood plasma enters tissue spaces as tissue fluid. From there, tissue fluid flows into lymphatic vessels as lymph which eventually enters the blood stream. At each level, components of the immune system are monitoring these fluids for pathogens, toxins and foreign antigens.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-20/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Blood",
+      "explicacao_original": "Blood consists of a fluid portion, plasma, that carries blood cells and platelets. As blood flows through capillaries in body tissues, hydrostatic pressure forces a filtrate of plasma into the tissue spaces, forming tissue fluid or interstitial fluid. Immune surveillance of blood occurs in the spleen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Circulation of body fluids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-9.jpg'. Destaca a estrutura ou conceito 'Blood' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood consists of a fluid portion, plasma, that carries blood cells and platelets. As blood flows through capillaries in body tissues, hydrostatic pressure forces a filtrate of plasma into the tissue spaces, forming tissue fluid or interstitial fluid. Immune surveillance of blood occurs in the spleen.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tissue fluid",
+      "explicacao_original": "Tissue fluid forms as a filtrate of plasma, percolates through connective tissues where it is monitored by MALT. Innate surveillance occurs by macrophage phagocytosis, natural killer cells and inflammatory reactions. MALT also initiates adaptive immune responses, i.e., T and B cell activation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Circulation of body fluids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-9.jpg'. Destaca a estrutura ou conceito 'Tissue fluid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue fluid forms as a filtrate of plasma, percolates through connective tissues where it is monitored by MALT. Innate surveillance occurs by macrophage phagocytosis, natural killer cells and inflammatory reactions. MALT also initiates adaptive immune responses, i.e., T and B cell activation.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lymph",
+      "explicacao_original": "Tissue fluid enters lymphatic capillaries as lymph. Lymph can contain antigens, bacteria and metastatic cancer cells along with immune cells emigrating from the tissues. Lymph fluid passes through lymph nodes (blue arrows) located along lymphatic vessels where adaptive responses are amplified and additional ones are initiated. Lymph eventually enters the venous side of the blood stream where it mixes with the plasma (red circle). Immune surveillance of blood occurs in the spleen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-9-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-NEW-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Circulation of body fluids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-NEW-9.jpg'. Destaca a estrutura ou conceito 'Lymph' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue fluid enters lymphatic capillaries as lymph. Lymph can contain antigens, bacteria and metastatic cancer cells along with immune cells emigrating from the tissues. Lymph fluid passes through lymph nodes (blue arrows) located along lymphatic vessels where adaptive responses are amplified and additional ones are initiated. Lymph eventually enters the venous side of the blood stream where it mixes with the plasma (red circle). Immune surveillance of blood occurs in the spleen.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-20/, acesso em 2026-08-07."
+    }
+  ]
+}

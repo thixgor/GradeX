@@ -1,0 +1,163 @@
+{
+  "id": 6075,
+  "titulo": "Skin overview",
+  "titulo_wordpress": "Skin overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Visão Geral",
+    "Skin overview 1"
+  ],
+  "descricao_original": "Skin is the largest organ of the body, consisting of an epidermis (epithelium) and its underlying dermis (connective tissue). The hypodermis, loose connective tissue beneath the dermis, is not part of the skin but is intimately associated with it. The hypodermis is equivalent to the superficial fascia described in gross anatomy. Skin can be classified as either thick skin or thin skin depending on the thickness of its epidermal layer.",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skin overview', no setor Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Descricao original da pagina: Skin is the largest organ of the body, consisting of an epidermis (epithelium) and its underlying dermis (connective tissue). The hypodermis, loose connective tissue beneath the dermis, is not part of the skin but is intimately associated with it. The hypodermis is equivalent to the superficial fascia described in gross anatomy. Skin can be classified as either thick skin or thin skin depending on the thickness of its epidermal layer.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epidermis",
+      "explicacao_original": "The epidermis (between the black arrows) is composed of stratified squamous keratinized epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Epidermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epidermis (between the black arrows) is composed of stratified squamous keratinized epithelium.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epidermal ridges (pegs)",
+      "explicacao_original": "The basal layers of the epidermis form epidermal ridges or pegs, also called rete ridges and pegs. This specialization increases the surface area for attachment to the underlying dermis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Epidermal ridges (pegs)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basal layers of the epidermis form epidermal ridges or pegs, also called rete ridges and pegs. This specialization increases the surface area for attachment to the underlying dermis.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Keratinized layer",
+      "explicacao_original": "Epithelial cells of the skin, (keratinocytes) are programmed to produce keratin, which forms the outermost layer of the epidermis and serves as a waterproof, protective barrier for the body. The keratinized layer is much thicker in thick than in thin skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Keratinized layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Epithelial cells of the skin, (keratinocytes) are programmed to produce keratin, which forms the outermost layer of the epidermis and serves as a waterproof, protective barrier for the body. The keratinized layer is much thicker in thick than in thin skin.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dermis",
+      "explicacao_original": "The dermis lies just beneath the epidermis and is composed of two layers of connective tissue. The superficial papillary layer is composed of loose connective tissue, and the deep reticular layer is composed of dense irregular connective tissue. The thickness of the dermis varies among regions of the body; however, dermal thickness is not a factor in differentiating thick from thin skin. This distinction is based on the thickness of the epidermis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dermis lies just beneath the epidermis and is composed of two layers of connective tissue. The superficial papillary layer is composed of loose connective tissue, and the deep reticular layer is composed of dense irregular connective tissue. The thickness of the dermis varies among regions of the body; however, dermal thickness is not a factor in differentiating thick from thin skin. This distinction is based on the thickness of the epidermis.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Papillary layer of dermis",
+      "explicacao_original": "The papillary layer of the dermis is composed of loose connective tissue and lies immediately beneath the epidermis. The papillary layer is highly vascularized, supplying itself as well as the epidermis, which is avascular. Extensions of the papillary layer, called dermal papillae, extend between the epidermal ridges/pegs (rete ridges/pegs) and contain blood vessels and fine-touch sensory receptors.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Papillary layer of dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The papillary layer of the dermis is composed of loose connective tissue and lies immediately beneath the epidermis. The papillary layer is highly vascularized, supplying itself as well as the epidermis, which is avascular. Extensions of the papillary layer, called dermal papillae, extend between the epidermal ridges/pegs (rete ridges/pegs) and contain blood vessels and fine-touch sensory receptors.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dermal papillae",
+      "explicacao_original": "The papillary layer of the dermis is composed of loose connective tissue and lies immediately beneath the epidermis. The papillary layer is highly vascularized, supplying itself as well as the epidermis, which is avascular. Extensions of the papillary layer, called dermal papillae, extend between the epidermal ridges/pegs (rete ridges/pegs) and contain blood vessels and fine-touch sensory receptors.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Dermal papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The papillary layer of the dermis is composed of loose connective tissue and lies immediately beneath the epidermis. The papillary layer is highly vascularized, supplying itself as well as the epidermis, which is avascular. Extensions of the papillary layer, called dermal papillae, extend between the epidermal ridges/pegs (rete ridges/pegs) and contain blood vessels and fine-touch sensory receptors.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Reticular layer of dermis",
+      "explicacao_original": "The reticular layer of the dermis lies beneath the papillary layer and is composed of dense irregular connective tissue. These two layers blend together, with no obvious line of demarcation between them. The thick collagen bundles in the reticular layer provide great strength to the skin, while its elastic fiber component provides some degree of elasticity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Reticular layer of dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The reticular layer of the dermis lies beneath the papillary layer and is composed of dense irregular connective tissue. These two layers blend together, with no obvious line of demarcation between them. The thick collagen bundles in the reticular layer provide great strength to the skin, while its elastic fiber component provides some degree of elasticity.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Thick skin",
+      "explicacao_original": "Several criteria differentiate thick skin from thin skin. The epidermis, as well as its various layers, is thicker in thick skin than in thin skin. Additionally, thick skin lacks hair follicles and sebaceous glands, but both thick and thin skin possess sweat glands. Thick skin is found on the palms of the hands and the soles of the feet.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Thick skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several criteria differentiate thick skin from thin skin. The epidermis, as well as its various layers, is thicker in thick skin than in thin skin. Additionally, thick skin lacks hair follicles and sebaceous glands, but both thick and thin skin possess sweat glands. Thick skin is found on the palms of the hands and the soles of the feet.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Thin skin",
+      "explicacao_original": "Although thin skin has a thinner epidermis, it may possess a thicker dermis, as illustrated here, giving thin skin an overall thickness that is greater than that of thick skin. The presence of hair follicles and sebaceous glands is indicative of thin skin; sweat glands are present in both thick and thin skin. Thin skin covers all of the body except the palms of the hands and the soles of the feet.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Thin skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Although thin skin has a thinner epidermis, it may possess a thicker dermis, as illustrated here, giving thin skin an overall thickness that is greater than that of thick skin. The presence of hair follicles and sebaceous glands is indicative of thin skin; sweat glands are present in both thick and thin skin. Thin skin covers all of the body except the palms of the hands and the soles of the feet.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Hypodermis (subcutis)",
+      "explicacao_original": "The hypodermis, or subcutaneous connective tissue, is not part of the skin, but lies beneath it. This layer is composed of loose connective tissue with areas of adipose connective tissue. Sweat glands and hair follicles may lie either deep in the dermis or in the hypodermis. The hypodermis is equivalent to the superficial fascia described in gross anatomy.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-10-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Hypodermis (subcutis)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hypodermis, or subcutaneous connective tissue, is not part of the skin, but lies beneath it. This layer is composed of loose connective tissue with areas of adipose connective tissue. Sweat glands and hair follicles may lie either deep in the dermis or in the hypodermis. The hypodermis is equivalent to the superficial fascia described in gross anatomy.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Adipose connective tissue",
+      "explicacao_original": "The hypodermis, or subcutaneous connective tissue, is not part of the skin but lies beneath it. This layer is composed of loose connective tissue with areas of adipose connective tissue. Sweat glands and hair follicles may lie either deep in the dermis or in the hypodermis. The hypodermis is equivalent to the superficial fascia described in gross anatomy.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Adipose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hypodermis, or subcutaneous connective tissue, is not part of the skin but lies beneath it. This layer is composed of loose connective tissue with areas of adipose connective tissue. Sweat glands and hair follicles may lie either deep in the dermis or in the hypodermis. The hypodermis is equivalent to the superficial fascia described in gross anatomy.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Sweat glands",
+      "explicacao_original": "Sweat glands (black arrows) originate either deep in the dermis or in the hypodermis, as illustrated here; their ducts (blue arrows) travel through the dermis and epidermis to open onto the surface. Sweat glands are present in both thick and thin skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-12-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Sweat glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sweat glands (black arrows) originate either deep in the dermis or in the hypodermis, as illustrated here; their ducts (blue arrows) travel through the dermis and epidermis to open onto the surface. Sweat glands are present in both thick and thin skin.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Hair follicles",
+      "explicacao_original": "Hair follicles (black arrows) are present in thin but not in thick skin. They begin deep in the dermis or in the hypodermis. Arrector pili muscles (yellow arrow), composed of smooth muscle, are attached to the hair follicle; their contraction causes the hair to become erect, bunching up the skin adjacent to the hair to form a “goose bump.”",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-13-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Hair follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hair follicles (black arrows) are present in thin but not in thick skin. They begin deep in the dermis or in the hypodermis. Arrector pili muscles (yellow arrow), composed of smooth muscle, are attached to the hair follicle; their contraction causes the hair to become erect, bunching up the skin adjacent to the hair to form a “goose bump.”. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Sebaceous glands",
+      "explicacao_original": "Sebaceous glands of the skin are always associated with a hair follicle and, thus, are present only in thin skin. Sebaceous glands secrete an oily sebum onto the hair shaft that eventually reaches the surface to aid in moisturizing the skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Ov-1-14-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skin overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Sebaceous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sebaceous glands of the skin are always associated with a hair follicle and, thus, are present only in thin skin. Sebaceous glands secrete an oily sebum onto the hair shaft that eventually reaches the surface to aid in moisturizing the skin.. Contexto setorial: Órgãos e Sistemas > Pele > Visão Geral > Skin overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/overview/skin-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

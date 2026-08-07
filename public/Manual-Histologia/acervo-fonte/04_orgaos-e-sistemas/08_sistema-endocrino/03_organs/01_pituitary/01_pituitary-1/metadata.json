@@ -1,0 +1,154 @@
+{
+  "id": 4790,
+  "titulo": "Pituitary",
+  "titulo_wordpress": "Pituitary 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 1"
+  ],
+  "descricao_original": "The pituitary gland (hypophysis) along with the associated hypothalamus of the brain, form a major regulatory system of the body. The pituitary gland is often called the master gland because it regulates numerous physiological systems, with many of its hormones targeting other endocrine organs. The hypophysis consists of two portions, the neurohypophysis and the adenohypophysis.",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pituitary', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Descricao original da pagina: The pituitary gland (hypophysis) along with the associated hypothalamus of the brain, form a major regulatory system of the body. The pituitary gland is often called the master gland because it regulates numerous physiological systems, with many of its hormones targeting other endocrine organs. The hypophysis consists of two portions, the neurohypophysis and the adenohypophysis.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hypothalamus",
+      "explicacao_original": "The hypothalamus (black arrow) of the brain exerts a major controlling influence over the pituitary gland. Hypothalamic neurons either directly produce neurohypophyseal hormones or indirectly stimulate or inhibit the production of adenohypophyseal hormones via a vascular connection. The optic chiasm (red arrow) is shown for reference.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Hypothalamus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hypothalamus (black arrow) of the brain exerts a major controlling influence over the pituitary gland. Hypothalamic neurons either directly produce neurohypophyseal hormones or indirectly stimulate or inhibit the production of adenohypophyseal hormones via a vascular connection. The optic chiasm (red arrow) is shown for reference.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Neurohypophysis",
+      "explicacao_original": "The neurohypophysis (posterior pituitary) forms embryologically as an evagination of the hypothalamus and remains directly connected to it. The neurohypophysis consists of the pars nervosa, the infundibulum and its continuation, the median eminence. Hypothalamic neurons terminating in the neurohypophysis store and release vasopressin and oxytocin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Neurohypophysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neurohypophysis (posterior pituitary) forms embryologically as an evagination of the hypothalamus and remains directly connected to it. The neurohypophysis consists of the pars nervosa, the infundibulum and its continuation, the median eminence. Hypothalamic neurons terminating in the neurohypophysis store and release vasopressin and oxytocin.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Infundibulum",
+      "explicacao_original": "The infundibulum connects the hypothalamus with the enlarged terminal portion of the neurohypophysis, the pars nervosa. The pars nervosa is sometimes referred to as the posterior lobe. The infundibulum also suspends the adenohypophysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-3a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-3a-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Infundibulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The infundibulum connects the hypothalamus with the enlarged terminal portion of the neurohypophysis, the pars nervosa. The pars nervosa is sometimes referred to as the posterior lobe. The infundibulum also suspends the adenohypophysis.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pars nervosa",
+      "explicacao_original": "The infundibulum connects the hypothalamus with the enlarged terminal portion of the neurohypophysis, the pars nervosa. The pars nervosa is sometimes referred to as the posterior lobe. The infundibulum also suspends the adenohypophysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Pars nervosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The infundibulum connects the hypothalamus with the enlarged terminal portion of the neurohypophysis, the pars nervosa. The pars nervosa is sometimes referred to as the posterior lobe. The infundibulum also suspends the adenohypophysis.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secretion",
+      "explicacao_original": "Axons (red arrows) of neurons originating in supraoptic and paraventricular nuclei (blue arrows) of the hypothalamus terminate in the pars nervosa as enlargements called Herring bodies (black arrows). The hormones produced by these neurons, vasopressin and oxytocin, are stored in and released from the Herring bodies into the blood stream for distribution throughout the body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Secretion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Axons (red arrows) of neurons originating in supraoptic and paraventricular nuclei (blue arrows) of the hypothalamus terminate in the pars nervosa as enlargements called Herring bodies (black arrows). The hormones produced by these neurons, vasopressin and oxytocin, are stored in and released from the Herring bodies into the blood stream for distribution throughout the body.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Adenohypophysis",
+      "explicacao_original": "The adenohypophysis (anterior pituitary) invaginates from the oral ectoderm of the embryo as a balloon-shaped structure termed Rathke’s pouch. It eventually separates from the oral cavity and comes to lie in close contact with the neurohypophysis. The synthesis and release of adenohypophyseal hormones are stimulated or inhibited by factors produced by hypothalamic neurons. The adenohypophysis consists of the pars distalis, pars tuberalis, pars intermedia and the remnants of Rathke’s pouch.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Adenohypophysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adenohypophysis (anterior pituitary) invaginates from the oral ectoderm of the embryo as a balloon-shaped structure termed Rathke’s pouch. It eventually separates from the oral cavity and comes to lie in close contact with the neurohypophysis. The synthesis and release of adenohypophyseal hormones are stimulated or inhibited by factors produced by hypothalamic neurons. The adenohypophysis consists of the pars distalis, pars tuberalis, pars intermedia and the remnants of Rathke’s pouch.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Pars distalis",
+      "explicacao_original": "The pars distalis is the enlarged anterior wall of Rathke’s pouch and is the largest portion of the adenohypophysis. It is sometimes referred to as the anterior lobe. The pars tuberalis extends upward from this main body of the adenohypophysis and forms an incomplete sleeve around the infundibulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Pars distalis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars distalis is the enlarged anterior wall of Rathke’s pouch and is the largest portion of the adenohypophysis. It is sometimes referred to as the anterior lobe. The pars tuberalis extends upward from this main body of the adenohypophysis and forms an incomplete sleeve around the infundibulum.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Pars tuberalis",
+      "explicacao_original": "The pars distalis is the enlarged anterior wall of Rathke’s pouch and is the largest portion of the adenohypophysis. It is sometimes referred to as the anterior lobe. The pars tuberalis extends upward from this main body of the adenohypophysis and forms an incomplete sleeve around the infundibulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Pars tuberalis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars distalis is the enlarged anterior wall of Rathke’s pouch and is the largest portion of the adenohypophysis. It is sometimes referred to as the anterior lobe. The pars tuberalis extends upward from this main body of the adenohypophysis and forms an incomplete sleeve around the infundibulum.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Pars intermedia",
+      "explicacao_original": "The pars intermedia develops from the posterior wall of Rathke’s pouch. It remains small and invades the pars nervosa, making it difficult to specifically identify. In humans, the original lumen of Rathke’s pouch persists as small cysts, called the remnants of Rathke’s pouch, which separate the pars distalis from the pars intermedia. The cysts are surrounded by glandular cells of the pars intermedia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Pars intermedia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars intermedia develops from the posterior wall of Rathke’s pouch. It remains small and invades the pars nervosa, making it difficult to specifically identify. In humans, the original lumen of Rathke’s pouch persists as small cysts, called the remnants of Rathke’s pouch, which separate the pars distalis from the pars intermedia. The cysts are surrounded by glandular cells of the pars intermedia.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Remnants of Rathke's pouch",
+      "explicacao_original": "The pars intermedia develops from the posterior wall of Rathke’s pouch. It remains small and invades the pars nervosa, making it difficult to specifically identify. In humans, the original lumen of Rathke’s pouch persists as small cysts, called the remnants of Rathke’s pouch, which separate the pars distalis from the pars intermedia. The cysts are surrounded by glandular cells of the pars intermedia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-10-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Remnants of Rathke's pouch' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars intermedia develops from the posterior wall of Rathke’s pouch. It remains small and invades the pars nervosa, making it difficult to specifically identify. In humans, the original lumen of Rathke’s pouch persists as small cysts, called the remnants of Rathke’s pouch, which separate the pars distalis from the pars intermedia. The cysts are surrounded by glandular cells of the pars intermedia.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Control of secretion",
+      "explicacao_original": "Neurons (red arrows) in hypothalamic nuclei terminate on a capillary plexus (black circle) in the median eminence of the hypothalamus. Stimulating and inhibiting factors synthesized by these neurons are released into the capillary plexus and carried via the hypothalamo-hypophyseal portal system of vessels (blue arrow) to capillaries in the adenohypophysis, where they influence hormone secretion (black arrow).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Control of secretion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neurons (red arrows) in hypothalamic nuclei terminate on a capillary plexus (black circle) in the median eminence of the hypothalamus. Stimulating and inhibiting factors synthesized by these neurons are released into the capillary plexus and carried via the hypothalamo-hypophyseal portal system of vessels (blue arrow) to capillaries in the adenohypophysis, where they influence hormone secretion (black arrow).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Combined secretion and control",
+      "explicacao_original": "This composite image compares the structural and functional components of the neuro- and adenohypophyseal subdivisions, as well as their controlling mechanisms.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-12-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Combined secretion and control' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This composite image compares the structural and functional components of the neuro- and adenohypophyseal subdivisions, as well as their controlling mechanisms.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Subdivision summary",
+      "explicacao_original": "Terminologies for the components of the pituitary gland are based on the embryological origins of the main subdivisions as well as the anatomical regions of each. In clinical reference, the term anterior pituitary is often used synonymously with pars distalis and posterior pituitary is frequently used synonymously with pars nervosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/Chart-ping.png",
+      "arquivo": "imagens/marcadores/Chart-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-1.jpg'. Destaca a estrutura ou conceito 'Subdivision summary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Terminologies for the components of the pituitary gland are based on the embryological origins of the main subdivisions as well as the anatomical regions of each. In clinical reference, the term anterior pituitary is often used synonymously with pars distalis and posterior pituitary is frequently used synonymously with pars nervosa.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-1/, acesso em 2026-08-07."
+    }
+  ]
+}

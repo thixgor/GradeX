@@ -1,0 +1,44 @@
+{
+  "id": 3046,
+  "titulo": "Microglia",
+  "titulo_wordpress": "Supporting cells CNS 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 8"
+  ],
+  "descricao_original": "Microglial cells function as macrophages in the CNS. They have small, round to rod-shaped cell bodies with multiple, highly branched processes that are highly motile, continuously surveilling the surrounding tissue (left). Trauma or infection causes these cells to enlarge as they actively become phagocytic and participate in the inflammatory process (right). These sections are immunostained using an antibody for a macrophage-specific protein. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-6.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Microglia', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 8. Descricao original da pagina: Microglial cells function as macrophages in the CNS. They have small, round to rod-shaped cell bodies with multiple, highly branched processes that are highly motile, continuously surveilling the surrounding tissue (left). Trauma or infection causes these cells to enlarge as they actively become phagocytic and participate in the inflammatory process (right). These sections are immunostained using an antibody for a macrophage-specific protein. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Microglia",
+      "explicacao_original": "Microglial cells function as macrophages in the CNS. They have small, round to rod-shaped cell bodies with multiple, highly branched processes that are highly motile, continuously surveilling the surrounding tissue (left). Trauma or infection causes these cells to enlarge as they actively become phagocytic and participate in the inflammatory process (right). These sections are immunostained using an antibody for a macrophage-specific protein. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-6-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microglia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-6.jpg'. Destaca a estrutura ou conceito 'Microglia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microglial cells function as macrophages in the CNS. They have small, round to rod-shaped cell bodies with multiple, highly branched processes that are highly motile, continuously surveilling the surrounding tissue (left). Trauma or infection causes these cells to enlarge as they actively become phagocytic and participate in the inflammatory process (right). These sections are immunostained using an antibody for a macrophage-specific protein. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cell bodies",
+      "explicacao_original": "Microglial cells function as macrophages in the CNS. They have small, round to rod-shaped cell bodies with multiple, highly branched processes that are highly motile, continuously surveilling the surrounding tissue (left). Trauma or infection causes these cells to enlarge as they actively become phagocytic and participate in the inflammatory process (right). These sections are immunostained using an antibody for a macrophage-specific protein. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-6-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microglia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-6.jpg'. Destaca a estrutura ou conceito 'Cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microglial cells function as macrophages in the CNS. They have small, round to rod-shaped cell bodies with multiple, highly branched processes that are highly motile, continuously surveilling the surrounding tissue (left). Trauma or infection causes these cells to enlarge as they actively become phagocytic and participate in the inflammatory process (right). These sections are immunostained using an antibody for a macrophage-specific protein. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-6/, acesso em 2026-08-07."
+    }
+  ]
+}

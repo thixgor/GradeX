@@ -1,0 +1,85 @@
+{
+  "id": 4569,
+  "titulo": "Compound tubuloacinar gland",
+  "titulo_wordpress": "Compound 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 16"
+  ],
+  "descricao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound tubuloacinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Descricao original da pagina: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serous-secreting acini",
+      "explicacao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-15-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-15-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-15-light.jpg'. Destaca a estrutura ou conceito 'Serous-secreting acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-15-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-15-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-15-light.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucus-secreting tubules",
+      "explicacao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-15-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-15-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-15-light.jpg'. Destaca a estrutura ou conceito 'Mucus-secreting tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mucin",
+      "explicacao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-15-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-15-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-15-light.jpg'. Destaca a estrutura ou conceito 'Mucin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mucous tubule lumens",
+      "explicacao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-15-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-15-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-15-light.jpg'. Destaca a estrutura ou conceito 'Mucous tubule lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Serous demilunes",
+      "explicacao_original": "Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-15-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-15-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-15-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-15-light.jpg'. Destaca a estrutura ou conceito 'Serous demilunes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mucus-secreting cells are easily distinguished from those releasing a serous product. Mucous cells are frothy in appearance and are arranged as tubules with wide lumens. Serous-secreting cells can be arranged as acini or as serous demilunes. Each acinus has a small lumen surrounded by wedge-shaped cells with secretory granules. Serous demilunes possess similar cells, but they are configured as crescent-shaped units capping the ends of tubules. Submandibular 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 16. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-16/, acesso em 2026-08-07."
+    }
+  ]
+}

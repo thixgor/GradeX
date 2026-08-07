@@ -1,0 +1,65 @@
+{
+  "id": 4539,
+  "titulo": "Structure of compound glands",
+  "titulo_wordpress": "Compound 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 1"
+  ],
+  "descricao_original": "Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-1.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Structure of compound glands', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 1. Descricao original da pagina: Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lobules",
+      "explicacao_original": "Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-1-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Lobules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intralobular connective tissue and ducts",
+      "explicacao_original": "Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-1-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Intralobular connective tissue and ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interlobular connective tissue",
+      "explicacao_original": "Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-1-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-1-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most compound glands are macroscopic organs surrounded by a connective tissue capsule. Partitions arising from the capsule subdivide the gland into lobules composed of secretory acini (alveoli) and/or tubules. Secretions from the lobules are drained by a complex, branching, duct system. Most compound glands are associated with the digestive system. Parotid gland 10x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-1/, acesso em 2026-08-07."
+    }
+  ]
+}

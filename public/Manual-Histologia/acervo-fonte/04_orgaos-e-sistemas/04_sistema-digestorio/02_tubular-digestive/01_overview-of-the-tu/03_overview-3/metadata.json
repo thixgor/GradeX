@@ -1,0 +1,64 @@
+{
+  "id": 6827,
+  "titulo": "Diagnostic features",
+  "titulo_wordpress": "Overview 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Overview of the tubular digestive system",
+    "Overview 3"
+  ],
+  "descricao_original": "The major diagnostic features of the components of the tubular digestive tract are highlighted in these drawings. All images show the tubular digestive organs cut in cross section, except for the small intestine illustrated in the two smaller panels located in the lower left quadrant. These small intestine sections depict longitudinal sections of this organ.",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-3.jpg",
+      "arquivo": "imagens/base/Or.DigTub.-Ov-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Diagnostic features', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 3. Descricao original da pagina: The major diagnostic features of the components of the tubular digestive tract are highlighted in these drawings. All images show the tubular digestive organs cut in cross section, except for the small intestine illustrated in the two smaller panels located in the lower left quadrant. These small intestine sections depict longitudinal sections of this organ.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Esophagus",
+      "explicacao_original": "The esophagus is lined by stratified squamous moist epithelium (black arrows). Scattered glands are present in lamina propria of the upper and lower esophagus and in the submucosa (blue arrow). Muscularis externa (green line) begins as skeletal muscle, transitions to skeletal plus smooth muscle and finally to only smooth muscle in the lower portion. An adventitia surrounds the organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diagnostic features'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-3.jpg'. Destaca a estrutura ou conceito 'Esophagus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The esophagus is lined by stratified squamous moist epithelium (black arrows). Scattered glands are present in lamina propria of the upper and lower esophagus and in the submucosa (blue arrow). Muscularis externa (green line) begins as skeletal muscle, transitions to skeletal plus smooth muscle and finally to only smooth muscle in the lower portion. An adventitia surrounds the organ.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stomach",
+      "explicacao_original": "The stomach is characterized by a thick mucosa lined by a surface sheet gland (black arrows). The lamina propria is filled with gastric glands (blue arrow), each opening into a gastric pit (red arrow). The muscularis externa (green line) is very thick with three, rather than the usual two, subdivisions. The stomach is covered by a serosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diagnostic features'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-3.jpg'. Destaca a estrutura ou conceito 'Stomach' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stomach is characterized by a thick mucosa lined by a surface sheet gland (black arrows). The lamina propria is filled with gastric glands (blue arrow), each opening into a gastric pit (red arrow). The muscularis externa (green line) is very thick with three, rather than the usual two, subdivisions. The stomach is covered by a serosa.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Small intestine",
+      "explicacao_original": "Villi (black arrows) are prominent features of small intestine. Intestinal glands (blue arrows) open at the bases of villi and extend to muscularis mucosae. Glands (of Brunner) in submucosa (red arrows) distinguish duodenum from the remainder of small intestine. Most of the organ is covered by a serosa, although a portion of duodenum is retroperitoneal and possesses an adventitia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diagnostic features'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-3.jpg'. Destaca a estrutura ou conceito 'Small intestine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi (black arrows) are prominent features of small intestine. Intestinal glands (blue arrows) open at the bases of villi and extend to muscularis mucosae. Glands (of Brunner) in submucosa (red arrows) distinguish duodenum from the remainder of small intestine. Most of the organ is covered by a serosa, although a portion of duodenum is retroperitoneal and possesses an adventitia.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Large intestine",
+      "explicacao_original": "The large intestine lacks villi and possesses very straight intestinal glands (black arrows) in lamina propria. No submucosal glands are present. Most of the outer longitudinal subdivision of muscularis externa is relegated to three longitudinal strips termed the taeniae coli (oval). The large intestine is covered by either an adventitia or a serosa, depending on its location.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Ov-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Ov-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.DigTub.-Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.DigTub.-Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diagnostic features'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.DigTub.-Ov-3.jpg'. Destaca a estrutura ou conceito 'Large intestine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The large intestine lacks villi and possesses very straight intestinal glands (black arrows) in lamina propria. No submucosal glands are present. Most of the outer longitudinal subdivision of muscularis externa is relegated to three longitudinal strips termed the taeniae coli (oval). The large intestine is covered by either an adventitia or a serosa, depending on its location.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Overview of the tubular digestive system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/overview-digestive-tubular/overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": 6930,
+  "titulo": "Large intestine",
+  "titulo_wordpress": "Large intestine 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Large Intestine and Anus",
+    "Large intestine 1"
+  ],
+  "descricao_original": "The large intestine, composed of the four basic tunics, is differentiated from small intestine by the lack of villi, straight intestinal glands and taeniae coli. The large intestine is the site of water absorption and fecal formation. The large intestine was cut in cross section in the top left image and longitudinally through a taenia coli in the bottom left image. 10x, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Large intestine', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Descricao original da pagina: The large intestine, composed of the four basic tunics, is differentiated from small intestine by the lack of villi, straight intestinal glands and taeniae coli. The large intestine is the site of water absorption and fecal formation. The large intestine was cut in cross section in the top left image and longitudinally through a taenia coli in the bottom left image. 10x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The large intestine, composed of the four basic tunics, is differentiated from small intestine by the lack of villi, straight intestinal glands and taeniae coli. The large intestine is the site of water absorption and fecal formation. The large intestine was cut in cross section in the top left image and longitudinally through a taenia coli in the bottom left image. 10x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The large intestine, composed of the four basic tunics, is differentiated from small intestine by the lack of villi, straight intestinal glands and taeniae coli. The large intestine is the site of water absorption and fecal formation. The large intestine was cut in cross section in the top left image and longitudinally through a taenia coli in the bottom left image. 10x, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The large intestine, composed of the four basic tunics, is differentiated from small intestine by the lack of villi, straight intestinal glands and taeniae coli. The large intestine is the site of water absorption and fecal formation. The large intestine was cut in cross section in the top left image and longitudinally through a taenia coli in the bottom left image. 10x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The large intestine, composed of the four basic tunics, is differentiated from small intestine by the lack of villi, straight intestinal glands and taeniae coli. The large intestine is the site of water absorption and fecal formation. The large intestine was cut in cross section in the top left image and longitudinally through a taenia coli in the bottom left image. 10x, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner muscularis externa",
+      "explicacao_original": "The inner circular portion of the muscularis externa is similar to the circular layers seen thus far in the stomach and small intestine.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Inner muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner circular portion of the muscularis externa is similar to the circular layers seen thus far in the stomach and small intestine.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer muscularis externa",
+      "explicacao_original": "The majority of the outer longitudinal portion of muscularis externa is segregated into three separate bands called taeniae coli, seen cut in cross section in the upper image and on the right. In the bottom image, the outer longitudinal portion is sectioned longitudinally through one of the taeniae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Outer muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The majority of the outer longitudinal portion of muscularis externa is segregated into three separate bands called taeniae coli, seen cut in cross section in the upper image and on the right. In the bottom image, the outer longitudinal portion is sectioned longitudinally through one of the taeniae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Taeniae coli",
+      "explicacao_original": "The majority of the outer longitudinal portion of muscularis externa is segregated into three separate bands called taeniae coli, seen cut in cross section in the upper image and on the right. In the bottom image, the outer longitudinal portion is sectioned longitudinally through one of the taeniae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Taeniae coli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The majority of the outer longitudinal portion of muscularis externa is segregated into three separate bands called taeniae coli, seen cut in cross section in the upper image and on the right. In the bottom image, the outer longitudinal portion is sectioned longitudinally through one of the taeniae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Serosa",
+      "explicacao_original": "The outermost layer of the large intestine is either an adventitia or a serosa, depending on whether a particular segment of this organ is intra- or retroperitoneal in location.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outermost layer of the large intestine is either an adventitia or a serosa, depending on whether a particular segment of this organ is intra- or retroperitoneal in location.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "Although no villi are present in the large intestine, intestinal glands are present and are very linear and parallel in this organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-1.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Although no villi are present in the large intestine, intestinal glands are present and are very linear and parallel in this organ.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-1/, acesso em 2026-08-07."
+    }
+  ]
+}

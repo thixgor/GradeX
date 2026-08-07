@@ -1,0 +1,86 @@
+{
+  "id": 11177,
+  "titulo": "Bone remodeling",
+  "titulo_wordpress": "Remodeling 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Remodeling",
+    "Remodeling 6"
+  ],
+  "descricao_original": "Conversion of spongy to compact bone occurs in other areas than just the diaphyses of long bones. These areas of spongy woven bone from the skull were formed by intramembranous ossification. Formation of the inner and outer tables of compact bone in the skull occur by continued intramembranous bone deposition, as osteons fill in these circular spaces and also as the surrounding periosteum lays down peripheral lamellae. 200x, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/",
+  "creditos_identificados": [
+    "Image source: These images were taken of slides in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "arquivo": "imagens/base/T.C.B.R.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone remodeling', no setor Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Descricao original da pagina: Conversion of spongy to compact bone occurs in other areas than just the diaphyses of long bones. These areas of spongy woven bone from the skull were formed by intramembranous ossification. Formation of the inner and outer tables of compact bone in the skull occur by continued intramembranous bone deposition, as osteons fill in these circular spaces and also as the surrounding periosteum lays down peripheral lamellae. 200x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Bone",
+      "explicacao_original": "This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes indicate that this is woven bone. Osteoclasts are also present, demonstrating that bone resorption is occurring simultaneously.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.06.P01.png",
+      "imagem_base": "imagens/base/T.C.B.R.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.06.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes indicate that this is woven bone. Osteoclasts are also present, demonstrating that bone resorption is occurring simultaneously.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes indicate that this is woven bone. Osteoclasts are also present, demonstrating that bone resorption is occurring simultaneously.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/T.C.B.R.06-1B-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.06-1B-ping.png",
+      "imagem_base": "imagens/base/T.C.B.R.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.06.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes indicate that this is woven bone. Osteoclasts are also present, demonstrating that bone resorption is occurring simultaneously.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes indicate that this is woven bone. Osteoclasts are also present, demonstrating that bone resorption is occurring simultaneously.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/T.C.B.R.06-1C-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.06-1C-ping.png",
+      "imagem_base": "imagens/base/T.C.B.R.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.06.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes indicate that this is woven bone. Osteoclasts are also present, demonstrating that bone resorption is occurring simultaneously.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes (black arrows) indicate that this is woven bone. Osteoclasts (yellow arrows) are also present, demonstrating that bone resorption is occurring simultaneously.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.06.P02.png",
+      "imagem_base": "imagens/base/T.C.B.R.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.06.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes (black arrows) indicate that this is woven bone. Osteoclasts (yellow arrows) are also present, demonstrating that bone resorption is occurring simultaneously.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endosteum",
+      "explicacao_original": "This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes (black arrows) indicate that this is woven bone. Osteoclasts (green arrows) are also present, demonstrating that bone resorption is occurring simultaneously.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.06.P03.png",
+      "imagem_base": "imagens/base/T.C.B.R.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.06.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone has all the characteristics of spongy bone: anastomosing spicules, endosteal lining, and numerous blood vessels. Additionally, the numerous rounded lacunae, containing osteocytes (black arrows) indicate that this is woven bone. Osteoclasts (green arrows) are also present, demonstrating that bone resorption is occurring simultaneously.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of slides in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/T.C.B.R.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.06.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of slides in the University of Michigan collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-6/, acesso em 2026-08-07."
+    }
+  ]
+}

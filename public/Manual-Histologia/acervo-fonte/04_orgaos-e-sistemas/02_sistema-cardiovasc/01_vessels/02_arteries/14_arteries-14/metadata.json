@@ -1,0 +1,74 @@
+{
+  "id": 5278,
+  "titulo": "Medium (muscular) artery",
+  "titulo_wordpress": "Arteries 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 14"
+  ],
+  "descricao_original": "The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-14.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Medium (muscular) artery', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 14. Descricao original da pagina: The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medium (muscular) artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-14.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Internal elastic lamina",
+      "explicacao_original": "The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-14-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-14-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medium (muscular) artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-14.jpg'. Destaca a estrutura ou conceito 'Internal elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica media",
+      "explicacao_original": "The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medium (muscular) artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-14.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "External elastic lamina",
+      "explicacao_original": "In this section, the external elastic lamina appears well delineated from the tunica adventitia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-14-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-14-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medium (muscular) artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-14.jpg'. Destaca a estrutura ou conceito 'External elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this section, the external elastic lamina appears well delineated from the tunica adventitia.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-14-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-14-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medium (muscular) artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-14.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima is composed of an endothelium, a subendothelial connective tissue and a prominent internal elastic lamina. The tunica media, composed mostly of smooth muscle, is the thickest layer and extends up to the multilayered external elastic lamina. The tunica adventitia begins at the external elastic lamina and is composed of irregular dense connective tissue. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-14/, acesso em 2026-08-07."
+    }
+  ]
+}

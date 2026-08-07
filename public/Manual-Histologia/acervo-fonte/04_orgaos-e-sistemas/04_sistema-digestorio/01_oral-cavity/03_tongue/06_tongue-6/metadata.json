@@ -1,0 +1,96 @@
+{
+  "id": 6763,
+  "titulo": "Tongue: Circumvallate papillae",
+  "titulo_wordpress": "Tongue 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tongue",
+    "Tongue 6"
+  ],
+  "descricao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tongue: Circumvallate papillae', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Descricao original da pagina: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Circumvallate papilla",
+      "explicacao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Circumvallate papilla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sulcus",
+      "explicacao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Sulcus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Serous glands of von Ebner",
+      "explicacao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Serous glands of von Ebner' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ducts of glands",
+      "explicacao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Ducts of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Taste buds",
+      "explicacao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Taste buds' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nerves",
+      "explicacao_original": "Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Nerves' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each circumvallate papilla is surrounded by a deep, circular sulcus into which the serous glands of von Ebner empty. The connection between the duct of the glands and the sulcus is visible. The secretory cells of the glands contain apical eosinophilic granules; their watery secretions cleanse the surfaces of the taste buds for the reception of new tastes. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-6-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-6-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-MS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-MS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Circumvallate papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-MS-6.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-6/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": 31650,
+  "titulo": "Pulmonary vein",
+  "titulo_wordpress": "Pulmonary vein 2A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Blood Supply",
+    "Pulmonary Vein",
+    "Pulmonary vein 2A"
+  ],
+  "descricao_original": "A pulmonary vein located near the surface of the lung travels in thin connective tissue septa and is not associated with a respiratory passageway. Oxygenated blood in these vessels drains mostly into pulmonary veins. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-2a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-light.jpg",
+      "arquivo": "imagens/base/O.R.B.PV_.02-NEW-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pulmonary vein', no setor Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 2A. Descricao original da pagina: A pulmonary vein located near the surface of the lung travels in thin connective tissue septa and is not associated with a respiratory passageway. Oxygenated blood in these vessels drains mostly into pulmonary veins. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-2a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pulmonary veins",
+      "explicacao_original": "A pulmonary vein located near the surface of the lung travels in thin connective tissue septa and is not associated with a respiratory passageway. Oxygenated blood in these vessels drains mostly into pulmonary veins. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.PV_.02-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.B.PV_.02-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pulmonary vein'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.PV_.02-NEW-light.jpg'. Destaca a estrutura ou conceito 'Pulmonary veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A pulmonary vein located near the surface of the lung travels in thin connective tissue septa and is not associated with a respiratory passageway. Oxygenated blood in these vessels drains mostly into pulmonary veins. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "A pulmonary vein located near the surface of the lung travels in thin connective tissue septa and is not associated with a respiratory passageway. Oxygenated blood in these vessels drains mostly into pulmonary veins. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.PV_.02-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.B.PV_.02-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pulmonary vein'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.PV_.02-NEW-light.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A pulmonary vein located near the surface of the lung travels in thin connective tissue septa and is not associated with a respiratory passageway. Oxygenated blood in these vessels drains mostly into pulmonary veins. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Visceral pleura",
+      "explicacao_original": "Each lung projects into an internal body cavity, the pleural cavity, and is covered by a serous membrane (serosa), called visceral pleura. Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.PV_.02-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.B.PV_.02-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pulmonary vein'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.PV_.02-NEW-light.jpg'. Destaca a estrutura ou conceito 'Visceral pleura' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each lung projects into an internal body cavity, the pleural cavity, and is covered by a serous membrane (serosa), called visceral pleura. Pleura is composed of a simple squamous epithelium (mesothelium) overlying a layer of connective tissue that contains blood vessels and elastic fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.PV_.02-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.B.PV_.02-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.PV_.02-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pulmonary vein'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.PV_.02-NEW-light.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Pulmonary Vein > Pulmonary vein 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/pulmonary-vein/pulmonary-vein-2a/, acesso em 2026-08-07."
+    }
+  ]
+}

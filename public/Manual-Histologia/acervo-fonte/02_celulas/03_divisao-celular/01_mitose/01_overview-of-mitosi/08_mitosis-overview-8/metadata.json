@@ -1,0 +1,74 @@
+{
+  "id": 2330,
+  "titulo": "Telophase",
+  "titulo_wordpress": "Mitosis overview 8",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 8"
+  ],
+  "descricao_original": "During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-7.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Telophase', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 8. Descricao original da pagina: During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chromosomes",
+      "explicacao_original": "During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/C.CD_.MIT-7-6-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-7-6-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 8. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-7-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-7-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 8. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleoli",
+      "explicacao_original": "During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-7-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-7-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Nucleoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During telophase, the nuclear envelope and nucleoli reform, and the chromosomal DNA decondenses. The developing cleavage furrow indicates the division of the cytoplasm (cytokinesis) and the formation of identical daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 8. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cleavage furrow",
+      "explicacao_original": "The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-7-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-7-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Cleavage furrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 8. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Contractile ring",
+      "explicacao_original": "The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-7-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-7-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-7.jpg'. Destaca a estrutura ou conceito 'Contractile ring' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 8. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-8/, acesso em 2026-08-07."
+    }
+  ]
+}

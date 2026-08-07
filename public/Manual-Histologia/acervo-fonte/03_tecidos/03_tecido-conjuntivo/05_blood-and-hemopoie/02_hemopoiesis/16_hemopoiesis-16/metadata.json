@@ -1,0 +1,44 @@
+{
+  "id": 20480,
+  "titulo": "Hemopoiesis",
+  "titulo_wordpress": "Hemopoiesis 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 16"
+  ],
+  "descricao_original": "Hemopoiesis is the process of blood cell formation. The wide variety of mature blood cells are all derived from a single precursor cell called the hemopoietic stem cell. These stem cells generate two major lineages, myeloid and lymphoid. Cells of the myeloid lineage consist of erythrocytes, granulocytes (composed of neutrophils, eosinophils and basophils), monocytes and megakaryocytes. The lymphoid lineage includes B and T lymphocytes and natural killer cells.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-16.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-16.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hemopoiesis', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 16. Descricao original da pagina: Hemopoiesis is the process of blood cell formation. The wide variety of mature blood cells are all derived from a single precursor cell called the hemopoietic stem cell. These stem cells generate two major lineages, myeloid and lymphoid. Cells of the myeloid lineage consist of erythrocytes, granulocytes (composed of neutrophils, eosinophils and basophils), monocytes and megakaryocytes. The lymphoid lineage includes B and T lymphocytes and natural killer cells.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Myeloid lineage",
+      "explicacao_original": "Hemopoiesis is the process of blood cell formation. The wide variety of mature blood cells are all derived from a single precursor cell called the hemopoietic stem cell. These stem cells generate two major lineages, myeloid and lymphoid. Cells of the myeloid lineage consist of erythrocytes, granulocytes (composed of neutrophils, eosinophils and basophils), monocytes and megakaryocytes. The lymphoid lineage includes B and T lymphocytes and natural killer cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-16-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-16-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-16.jpg'. Destaca a estrutura ou conceito 'Myeloid lineage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemopoiesis is the process of blood cell formation. The wide variety of mature blood cells are all derived from a single precursor cell called the hemopoietic stem cell. These stem cells generate two major lineages, myeloid and lymphoid. Cells of the myeloid lineage consist of erythrocytes, granulocytes (composed of neutrophils, eosinophils and basophils), monocytes and megakaryocytes. The lymphoid lineage includes B and T lymphocytes and natural killer cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lymphoid lineage",
+      "explicacao_original": "Hemopoiesis is the process of blood cell formation. The wide variety of mature blood cells are all derived from a single precursor cell called the hemopoietic stem cell. These stem cells generate two major lineages, myeloid and lymphoid. Cells of the myeloid lineage consist of erythrocytes, granulocytes (composed of neutrophils, eosinophils and basophils), monocytes and megakaryocytes. The lymphoid lineage includes B and T lymphocytes and natural killer cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-16-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-16-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/Or.CV_.Hemo-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-16.jpg'. Destaca a estrutura ou conceito 'Lymphoid lineage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemopoiesis is the process of blood cell formation. The wide variety of mature blood cells are all derived from a single precursor cell called the hemopoietic stem cell. These stem cells generate two major lineages, myeloid and lymphoid. Cells of the myeloid lineage consist of erythrocytes, granulocytes (composed of neutrophils, eosinophils and basophils), monocytes and megakaryocytes. The lymphoid lineage includes B and T lymphocytes and natural killer cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-16/, acesso em 2026-08-07."
+    }
+  ]
+}

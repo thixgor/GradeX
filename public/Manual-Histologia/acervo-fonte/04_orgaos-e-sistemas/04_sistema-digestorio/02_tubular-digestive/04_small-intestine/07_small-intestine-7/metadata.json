@@ -1,0 +1,84 @@
+{
+  "id": 28522,
+  "titulo": "Mucosa: Epithelium",
+  "titulo_wordpress": "Small intestine 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 7"
+  ],
+  "descricao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosa: Epithelium', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Descricao original da pagina: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6-1-yellow-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-6-1-yellow-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enterocytes",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6-2-yellow-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-6-2-yellow-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Enterocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Microvilli",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lymphocytes and macrophages",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Lymphocytes and macrophages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is lined by a simple columnar epithelium, primarily composed of absorptive enterocytes with microvilli. Scattered goblet cells with their expanded apical portions containing mucinogen are visible. Also present are lymphocytes, macrophages and microfold or M cells. M cells (not visible here) occur among the enterocytes, but lack microvilli; instead having microfolds of their apical surface membrane that endocytose antigens, transporting them to surveilling lymphoid tissue in the lamina propria beneath them. M cells are antigen delivery cells for initiating mucosal immune responses. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-7/, acesso em 2026-08-07."
+    }
+  ]
+}

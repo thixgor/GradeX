@@ -1,0 +1,115 @@
+{
+  "id": 6850,
+  "titulo": "Overview",
+  "titulo_wordpress": "Overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Overview of the stomach",
+    "Overview 1"
+  ],
+  "descricao_original": "The four stomach regions comprise three functional units (cardia, body and fundus, pylorus), each composed of the expected four tunics. The stomach continues digestion by secreting pepsin to aid in protein digestion, producing an acidic fluid, and churning via the thick muscularis externa. Hormones secreted by enteroendocrine cells modulate digestion. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Descricao original da pagina: The four stomach regions comprise three functional units (cardia, body and fundus, pylorus), each composed of the expected four tunics. The stomach continues digestion by secreting pepsin to aid in protein digestion, producing an acidic fluid, and churning via the thick muscularis externa. Hormones secreted by enteroendocrine cells modulate digestion. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Gastric glands",
+      "explicacao_original": "The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-5a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-5a-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Gastric glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosal epithelium of the stomach is modified to form a sheet gland that invaginates into lamina propria, forming gastric pits. Gastric glands begin at the bases of these pits and extend to muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosa is composed of dense connective tissue. The gastic muscularis externa is composed of three layers of smooth muscle instead of the usual two; however, the additional internal oblique layer is inconsistently present. The stomach is covered on its exterior surface by a serosa because this organ protrudes into the peritoneal cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa is composed of dense connective tissue. The gastic muscularis externa is composed of three layers of smooth muscle instead of the usual two; however, the additional internal oblique layer is inconsistently present. The stomach is covered on its exterior surface by a serosa because this organ protrudes into the peritoneal cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The submucosa is composed of dense connective tissue. The gastic muscularis externa is composed of three layers of smooth muscle instead of the usual two; however, the additional internal oblique layer is inconsistently present. The stomach is covered on its exterior surface by a serosa because this organ protrudes into the peritoneal cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa is composed of dense connective tissue. The gastic muscularis externa is composed of three layers of smooth muscle instead of the usual two; however, the additional internal oblique layer is inconsistently present. The stomach is covered on its exterior surface by a serosa because this organ protrudes into the peritoneal cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Serosa",
+      "explicacao_original": "The submucosa is composed of dense connective tissue. The gastic muscularis externa is composed of three layers of smooth muscle instead of the usual two; however, the additional internal oblique layer is inconsistently present. The stomach is covered on its exterior surface by a serosa because this organ protrudes into the peritoneal cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa is composed of dense connective tissue. The gastic muscularis externa is composed of three layers of smooth muscle instead of the usual two; however, the additional internal oblique layer is inconsistently present. The stomach is covered on its exterior surface by a serosa because this organ protrudes into the peritoneal cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

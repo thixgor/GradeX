@@ -1,0 +1,84 @@
+{
+  "id": 14072,
+  "titulo": "Semicircular canals",
+  "titulo_wordpress": "Semicircular canals 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Semicircular Canals",
+    "Semicircular canals 5"
+  ],
+  "descricao_original": "The ampulla of a semicircular duct, with its crista ampullaris, is shown near its union with the utricle. 30X",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "arquivo": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Semicircular canals', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Descricao original da pagina: The ampulla of a semicircular duct, with its crista ampullaris, is shown near its union with the utricle. 30X. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The ampulla of a semicircular duct, with its crista ampullaris, is shown near its union with the utricle. 30X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.05.P01-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.05.P01-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.05A.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ampulla of a semicircular duct, with its crista ampullaris, is shown near its union with the utricle. 30X. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ampulla of semicircular duct",
+      "explicacao_original": "The ampulla of a semicircular duct, with its crista ampullaris, is shown near its union with the utricle. 30X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.05.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.05.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.05A.jpg'. Destaca a estrutura ou conceito 'Ampulla of semicircular duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ampulla of a semicircular duct, with its crista ampullaris, is shown near its union with the utricle. 30X. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Crista ampullaris",
+      "explicacao_original": "The crista ampullaris is a ridge-like structure that functions similarly to the macula in the utricle and in the saccule. However, in the crista the gelatinous layer forms a cupula that extends across the ampulla to the opposite wall. Changes in acceleration cause deflection of the cupula that stimulate receptor cells and initiate a neural response in CN VIII. Otoliths are absent in the crista.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.05.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.05.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.05A.jpg'. Destaca a estrutura ou conceito 'Crista ampullaris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The crista ampullaris is a ridge-like structure that functions similarly to the macula in the utricle and in the saccule. However, in the crista the gelatinous layer forms a cupula that extends across the ampulla to the opposite wall. Changes in acceleration cause deflection of the cupula that stimulate receptor cells and initiate a neural response in CN VIII. Otoliths are absent in the crista.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Receptor cells",
+      "explicacao_original": "The crista ampullaris is a ridge-like structure that functions similarly to the macula in the utricle and in the saccule. However, in the crista the gelatinous layer forms a cupula that extends across the ampulla to the opposite wall. Changes in acceleration cause deflection of the cupula that stimulate receptor cells and initiate a neural response in CN VIII. Otoliths are absent in the crista.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.05.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.05.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.05A.jpg'. Destaca a estrutura ou conceito 'Receptor cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The crista ampullaris is a ridge-like structure that functions similarly to the macula in the utricle and in the saccule. However, in the crista the gelatinous layer forms a cupula that extends across the ampulla to the opposite wall. Changes in acceleration cause deflection of the cupula that stimulate receptor cells and initiate a neural response in CN VIII. Otoliths are absent in the crista.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cupula",
+      "explicacao_original": "The crista ampullaris is a ridge-like structure that functions similarly to the macula in the utricle and in the saccule. However, in the crista the gelatinous layer forms a cupula that extends across the ampulla to the opposite wall. Changes in acceleration cause deflection of the cupula that stimulate receptor cells and initiate a neural response in CN VIII. Otoliths are absent in the crista.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.05.P04-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.05.P04-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.05A.jpg'. Destaca a estrutura ou conceito 'Cupula' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The crista ampullaris is a ridge-like structure that functions similarly to the macula in the utricle and in the saccule. However, in the crista the gelatinous layer forms a cupula that extends across the ampulla to the opposite wall. Changes in acceleration cause deflection of the cupula that stimulate receptor cells and initiate a neural response in CN VIII. Otoliths are absent in the crista.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Connective tissue reticulum",
+      "explicacao_original": "The connective tissue reticulum suspends the semicircular ducts in the semicircular canals.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.05.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.05.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.SC_.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.05A.jpg'. Destaca a estrutura ou conceito 'Connective tissue reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The connective tissue reticulum suspends the semicircular ducts in the semicircular canals.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-5/, acesso em 2026-08-07."
+    }
+  ]
+}

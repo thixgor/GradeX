@@ -1,0 +1,75 @@
+{
+  "id": 30437,
+  "titulo": "Primary lymphoid nodule",
+  "titulo_wordpress": "Tissues 3A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 3A"
+  ],
+  "descricao_original": "Primary lymphoid nodules consist primarily of unstimulated lymphocytes that accumulate in tightly packed, spherical clusters in lymphoid tissues and organs. Lymphoid nodules filter the fluid in the layer or organ in which they are located; i.e., tissue fluid in the lamina propria, lymph in lymph node and blood in spleen. Antigens present in these filtrates initiate an immune response in these nodules. Colon, 200x; Fundic stomach, 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/",
+  "creditos_identificados": [
+    "Image sources: These images were taken of slides from the University of Virginia (l) and the University of New England College of Osteopathic Medicine (r) collections."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-3A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Primary lymphoid nodule', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 3A. Descricao original da pagina: Primary lymphoid nodules consist primarily of unstimulated lymphocytes that accumulate in tightly packed, spherical clusters in lymphoid tissues and organs. Lymphoid nodules filter the fluid in the layer or organ in which they are located; i.e., tissue fluid in the lamina propria, lymph in lymph node and blood in spleen. Antigens present in these filtrates initiate an immune response in these nodules. Colon, 200x; Fundic stomach, 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary lymphoid nodules",
+      "explicacao_original": "Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-3A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Primary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-3A.jpg'. Destaca a estrutura ou conceito 'Primary lymphoid nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-3A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Primary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-3A.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Glands",
+      "explicacao_original": "Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-3A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Primary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-3A.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-3A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Primary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-3A.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary lymphoid nodules consists of a spherical mass of unstimulated lymphocytes. These primary nodules, located in the lamina propria of the colon (l) and stomach (r), filter tissue fluid and respond to antigens encountered by the mucosa. Following antigen stimulation, they can become a secondary nodule with the formation of a pale staining central region called the germinal center.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image sources",
+      "explicacao_original": "These images were taken of slides from the University of Virginia (l) and the University of New England College of Osteopathic Medicine (r) collections.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A-5-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-3A-5-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Primary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-3A.jpg'. Destaca a estrutura ou conceito 'Image sources' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of slides from the University of Virginia (l) and the University of New England College of Osteopathic Medicine (r) collections.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-3a/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": 1116,
+  "titulo": "Membranes",
+  "titulo_wordpress": "Membranes 5",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Membranas",
+    "Membranes 5"
+  ],
+  "descricao_original": "By electron microscopy, membranes appear as dark lines, due to the reaction of osmium with the membrane lipids. At much higher magnification, membranes show a trilaminar appearance due to the localized binding of electron-dense osmium within the lipid bilayer. Membranes are a component of many intracellular organelles, as well as forming the unique membrane at the cell surface, called the plasma membrane. The margins of two cells are visible in this image. 15,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/membranes/membranes-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "arquivo": "imagens/base/C.S.M-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Membranes', no setor Células > Estruturas > Membranas > Membranes 5. Descricao original da pagina: By electron microscopy, membranes appear as dark lines, due to the reaction of osmium with the membrane lipids. At much higher magnification, membranes show a trilaminar appearance due to the localized binding of electron-dense osmium within the lipid bilayer. Membranes are a component of many intracellular organelles, as well as forming the unique membrane at the cell surface, called the plasma membrane. The margins of two cells are visible in this image. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "The plasma membrane is the membrane at the cell surface, enclosing the cytoplasm of the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-1-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the membrane at the cell surface, enclosing the cytoplasm of the cell.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "The plasma membrane is the membrane at the cell surface, enclosing the cytoplasm of the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.M-5-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-7-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the membrane at the cell surface, enclosing the cytoplasm of the cell.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "A portion of the nucleus of each cell is visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.S.M-5-nuclei-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-nuclei-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A portion of the nucleus of each cell is visible.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "Two membranes surround each nucleus, forming the nuclear envelope. Red arrows indicate the outer nuclear membrane; green arrows the inner membrane. Intracellular membranes, like the plasma membrane, are unit membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.M-5A-membrane-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5A-membrane-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two membranes surround each nucleus, forming the nuclear envelope. Red arrows indicate the outer nuclear membrane; green arrows the inner membrane. Intracellular membranes, like the plasma membrane, are unit membranes.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "RER",
+      "explicacao_original": "Rough endoplasmic reticulum forms flattened sacs composed of unit membranes. RER membranes possess ribosomes on their cytoplasmic surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-3-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Rough endoplasmic reticulum forms flattened sacs composed of unit membranes. RER membranes possess ribosomes on their cytoplasmic surface.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "Intracellular membranes also form mitochondria which consist of two unit membranes. The inner membrane is folded inwards forming cristae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-4-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intracellular membranes also form mitochondria which consist of two unit membranes. The inner membrane is folded inwards forming cristae.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Intercellular space",
+      "explicacao_original": "The intercellular space contains numerous cellular extensions.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-5-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Intercellular space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intercellular space contains numerous cellular extensions.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Cellular extensions",
+      "explicacao_original": "The intercellular space contains numerous cellular extensions.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-5-6-ping.png",
+      "imagem_base": "imagens/base/C.S.M-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M-5.jpg'. Destaca a estrutura ou conceito 'Cellular extensions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intercellular space contains numerous cellular extensions.. Contexto setorial: Células > Estruturas > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-5/, acesso em 2026-08-07."
+    }
+  ]
+}

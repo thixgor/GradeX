@@ -1,0 +1,115 @@
+{
+  "id": 23196,
+  "titulo": "Testis proper: exocrine portion",
+  "titulo_wordpress": "Testis proper 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Testis Proper",
+    "Testis proper 4"
+  ],
+  "descricao_original": "The exocrine function of the testis is performed by the epithelium lining the convoluted portions of seminiferous tubules. Each convoluted tubule is lined by a stratified epithelium composed of two cell types. Germ cells divide and cytodifferentiate to form haploid spermatozoa. Sertoli cells nourish and protect germ cells during their formation before releasing them into the lumen of the tubule. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "arquivo": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Testis proper: exocrine portion', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Descricao original da pagina: The exocrine function of the testis is performed by the epithelium lining the convoluted portions of seminiferous tubules. Each convoluted tubule is lined by a stratified epithelium composed of two cell types. Germ cells divide and cytodifferentiate to form haploid spermatozoa. Sertoli cells nourish and protect germ cells during their formation before releasing them into the lumen of the tubule. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Orientation",
+      "explicacao_original": "The exocrine function of the testis is performed by the epithelium lining the convoluted portions of seminiferous tubules. Each convoluted tubule is lined by a stratified epithelium composed of two cell types. Germ cells divide and cytodifferentiate to form haploid spermatozoa. Sertoli cells nourish and protect germ cells during their formation before releasing them into the lumen of the tubule. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P01.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Orientation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The exocrine function of the testis is performed by the epithelium lining the convoluted portions of seminiferous tubules. Each convoluted tubule is lined by a stratified epithelium composed of two cell types. Germ cells divide and cytodifferentiate to form haploid spermatozoa. Sertoli cells nourish and protect germ cells during their formation before releasing them into the lumen of the tubule. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sertoli cells",
+      "explicacao_original": "Sertoli cells (X) extend from the basal lamina to the lumen. Their nuclei (arrows) are ovoid, have a prominent nucleolus, are usually indented, and lie perpendicular to the basal lamina. Sertoli cells extend numerous lateral processes that “bear hug” developing germ cells and form occluding junctions with adjacent Sertoli cells. These occluding junctions establish the blood-testis barrier.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P02.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Sertoli cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sertoli cells (X) extend from the basal lamina to the lumen. Their nuclei (arrows) are ovoid, have a prominent nucleolus, are usually indented, and lie perpendicular to the basal lamina. Sertoli cells extend numerous lateral processes that “bear hug” developing germ cells and form occluding junctions with adjacent Sertoli cells. These occluding junctions establish the blood-testis barrier.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood-testis barrier",
+      "explicacao_original": "The blood-testis barrier creates two compartments in the germinal epithelium to protect developing sperm against any potential immune response. The barrier is formed by occluding junctions (arrows) joining adjacent Sertoli cells. The basal compartment (blue fill) contains cells that are exposed to blood-born factors. The adluminal compartment (white fill) isolates developing germ cells (gametes), thus protecting them from potential immune responses brought about by exposure to blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P03-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P03-1.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Blood-testis barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The blood-testis barrier creates two compartments in the germinal epithelium to protect developing sperm against any potential immune response. The barrier is formed by occluding junctions (arrows) joining adjacent Sertoli cells. The basal compartment (blue fill) contains cells that are exposed to blood-born factors. The adluminal compartment (white fill) isolates developing germ cells (gametes), thus protecting them from potential immune responses brought about by exposure to blood.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Germ cells",
+      "explicacao_original": "Germ cells divide and cytodifferentiate to form haploid spermatozoa. The entire process, called spermatogenesis, involves several stages of development.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP-new-ping-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-new-ping-1.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Germ cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Germ cells divide and cytodifferentiate to form haploid spermatozoa. The entire process, called spermatogenesis, involves several stages of development.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Spermatogonia",
+      "explicacao_original": "Spermatogonia are diploid, somatic cells that divide by mitosis to perpetuate themselves or to begin the process of spermatogenesis. Spermatogonia lie on the basal lamina in the basal compartment formed by the blood-testis barrier. The diameter of spermatogonia nuclei will serve as a measure for identifying the other germ cells",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P04.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Spermatogonia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia are diploid, somatic cells that divide by mitosis to perpetuate themselves or to begin the process of spermatogenesis. Spermatogonia lie on the basal lamina in the basal compartment formed by the blood-testis barrier. The diameter of spermatogonia nuclei will serve as a measure for identifying the other germ cells. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Primary spermatocytes",
+      "explicacao_original": "Primary spermatocytes are diploid cells formed by mitosis of spermatogonia. Primary spermatocytes form in the basal compartment but soon move through the blood-testis barrier into the adluminal compartment. Their nuclei are about 150% that of spermatogonia nuclei. Primary spermatocytes arrest in prophase of meiosis I, so many of these cells, with condensed chromosomes, are visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P05.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P05.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Primary spermatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary spermatocytes are diploid cells formed by mitosis of spermatogonia. Primary spermatocytes form in the basal compartment but soon move through the blood-testis barrier into the adluminal compartment. Their nuclei are about 150% that of spermatogonia nuclei. Primary spermatocytes arrest in prophase of meiosis I, so many of these cells, with condensed chromosomes, are visible.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Secondary spermatocytes",
+      "explicacao_original": "Secondary spermatocytes are haploid cells formed by the first meiotic division of primary spermatocytes. Secondary spermatocytes are located closer to the lumen than are primaries, and their nuclei are about the same diameter as those of spermatogonia. Secondary spermatocytes quickly complete the second meiotic division, so they are not frequently seen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P06.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P06.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Secondary spermatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secondary spermatocytes are haploid cells formed by the first meiotic division of primary spermatocytes. Secondary spermatocytes are located closer to the lumen than are primaries, and their nuclei are about the same diameter as those of spermatogonia. Secondary spermatocytes quickly complete the second meiotic division, so they are not frequently seen.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Spermatids",
+      "explicacao_original": "Spermatids, haploid cells formed by the 2nd meiotic division of secondary spermatocytes, lie adjacent to the lumen. Nuclei of the first spermatids formed are about 2/3 the size of spermatogonia nuclei. Spermatids do not divide but undergo cytodifferentiation. They transform from spherical cells (early spermatids, blue arrows), to the sleek, tadpole-shape of late spermatids (red arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P07.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P07.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Spermatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatids, haploid cells formed by the 2nd meiotic division of secondary spermatocytes, lie adjacent to the lumen. Nuclei of the first spermatids formed are about 2/3 the size of spermatogonia nuclei. Spermatids do not divide but undergo cytodifferentiation. They transform from spherical cells (early spermatids, blue arrows), to the sleek, tadpole-shape of late spermatids (red arrows).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Spermatozoa",
+      "explicacao_original": "Spermatozoa are haploid cells formed by the cytodifferentiation of spermatids. Spermatozoa are released from the seminiferous epithelium (germinal epithelium) by the Sertoli cells and lie free in the lumen of the convoluted portions of the seminiferous tubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.P08-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.04.P08-1.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis proper: exocrine portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.04.jpg'. Destaca a estrutura ou conceito 'Spermatozoa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatozoa are haploid cells formed by the cytodifferentiation of spermatids. Spermatozoa are released from the seminiferous epithelium (germinal epithelium) by the Sertoli cells and lie free in the lumen of the convoluted portions of the seminiferous tubules.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis proper 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-14/, acesso em 2026-08-07."
+    }
+  ]
+}

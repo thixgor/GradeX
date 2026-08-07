@@ -1,0 +1,74 @@
+{
+  "id": 12739,
+  "titulo": "Uterus: proliferative phase (Days 6-14)",
+  "titulo_wordpress": "Uterus 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 4"
+  ],
+  "descricao_original": "To date the endometrium and, thus, determine the stage of the menstrual cycle, evaluate the thickness of the endometrium, the development of its glands, and the visibility of spiral arteries. In this image the endometrium is not very thick, glands are straight, and spiral arteries are not readily visible, all indications of the proliferative phase. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.jpg",
+      "arquivo": "imagens/base/O.R.F.U.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: proliferative phase (Days 6-14)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 4. Descricao original da pagina: To date the endometrium and, thus, determine the stage of the menstrual cycle, evaluate the thickness of the endometrium, the development of its glands, and the visibility of spiral arteries. In this image the endometrium is not very thick, glands are straight, and spiral arteries are not readily visible, all indications of the proliferative phase. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Basal zone",
+      "explicacao_original": "The basal zone of the endometrium rests on the myometrium and can be readily distinguished in images because of its darker staining quality (resulting from smaller, closely packed cells). The bases of the glands, located in this layer, are the source of cells that regenerate the glands and also the surface epithelium of the functional zone following menstruation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.04.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: proliferative phase (Days 6-14)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.04.jpg'. Destaca a estrutura ou conceito 'Basal zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basal zone of the endometrium rests on the myometrium and can be readily distinguished in images because of its darker staining quality (resulting from smaller, closely packed cells). The bases of the glands, located in this layer, are the source of cells that regenerate the glands and also the surface epithelium of the functional zone following menstruation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Functional zone",
+      "explicacao_original": "The functional zone of the endometrium is rapidly growing during the proliferative phase, under the influence of estrogen from the ovarian follicles. Simple branched tubular glands are fairly straight and are non-secretory at this time. Because they are growing to keep up with the proliferating functional zone, spiral arteries will be present but are not coiled and will be difficult to see.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.04.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: proliferative phase (Days 6-14)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.04.jpg'. Destaca a estrutura ou conceito 'Functional zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The functional zone of the endometrium is rapidly growing during the proliferative phase, under the influence of estrogen from the ovarian follicles. Simple branched tubular glands are fairly straight and are non-secretory at this time. Because they are growing to keep up with the proliferating functional zone, spiral arteries will be present but are not coiled and will be difficult to see.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Simple tubular glands",
+      "explicacao_original": "Simple branched tubular glands in the endometrium are straight during the proliferative phase and are non-secretory at this time.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.04.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: proliferative phase (Days 6-14)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.04.jpg'. Destaca a estrutura ou conceito 'Simple tubular glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple branched tubular glands in the endometrium are straight during the proliferative phase and are non-secretory at this time.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myometrium",
+      "explicacao_original": "Only a small portion of the myometrium is visible in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.04.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: proliferative phase (Days 6-14)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.04.jpg'. Destaca a estrutura ou conceito 'Myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Only a small portion of the myometrium is visible in this image.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Graphic: proliferative phase",
+      "explicacao_original": "Uterus: Proliferative phase (days 6-14) — During this phase the functional zone is proliferating, regenerating itself from the basal zone. Therefore, the functional zone is relatively thin. Glands are growing and appear straight and non-secretory. Spiral arteries are not coiled and, therefore, are difficult to identify. Note the stage of the ovarian cycle at this time.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.R.F.U.04.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.04.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.F.U.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: proliferative phase (Days 6-14)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.04.jpg'. Destaca a estrutura ou conceito 'Graphic: proliferative phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Uterus: Proliferative phase (days 6-14) — During this phase the functional zone is proliferating, regenerating itself from the basal zone. Therefore, the functional zone is relatively thin. Glands are growing and appear straight and non-secretory. Spiral arteries are not coiled and, therefore, are difficult to identify. Note the stage of the ovarian cycle at this time.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-4/, acesso em 2026-08-07."
+    }
+  ]
+}

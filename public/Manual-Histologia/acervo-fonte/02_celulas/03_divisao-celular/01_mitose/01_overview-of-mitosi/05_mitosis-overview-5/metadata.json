@@ -1,0 +1,84 @@
+{
+  "id": 2324,
+  "titulo": "Prophase",
+  "titulo_wordpress": "Mitosis overview 5",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 5"
+  ],
+  "descricao_original": "Prophase, the initial phase of mitosis, follows G2 phase of interphase. During prophase, replicated DNA condenses into visible chromosomes; the duplicated centrosomes move apart, and the mitotic spindle assembles from the centrosome. Finally, the nuclear envelope disintegrates and the nucleolus disappears.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Prophase', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Descricao original da pagina: Prophase, the initial phase of mitosis, follows G2 phase of interphase. During prophase, replicated DNA condenses into visible chromosomes; the duplicated centrosomes move apart, and the mitotic spindle assembles from the centrosome. Finally, the nuclear envelope disintegrates and the nucleolus disappears.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Condensing chromosomes",
+      "explicacao_original": "Prophase, the initial phase of mitosis, follows G2 phase of interphase. During prophase, replicated DNA condenses into visible chromosomes; the duplicated centrosomes move apart; and the mitotic spindle assembles from the centrosome. Finally, the nuclear envelope disintegrates and the nucleolus disappears.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-4-0-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-4-0-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-4.jpg'. Destaca a estrutura ou conceito 'Condensing chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Prophase, the initial phase of mitosis, follows G2 phase of interphase. During prophase, replicated DNA condenses into visible chromosomes; the duplicated centrosomes move apart; and the mitotic spindle assembles from the centrosome. Finally, the nuclear envelope disintegrates and the nucleolus disappears.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "The term chromatid refers to one copy of a chromosome that is still joined to the other copy at the centromere. The two copies are referred to as sister chromatids (blue arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-4-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-4.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The term chromatid refers to one copy of a chromosome that is still joined to the other copy at the centromere. The two copies are referred to as sister chromatids (blue arrows).. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Centromeres",
+      "explicacao_original": "The centromere is a highly condensed region of DNA which forms the junction point for the two sister chromatids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-4-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-4.jpg'. Destaca a estrutura ou conceito 'Centromeres' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The centromere is a highly condensed region of DNA which forms the junction point for the two sister chromatids.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "The breakdown of the nuclear envelope occurs in late prophase, a stage referred to as pro-metaphase. This step allows access for the microtubules, which are extending from the centrioles, to attach to the chromatids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-4-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-4.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The breakdown of the nuclear envelope occurs in late prophase, a stage referred to as pro-metaphase. This step allows access for the microtubules, which are extending from the centrioles, to attach to the chromatids.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "The dissolution of the nucleolus occurs in late prophase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-4-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-4.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dissolution of the nucleolus occurs in late prophase.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "The centrosome, the microtubule organizing center of the cell, consists of two centrioles (diplosome) oriented at right angles that are surrounded by the centrosome matrix. During prophase, the centrosomes move to opposite poles of the cell where they produce the microtubules (spindle fibers) forming the mitotic spindle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-4-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-4.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The centrosome, the microtubule organizing center of the cell, consists of two centrioles (diplosome) oriented at right angles that are surrounded by the centrosome matrix. During prophase, the centrosomes move to opposite poles of the cell where they produce the microtubules (spindle fibers) forming the mitotic spindle.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-5/, acesso em 2026-08-07."
+    }
+  ]
+}

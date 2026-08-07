@@ -1,0 +1,64 @@
+{
+  "id": 16823,
+  "titulo": "Macrophage",
+  "titulo_wordpress": "Cells 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 14"
+  ],
+  "descricao_original": "The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Macrophage', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 14. Descricao original da pagina: The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nuclear indentation",
+      "explicacao_original": "The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-14-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-14.jpg'. Destaca a estrutura ou conceito 'Nuclear indentation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Marginal heterochromatin",
+      "explicacao_original": "The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-14-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-14.jpg'. Destaca a estrutura ou conceito 'Marginal heterochromatin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Folds and processes",
+      "explicacao_original": "The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-14-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-14.jpg'. Destaca a estrutura ou conceito 'Folds and processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lysosomes",
+      "explicacao_original": "The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-14-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-14.jpg'. Destaca a estrutura ou conceito 'Lysosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The macrophage nucleus has a prominent indentation, reflective of its origin from monocytes. The accumulations of heterochromatin are mostly located just beneath the nuclear envelope, a distribution referred to as marginated. Prominent folding and ruffling of the processes is also typically seen. Numerous heterogeneous lysosomes are also visible. 7000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-14/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": 3044,
+  "titulo": "Oligodendrocytes",
+  "titulo_wordpress": "Supporting cells CNS 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 5"
+  ],
+  "descricao_original": "Interfascicular oligodendrocytes, the second type, form the myelin sheath around axons in the CNS. Oligodendrocytes have small, dark nuclei compared with the larger, paler nuclei of fibrous astrocytes; the processes of both cells are not seen with routine staining. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oligodendrocytes', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 5. Descricao original da pagina: Interfascicular oligodendrocytes, the second type, form the myelin sheath around axons in the CNS. Oligodendrocytes have small, dark nuclei compared with the larger, paler nuclei of fibrous astrocytes; the processes of both cells are not seen with routine staining. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Oligodendrocytes",
+      "explicacao_original": "An oligodendrocyte forms multiple internodal segments of myelin on multiple axons, in contrast to a Schwann cell which forms only one internode on one axon. Myelin in the CNS forms in an analogous fashion to that in the PNS, forming concentric wrappings around the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5.jpg'. Destaca a estrutura ou conceito 'Oligodendrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An oligodendrocyte forms multiple internodal segments of myelin on multiple axons, in contrast to a Schwann cell which forms only one internode on one axon. Myelin in the CNS forms in an analogous fashion to that in the PNS, forming concentric wrappings around the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Astrocytes",
+      "explicacao_original": "Interfascicular oligodendrocytes, the second type, form the myelin sheath around axons in the CNS. Oligodendrocytes have small, dark nuclei compared with the larger, paler nuclei of fibrous astrocytes; the processes of both cells are not seen with routine staining. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5.jpg'. Destaca a estrutura ou conceito 'Astrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interfascicular oligodendrocytes, the second type, form the myelin sheath around axons in the CNS. Oligodendrocytes have small, dark nuclei compared with the larger, paler nuclei of fibrous astrocytes; the processes of both cells are not seen with routine staining. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myelinated axons",
+      "explicacao_original": "Interfascicular oligodendrocytes, the second type, form the myelin sheath around axons in the CNS. Oligodendrocytes have small, dark nuclei compared with the larger, paler nuclei of fibrous astrocytes; the processes of both cells are not seen with routine staining. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5.jpg'. Destaca a estrutura ou conceito 'Myelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interfascicular oligodendrocytes, the second type, form the myelin sheath around axons in the CNS. Oligodendrocytes have small, dark nuclei compared with the larger, paler nuclei of fibrous astrocytes; the processes of both cells are not seen with routine staining. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-5/, acesso em 2026-08-07."
+    }
+  ]
+}

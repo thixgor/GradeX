@@ -1,0 +1,85 @@
+{
+  "id": 4250,
+  "titulo": "Modes of secretion: holocrine",
+  "titulo_wordpress": "Overview (exocrine) 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Visão Geral",
+    "Overview (exocrine) 6"
+  ],
+  "descricao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "arquivo": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Modes of secretion: holocrine', no setor Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Descricao original da pagina: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-6-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Modes of secretion: holocrine'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ex_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Proliferating cells",
+      "explicacao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-6-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Modes of secretion: holocrine'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ex_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Proliferating cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cells accumulating lipid",
+      "explicacao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-6-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Modes of secretion: holocrine'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ex_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Cells accumulating lipid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lipid-filled, degenerating cells",
+      "explicacao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-6-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Modes of secretion: holocrine'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ex_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Lipid-filled, degenerating cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sebum",
+      "explicacao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-6-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Modes of secretion: holocrine'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ex_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Sebum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Hair follicle",
+      "explicacao_original": "Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Glands.Ex_.Ov-6-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-6-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ex_.Ov-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ex_.Ov-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Modes of secretion: holocrine'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ex_.Ov-6.jpg'. Destaca a estrutura ou conceito 'Hair follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Holocrine secretion involves the release of entire cells or their fragments from the secretory unit, as shown in this image of a sebaceous gland and a hair follicle. At the periphery of the acinus, cells proliferate and move toward the center, accumulating lipid as they mature, enlarge and degenerate. In this example of a sebaceous gland, lipid-filled cells either rupture their contents, sebum, or are shed as whole cells onto the hair shaft in a hair follicle. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-6/, acesso em 2026-08-07."
+    }
+  ]
+}

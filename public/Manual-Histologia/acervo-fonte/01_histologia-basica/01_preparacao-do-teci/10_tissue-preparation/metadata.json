@@ -1,0 +1,175 @@
+{
+  "id": 27195,
+  "titulo": "Light microscopy",
+  "titulo_wordpress": "Tissue preparation 10",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 10"
+  ],
+  "descricao_original": "These images show the most commonly used type of light microscope, the compound, bright-field microscope. It is a compound microscope because it uses two lenses to form the final image. The lenses for light microscopy are made of glass. The image on the right shows the illumination pathway through the lenses of the microscope.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/",
+  "creditos_identificados": [
+    "Light source: The illumination is white light produced by a lamp in the base.",
+    "Image source: Carl Zeiss AG, Oberkochen, Germany"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "arquivo": "imagens/base/HB-TP-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Light microscopy', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 10. Descricao original da pagina: These images show the most commonly used type of light microscope, the compound, bright-field microscope. It is a compound microscope because it uses two lenses to form the final image. The lenses for light microscopy are made of glass. The image on the right shows the illumination pathway through the lenses of the microscope.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Components",
+      "explicacao_original": "These images show the most commonly used type of light microscope, the compound, bright-field microscope. It is a compound microscope because it uses two lenses to form the final image. The lenses for light microscopy are made of glass. The image on the right shows the illumination pathway through the lenses of the microscope.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Components' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show the most commonly used type of light microscope, the compound, bright-field microscope. It is a compound microscope because it uses two lenses to form the final image. The lenses for light microscopy are made of glass. The image on the right shows the illumination pathway through the lenses of the microscope.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Base",
+      "explicacao_original": "The illumination is white light produced by a lamp in the base.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Base' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The illumination is white light produced by a lamp in the base.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Light source",
+      "explicacao_original": "The illumination is white light produced by a lamp in the base.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Light source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The illumination is white light produced by a lamp in the base.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stage",
+      "explicacao_original": "The slide is secured to the stage and the stage can be moved in the X and Y axes by the stage control knobs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-4-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-4-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The slide is secured to the stage and the stage can be moved in the X and Y axes by the stage control knobs.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Focusing controls",
+      "explicacao_original": "Focus is adjusted by coarse and fine controls.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-5-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-5-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Focusing controls' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Focus is adjusted by coarse and fine controls.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lenses",
+      "explicacao_original": "For light microscopy, glass lenses focus the light and magnify the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-6-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-6-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Lenses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For light microscopy, glass lenses focus the light and magnify the image.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Substage condenser",
+      "explicacao_original": "After being reflected by a mirror, light from the base is focused on the slide by the substage condenser lens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-7-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-7-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Substage condenser' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After being reflected by a mirror, light from the base is focused on the slide by the substage condenser lens.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Objective lens",
+      "explicacao_original": "The objective lens collects the light immediately after it passes through the tissue section. It forms an initial image and provides magnification. Microscopes have multiple objective lenses, each with a set magnification, generally 4x, 10x, 40x and 100x. Different objective lenses can be selected by rotating the turret to which the lenses are attached.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-8-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-8-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Objective lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The objective lens collects the light immediately after it passes through the tissue section. It forms an initial image and provides magnification. Microscopes have multiple objective lenses, each with a set magnification, generally 4x, 10x, 40x and 100x. Different objective lenses can be selected by rotating the turret to which the lenses are attached.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Ocular lens",
+      "explicacao_original": "After passing through the objective lens, light is reflected to the ocular lenses, which provide an additional 10x magnification of the image. The final magnification of the image is the product of the objective lens magnification times the ocular lens magnification. This bright-field microscope is an example of a compound microscope because it uses two glass lenses to form the final image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-9-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-9-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Ocular lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After passing through the objective lens, light is reflected to the ocular lenses, which provide an additional 10x magnification of the image. The final magnification of the image is the product of the objective lens magnification times the ocular lens magnification. This bright-field microscope is an example of a compound microscope because it uses two glass lenses to form the final image.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Optical path",
+      "explicacao_original": "From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-11-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-11-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Optical path' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Substage condenser",
+      "explicacao_original": "From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-12-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-12-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Substage condenser' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Slide position",
+      "explicacao_original": "From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-13-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-13-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Slide position' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Objective lens",
+      "explicacao_original": "From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-14-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-14-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Objective lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Ocular lens",
+      "explicacao_original": "From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-15-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-15-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Ocular lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: From its source in the base, light is reflected upwards and concentrated by the substage condenser lens. The light passes through the tissue section mounted on a glass slide placed on the stage. The light then passes into the objective lens, after which is it reflected to ocular lens. The final magnification is the product of the two lens magnifications.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Image source",
+      "explicacao_original": "Carl Zeiss AG, Oberkochen, Germany",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9-16-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-9-16-ping.png",
+      "imagem_base": "imagens/base/HB-TP-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-9.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Carl Zeiss AG, Oberkochen, Germany. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 10. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-10/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": 3060,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 6"
+  ],
+  "descricao_original": "These cross sections show numerous myelinated axons of various sizes, as well as unmyelinated axons. In the peripheral nervous system, the myelin sheath is produced by Schwann cells. Note how the Schwann cell nucleus and cytoplasm conforms to the outer contours of the myelin. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "arquivo": "imagens/base/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Descricao original da pagina: These cross sections show numerous myelinated axons of various sizes, as well as unmyelinated axons. In the peripheral nervous system, the myelin sheath is produced by Schwann cells. Note how the Schwann cell nucleus and cytoplasm conforms to the outer contours of the myelin. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Myelinated axons",
+      "explicacao_original": "These cross sections show numerous myelinated axons of various sizes, as well as unmyelinated axons. In the peripheral nervous system, the myelin sheath is produced by Schwann cells. Note how the Schwann cell nucleus and cytoplasm conforms to the outer contours of the myelin. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-1-ping-1.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-1-ping-1.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Myelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cross sections show numerous myelinated axons of various sizes, as well as unmyelinated axons. In the peripheral nervous system, the myelin sheath is produced by Schwann cells. Note how the Schwann cell nucleus and cytoplasm conforms to the outer contours of the myelin. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Unmyelinated axons",
+      "explicacao_original": "These cross sections show numerous myelinated axons of various sizes, as well as unmyelinated axons. In the peripheral nervous system, the myelin sheath is produced by Schwann cells. Note how the Schwann cell nucleus and cytoplasm conforms to the outer contours of the myelin. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-2-ping-1.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-2-ping-1.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Unmyelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cross sections show numerous myelinated axons of various sizes, as well as unmyelinated axons. In the peripheral nervous system, the myelin sheath is produced by Schwann cells. Note how the Schwann cell nucleus and cytoplasm conforms to the outer contours of the myelin. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myelin sheaths",
+      "explicacao_original": "The myelin sheath surrounds individual axons and consists of the spiral wrappings of Schwann cell plasma membranes. The uniquely high lipid content of myelin provides insulation of the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Axons and their sheaths are surrounded by the endoneurium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Myelin sheaths' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The myelin sheath surrounds individual axons and consists of the spiral wrappings of Schwann cell plasma membranes. The uniquely high lipid content of myelin provides insulation of the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Axons and their sheaths are surrounded by the endoneurium.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "The myelin sheath surrounds individual axons and consists of the spiral wrappings of Schwann cell plasma membranes. The uniquely high lipid content of myelin provides insulation of the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Axons and their sheaths are surrounded by the endoneurium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The myelin sheath surrounds individual axons and consists of the spiral wrappings of Schwann cell plasma membranes. The uniquely high lipid content of myelin provides insulation of the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Axons and their sheaths are surrounded by the endoneurium.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Schwann cell cytoplasm",
+      "explicacao_original": "The myelin sheath surrounds individual axons and consists of the spiral wrappings of Schwann cell plasma membranes. The uniquely high lipid content of myelin provides insulation of the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Axons and their sheaths are surrounded by the endoneurium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-5-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Schwann cell cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The myelin sheath surrounds individual axons and consists of the spiral wrappings of Schwann cell plasma membranes. The uniquely high lipid content of myelin provides insulation of the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Axons and their sheaths are surrounded by the endoneurium.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Endoneurium",
+      "explicacao_original": "The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath. Also present in the endoneurium are blood vessels, mast cells and macrophages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-6-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Endoneurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath. Also present in the endoneurium are blood vessels, mast cells and macrophages.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath. Also present in the endoneurium are blood vessels, mast cells and macrophages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-7-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath. Also present in the endoneurium are blood vessels, mast cells and macrophages.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Next image seen by electron microscopy",
+      "explicacao_original": "The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-8-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-6-8-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/11/T.N.PN-6-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6-NEW.jpg'. Destaca a estrutura ou conceito 'Next image seen by electron microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-6/, acesso em 2026-08-07."
+    }
+  ]
+}

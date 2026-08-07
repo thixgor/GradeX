@@ -1,0 +1,64 @@
+{
+  "id": 10286,
+  "titulo": "Bone: orientation",
+  "titulo_wordpress": "Deposition and Resorption 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 1"
+  ],
+  "descricao_original": "On the right is a cross-sectional “donut” of compact, decalcified bone forming the diaphysis of a growing long bone. Skeletal muscle surrounds the donut. Red marrow fills the internal “hole” and will be replaced by yellow marrow in the adult. Periosteum covers the external surface; endosteum lines the marrow surface and any other internal spaces. 100x, 40x, 10x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01-1.jpg",
+      "arquivo": "imagens/base/T.C.B.D.01-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: orientation', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 1. Descricao original da pagina: On the right is a cross-sectional “donut” of compact, decalcified bone forming the diaphysis of a growing long bone. Skeletal muscle surrounds the donut. Red marrow fills the internal “hole” and will be replaced by yellow marrow in the adult. Periosteum covers the external surface; endosteum lines the marrow surface and any other internal spaces. 100x, 40x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Principles",
+      "explicacao_original": "Two rules apply to bone deposition, leading to bone growth. Bone always grows appositionally; the rigid matrix of bone prohibits interstitial growth. Second, with one exception, bone is always deposited by endosteum or periosteum on a framework of pre-existing bone or cartilage. Consequently, new bone will assume the shape of the framework on which it is deposited.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01.P01-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.01.P01-1.png",
+      "imagem_base": "imagens/base/T.C.B.D.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: orientation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.01-1.jpg'. Destaca a estrutura ou conceito 'Principles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two rules apply to bone deposition, leading to bone growth. Bone always grows appositionally; the rigid matrix of bone prohibits interstitial growth. Second, with one exception, bone is always deposited by endosteum or periosteum on a framework of pre-existing bone or cartilage. Consequently, new bone will assume the shape of the framework on which it is deposited.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Outer circumferential",
+      "explicacao_original": "lamellae > If periosteum deposits bone, layers are formed along the outer circumference of the bone and are called outer circumferential lamellae. The first lamella formed is deposited on the donut of the original bone. Thus, the diaphysis increases in thickness by appositional growth as the periosteum apposes new lamellae of bone around the periphery.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01.P02-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.01.P02-1.png",
+      "imagem_base": "imagens/base/T.C.B.D.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: orientation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.01-1.jpg'. Destaca a estrutura ou conceito 'Outer circumferential' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: lamellae > If periosteum deposits bone, layers are formed along the outer circumference of the bone and are called outer circumferential lamellae. The first lamella formed is deposited on the donut of the original bone. Thus, the diaphysis increases in thickness by appositional growth as the periosteum apposes new lamellae of bone around the periphery.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner circumferential",
+      "explicacao_original": "lamellae > If endosteum at the marrow surface deposits bone, layers are formed along the inner circumference of the bone and are called, unsurprisingly, inner circumferential lamellae. The first lamella formed is deposited on the donut of pre-existing bone. Thus, the diaphysis increases in thickness by the endosteum apposing new lamellae around the inner circumference of the bone, and the diameter of the marrow space is reduced proportionally.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01.P03-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.01.P03-1.png",
+      "imagem_base": "imagens/base/T.C.B.D.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: orientation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.01-1.jpg'. Destaca a estrutura ou conceito 'Inner circumferential' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: lamellae > If endosteum at the marrow surface deposits bone, layers are formed along the inner circumference of the bone and are called, unsurprisingly, inner circumferential lamellae. The first lamella formed is deposited on the donut of pre-existing bone. Thus, the diaphysis increases in thickness by the endosteum apposing new lamellae around the inner circumference of the bone, and the diameter of the marrow space is reduced proportionally.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Next Image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle and demonstrates the inner and outer circumferential lamellae at higher magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01.P04-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.01.P04-1.png",
+      "imagem_base": "imagens/base/T.C.B.D.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: orientation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.01-1.jpg'. Destaca a estrutura ou conceito 'Next Image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle and demonstrates the inner and outer circumferential lamellae at higher magnification.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-1/, acesso em 2026-08-07."
+    }
+  ]
+}

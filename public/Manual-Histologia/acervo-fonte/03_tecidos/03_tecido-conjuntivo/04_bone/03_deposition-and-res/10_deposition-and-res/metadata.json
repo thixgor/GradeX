@@ -1,0 +1,74 @@
+{
+  "id": 10334,
+  "titulo": "Bone: resorption",
+  "titulo_wordpress": "Deposition and Resorption 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 10"
+  ],
+  "descricao_original": "A cross section through the diaphysis demonstrates bone remodeling in the interior of a bone. A bone remodeling unit is columnar in shape and consists of a cutting tip, where bone is resorbed (resorption canal), and a closing end, where osteoblasts deposit concentric lamellae, filling in the resorption canal with an osteon. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.jpg",
+      "arquivo": "imagens/base/T.C.B.DR_.10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: resorption', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 10. Descricao original da pagina: A cross section through the diaphysis demonstrates bone remodeling in the interior of a bone. A bone remodeling unit is columnar in shape and consists of a cutting tip, where bone is resorbed (resorption canal), and a closing end, where osteoblasts deposit concentric lamellae, filling in the resorption canal with an osteon. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endosteum",
+      "explicacao_original": "An endosteum lines all interior bony surfaces. The cells in this layer are readily visible in the bony interior (black arrows), but are difficult to differentiate at the marrow surface (yellow arrows) from the cells of the adjacent red marrow to the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.10.P01.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.10.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An endosteum lines all interior bony surfaces. The cells in this layer are readily visible in the bony interior (black arrows), but are difficult to differentiate at the marrow surface (yellow arrows) from the cells of the adjacent red marrow to the right.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteons",
+      "explicacao_original": "Osteons, or Haversian systems, are identified by their concentric lamellae and central Haversian canals.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.10.P02.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.10.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteons, or Haversian systems, are identified by their concentric lamellae and central Haversian canals.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Resorption canals",
+      "explicacao_original": "Cross sections of two resorption canals are shown. Resorption canals have irregular outlines, contain a blood vessel, and are lined with an endosteum containing osteoclasts; they have no concentric lamellae. The canals shown here form the eroding tip of columnar-shaped remodeling units. Remodeling units are oriented parallel to the long axis of the bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.10.P03.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.10.jpg'. Destaca a estrutura ou conceito 'Resorption canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cross sections of two resorption canals are shown. Resorption canals have irregular outlines, contain a blood vessel, and are lined with an endosteum containing osteoclasts; they have no concentric lamellae. The canals shown here form the eroding tip of columnar-shaped remodeling units. Remodeling units are oriented parallel to the long axis of the bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Forming osteons",
+      "explicacao_original": "Forming osteons comprise the closing end of a remodeling unit, filling in the space created by resorption at the cutting tip of the unit. The large diameter of the Haversian canals in the center of these osteons indicates that these osteons are still in the formative stage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.10.P04.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.10.jpg'. Destaca a estrutura ou conceito 'Forming osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Forming osteons comprise the closing end of a remodeling unit, filling in the space created by resorption at the cutting tip of the unit. The large diameter of the Haversian canals in the center of these osteons indicates that these osteons are still in the formative stage.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area enclosed by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.10.P05.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.10.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area enclosed by the rectangle.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-10/, acesso em 2026-08-07."
+    }
+  ]
+}

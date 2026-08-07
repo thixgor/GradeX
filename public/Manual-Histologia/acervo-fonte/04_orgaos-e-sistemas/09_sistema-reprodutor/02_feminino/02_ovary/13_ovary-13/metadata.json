@@ -1,0 +1,64 @@
+{
+  "id": 12344,
+  "titulo": "Ovary: corpus luteum",
+  "titulo_wordpress": "Ovary 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 13"
+  ],
+  "descricao_original": "A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: corpus luteum', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 13. Descricao original da pagina: A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Remnant of antrum",
+      "explicacao_original": "A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.14.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.14.jpg'. Destaca a estrutura ou conceito 'Remnant of antrum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Granulosa lutein cells",
+      "explicacao_original": "A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.14.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.14.jpg'. Destaca a estrutura ou conceito 'Granulosa lutein cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Theca lutein cells",
+      "explicacao_original": "A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.14.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.14.jpg'. Destaca a estrutura ou conceito 'Theca lutein cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section through the periphery of a corpus luteum shows both types of luteal cells. The larger granulosa lutein cells are frothy, steroid-producing cells that form the bulk of this structure and are located adjacent to the remnant of the antral space. Theca lutein cells are smaller, steroid-secreting cells present around the periphery and in the infoldings of the corpus luteum. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.14.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.14.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-13/, acesso em 2026-08-07."
+    }
+  ]
+}

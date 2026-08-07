@@ -1,0 +1,94 @@
+{
+  "id": 5322,
+  "titulo": "Fenestrated capillaries",
+  "titulo_wordpress": "Capillaries and Sinusoids 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 13"
+  ],
+  "descricao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Fenestrated capillaries', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Descricao original da pagina: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tubule cell",
+      "explicacao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Tubule cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Basal lamina of epithelial cell",
+      "explicacao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Basal lamina of epithelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillary lumen",
+      "explicacao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Capillary lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endothelial cell",
+      "explicacao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Endothelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basal lamina of endothelial cell",
+      "explicacao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Basal lamina of endothelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fenestrae",
+      "explicacao_original": "This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Fenestrae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a capillary adjacent to the basal portion of a kidney tubule that is actively involved with water and ion movement between the urine in its lumen and the blood. The fenestrations in the endothelium facilitate this process. The tubule is composed of epithelial cells with numerous basal folds and an unusually thick basal lamina. 40,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Diaphragms",
+      "explicacao_original": "Diaphragms that span the pores are non-membranous. They are thought to represent components of the glycocalyx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-12-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-12-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-12.jpg'. Destaca a estrutura ou conceito 'Diaphragms' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diaphragms that span the pores are non-membranous. They are thought to represent components of the glycocalyx.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-13/, acesso em 2026-08-07."
+    }
+  ]
+}

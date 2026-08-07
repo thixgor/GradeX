@@ -1,0 +1,75 @@
+{
+  "id": 4579,
+  "titulo": "Mucus-secreting tubule",
+  "titulo_wordpress": "Compound 21",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 21"
+  ],
+  "descricao_original": "The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-19.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-19.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucus-secreting tubule', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 21. Descricao original da pagina: The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucin granules",
+      "explicacao_original": "The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-19-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-19-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucus-secreting tubule'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-19.jpg'. Destaca a estrutura ou conceito 'Mucin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "RER",
+      "explicacao_original": "The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-19-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-19-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucus-secreting tubule'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-19.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-19-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-19-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucus-secreting tubule'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-19.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lumen with mucus",
+      "explicacao_original": "The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-19-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-19-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucus-secreting tubule'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-19.jpg'. Destaca a estrutura ou conceito 'Lumen with mucus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Capillary with red blood cell",
+      "explicacao_original": "The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-19-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-19-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucus-secreting tubule'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-19.jpg'. Destaca a estrutura ou conceito 'Capillary with red blood cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presence of mucin granules in the cells of this mucus-secreting tubule accounts for their foamy appearance seen with the light microscope. The granules contain mucin proteins which become hydrated to form mucus after their release. Trachea 5000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-21/, acesso em 2026-08-07."
+    }
+  ]
+}

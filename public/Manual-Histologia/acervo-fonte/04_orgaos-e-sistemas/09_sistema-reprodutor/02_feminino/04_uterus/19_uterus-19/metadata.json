@@ -1,0 +1,34 @@
+{
+  "id": 12769,
+  "titulo": "Uterus: cervix",
+  "titulo_wordpress": "Uterus 19",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 19"
+  ],
+  "descricao_original": "The drawing on the left shows a sagittal section of the uterus (U) and vagina (V), showing the area from which the section of the cervix, on the right, was taken. The next image shows this section of the cervix, rotated 90 degrees to the right angle, in more detail. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-19/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.19.jpg",
+      "arquivo": "imagens/base/O.R.F.U.19.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: cervix', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 19. Descricao original da pagina: The drawing on the left shows a sagittal section of the uterus (U) and vagina (V), showing the area from which the section of the cervix, on the right, was taken. The next image shows this section of the cervix, rotated 90 degrees to the right angle, in more detail. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-19/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Marcador 1",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/",
+      "arquivo": "imagens/marcadores/marcador-1.png",
+      "imagem_base": "imagens/base/O.R.F.U.19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.19.jpg'. Destaca a estrutura ou conceito 'Marcador 1' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 19. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-19/, acesso em 2026-08-07."
+    }
+  ]
+}

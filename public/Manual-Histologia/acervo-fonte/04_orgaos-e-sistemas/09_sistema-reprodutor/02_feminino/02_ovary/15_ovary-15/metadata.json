@@ -1,0 +1,44 @@
+{
+  "id": 12346,
+  "titulo": "Ovary: corpus luteum",
+  "titulo_wordpress": "Ovary 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 15"
+  ],
+  "descricao_original": "One of the infoldings of the corpus luteum demonstrates the differences between the size of the granulosa lutein and theca lutein cells. The corpus luteum is responsible for the production of both progesterone and estrogen during the second half of the ovarian cycle. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.15.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: corpus luteum', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 15. Descricao original da pagina: One of the infoldings of the corpus luteum demonstrates the differences between the size of the granulosa lutein and theca lutein cells. The corpus luteum is responsible for the production of both progesterone and estrogen during the second half of the ovarian cycle. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Granulosa lutein cells",
+      "explicacao_original": "The differences between the size of the granulosa lutein and theca lutein cells is well demonstrated in this section, that includes one of the infoldings of the corpus luteum. The corpus luteum is responsible for the production of both progesterone and estrogen during the second half of the ovarian cycle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.15.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.15.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.15.jpg'. Destaca a estrutura ou conceito 'Granulosa lutein cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The differences between the size of the granulosa lutein and theca lutein cells is well demonstrated in this section, that includes one of the infoldings of the corpus luteum. The corpus luteum is responsible for the production of both progesterone and estrogen during the second half of the ovarian cycle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Theca lutein cells",
+      "explicacao_original": "The differences between the size of the granulosa lutein and theca lutein cells is well demonstrated in this section, that includes one of the infoldings of the corpus luteum. The corpus luteum is responsible for the production of both progesterone and estrogen during the second half of the ovarian cycle. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.15.P02-2.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.15.P02-2.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.15.jpg'. Destaca a estrutura ou conceito 'Theca lutein cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The differences between the size of the granulosa lutein and theca lutein cells is well demonstrated in this section, that includes one of the infoldings of the corpus luteum. The corpus luteum is responsible for the production of both progesterone and estrogen during the second half of the ovarian cycle. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-15/, acesso em 2026-08-07."
+    }
+  ]
+}

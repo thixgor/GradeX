@@ -1,0 +1,107 @@
+{
+  "id": 29398,
+  "titulo": "Cap stage of tooth development (early)",
+  "titulo_wordpress": "Tooth development 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 5"
+  ],
+  "descricao_original": "The cap stage results from a differential rate of cell proliferation in the epithelial cells of the bud, resulting in a concave structure resembling a cup. During this stage, histodifferentiation occurs establishing the enamel organ which encloses ectomesenchymal cells that develop into the dental papilla. The dental papilla forms the dentin and pulp. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of South Dakota slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "arquivo": "imagens/base/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cap stage of tooth development (early)', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Descricao original da pagina: The cap stage results from a differential rate of cell proliferation in the epithelial cells of the bud, resulting in a concave structure resembling a cup. During this stage, histodifferentiation occurs establishing the enamel organ which encloses ectomesenchymal cells that develop into the dental papilla. The dental papilla forms the dentin and pulp. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dental lamina",
+      "explicacao_original": "The dental lamina connects the developing tooth germ with the oral ectoderm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dental-lamina-4B.png",
+      "arquivo": "imagens/marcadores/Dental-lamina-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Dental lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental lamina connects the developing tooth germ with the oral ectoderm.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tooth germ",
+      "explicacao_original": "The tooth germ is first identifiable at the cap stage of tooth development (histodifferentiation). The tooth germ consists of all the identifiable ectoderm and ectomesenchyme tissues that form the tooth: inner and outer enamel epithelia, (ectoderm), dental papillae and the dental follicle (ectomesenchyme).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Tooth-germ-4B.png",
+      "arquivo": "imagens/marcadores/Tooth-germ-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Tooth germ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tooth germ is first identifiable at the cap stage of tooth development (histodifferentiation). The tooth germ consists of all the identifiable ectoderm and ectomesenchyme tissues that form the tooth: inner and outer enamel epithelia, (ectoderm), dental papillae and the dental follicle (ectomesenchyme).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Enamel organ",
+      "explicacao_original": "The enamel organ forms from ectoderm during the cap stage of tooth development. The enamel organ contains both the inner enamel epithelium and the outer enamel epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Enamel-organ-4B.png",
+      "arquivo": "imagens/marcadores/Enamel-organ-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Enamel organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The enamel organ forms from ectoderm during the cap stage of tooth development. The enamel organ contains both the inner enamel epithelium and the outer enamel epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer enamel epithelium",
+      "explicacao_original": "The cuboidal ectodermal cells on the outer aspect of the enamel organ are the outer enamel epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/OEE-4B.png",
+      "arquivo": "imagens/marcadores/OEE-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Outer enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cuboidal ectodermal cells on the outer aspect of the enamel organ are the outer enamel epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Inner enamel epithelium",
+      "explicacao_original": "The columnar ectodermal cells on the inner aspect of the enamel organ are the inner enamel epithelium. These cells will differentiate into ameloblasts that deposit enamel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/IEE-4B.png",
+      "arquivo": "imagens/marcadores/IEE-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Inner enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The columnar ectodermal cells on the inner aspect of the enamel organ are the inner enamel epithelium. These cells will differentiate into ameloblasts that deposit enamel.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cervical loop",
+      "explicacao_original": "The location where the inner enamel epithelium and outer enamel epithelium meet is the cervical loop.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cervical-loop-4B.png",
+      "arquivo": "imagens/marcadores/Cervical-loop-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Cervical loop' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The location where the inner enamel epithelium and outer enamel epithelium meet is the cervical loop.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Dental papilla",
+      "explicacao_original": "The dental papilla is formed of ectomesenchymal cells beneath the enamel organ and will form the majority of the dental pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dental-papilla-4B.png",
+      "arquivo": "imagens/marcadores/Dental-papilla-4B.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Dental papilla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental papilla is formed of ectomesenchymal cells beneath the enamel organ and will form the majority of the dental pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of South Dakota slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/SD-Image-source.png",
+      "arquivo": "imagens/marcadores/SD-Image-source.png",
+      "imagem_base": "imagens/base/Early-cap-stage-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Early-cap-stage-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cap stage of tooth development (early)'. Deve ser sobreposta, sem redimensionamento independente, a 'Early-cap-stage-fix.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of South Dakota slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-4b/, acesso em 2026-08-07."
+    }
+  ]
+}

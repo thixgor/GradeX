@@ -1,0 +1,64 @@
+{
+  "id": 12657,
+  "titulo": "Oviduct: intramural portion",
+  "titulo_wordpress": "Oviduct 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Oviduct",
+    "Oviduct 8"
+  ],
+  "descricao_original": "The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.08.jpg",
+      "arquivo": "imagens/base/O.R.F.OD_.08.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oviduct: intramural portion', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 8. Descricao original da pagina: The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen",
+      "explicacao_original": "The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.08.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.08.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: intramural portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.08.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.08.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.08.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: intramural portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.08.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.08.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.08.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: intramural portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.08.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Uterine musculature",
+      "explicacao_original": "The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.08.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.08.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: intramural portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.08.jpg'. Destaca a estrutura ou conceito 'Uterine musculature' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The intramural oviduct lies within the uterine wall, surrounded by the uterine musculature. In the intramural oviduct, the folds of the mucosa are reduced to just a few ridges; secretory cells outnumber ciliated cells, and the muscularis externa is thick. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-8/, acesso em 2026-08-07."
+    }
+  ]
+}

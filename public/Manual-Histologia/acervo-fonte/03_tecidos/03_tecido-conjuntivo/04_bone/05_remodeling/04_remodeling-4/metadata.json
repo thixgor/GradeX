@@ -1,0 +1,54 @@
+{
+  "id": 11173,
+  "titulo": "Bone remodeling",
+  "titulo_wordpress": "Remodeling 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Remodeling",
+    "Remodeling 4"
+  ],
+  "descricao_original": "In the zone of ossification, woven bone is deposited on calcified cartilage cylinders. With time, the endosteum lining these cylinders produces lamellar bone, forming osteons. Addition of osteons converts the spongy-bone area to compact bone, still containing calcified cartilage remnants. The woven bone and calcified cartilage will be resorbed eventually, replaced by lamellar bone. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.jpg",
+      "arquivo": "imagens/base/T.C.B.R.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone remodeling', no setor Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 4. Descricao original da pagina: In the zone of ossification, woven bone is deposited on calcified cartilage cylinders. With time, the endosteum lining these cylinders produces lamellar bone, forming osteons. Addition of osteons converts the spongy-bone area to compact bone, still containing calcified cartilage remnants. The woven bone and calcified cartilage will be resorbed eventually, replaced by lamellar bone. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Calcified cartilage",
+      "explicacao_original": "The gray, calcified cartilage remnants form almost a circular rim around the osteon, thus indicating the hollow cylinder these remnants once formed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.04.P01.png",
+      "imagem_base": "imagens/base/T.C.B.R.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.04.jpg'. Destaca a estrutura ou conceito 'Calcified cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gray, calcified cartilage remnants form almost a circular rim around the osteon, thus indicating the hollow cylinder these remnants once formed.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Woven bone",
+      "explicacao_original": "Woven bone surrounding the calcified cartilage represents the bone deposited in the zone of ossification during endochondral ossification of this region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.04.P02.png",
+      "imagem_base": "imagens/base/T.C.B.R.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.04.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Woven bone surrounding the calcified cartilage represents the bone deposited in the zone of ossification during endochondral ossification of this region.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteon",
+      "explicacao_original": "An osteon has filled in the space originally existing within the calcified cartilage-bone cylinders. Because of the vertical orientation of the cylinders, forming osteon columns will be organized parallel to the long axis of the bone, providing additional strength to the long bone. See the three-dimensional drawing for orientation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.04.P03.png",
+      "imagem_base": "imagens/base/T.C.B.R.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.04.jpg'. Destaca a estrutura ou conceito 'Osteon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An osteon has filled in the space originally existing within the calcified cartilage-bone cylinders. Because of the vertical orientation of the cylinders, forming osteon columns will be organized parallel to the long axis of the bone, providing additional strength to the long bone. See the three-dimensional drawing for orientation.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-4/, acesso em 2026-08-07."
+    }
+  ]
+}

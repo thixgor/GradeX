@@ -1,0 +1,106 @@
+{
+  "id": 30889,
+  "titulo": "Nasal cavities: Olfactory epithelium",
+  "titulo_wordpress": "Nasal cavity 4A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Nasal Cavity",
+    "Nasal cavity 4A"
+  ],
+  "descricao_original": "The mucosa of the olfactory region of the nasal cavity is much thicker than that in respiratory regions. The epithelium includes bipolar neurons with long, non-motile cilia, supporting (sustentacular) cells and basal cells. The mucosal glands, called Bowman’s glands (olfactory glands), are purely serous-secreting. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Mississippi slide collection"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "arquivo": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nasal cavities: Olfactory epithelium', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Descricao original da pagina: The mucosa of the olfactory region of the nasal cavity is much thicker than that in respiratory regions. The epithelium includes bipolar neurons with long, non-motile cilia, supporting (sustentacular) cells and basal cells. The mucosal glands, called Bowman’s glands (olfactory glands), are purely serous-secreting. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa of the olfactory region of the nasal cavity is much thicker than that in respiratory regions. The epithelium includes bipolar neurons with long, non-motile cilia, supporting (sustentacular) cells and basal cells. The mucosal glands, called Bowman’s glands (olfactory glands), are purely serous-secreting. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the olfactory region of the nasal cavity is much thicker than that in respiratory regions. The epithelium includes bipolar neurons with long, non-motile cilia, supporting (sustentacular) cells and basal cells. The mucosal glands, called Bowman’s glands (olfactory glands), are purely serous-secreting. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Olfactory epithelium",
+      "explicacao_original": "The epithelium of the olfactory mucosa consists of bipolar olfactory neurons, support (sustentacular) cells and basal cells. The nuclei of olfactory neurons are generally located in the mid and lower regions; nuclei of supporting cells are present closer to the surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Olfactory epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of the olfactory mucosa consists of bipolar olfactory neurons, support (sustentacular) cells and basal cells. The nuclei of olfactory neurons are generally located in the mid and lower regions; nuclei of supporting cells are present closer to the surface.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "Olfactory neurons possess non-motile cilia that may be 5 to 10 times longer than regular cilia. They emerge from an enlargement at the end of the dendrite called the olfactory vesicle. These cilia possess odorant receptors for detecting olfactory stimuli. Supporting cells have microvilli only.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory neurons possess non-motile cilia that may be 5 to 10 times longer than regular cilia. They emerge from an enlargement at the end of the dendrite called the olfactory vesicle. These cilia possess odorant receptors for detecting olfactory stimuli. Supporting cells have microvilli only.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bowman's glands",
+      "explicacao_original": "Serous glands of Bowman, also called olfactory glands, are present in the lamina propria beneath the epithelium. Their watery secretions prevent water evaporation as well as cleanse the surface for detecting new odorant molecules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-4-ping-1.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-4-ping-1.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Bowman's glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Serous glands of Bowman, also called olfactory glands, are present in the lamina propria beneath the epithelium. Their watery secretions prevent water evaporation as well as cleanse the surface for detecting new odorant molecules.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ducts of Bowman’s gland",
+      "explicacao_original": "Serous glands of Bowman, also called olfactory glands, are present in the lamina propria beneath the epithelium. Their watery secretions prevent water evaporation as well as cleanse the surface for detecting new odorant molecules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Ducts of Bowman’s gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Serous glands of Bowman, also called olfactory glands, are present in the lamina propria beneath the epithelium. Their watery secretions prevent water evaporation as well as cleanse the surface for detecting new odorant molecules.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Olfactory nerves",
+      "explicacao_original": "Axons from olfactory neurons collect into fascicles that collectively form the olfactory nerve (cranial nerve I). They pass through the bony cribriform plate to enter the olfactory bulb of the brain. The olfactory mucosa also receives general sensory innervation to detect pain and temperature.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Olfactory nerves' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Axons from olfactory neurons collect into fascicles that collectively form the olfactory nerve (cranial nerve I). They pass through the bony cribriform plate to enter the olfactory bulb of the brain. The olfactory mucosa also receives general sensory innervation to detect pain and temperature.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bone",
+      "explicacao_original": "Axons from olfactory neurons collect into fascicles that collectively form the olfactory nerve (cranial nerve I). They pass through the bony cribriform plate to enter the olfactory bulb of the brain. The olfactory mucosa also receives general sensory innervation to detect pain and temperature.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.04-NEW-7-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Axons from olfactory neurons collect into fascicles that collectively form the olfactory nerve (cranial nerve I). They pass through the bony cribriform plate to enter the olfactory bulb of the brain. The olfactory mucosa also receives general sensory innervation to detect pain and temperature.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Mississippi slide collection",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/Mississippi-source-ping.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.04-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.04-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.04-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Mississippi slide collection. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 4A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-4a/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": 10829,
+  "titulo": "Medulla",
+  "titulo_wordpress": "Tubules and collecting system 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 12"
+  ],
+  "descricao_original": "The renal medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loop of Henle, and collecting ducts. The straight portions of the proximal and distal tubules appear similar to their convoluted counterparts. 10x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-13.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Medulla', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 12. Descricao original da pagina: The renal medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loop of Henle, and collecting ducts. The straight portions of the proximal and distal tubules appear similar to their convoluted counterparts. 10x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Proximal straight tubules",
+      "explicacao_original": "Proximal straight tubules (thick descending limbs of the loop of Henle) are lined by a tall, simple cuboidal epithelium with a prominent brush border. Many of the proximal tubules seen here have precipitate filling the lumens and show considerable vacuolation in their cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-13-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-13-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-13.jpg'. Destaca a estrutura ou conceito 'Proximal straight tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal straight tubules (thick descending limbs of the loop of Henle) are lined by a tall, simple cuboidal epithelium with a prominent brush border. Many of the proximal tubules seen here have precipitate filling the lumens and show considerable vacuolation in their cytoplasm.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Thin limbs",
+      "explicacao_original": "The thin limbs of the loop of Henle are lined by a simple squamous epithelium. Usually this epithelium, although squamous, is thicker than that seen in a capillary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-13-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-13-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-13.jpg'. Destaca a estrutura ou conceito 'Thin limbs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin limbs of the loop of Henle are lined by a simple squamous epithelium. Usually this epithelium, although squamous, is thicker than that seen in a capillary.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ascending thick limbs",
+      "explicacao_original": "Thick ascending limbs of the loop of Henle (distal straight tubules) have a lower epithelium than do proximal tubules and lack a brush border. Additionally, the nuclei are spaced irregularly around the lumen, into which they frequently bulge.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-13-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-13-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-13.jpg'. Destaca a estrutura ou conceito 'Ascending thick limbs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thick ascending limbs of the loop of Henle (distal straight tubules) have a lower epithelium than do proximal tubules and lack a brush border. Additionally, the nuclei are spaced irregularly around the lumen, into which they frequently bulge.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collecting duct",
+      "explicacao_original": "Collecting ducts are identified by a tall, eosinophilic, simple columnar epithelium. Lateral cell boundaries are distinct in a collecting duct, and a brush border is absent.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-13-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-13-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-13.jpg'. Destaca a estrutura ou conceito 'Collecting duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Collecting ducts are identified by a tall, eosinophilic, simple columnar epithelium. Lateral cell boundaries are distinct in a collecting duct, and a brush border is absent.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Vasa recta",
+      "explicacao_original": "Vasa recta arise from efferent arterioles of renal corpuscles located near the cortico-medullary junction. These capillaries accompany the tubules through the medulla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-13-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-13-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-13.jpg'. Destaca a estrutura ou conceito 'Vasa recta' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Vasa recta arise from efferent arterioles of renal corpuscles located near the cortico-medullary junction. These capillaries accompany the tubules through the medulla.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-12/, acesso em 2026-08-07."
+    }
+  ]
+}

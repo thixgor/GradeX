@@ -1,0 +1,72 @@
+{
+  "id": 640,
+  "titulo": "Hematoxylin and esosin (H&E) staining",
+  "titulo_wordpress": "Stains 02",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Corantes",
+    "Stains 02"
+  ],
+  "descricao_original": "The most commonly used stains for routine histology and pathology sections are hematoxylin and eosin. Hematoxylin has a purple color; eosin has a pinkish-orange color. They are referred to as conventional stains, because they bind to tissue elements based on simple charge interactions. Pancreas, 1000x",
+  "url_origem": "https://digitalhistology.org/histology-basics/stains/stains-02/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-2.jpg",
+      "arquivo": "imagens/base/C.B.St-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hematoxylin and esosin (H&E) staining', no setor Histologia Básica > Corantes > Stains 02. Descricao original da pagina: The most commonly used stains for routine histology and pathology sections are hematoxylin and eosin. Hematoxylin has a purple color; eosin has a pinkish-orange color. They are referred to as conventional stains, because they bind to tissue elements based on simple charge interactions. Pancreas, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-02/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Basophilia",
+      "explicacao_original": "Structures such as the nucleus and rough endoplasmic reticulum (arrows) stain with hematoxylin, and are referred to as basophilic or “base loving” structures. The term basophilia refers to the property of a structure or region that stains with a basic dye, such as hematoxylin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-2-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-2-3-ping.png",
+      "imagem_base": "imagens/base/C.B.St-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hematoxylin and esosin (H&E) staining'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-2.jpg'. Destaca a estrutura ou conceito 'Basophilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Structures such as the nucleus and rough endoplasmic reticulum (arrows) stain with hematoxylin, and are referred to as basophilic or “base loving” structures. The term basophilia refers to the property of a structure or region that stains with a basic dye, such as hematoxylin.. Contexto setorial: Histologia Básica > Corantes > Stains 02. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-02/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Hematoxylin is a positively charged, basic dye and stains structures with a negative charge purple to blue. The nucleus contains nucleic acids (both DNA and RNA), which have a negative charge and, thus, bind the positively charged hematoxylin. In addition to the nucleus, hematoxylin also stains the rough endoplasmic reticulum (RER), since it binds to the RNA in ribosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-2-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-2-1-ping.png",
+      "imagem_base": "imagens/base/C.B.St-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hematoxylin and esosin (H&E) staining'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hematoxylin is a positively charged, basic dye and stains structures with a negative charge purple to blue. The nucleus contains nucleic acids (both DNA and RNA), which have a negative charge and, thus, bind the positively charged hematoxylin. In addition to the nucleus, hematoxylin also stains the rough endoplasmic reticulum (RER), since it binds to the RNA in ribosomes.. Contexto setorial: Histologia Básica > Corantes > Stains 02. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-02/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Rough endoplasmic reticulum",
+      "explicacao_original": "Hematoxylin is a positively charged, basic dye and stains structures with a negative charge purple to blue. The nucleus contains nucleic acids (both DNA and RNA), which have a negative charge and, thus, bind the positively charged hematoxylin. In addition to the nucleus, hematoxylin also stains the rough endoplasmic reticulum (RER), since it binds to the RNA in ribosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-2-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-2-2-ping.png",
+      "imagem_base": "imagens/base/C.B.St-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hematoxylin and esosin (H&E) staining'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-2.jpg'. Destaca a estrutura ou conceito 'Rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hematoxylin is a positively charged, basic dye and stains structures with a negative charge purple to blue. The nucleus contains nucleic acids (both DNA and RNA), which have a negative charge and, thus, bind the positively charged hematoxylin. In addition to the nucleus, hematoxylin also stains the rough endoplasmic reticulum (RER), since it binds to the RNA in ribosomes.. Contexto setorial: Histologia Básica > Corantes > Stains 02. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-02/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Eosinophilia",
+      "explicacao_original": "The term eosinophilia refers to the property of a structure or region that stains with an acidic dye such as eosin. Eosinophilic structures are neutral to positively-charged and include collagen fibers, mitochondria and some secretory granules (arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-2-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-2-4-ping.png",
+      "imagem_base": "imagens/base/C.B.St-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hematoxylin and esosin (H&E) staining'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-2.jpg'. Destaca a estrutura ou conceito 'Eosinophilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The term eosinophilia refers to the property of a structure or region that stains with an acidic dye such as eosin. Eosinophilic structures are neutral to positively-charged and include collagen fibers, mitochondria and some secretory granules (arrows).. Contexto setorial: Histologia Básica > Corantes > Stains 02. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-02/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "The term eosinophilia refers to the property of a structure or region that stains with an acidic dye such as eosin. Eosinophilic structures are neutral to positively-charged and include collagen fibers, mitochondria and some secretory granules (arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-2-5-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-2-5-ping.png",
+      "imagem_base": "imagens/base/C.B.St-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hematoxylin and esosin (H&E) staining'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-2.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The term eosinophilia refers to the property of a structure or region that stains with an acidic dye such as eosin. Eosinophilic structures are neutral to positively-charged and include collagen fibers, mitochondria and some secretory granules (arrows).. Contexto setorial: Histologia Básica > Corantes > Stains 02. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-02/, acesso em 2026-08-07."
+    }
+  ]
+}

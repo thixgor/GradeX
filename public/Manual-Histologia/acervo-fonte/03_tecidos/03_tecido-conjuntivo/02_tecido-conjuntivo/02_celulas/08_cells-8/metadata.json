@@ -1,0 +1,64 @@
+{
+  "id": 16811,
+  "titulo": "Inactive fibroblast",
+  "titulo_wordpress": "Cells 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 8"
+  ],
+  "descricao_original": "Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Inactive fibroblast', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 8. Descricao original da pagina: Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fibroblast nuclei",
+      "explicacao_original": "Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-8-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-8.jpg'. Destaca a estrutura ou conceito 'Fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibroblast processes",
+      "explicacao_original": "Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-8-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-8.jpg'. Destaca a estrutura ou conceito 'Fibroblast processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen bundles",
+      "explicacao_original": "Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-8-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-8.jpg'. Destaca a estrutura ou conceito 'Collagen bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillary",
+      "explicacao_original": "Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-8-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Inactive fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-8.jpg'. Destaca a estrutura ou conceito 'Capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Inactive fibroblasts are the predominate cell type in an adult tendon, which is classified as dense regular connective tissue. Highly flattened, heterochromatic fibroblast nuclei are interspersed with collagen bundles oriented in parallel. Thin fibroblast processes with sparse cytoplasm are visible extending from the tips of the nuclei. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-8/, acesso em 2026-08-07."
+    }
+  ]
+}

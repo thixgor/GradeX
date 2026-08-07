@@ -1,0 +1,86 @@
+{
+  "id": 6741,
+  "titulo": "Lip: mucosal surface",
+  "titulo_wordpress": "Lip 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Lip",
+    "Lip 4"
+  ],
+  "descricao_original": "The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lip: mucosal surface', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Descricao original da pagina: The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Labial gland",
+      "explicacao_original": "The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: mucosal surface'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-4.jpg'. Destaca a estrutura ou conceito 'Labial gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucous tubules",
+      "explicacao_original": "The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: mucosal surface'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-4.jpg'. Destaca a estrutura ou conceito 'Mucous tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Serous acini",
+      "explicacao_original": "The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: mucosal surface'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-4.jpg'. Destaca a estrutura ou conceito 'Serous acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ducts of labial glands",
+      "explicacao_original": "The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: mucosal surface'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-4.jpg'. Destaca a estrutura ou conceito 'Ducts of labial glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Orbicularis oris muscle fibers",
+      "explicacao_original": "The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: mucosal surface'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-4.jpg'. Destaca a estrutura ou conceito 'Orbicularis oris muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The minor salivary glands of the lip, also called labial glands, produce both serous and mucous secretions; their ducts empty into the vestibule of the oral cavity. The epithelium and surface of the inner lip lie above this image. These glands are located in the submucosa near the fibers forming the orbicularis oris muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: mucosal surface'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-4.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-4/, acesso em 2026-08-07."
+    }
+  ]
+}

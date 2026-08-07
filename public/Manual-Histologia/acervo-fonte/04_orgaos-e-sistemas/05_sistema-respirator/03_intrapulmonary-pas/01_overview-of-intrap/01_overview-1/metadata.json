@@ -1,0 +1,114 @@
+{
+  "id": 17886,
+  "titulo": "Intrapulmonary passages",
+  "titulo_wordpress": "Overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Overview of intrapulmonary passageways",
+    "Overview 1"
+  ],
+  "descricao_original": "Intrapulmonary passageways are subdivided into those that conduct air to the respiratory portion (conducting portion) and those involved with gas exchange (respiratory portion). Passageways included in the conducting portion are secondary bronchi and bronchioles. Components of the respiratory portion are respiratory bronchioles, alveolar ducts, alveolar sacs and alveoli.",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "arquivo": "imagens/base/O.R.I.O.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Intrapulmonary passages', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Descricao original da pagina: Intrapulmonary passageways are subdivided into those that conduct air to the respiratory portion (conducting portion) and those involved with gas exchange (respiratory portion). Passageways included in the conducting portion are secondary bronchi and bronchioles. Components of the respiratory portion are respiratory bronchioles, alveolar ducts, alveolar sacs and alveoli.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Conducting portion",
+      "explicacao_original": "These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.I.O.01.P01.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Conducting portion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Primary (main) bronchi",
+      "explicacao_original": "These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P02.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Primary (main) bronchi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secondary bronchi",
+      "explicacao_original": "These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.P02.png",
+      "arquivo": "imagens/marcadores/O.R.I.O.01.P02.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Secondary bronchi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bronchioles",
+      "explicacao_original": "These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.P03.png",
+      "arquivo": "imagens/marcadores/O.R.I.O.01.P03.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Bronchioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These passageways include the continuation of main bronchi as they pass into the lung and their branches: secondary (lobar) bronchi and tertiary (segmental) bronchi. All bronchi are distinguished by the presence of cartilage in their wall. The amount of cartilage gradually diminishes until it finally disappears, at which point the passageways are designated as bronchioles.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Respiratory portion",
+      "explicacao_original": "The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.I.O.01.P04.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Respiratory portion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Respiratory bronchioles",
+      "explicacao_original": "The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P07AA-1.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P07AA-1.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Respiratory bronchioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveolar duct",
+      "explicacao_original": "The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P08A-1.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P08A-1.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Alveolar duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Alverolar sac",
+      "explicacao_original": "The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P09A.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P09A.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Alverolar sac' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Alveoli",
+      "explicacao_original": "The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P10A.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P10A.png",
+      "imagem_base": "imagens/base/O.R.I.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.I.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intrapulmonary passages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.O.01.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The distinguishing feature of respiratory passageways is the presence of alveoli in their walls. Alveoli first appear scattered along the length of respiratory bronchioles, which are transitional structures between purely conducting bronchioles and alveolar ducts. The walls of alveolar ducts are formed entirely by alveoli and end as alveolar sacs. Alveoli are sites where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Overview of intrapulmonary passageways > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/overview-intrapulmonary/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

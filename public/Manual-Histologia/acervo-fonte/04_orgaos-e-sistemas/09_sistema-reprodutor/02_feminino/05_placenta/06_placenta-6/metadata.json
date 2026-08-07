@@ -1,0 +1,104 @@
+{
+  "id": 13103,
+  "titulo": "Placenta: 3rd trimester",
+  "titulo_wordpress": "Placenta 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 6"
+  ],
+  "descricao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "arquivo": "imagens/base/O.R.F.P.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Placenta: 3rd trimester', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Descricao original da pagina: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intervillous space",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Intervillous space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Floating villi",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P01.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Floating villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Fetal connective tissue",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P03.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Fetal connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fetal blood vessels",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P04.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Fetal blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cytotrophoblast",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P05.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Cytotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Syncytiotrophoblast",
+      "explicacao_original": "Villi appear similar to those in early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P06.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Syncytiotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Clumped nuclei",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P07.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Clumped nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Fibrinoid",
+      "explicacao_original": "Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.06.P08.png",
+      "imagem_base": "imagens/base/O.R.F.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 3rd trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.06.jpg'. Destaca a estrutura ou conceito 'Fibrinoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi appear similar to those in the early placenta except that fetal connective tissue is more condensed; cytotrophoblast cells form a discontinuous layer beneath the syncytiotrophoblast; fibrinoid is seen in villi; and syncytiotrophoblastic nuclei tend to clump. Fetal capillaries are more numerous and are frequently located immediately beneath the syncytial layer. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-6/, acesso em 2026-08-07."
+    }
+  ]
+}

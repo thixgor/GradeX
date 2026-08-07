@@ -1,0 +1,64 @@
+{
+  "id": 4806,
+  "titulo": "Pars distalis",
+  "titulo_wordpress": "Pituitary 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 9"
+  ],
+  "descricao_original": "This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pars distalis', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 9. Descricao original da pagina: This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Basophils",
+      "explicacao_original": "This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-9.jpg'. Destaca a estrutura ou conceito 'Basophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acidophils",
+      "explicacao_original": "This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-9.jpg'. Destaca a estrutura ou conceito 'Acidophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillaries with red blood cells",
+      "explicacao_original": "This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-9.jpg'. Destaca a estrutura ou conceito 'Capillaries with red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-9.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This Masson stain colors acidophils orange and basophils greenish-purple. The connective tissue stroma of the gland is stained green. Tissue processing has resulted in some artifactual separation of the cells. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-9/, acesso em 2026-08-07."
+    }
+  ]
+}

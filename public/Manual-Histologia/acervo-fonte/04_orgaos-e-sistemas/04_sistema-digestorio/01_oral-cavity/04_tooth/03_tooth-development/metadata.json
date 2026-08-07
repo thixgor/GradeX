@@ -1,0 +1,28 @@
+{
+  "id": 29082,
+  "titulo": "item",
+  "titulo_wordpress": "Tooth development",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development"
+  ],
+  "descricao_original": "asdf",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/",
+  "creditos_identificados": [],
+  "bases": [],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "test",
+      "explicacao_original": "test",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-tooth-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-tooth-7-ping.png",
+      "imagem_base": "",
+      "url_imagem_base": "",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'item'. Deve ser sobreposta, sem redimensionamento independente, a 'imagem-base da pagina'. Destaca a estrutura ou conceito 'test' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: test. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/, acesso em 2026-08-07."
+    }
+  ]
+}

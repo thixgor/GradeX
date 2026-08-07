@@ -1,0 +1,47 @@
+{
+  "id": 27911,
+  "titulo": "Intratesticular ducts",
+  "titulo_wordpress": "Intratesticular ducts 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Intratesticular Ducts",
+    "Intratesticular ducts 4"
+  ],
+  "descricao_original": "The rete testis is a network of anastomosing channels receiving sperm from the straight portions of the seminiferous tubules. The rete is lined by a simple cuboidal epithelium, each cell possessing microvilli and a single cilium. Rete channels connect with efferent ducts that pass out of the test and connect with the duct of the epididymis in the head of the epididymis. 800x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/intratesticular-ducts/intratesticular-ducts-5-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Iowa collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/12/O.R.M.T.ID-5.jpg",
+      "arquivo": "imagens/base/O.R.M.T.ID-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Intratesticular ducts', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Intratesticular Ducts > Intratesticular ducts 4. Descricao original da pagina: The rete testis is a network of anastomosing channels receiving sperm from the straight portions of the seminiferous tubules. The rete is lined by a simple cuboidal epithelium, each cell possessing microvilli and a single cilium. Rete channels connect with efferent ducts that pass out of the test and connect with the duct of the epididymis in the head of the epididymis. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/intratesticular-ducts/intratesticular-ducts-5-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Rete testis",
+      "explicacao_original": "The rete testis is a network of anastomosing channels receiving sperm from the straight portions of the seminiferous tubules. The rete is lined by a simple cuboidal epithelium, each cell possessing microvilli and a single cilium. Rete channels connect with efferent ducts that pass out of the test and connect with the duct of the epididymis in the head of the epididymis. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/12/O.R.M.T.ID-5-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.ID-5-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.ID-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/12/O.R.M.T.ID-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intratesticular ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.ID-5.jpg'. Destaca a estrutura ou conceito 'Rete testis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The rete testis is a network of anastomosing channels receiving sperm from the straight portions of the seminiferous tubules. The rete is lined by a simple cuboidal epithelium, each cell possessing microvilli and a single cilium. Rete channels connect with efferent ducts that pass out of the test and connect with the duct of the epididymis in the head of the epididymis. 800x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Intratesticular Ducts > Intratesticular ducts 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/intratesticular-ducts/intratesticular-ducts-5-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Iowa collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/12/Iowa-source-ping.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.ID-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/12/O.R.M.T.ID-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intratesticular ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.ID-5.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Iowa collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Intratesticular Ducts > Intratesticular ducts 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/intratesticular-ducts/intratesticular-ducts-5-2/, acesso em 2026-08-07."
+    }
+  ]
+}

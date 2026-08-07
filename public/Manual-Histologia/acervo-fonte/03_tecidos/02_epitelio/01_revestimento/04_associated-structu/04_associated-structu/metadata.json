@@ -1,0 +1,74 @@
+{
+  "id": 3939,
+  "titulo": "Microvilli",
+  "titulo_wordpress": "Associated structures 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 4"
+  ],
+  "descricao_original": "Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane. By light microscopy (left), collections of microvilli constitute a brush, or striated, border. In optimal sections, individual microvilli can be resolved with the light microscope; however, they are better appreciated by electron microscopy (right image). Microvilli greatly increase the absorptive surface area of a cell. Small intestine 1000x, 10,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-4-new.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-4-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Microvilli', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 4. Descricao original da pagina: Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane. By light microscopy (left), collections of microvilli constitute a brush, or striated, border. In optimal sections, individual microvilli can be resolved with the light microscope; however, they are better appreciated by electron microscopy (right image). Microvilli greatly increase the absorptive surface area of a cell. Small intestine 1000x, 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Brush border",
+      "explicacao_original": "The collection of microvilli comprise the brush border, also called a striated border, because the individual microvilli give it a striated or striped appearance. Each microvillus is supported by a core of microfilaments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-4-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-4-new.jpg'. Destaca a estrutura ou conceito 'Brush border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The collection of microvilli comprise the brush border, also called a striated border, because the individual microvilli give it a striated or striped appearance. Each microvillus is supported by a core of microfilaments.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Microvilli",
+      "explicacao_original": "The collection of microvilli comprise the brush border also called a striated border because the individual microvilli give it a striated or striped appearance. Each microvillus is supported by a core of microfilaments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-4-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-4-new.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The collection of microvilli comprise the brush border also called a striated border because the individual microvilli give it a striated or striped appearance. Each microvillus is supported by a core of microfilaments.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Terminal web",
+      "explicacao_original": "The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-4-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-4-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-4-new.jpg'. Destaca a estrutura ou conceito 'Terminal web' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Microfilament bundles",
+      "explicacao_original": "The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-4-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-4-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-4-new.jpg'. Destaca a estrutura ou conceito 'Microfilament bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Simple columnar epithelium",
+      "explicacao_original": "Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane. By light microscopy (left), collections of microvilli constitute a brush, or striated, border. In optimal sections, individual microvilli can be resolved with the light microscope, however they are better appreciated by electron microscopy (right image). Microvilli greatly increase the absorptive surface area of a cell. Small intestine 1000x, 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-4-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-4-new.jpg'. Destaca a estrutura ou conceito 'Simple columnar epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane. By light microscopy (left), collections of microvilli constitute a brush, or striated, border. In optimal sections, individual microvilli can be resolved with the light microscope, however they are better appreciated by electron microscopy (right image). Microvilli greatly increase the absorptive surface area of a cell. Small intestine 1000x, 10,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-4/, acesso em 2026-08-07."
+    }
+  ]
+}

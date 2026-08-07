@@ -1,0 +1,64 @@
+{
+  "id": 6819,
+  "titulo": "Sublingual gland",
+  "titulo_wordpress": "Major salivary glands 18",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 18"
+  ],
+  "descricao_original": "Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-18/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-18.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-18.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sublingual gland', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 18. Descricao original da pagina: Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-18/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serous acini",
+      "explicacao_original": "Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-18-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-18-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sublingual gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-18.jpg'. Destaca a estrutura ou conceito 'Serous acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucous tubules",
+      "explicacao_original": "Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-18-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-18-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sublingual gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-18.jpg'. Destaca a estrutura ou conceito 'Mucous tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tubule lumens",
+      "explicacao_original": "Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-18-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-18-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sublingual gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-18.jpg'. Destaca a estrutura ou conceito 'Tubule lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Striated duct",
+      "explicacao_original": "Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-18-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-18-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sublingual gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-18.jpg'. Destaca a estrutura ou conceito 'Striated duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Both serous and mucous secretory cells are present, with mucous cells predominating. The tubular configuration of the mucous cells is readily apparent. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-18/, acesso em 2026-08-07."
+    }
+  ]
+}

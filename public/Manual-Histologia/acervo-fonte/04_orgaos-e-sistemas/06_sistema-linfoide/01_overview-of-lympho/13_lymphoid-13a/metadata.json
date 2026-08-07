@@ -1,0 +1,63 @@
+{
+  "id": 28382,
+  "titulo": "Overview: Spleen",
+  "titulo_wordpress": "Lymphoid 13A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Lymphoid 13A"
+  ],
+  "descricao_original": "Lymph exits the lymph node and is carried via increasingly larger lymph vessels to eventually drain into the blood vascular system. The spleen monitors the blood passing through it and responds to any blood-borne antigens. The spleen also functions in the breakdown and recycling of aged (senescent) red blood cells and platelets. 40X",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-22/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Spleen', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 13A. Descricao original da pagina: Lymph exits the lymph node and is carried via increasingly larger lymph vessels to eventually drain into the blood vascular system. The spleen monitors the blood passing through it and responds to any blood-borne antigens. The spleen also functions in the breakdown and recycling of aged (senescent) red blood cells and platelets. 40X. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-22/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spleen",
+      "explicacao_original": "The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-11.jpg'. Destaca a estrutura ou conceito 'Spleen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 13A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lymph vessel",
+      "explicacao_original": "The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-11.jpg'. Destaca a estrutura ou conceito 'Lymph vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 13A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Veins",
+      "explicacao_original": "The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-11.jpg'. Destaca a estrutura ou conceito 'Veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 13A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Arteries",
+      "explicacao_original": "The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-11.jpg'. Destaca a estrutura ou conceito 'Arteries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spleen, the largest lymphoid organ, filters blood and, therefore, elicits an immune response against any blood-borne antigen. Blood enters the spleen via the splenic artery. Uncontrolled bacterial growth in the blood results in septicemia, sometimes referred to “blood poisoning”.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 13A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-22/, acesso em 2026-08-07."
+    }
+  ]
+}

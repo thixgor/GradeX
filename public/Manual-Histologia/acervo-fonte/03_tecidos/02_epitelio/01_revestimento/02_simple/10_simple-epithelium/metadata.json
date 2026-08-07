@@ -1,0 +1,44 @@
+{
+  "id": 3681,
+  "titulo": "Simple columnar epithelium",
+  "titulo_wordpress": "Simple epithelium 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 10"
+  ],
+  "descricao_original": "Simple columnar epithelium can line ducts as they become larger, as seen in these images of a kidney tubule (left) and a salivary gland duct (right). In the case of the salivary duct, the nuclei are displaced upwards to the center of the cell due to cytoplasmic structures in the basal regions. Kidney (l), Submandibular gland (r), 400x.",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp_.-10.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Simp_.-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple columnar epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 10. Descricao original da pagina: Simple columnar epithelium can line ducts as they become larger, as seen in these images of a kidney tubule (left) and a salivary gland duct (right). In the case of the salivary duct, the nuclei are displaced upwards to the center of the cell due to cytoplasmic structures in the basal regions. Kidney (l), Submandibular gland (r), 400x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple columnar epithelium",
+      "explicacao_original": "Simple columnar epithelium can line ducts as they become larger, as seen in these images of a kidney tubule (left) and a salivary gland duct (right). In the case of the salivary duct, the nuclei are displaced upwards to the center of the cell due to cytoplasmic structures in the basal regions. Kidney (l), Submandibular gland (r), 400x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-10-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-10-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp_.-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp_.-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp_.-10.jpg'. Destaca a estrutura ou conceito 'Simple columnar epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium can line ducts as they become larger, as seen in these images of a kidney tubule (left) and a salivary gland duct (right). In the case of the salivary duct, the nuclei are displaced upwards to the center of the cell due to cytoplasmic structures in the basal regions. Kidney (l), Submandibular gland (r), 400x.. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lumen",
+      "explicacao_original": "Simple columnar epithelium can line ducts as they become larger, as seen in these images of a kidney tubule (left) and a salivary gland duct (right). In the case of the salivary duct, the nuclei are displaced upwards to the center of the cell due to cytoplasmic structures in the basal regions. Kidney (l), Submandibular gland (r), 400x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-10-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-10-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp_.-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp_.-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp_.-10.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium can line ducts as they become larger, as seen in these images of a kidney tubule (left) and a salivary gland duct (right). In the case of the salivary duct, the nuclei are displaced upwards to the center of the cell due to cytoplasmic structures in the basal regions. Kidney (l), Submandibular gland (r), 400x.. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-10/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 9684,
+  "titulo": "Eosinophilic myelocytes",
+  "titulo_wordpress": "Hemopoiesis 13",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 13"
+  ],
+  "descricao_original": "Eosinophilic myelocytes are the first definitive cell type in the eosinophilic lineage. At this stage, the cells begin to synthesize eosinophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The nucleus of an eosinophilic myelocyte will develop a distinct indentation, at which point they become metamyelocytes. 1000x, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-13.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Eosinophilic myelocytes', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 13. Descricao original da pagina: Eosinophilic myelocytes are the first definitive cell type in the eosinophilic lineage. At this stage, the cells begin to synthesize eosinophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The nucleus of an eosinophilic myelocyte will develop a distinct indentation, at which point they become metamyelocytes. 1000x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Eosinophilic myelocytes",
+      "explicacao_original": "Eosinophilic myelocytes are the first definitive cell type in the eosinophilic lineage. At this stage, the cells begin to synthesize eosinophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The nucleus of an eosinophilic myelocyte will develop a distinct indentation, at which point they become metamyelocytes. 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-13-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-13-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophilic myelocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-13.jpg'. Destaca a estrutura ou conceito 'Eosinophilic myelocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophilic myelocytes are the first definitive cell type in the eosinophilic lineage. At this stage, the cells begin to synthesize eosinophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The nucleus of an eosinophilic myelocyte will develop a distinct indentation, at which point they become metamyelocytes. 1000x, 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Eosinophilic myelocytes are the first definitive cell type in the eosinophilic lineage. At this stage, the cells begin to synthesize eosinophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The nucleus of an eosinophilic myelocyte will develop a distinct indentation, at which point they become metamyelocytes. 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-13-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-13-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophilic myelocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-13.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophilic myelocytes are the first definitive cell type in the eosinophilic lineage. At this stage, the cells begin to synthesize eosinophil-specific granules, which then come to predominate since azurophilic granules are no longer being produced. The nucleus of an eosinophilic myelocyte will develop a distinct indentation, at which point they become metamyelocytes. 1000x, 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Granules",
+      "explicacao_original": "Specific or secondary granules in eosinophils contain a variety of proteins including eosinophil major basic protein, RNAases and peroxidase; enzymes important for combating multicellular parasites and certain infections. Due to the cationic nature of these contents, the granules stain intensely with eosin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-13-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-13-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophilic myelocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-13.jpg'. Destaca a estrutura ou conceito 'Granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Specific or secondary granules in eosinophils contain a variety of proteins including eosinophil major basic protein, RNAases and peroxidase; enzymes important for combating multicellular parasites and certain infections. Due to the cationic nature of these contents, the granules stain intensely with eosin.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Segmented neutrophils",
+      "explicacao_original": "Specific or secondary granules in eosinophils contain a variety of proteins including eosinophil major basic protein, RNAases and peroxidase; enzymes important for combating multicellular parasites and certain infections. Due to the cationic nature of these contents, the granules stain intensely with eosin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-13-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-13-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophilic myelocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-13.jpg'. Destaca a estrutura ou conceito 'Segmented neutrophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Specific or secondary granules in eosinophils contain a variety of proteins including eosinophil major basic protein, RNAases and peroxidase; enzymes important for combating multicellular parasites and certain infections. Due to the cationic nature of these contents, the granules stain intensely with eosin.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-13/, acesso em 2026-08-07."
+    }
+  ]
+}

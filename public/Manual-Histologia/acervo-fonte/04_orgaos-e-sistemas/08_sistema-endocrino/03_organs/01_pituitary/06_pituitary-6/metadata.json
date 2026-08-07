@@ -1,0 +1,74 @@
+{
+  "id": 4800,
+  "titulo": "Pars distalis",
+  "titulo_wordpress": "Pituitary 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 6"
+  ],
+  "descricao_original": "Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-6.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pars distalis', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 6. Descricao original da pagina: Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Basophils",
+      "explicacao_original": "Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-6.jpg'. Destaca a estrutura ou conceito 'Basophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acidophils",
+      "explicacao_original": "Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-6.jpg'. Destaca a estrutura ou conceito 'Acidophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chromophobes",
+      "explicacao_original": "Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-6.jpg'. Destaca a estrutura ou conceito 'Chromophobes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-6.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basophils and acidophils are identified by the staining affinities of their secretory granules for either hematoxylin (basophils) or eosin (acidophils). Acidophils, the major cell type in this image, consist of growth hormone-secreting somatotropes and prolactin-secreting mammotropes. These two cell types cannot be distinguished by routine hematoxylin and eosin staining. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Location of Golgi body",
+      "explicacao_original": "The large Golgi apparatus present in these cells displaces the secretory granules, leaving a pale region. The Golgi is responsible for assembling and packaging the secretory granules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pit-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-6.jpg'. Destaca a estrutura ou conceito 'Location of Golgi body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The large Golgi apparatus present in these cells displaces the secretory granules, leaving a pale region. The Golgi is responsible for assembling and packaging the secretory granules.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-6/, acesso em 2026-08-07."
+    }
+  ]
+}

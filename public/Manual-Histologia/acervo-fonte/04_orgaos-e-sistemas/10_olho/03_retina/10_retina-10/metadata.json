@@ -1,0 +1,85 @@
+{
+  "id": 9244,
+  "titulo": "Sensory retina: Fovea",
+  "titulo_wordpress": "Retina 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 10"
+  ],
+  "descricao_original": "The fovea is a small depression in the retina that lies at the center of a larger, oval-shaped area called the macula lutea. The fovea is on the visual axis of the eye and, thus, provides the area of highest visual acuity or resolution in the retina. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-10/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina: Fovea', no setor Órgãos e Sistemas > Olho > Retina > Retina 10. Descricao original da pagina: The fovea is a small depression in the retina that lies at the center of a larger, oval-shaped area called the macula lutea. The fovea is on the visual axis of the eye and, thus, provides the area of highest visual acuity or resolution in the retina. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Retina",
+      "explicacao_original": "The fovea is a small depression in the retina that lies at the center of a larger, oval-shaped area called the macula lutea. The fovea is on the visual axis of the eye and, thus, provides the area of highest visual acuity or resolution in the retina. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-10-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-10-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Fovea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-10.jpg'. Destaca a estrutura ou conceito 'Retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fovea is a small depression in the retina that lies at the center of a larger, oval-shaped area called the macula lutea. The fovea is on the visual axis of the eye and, thus, provides the area of highest visual acuity or resolution in the retina. 200x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fovea",
+      "explicacao_original": "At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-10-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-10-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Fovea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-10.jpg'. Destaca a estrutura ou conceito 'Fovea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Foveola",
+      "explicacao_original": "At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-10-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-10-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Fovea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-10.jpg'. Destaca a estrutura ou conceito 'Foveola' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Choroid",
+      "explicacao_original": "At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-10-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-10-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Fovea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-10.jpg'. Destaca a estrutura ou conceito 'Choroid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sclera",
+      "explicacao_original": "At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-10-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-10-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Fovea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-10.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the fovea, bipolar and ganglion cells and their processes are shifted peripherally, leaving only cones at the central area, the foveola. This displacement allows for an unimpeded light path to the foveola. The foveola perceives less than one degree of arc over the entire visual field and, thus, minute movements of the eyeball (saccades) are necessary to maintain this foveal resolution on objects of interest.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina: Fovea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-10.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-10/, acesso em 2026-08-07."
+    }
+  ]
+}

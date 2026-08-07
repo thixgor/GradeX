@@ -1,0 +1,84 @@
+{
+  "id": 11598,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 5"
+  ],
+  "descricao_original": "Hyaline cartilage stains purple because of the high concentration of glycosaminoglycans in its ground substance; collagen fibrils cannot be resolved with the light microscope. Each chondrocyte, lying in a potential space called a lacuna, can divide to form an isogenous group. No blood vessels are present, so nutrients diffuse through the cartilage to supply the chondrocytes. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "arquivo": "imagens/base/T.C.C.H.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Descricao original da pagina: Hyaline cartilage stains purple because of the high concentration of glycosaminoglycans in its ground substance; collagen fibrils cannot be resolved with the light microscope. Each chondrocyte, lying in a potential space called a lacuna, can divide to form an isogenous group. No blood vessels are present, so nutrients diffuse through the cartilage to supply the chondrocytes. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Perichondrium: chondrogenic layer",
+      "explicacao_original": "Hyaline cartilage stains purple because of the high concentration of glycosaminoglycans in its ground substance; collagen fibrils cannot be resolved with the light microscope. Each chondrocyte, lying in a potential space called a lacuna, can divide to form an isogenous group. No blood vessels are present, so nutrients diffuse through the cartilage to supply the chondrocytes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.P01.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.05.P01.png",
+      "imagem_base": "imagens/base/T.C.C.H.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.05.jpg'. Destaca a estrutura ou conceito 'Perichondrium: chondrogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hyaline cartilage stains purple because of the high concentration of glycosaminoglycans in its ground substance; collagen fibrils cannot be resolved with the light microscope. Each chondrocyte, lying in a potential space called a lacuna, can divide to form an isogenous group. No blood vessels are present, so nutrients diffuse through the cartilage to supply the chondrocytes. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "Chondrocytes (yellow arrows) lying in potential spaces called lacunae, are seen singly or in clusters called isogenous groups. These cells retain all the organelles of typical protein-producing cells and secrete matrix and divide throughout life, resulting in interstitial growth. Chondrocytes also contain lipid droplets (white arrows) in their cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.P03.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.05.P03.png",
+      "imagem_base": "imagens/base/T.C.C.H.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.05.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes (yellow arrows) lying in potential spaces called lacunae, are seen singly or in clusters called isogenous groups. These cells retain all the organelles of typical protein-producing cells and secrete matrix and divide throughout life, resulting in interstitial growth. Chondrocytes also contain lipid droplets (white arrows) in their cytoplasm.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Isogenous groups",
+      "explicacao_original": "Chondrocytes divide and secrete matrix around themselves, resulting in the formation of isogenous groups of cells and increasing the volume of the cartilage by interstitial growth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.05.P04.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.05.P04.png",
+      "imagem_base": "imagens/base/T.C.C.H.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.05.jpg'. Destaca a estrutura ou conceito 'Isogenous groups' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes divide and secrete matrix around themselves, resulting in the formation of isogenous groups of cells and increasing the volume of the cartilage by interstitial growth.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Extracellular matrix",
+      "explicacao_original": "Extracellular matrix is secreted by each chondrocyte and accounts for a majority of the mass of hyaline cartilage. It consists of both Type II collagen fibers and glycosaminoglycans resulting in a rigid but deformable mass. No blood vessels are present, so nutrients must diffuse through the matrix to supply the chondrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.05-ECM-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.05-ECM-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.05.jpg'. Destaca a estrutura ou conceito 'Extracellular matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Extracellular matrix is secreted by each chondrocyte and accounts for a majority of the mass of hyaline cartilage. It consists of both Type II collagen fibers and glycosaminoglycans resulting in a rigid but deformable mass. No blood vessels are present, so nutrients must diffuse through the matrix to supply the chondrocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Territorial matrix",
+      "explicacao_original": "The darkly staining extracellular matrix immediately surrounding individual chondrocytes and isogenous groups is called territorial matrix and represents an area of high glycosaminoglycan content. These highly sulfated molecules impart intense basophilic staining. Beyond this region of the matrix, glycosaminoglycans are less concentrated and, consequently, stains less blue. This area is termed the interterritorial matrix and stains pink due to the high collagen content.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.05-terr-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.05-terr-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.05.jpg'. Destaca a estrutura ou conceito 'Territorial matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The darkly staining extracellular matrix immediately surrounding individual chondrocytes and isogenous groups is called territorial matrix and represents an area of high glycosaminoglycan content. These highly sulfated molecules impart intense basophilic staining. Beyond this region of the matrix, glycosaminoglycans are less concentrated and, consequently, stains less blue. This area is termed the interterritorial matrix and stains pink due to the high collagen content.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Interterritorial matrix",
+      "explicacao_original": "The darkly staining extracellular matrix immediately surrounding individual chondrocytes and isogenous groups is called territorial matrix and represents an area of high glycosaminoglycan content. These highly sulfated molecules impart intense basophilic staining. Beyond this region of the matrix, glycosaminoglycans are less concentrated and, consequently, stains less blue. This area is termed the interterritorial matrix and stains pink due to the high collagen content.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.05-inter-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.05-inter-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.05.jpg'. Destaca a estrutura ou conceito 'Interterritorial matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The darkly staining extracellular matrix immediately surrounding individual chondrocytes and isogenous groups is called territorial matrix and represents an area of high glycosaminoglycan content. These highly sulfated molecules impart intense basophilic staining. Beyond this region of the matrix, glycosaminoglycans are less concentrated and, consequently, stains less blue. This area is termed the interterritorial matrix and stains pink due to the high collagen content.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-5/, acesso em 2026-08-07."
+    }
+  ]
+}

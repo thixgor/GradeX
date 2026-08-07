@@ -1,0 +1,74 @@
+{
+  "id": 10346,
+  "titulo": "Bone: cement lines",
+  "titulo_wordpress": "Deposition and Resorption 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 16"
+  ],
+  "descricao_original": "The outer boundaries of osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.jpg",
+      "arquivo": "imagens/base/T.C.B.D.16.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: cement lines', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 16. Descricao original da pagina: The outer boundaries of osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cement lines",
+      "explicacao_original": "The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.16.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: cement lines'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.16.jpg'. Destaca a estrutura ou conceito 'Cement lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Inner circumferential lamellae",
+      "explicacao_original": "The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.16.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: cement lines'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.16.jpg'. Destaca a estrutura ou conceito 'Inner circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteons",
+      "explicacao_original": "The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.16.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: cement lines'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.16.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Resorption canal",
+      "explicacao_original": "A resorption canal can be differentiated from an Haversian canal, because it is lined with an endosteum containing osteoclasts, has an irregular outline and is not surrounded by concentric lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.16.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: cement lines'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.16.jpg'. Destaca a estrutura ou conceito 'Resorption canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A resorption canal can be differentiated from an Haversian canal, because it is lined with an endosteum containing osteoclasts, has an irregular outline and is not surrounded by concentric lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "A resorption canal can be differentiated from an Haversian canal, because it is lined with an endosteum containing osteoclasts, has an irregular outline and is not surrounded by concentric lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.16.P05.png",
+      "imagem_base": "imagens/base/T.C.B.D.16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: cement lines'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.16.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A resorption canal can be differentiated from an Haversian canal, because it is lined with an endosteum containing osteoclasts, has an irregular outline and is not surrounded by concentric lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-16/, acesso em 2026-08-07."
+    }
+  ]
+}

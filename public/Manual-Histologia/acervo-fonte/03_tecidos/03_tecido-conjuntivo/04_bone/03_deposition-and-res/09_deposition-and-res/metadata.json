@@ -1,0 +1,84 @@
+{
+  "id": 10332,
+  "titulo": "Bone: resorption",
+  "titulo_wordpress": "Deposition and Resorption 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 9"
+  ],
+  "descricao_original": "This diaphysis of a long bone shows bone resorption, either to maintain proper bone proportions during growth or to release calcium. Resorption occurs when osteoclasts break down bone at inner or outer bony surfaces or by a more involved process where a canal of bone (resorption canal) is resorbed and then filled in by bone deposition, forming an osteon. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "arquivo": "imagens/base/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: resorption', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Descricao original da pagina: This diaphysis of a long bone shows bone resorption, either to maintain proper bone proportions during growth or to release calcium. Resorption occurs when osteoclasts break down bone at inner or outer bony surfaces or by a more involved process where a canal of bone (resorption canal) is resorbed and then filled in by bone deposition, forming an osteon. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Periosteum",
+      "explicacao_original": "The osteogenic layer of the periosteum covers the exterior surface of a bone. The fibrous layer of the periosteum is out of the field to the left. The osteogenic layer is a thick layer consisting of many cells, those closest to the bone surface differentiate into osteoblasts and deposit osteoid.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.09.P01.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.09.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The osteogenic layer of the periosteum covers the exterior surface of a bone. The fibrous layer of the periosteum is out of the field to the left. The osteogenic layer is a thick layer consisting of many cells, those closest to the bone surface differentiate into osteoblasts and deposit osteoid.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Classify",
+      "explicacao_original": "The tissue indicated by the arrow is compact woven bone. It is compact because almost the entire tissue is bone. It is woven because it lacks lamellae and the osteocyte lacunae are rounded and in no orderly arrangement.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.09.P02.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.09.jpg'. Destaca a estrutura ou conceito 'Classify' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tissue indicated by the arrow is compact woven bone. It is compact because almost the entire tissue is bone. It is woven because it lacks lamellae and the osteocyte lacunae are rounded and in no orderly arrangement.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "Osteoclasts lie in Howship’s lacunae, half-moon shaped recesses they have resorbed into the bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.09.P03.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.09.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts lie in Howship’s lacunae, half-moon shaped recesses they have resorbed into the bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Howship's lacunae",
+      "explicacao_original": "Osteoclasts lie in Howship’s lacunae, half-moon shaped recesses they have resorbed into the bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.09.P04.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.09.jpg'. Destaca a estrutura ou conceito 'Howship's lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts lie in Howship’s lacunae, half-moon shaped recesses they have resorbed into the bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Resorption canal",
+      "explicacao_original": "Some osteoclasts have eroded a canal into the bone, called a resorption canal. These canals are usually located in the bony interior, but may also form on the bony interior or exterior surfaces as well, as seen here. Blood vessels are present in resorption canals and in the osteogenic layer of the periosteum",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.09.P05.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.09.jpg'. Destaca a estrutura ou conceito 'Resorption canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Some osteoclasts have eroded a canal into the bone, called a resorption canal. These canals are usually located in the bony interior, but may also form on the bony interior or exterior surfaces as well, as seen here. Blood vessels are present in resorption canals and in the osteogenic layer of the periosteum. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Some osteoclasts have eroded a canal into the bone, called a resorption canal. These canals are usually located in the bony interior, but may also form on the bony interior or exterior surfaces as well, as seen here. Blood vessels are present in resorption canals and in the osteogenic layer of the periosteum",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.P06.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.09.P06.png",
+      "imagem_base": "imagens/base/T.C.B.DR_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.DR_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.DR_.09.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Some osteoclasts have eroded a canal into the bone, called a resorption canal. These canals are usually located in the bony interior, but may also form on the bony interior or exterior surfaces as well, as seen here. Blood vessels are present in resorption canals and in the osteogenic layer of the periosteum. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-9/, acesso em 2026-08-07."
+    }
+  ]
+}

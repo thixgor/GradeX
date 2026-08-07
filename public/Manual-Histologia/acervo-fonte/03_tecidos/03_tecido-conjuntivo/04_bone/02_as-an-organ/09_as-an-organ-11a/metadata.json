@@ -1,0 +1,174 @@
+{
+  "id": 31725,
+  "titulo": "Periosteum",
+  "titulo_wordpress": "As an organ 11A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 11A"
+  ],
+  "descricao_original": "The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "arquivo": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Periosteum', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Descricao original da pagina: The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Periosteum",
+      "explicacao_original": "The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Periosteum.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibrous layer",
+      "explicacao_original": "The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Fibrous-layer.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Fibrous-layer.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Muscle insertion",
+      "explicacao_original": "The fibrous layer of the periosteum also serves at the site of muscle and ligament attachment. Collagen fibers from the muscle tendon and ligament blend with those of the fibrous layer of the periosteum and also extend into the bone matrix as Sharpey’s fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8A-Muscle-insertion.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8A-Muscle-insertion.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Muscle insertion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibrous layer of the periosteum also serves at the site of muscle and ligament attachment. Collagen fibers from the muscle tendon and ligament blend with those of the fibrous layer of the periosteum and also extend into the bone matrix as Sharpey’s fibers.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteogenic layer",
+      "explicacao_original": "The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteogenic-layer.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteogenic-layer.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Osteogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Compact bone",
+      "explicacao_original": "The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Bone.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Bone.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteocytes.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum covers the outer surface of bones, except where articular cartilages are present. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is also well vascularized and innervated. 800x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Inactive region",
+      "explicacao_original": "At sites where neither bone deposition nor resorption are occurring, the periosteum is relatively inactive, consisting mostly of osteoprogenitor cells and bone lining cells. Both cell types have a spindle shape and thus difficult to distinguish from each other.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/Resting-site.png",
+      "arquivo": "imagens/marcadores/Resting-site.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Inactive region' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At sites where neither bone deposition nor resorption are occurring, the periosteum is relatively inactive, consisting mostly of osteoprogenitor cells and bone lining cells. Both cell types have a spindle shape and thus difficult to distinguish from each other.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Progenitor and lining cells",
+      "explicacao_original": "At sites where neither bone deposition nor resorption are occurring, the periosteum is relatively inactive, consisting mostly of osteoprogenitor cells and bone lining cells. Both cell types have a spindle shape and thus difficult to distinguish from each other.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteoprogenitor-cells.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteoprogenitor-cells.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Progenitor and lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At sites where neither bone deposition nor resorption are occurring, the periosteum is relatively inactive, consisting mostly of osteoprogenitor cells and bone lining cells. Both cell types have a spindle shape and thus difficult to distinguish from each other.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Deposition region",
+      "explicacao_original": "Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Deposition-site.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Deposition-site.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Deposition region' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteoblasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteoblasts.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Osteoid",
+      "explicacao_original": "Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteoid.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteoid.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Osteoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteoprogenitor-cells-center.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteoprogenitor-cells-center.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Regions of bone deposition are indicated by the presence of osteoblasts on the surface of existing bone. Osteoblasts secrete osteoid, the organic matrix of bone, which rapidly become mineralized with hydroxyapatite. Bone deposition by the periosteum is an example of appositional bone growth by intramembranous ossification that occurs at sites of bone growth and healing following fracture.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Resorption region",
+      "explicacao_original": "Sites of resorption are indicated by the presence of osteoclasts in the periosteum and Howship’s lacunae on the surface of the bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Resorption-site.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Resorption-site.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Resorption region' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sites of resorption are indicated by the presence of osteoclasts in the periosteum and Howship’s lacunae on the surface of the bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "Osteoclasts are derived from monocyte/macrophage stem cells in the bone marrow and arrive in the osteogenic layer via the blood stream. They are not resident cells of the periosteum. Osteoclast activity produces shallow depressions in the bone called Howship’s lacunae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Osteoclasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Osteoclasts.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts are derived from monocyte/macrophage stem cells in the bone marrow and arrive in the osteogenic layer via the blood stream. They are not resident cells of the periosteum. Osteoclast activity produces shallow depressions in the bone called Howship’s lacunae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Howship's lacunae",
+      "explicacao_original": "Osteoclasts are derived from monocyte/macrophage stem cells in the bone marrow and arrive in the osteogenic layer via the blood stream. They are not resident cells of the periosteum. Osteoclast activity produces shallow depressions in the bone called Howship’s lacunae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Howships-lacunae.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.8-Howships-lacunae.png",
+      "imagem_base": "imagens/base/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/T.C.B.O.8-Periosteum-composite-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.8-Periosteum-composite-fix.jpg'. Destaca a estrutura ou conceito 'Howship's lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts are derived from monocyte/macrophage stem cells in the bone marrow and arrive in the osteogenic layer via the blood stream. They are not resident cells of the periosteum. Osteoclast activity produces shallow depressions in the bone called Howship’s lacunae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-11a/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": 6745,
+  "titulo": "Oral mucosa",
+  "titulo_wordpress": "Oral mucosa 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Oral Mucosa",
+    "Oral mucosa 2"
+  ],
+  "descricao_original": "The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oral mucosa', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Descricao original da pagina: The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lip",
+      "explicacao_original": "The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Lip' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Skin",
+      "explicacao_original": "The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Vermilion border",
+      "explicacao_original": "The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Vermilion border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The two images on the left show the oral mucosa lining the maxillary (above) and the mandibular (below) regions. In the right image the lips have been pulled open to show the anterior teeth. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule is the space between the inner surfaces of the lips and cheeks and the outer surface of the teeth and gums. The vestibule is not part of the oral cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule is the space between the inner surfaces of the lips and cheeks and the outer surface of the teeth and gums. The vestibule is not part of the oral cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Oral cavity",
+      "explicacao_original": "The oral cavity is bounded anteriorly and laterally by the teeth and gums, superiorly by the hard and soft palates, posteriorly by the pillars of the fauces, and inferiorly by the floor beneath the tongue. The term oral cavity is often used erroneously to include the vestibule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Oral cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The oral cavity is bounded anteriorly and laterally by the teeth and gums, superiorly by the hard and soft palates, posteriorly by the pillars of the fauces, and inferiorly by the floor beneath the tongue. The term oral cavity is often used erroneously to include the vestibule.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lining mucosa",
+      "explicacao_original": "Lining mucosa lines the inner surface of the lips and cheeks (black arrows), the inferior surface of the tongue, the floor of the mouth (blue arrows), and covers the cortical alveolar bone supporting the teeth (green arrows). The pink color imparted to lining mucosa is due to blood vessels in its underlying submucosa, a layer frequently lacking in the adjacent, pale masticatory mucosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Lining mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa lines the inner surface of the lips and cheeks (black arrows), the inferior surface of the tongue, the floor of the mouth (blue arrows), and covers the cortical alveolar bone supporting the teeth (green arrows). The pink color imparted to lining mucosa is due to blood vessels in its underlying submucosa, a layer frequently lacking in the adjacent, pale masticatory mucosa.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Masticatory mucosa",
+      "explicacao_original": "Masticatory mucosa is located in areas where the forces of mastication are highest; the gingiva (gums) (black arrows) and the hard palate (blue arrows). Masticatory mucosa stains more palely than does lining mucosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Masticatory mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Masticatory mucosa is located in areas where the forces of mastication are highest; the gingiva (gums) (black arrows) and the hard palate (blue arrows). Masticatory mucosa stains more palely than does lining mucosa.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Specialized mucosa",
+      "explicacao_original": "Specialized mucosa covers the dorsum of the tongue and is organized into papillae, some of which contain the receptors for the special sense of taste, the taste buds.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-2-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-2-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-2.jpg'. Destaca a estrutura ou conceito 'Specialized mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Specialized mucosa covers the dorsum of the tongue and is organized into papillae, some of which contain the receptors for the special sense of taste, the taste buds.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-2/, acesso em 2026-08-07."
+    }
+  ]
+}

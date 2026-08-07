@@ -1,0 +1,74 @@
+{
+  "id": 13676,
+  "titulo": "Overview: Osseous labyrinth",
+  "titulo_wordpress": "Inner ear overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Overview of the inner ear",
+    "Inner ear overview 2"
+  ],
+  "descricao_original": "The osseous labyrinth is a series of interconnected tubes and cavernous spaces in the petrous portion of the temporal bone. The osseous labyrinth is lined with periosteum and filled with a fluid, perilymph. This drawing demonstrates the shape the perilymph would assume when confined in the osseous labyrinth.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P01.png",
+      "arquivo": "imagens/base/O.E.IE_.02.P01.png",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Osseous labyrinth', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 2. Descricao original da pagina: The osseous labyrinth is a series of interconnected tubes and cavernous spaces in the petrous portion of the temporal bone. The osseous labyrinth is lined with periosteum and filled with a fluid, perilymph. This drawing demonstrates the shape the perilymph would assume when confined in the osseous labyrinth.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Orientation",
+      "explicacao_original": "This image shows the bony labyrinth of the left ear in lateral view, whereas the previous image shows a view of the bony labyrinth in the cranial cavity viewed from above.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.E.IE_.02.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.02.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.02.P01.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P01.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Osseous labyrinth'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.02.P01.png'. Destaca a estrutura ou conceito 'Orientation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the bony labyrinth of the left ear in lateral view, whereas the previous image shows a view of the bony labyrinth in the cranial cavity viewed from above.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule, the centrally located chamber in the osseous labyrinth, communicates with the middle ear via the oval window. The stapes is shown with its footplate inserted into the oval window.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.02.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.02.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.02.P01.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P01.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Osseous labyrinth'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.02.P01.png'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule, the centrally located chamber in the osseous labyrinth, communicates with the middle ear via the oval window. The stapes is shown with its footplate inserted into the oval window.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stapes",
+      "explicacao_original": "The vestibule, the centrally located chamber in the osseous labyrinth, communicates with the middle ear via the oval window. The stapes is shown with its footplate inserted into the oval window.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.02.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.02.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.02.P01.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P01.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Osseous labyrinth'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.02.P01.png'. Destaca a estrutura ou conceito 'Stapes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule, the centrally located chamber in the osseous labyrinth, communicates with the middle ear via the oval window. The stapes is shown with its footplate inserted into the oval window.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Semicircular canals",
+      "explicacao_original": "The semicircular canals are three tubular spaces (black arrows) that communicate with and lie posterolaterally to the vestibule. The canals are oriented in three, mutually perpendicular planes. An enlargement (red arrows) at one end of each canal, adjacent to the vestibule, houses the ampulla of each semicircular duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.02.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.02.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.02.P01.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P01.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Osseous labyrinth'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.02.P01.png'. Destaca a estrutura ou conceito 'Semicircular canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semicircular canals are three tubular spaces (black arrows) that communicate with and lie posterolaterally to the vestibule. The canals are oriented in three, mutually perpendicular planes. An enlargement (red arrows) at one end of each canal, adjacent to the vestibule, houses the ampulla of each semicircular duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The cochlea is an tubular space that connects with and lies anteromedially to the vestibule. The tube is coiled into a spiral shape with 2.5 turns, resembling a snail shell. The cochlea communicates with the middle ear via the round window (not shown in this image).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.02.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.02.P01.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.02.P01.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Osseous labyrinth'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.02.P01.png'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea is an tubular space that connects with and lies anteromedially to the vestibule. The tube is coiled into a spiral shape with 2.5 turns, resembling a snail shell. The cochlea communicates with the middle ear via the round window (not shown in this image).. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

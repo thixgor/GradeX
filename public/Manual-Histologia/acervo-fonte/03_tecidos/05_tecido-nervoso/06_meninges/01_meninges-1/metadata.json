@@ -1,0 +1,113 @@
+{
+  "id": 3078,
+  "titulo": "Meninges",
+  "titulo_wordpress": "Meninges 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Meninges",
+    "Meninges 1"
+  ],
+  "descricao_original": "The brain and spinal cord are surrounded by three protective membranes called the meninges. The outermost layer is the thick dura mater. The middle layer, the arachnoid, lies adjacent to the dura mater and extends trabeculae through the subarachnoid space to contact the pia mater. The pia mater is a thin layer located directly on the brain or spinal cord. Spinal cord 10x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/meninges/meninges-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "arquivo": "imagens/base/T.N.Men-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meninges', no setor Tecidos > Tecido Nervoso > Meninges > Meninges 1. Descricao original da pagina: The brain and spinal cord are surrounded by three protective membranes called the meninges. The outermost layer is the thick dura mater. The middle layer, the arachnoid, lies adjacent to the dura mater and extends trabeculae through the subarachnoid space to contact the pia mater. The pia mater is a thin layer located directly on the brain or spinal cord. Spinal cord 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spinal cord",
+      "explicacao_original": "The brain and spinal cord are surrounded by three protective membranes called the meninges. The outermost layer is the thick dura mater. The middle layer, the arachnoid, lies adjacent to the dura mater and extends trabeculae through the subarachnoid space to contact the pia mater. The pia mater is a thin layer located directly on the brain or spinal cord. Spinal cord 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Spinal cord' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The brain and spinal cord are surrounded by three protective membranes called the meninges. The outermost layer is the thick dura mater. The middle layer, the arachnoid, lies adjacent to the dura mater and extends trabeculae through the subarachnoid space to contact the pia mater. The pia mater is a thin layer located directly on the brain or spinal cord. Spinal cord 10x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dura mater",
+      "explicacao_original": "The dura mater, the thick outermost membrane, is formed by dense connective tissue. The dura mater contributes to the periosteum of the skull, but is a separate layer from the periosteum of the vertebrae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Dura mater' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dura mater, the thick outermost membrane, is formed by dense connective tissue. The dura mater contributes to the periosteum of the skull, but is a separate layer from the periosteum of the vertebrae.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Subdural space",
+      "explicacao_original": "Under normal conditions, the subdural space is a potential space, since the dura mater and arachnoid membranes normally adhere to each other. After head trauma, however, hemorrhaging blood may separate these two membranes, creating a subdural space. The hemorrhaging blood in this space is called a subdural hemotoma.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Subdural space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Under normal conditions, the subdural space is a potential space, since the dura mater and arachnoid membranes normally adhere to each other. After head trauma, however, hemorrhaging blood may separate these two membranes, creating a subdural space. The hemorrhaging blood in this space is called a subdural hemotoma.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Arachnoid membrane",
+      "explicacao_original": "The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Arachnoid membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Subarachnoid space",
+      "explicacao_original": "The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Subarachnoid space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nerve roots",
+      "explicacao_original": "The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-6-ping-1.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-6-ping-1.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Nerve roots' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-7-ping-1.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-7-ping-1.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arachnoid is a delicate layer lying adjacent to the dura mater. It sends weblike trabeculae through the subarachnoid space to the pia mater. The subarachnoid space is filled with cerebrospinal fluid, providing a cushion for the brain or spinal cord. Cranial and spinal nerve roots and blood vessels travel through this space.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Pia mater",
+      "explicacao_original": "The pia mater, a delicate layer lying directly on the surface of the brain or spinal cord, is continuous with the perivascular connective tissue accompanying blood vessels into the brain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-6-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Pia mater' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pia mater, a delicate layer lying directly on the surface of the brain or spinal cord, is continuous with the perivascular connective tissue accompanying blood vessels into the brain.. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Area shown in the next image",
+      "explicacao_original": "The brain and spinal cord are surrounded by three protective membranes called the meninges. The outermost layer is the thick dura mater. The middle layer, the arachnoid, lies adjacent to the dura mater and extends trabeculae through the subarachnoid space to contact the pia mater. The pia mater is a thin layer located directly on the brain or spinal cord. Spinal cord 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-1-7-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-1.jpg'. Destaca a estrutura ou conceito 'Area shown in the next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The brain and spinal cord are surrounded by three protective membranes called the meninges. The outermost layer is the thick dura mater. The middle layer, the arachnoid, lies adjacent to the dura mater and extends trabeculae through the subarachnoid space to contact the pia mater. The pia mater is a thin layer located directly on the brain or spinal cord. Spinal cord 10x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-1/, acesso em 2026-08-07."
+    }
+  ]
+}

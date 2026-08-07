@@ -1,0 +1,43 @@
+{
+  "id": 4778,
+  "titulo": "Individual endocrine cells",
+  "titulo_wordpress": "Cells and Clusters 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Cells and Clusters",
+    "Cells and Clusters 1"
+  ],
+  "descricao_original": "Individual endocrine cells occur scattered throughout the digestive, respiratory and urinary systems, forming the diffuse neuroendocrine system (DNES). This image of the bases of fundic glands of the stomach illustrates the endocrine cells present here. 1000x”",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-1.jpg",
+      "arquivo": "imagens/base/Or.Endo_.CC-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Individual endocrine cells', no setor Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 1. Descricao original da pagina: Individual endocrine cells occur scattered throughout the digestive, respiratory and urinary systems, forming the diffuse neuroendocrine system (DNES). This image of the bases of fundic glands of the stomach illustrates the endocrine cells present here. 1000x”. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endocrine cells",
+      "explicacao_original": "Individual DNES cells in the digestive system are also called enteroendocrine cells and represent at least 10-12 different cell types, each secreting a specific hormone. These cells are located at the periphery of each gland and release their hormones into the lamina propria, where they can enter blood vessels (endocrine) or influence adjacent exocrine cells (paracrine).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Individual endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-1.jpg'. Destaca a estrutura ou conceito 'Endocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Individual DNES cells in the digestive system are also called enteroendocrine cells and represent at least 10-12 different cell types, each secreting a specific hormone. These cells are located at the periphery of each gland and release their hormones into the lamina propria, where they can enter blood vessels (endocrine) or influence adjacent exocrine cells (paracrine).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Because these cells release their secretory product into the lamina propria surrounding the glands rather than into the lumen of the gland, their secretory granules are located on the side of the cell facing the lamina propria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.CC-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Individual endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-1.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because these cells release their secretory product into the lamina propria surrounding the glands rather than into the lumen of the gland, their secretory granules are located on the side of the cell facing the lamina propria.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-1/, acesso em 2026-08-07."
+    }
+  ]
+}

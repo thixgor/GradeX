@@ -1,0 +1,94 @@
+{
+  "id": 6785,
+  "titulo": "Salivary glands",
+  "titulo_wordpress": "Major salivary glands 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 1"
+  ],
+  "descricao_original": "The major salivary glands (parotid, submandibular, sublingual) are paired, compound glands located within or adjacent to the oral cavity. Their secretory portions are subdivided into lobules by connective tissue. A complex duct system drains each gland, carrying saliva into the oral cavity. Saliva moistens food, buffers the contents of the oral cavity, and begins the digestion of carbohydrates.",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Salivary glands', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Descricao original da pagina: The major salivary glands (parotid, submandibular, sublingual) are paired, compound glands located within or adjacent to the oral cavity. Their secretory portions are subdivided into lobules by connective tissue. A complex duct system drains each gland, carrying saliva into the oral cavity. Saliva moistens food, buffers the contents of the oral cavity, and begins the digestion of carbohydrates.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Compound acinar gland",
+      "explicacao_original": "The three pairs of major salivary glands vary in their morphology and secretions. The parotid, the largest, is a compound acinar gland (illustrated here) with a well developed duct system. The submandibular is a compound tubuloacinar gland with serous demilunes and a less extensive duct system. The sublingual is also compound tubuloacinar with tubular secretory units predominating.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Compound acinar gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The three pairs of major salivary glands vary in their morphology and secretions. The parotid, the largest, is a compound acinar gland (illustrated here) with a well developed duct system. The submandibular is a compound tubuloacinar gland with serous demilunes and a less extensive duct system. The sublingual is also compound tubuloacinar with tubular secretory units predominating.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory units",
+      "explicacao_original": "Secretory units are usually acini (alveoli) (shown here), secreting a serous product, and tubules, producing mucus. In cross section, an acinus resembles a grapefruit; each segment represents a cell with basal RER and nucleus; secretory granules lie next to a small lumen. Tubules are test-tube shaped with wide lumens; cells are flattened, with peripheral nuclei and frothy cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Secretory units' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secretory units are usually acini (alveoli) (shown here), secreting a serous product, and tubules, producing mucus. In cross section, an acinus resembles a grapefruit; each segment represents a cell with basal RER and nucleus; secretory granules lie next to a small lumen. Tubules are test-tube shaped with wide lumens; cells are flattened, with peripheral nuclei and frothy cytoplasm.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lobules",
+      "explicacao_original": "A capsule surrounds each gland, extending interlobular, connective tissue septa into the gland, forming lobules. A lobule is a cluster of secretory units and the ducts that drain them. An intralobular duct leaves one lobule and anastomoses with ducts from adjacent lobules to form interlobular ducts. Interlobular ducts, in turn, combine to form excretory, or main, duct(s) (box at far right) of the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Lobules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A capsule surrounds each gland, extending interlobular, connective tissue septa into the gland, forming lobules. A lobule is a cluster of secretory units and the ducts that drain them. An intralobular duct leaves one lobule and anastomoses with ducts from adjacent lobules to form interlobular ducts. Interlobular ducts, in turn, combine to form excretory, or main, duct(s) (box at far right) of the gland.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Connective tissue septa",
+      "explicacao_original": "A capsule surrounds each gland, extending interlobular, connective tissue septa into the gland, forming lobules. A lobule is a cluster of secretory units and the ducts that drain them. An intralobular duct leaves one lobule and anastomoses with ducts from adjacent lobules to form interlobular ducts. Interlobular ducts, in turn, combine to form excretory, or main, duct(s) of the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Connective tissue septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A capsule surrounds each gland, extending interlobular, connective tissue septa into the gland, forming lobules. A lobule is a cluster of secretory units and the ducts that drain them. An intralobular duct leaves one lobule and anastomoses with ducts from adjacent lobules to form interlobular ducts. Interlobular ducts, in turn, combine to form excretory, or main, duct(s) of the gland.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intercalated ducts",
+      "explicacao_original": "Intralobular ducts lie within lobules. The smallest intralobular ducts, intercalated ducts, drain secretory units and are smaller in diameter than acini. They are lined by simple cuboidal epithelium. In addition to transporting secretory product, these ducts secrete bicarbonate ions into saliva as well as absorbing chloride ions.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Intercalated ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intralobular ducts lie within lobules. The smallest intralobular ducts, intercalated ducts, drain secretory units and are smaller in diameter than acini. They are lined by simple cuboidal epithelium. In addition to transporting secretory product, these ducts secrete bicarbonate ions into saliva as well as absorbing chloride ions.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Striated ducts",
+      "explicacao_original": "Intercalated ducts enlarge to form striated ducts, which are lined by simple columnar epithelium. These intralobular ducts have basal striations, resulting from infoldings of the plasma membrane with mitochondria positioned between the folds. Striated ducts regulate the electrolyte balance and, therefore, the tonicity of the saliva.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Striated ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intercalated ducts enlarge to form striated ducts, which are lined by simple columnar epithelium. These intralobular ducts have basal striations, resulting from infoldings of the plasma membrane with mitochondria positioned between the folds. Striated ducts regulate the electrolyte balance and, therefore, the tonicity of the saliva.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "Interlobular ducts, lying in interlobular CT, are formed by the convergence of striated ducts after they leave the lobule. Interlobular ducts, lined by a stratified epithelium, anastomose to form the excretory, or main, duct(s) (box) that gradually assumes the characteristics of the epithelium onto which it empties. For salivary glands, this is the stratified squamous epithelium of the oral cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Salivary glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-1.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interlobular ducts, lying in interlobular CT, are formed by the convergence of striated ducts after they leave the lobule. Interlobular ducts, lined by a stratified epithelium, anastomose to form the excretory, or main, duct(s) (box) that gradually assumes the characteristics of the epithelium onto which it empties. For salivary glands, this is the stratified squamous epithelium of the oral cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-1/, acesso em 2026-08-07."
+    }
+  ]
+}

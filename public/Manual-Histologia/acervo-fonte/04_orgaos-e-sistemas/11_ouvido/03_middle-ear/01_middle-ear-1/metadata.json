@@ -1,0 +1,103 @@
+{
+  "id": 13638,
+  "titulo": "Middle ear",
+  "titulo_wordpress": "Middle ear 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Middle Ear",
+    "Middle ear 1"
+  ],
+  "descricao_original": "The middle ear, or tympanic cavity, is an air-filled space in the temporal bone that is lined by a mucosa. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the mastoid air cells posteriorly and with the pharynx anteriorly through the auditory (Eustachian) tube.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "arquivo": "imagens/base/O.E.ME_.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Middle ear', no setor Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Descricao original da pagina: The middle ear, or tympanic cavity, is an air-filled space in the temporal bone that is lined by a mucosa. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the mastoid air cells posteriorly and with the pharynx anteriorly through the auditory (Eustachian) tube.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tempanic membrane",
+      "explicacao_original": "The middle ear, or tympanic cavity, is an air-filled space in the temporal bone that is lined by a mucosa. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the mastoid air cells posteriorly and with pharynx anteriorly through the auditory (Eustachian) tube.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P01.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P01.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Tempanic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, or tympanic cavity, is an air-filled space in the temporal bone that is lined by a mucosa. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the mastoid air cells posteriorly and with pharynx anteriorly through the auditory (Eustachian) tube.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Middle ear",
+      "explicacao_original": "The middle ear, or tympanic cavity, is an air-filled space in the temporal bone that is lined by a mucosa. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the mastoid air cells posteriorly and with pharynx anteriorly through the auditory (Eustachian) tube.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P02.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P02.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Middle ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, or tympanic cavity, is an air-filled space in the temporal bone that is lined by a mucosa. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the mastoid air cells posteriorly and with pharynx anteriorly through the auditory (Eustachian) tube.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Malleus",
+      "explicacao_original": "The malleus, the first of the middle ear ossicles, is attached to the tympanic membrane and articulates with the incus. The auditory ossicles are covered by the mucosa that lines the middle ear cavity; tiny ligaments provide their support. Sound waves deflecting the tympanic membrane are converted into mechanical vibrations of the ossicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P03.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P03.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Malleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The malleus, the first of the middle ear ossicles, is attached to the tympanic membrane and articulates with the incus. The auditory ossicles are covered by the mucosa that lines the middle ear cavity; tiny ligaments provide their support. Sound waves deflecting the tympanic membrane are converted into mechanical vibrations of the ossicles.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Incus",
+      "explicacao_original": "The malleus, the first of the middle ear ossicles, is attached to the tympanic membrane and articulates with the incus. The auditory ossicles are covered by the mucosa that lines the middle ear cavity; tiny ligaments provide their support. Sound waves deflecting the tympanic membrane are converted into mechanical vibrations of the ossicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P04.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P04.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Incus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The malleus, the first of the middle ear ossicles, is attached to the tympanic membrane and articulates with the incus. The auditory ossicles are covered by the mucosa that lines the middle ear cavity; tiny ligaments provide their support. Sound waves deflecting the tympanic membrane are converted into mechanical vibrations of the ossicles.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stapes",
+      "explicacao_original": "The incus also articulates with the stapes, whose foot plate fits in the oval window. Movement of the stapes in the oval window transmits the mechanical vibrations of ossicles into a change in pressure in perilymph of the inner ear. This increased pressure is relieved by a bulging of the membrane covering the round window, which lies under the curve of the cochlea and is not visible here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P05.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P05.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Stapes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The incus also articulates with the stapes, whose foot plate fits in the oval window. Movement of the stapes in the oval window transmits the mechanical vibrations of ossicles into a change in pressure in perilymph of the inner ear. This increased pressure is relieved by a bulging of the membrane covering the round window, which lies under the curve of the cochlea and is not visible here.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Oval window",
+      "explicacao_original": "The incus also articulates with the stapes, whose foot plate fits in the oval window. Movement of the stapes in the oval window transmits the mechanical vibrations of ossicles into a change in pressure in perilymph of the inner ear. This increased pressure is relieved by a bulging of the membrane covering the round window, which lies under the curve of the cochlea and is not visible here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P06.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P06.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Oval window' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The incus also articulates with the stapes, whose foot plate fits in the oval window. Movement of the stapes in the oval window transmits the mechanical vibrations of ossicles into a change in pressure in perilymph of the inner ear. This increased pressure is relieved by a bulging of the membrane covering the round window, which lies under the curve of the cochlea and is not visible here.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Tensor tympani",
+      "explicacao_original": "Excessively loud sounds are modulated by reflex contractions of the tensor tympani muscle, pulling the malleus away from the tympanic membrane; the attachment of tensor tympani to the malleus is not illustrated here. Stapedius muscle (not illustrated) aids in modulating sound by pulling the stapes’ footplate away from the oval window.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P08.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P08.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Tensor tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Excessively loud sounds are modulated by reflex contractions of the tensor tympani muscle, pulling the malleus away from the tympanic membrane; the attachment of tensor tympani to the malleus is not illustrated here. Stapedius muscle (not illustrated) aids in modulating sound by pulling the stapes’ footplate away from the oval window.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Eustachian tube",
+      "explicacao_original": "The middle ear communicates with the pharynx anteriorly through the auditory (Eustachian) tube and with the mastoid air cells posteriorly.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.P07.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.01.P07.png",
+      "imagem_base": "imagens/base/O.E.ME_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.01.jpg'. Destaca a estrutura ou conceito 'Eustachian tube' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear communicates with the pharynx anteriorly through the auditory (Eustachian) tube and with the mastoid air cells posteriorly.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-1/, acesso em 2026-08-07."
+    }
+  ]
+}

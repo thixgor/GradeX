@@ -1,0 +1,122 @@
+{
+  "id": 27067,
+  "titulo": "Basic tissues: Muscle and nervous",
+  "titulo_wordpress": "Tissue basics 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Fundamentos dos Tecidos",
+    "Tissue basics 2"
+  ],
+  "descricao_original": "The four tissues of the body include epithelium, connective tissue, muscle and nervous. Muscle and nervous tissue are illustrated in this image. Left: 400x, 600x; Right: 400x, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "arquivo": "imagens/base/T.TB-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Basic tissues: Muscle and nervous', no setor Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Descricao original da pagina: The four tissues of the body include epithelium, connective tissue, muscle and nervous. Muscle and nervous tissue are illustrated in this image. Left: 400x, 600x; Right: 400x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle tissue",
+      "explicacao_original": "Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-1-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Muscle tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Muscle cells",
+      "explicacao_original": "Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-2-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Muscle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-3-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Non-striated (smooth) muscle",
+      "explicacao_original": "Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-4-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Non-striated (smooth) muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Striated muscle",
+      "explicacao_original": "Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-5-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Striated muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Striations",
+      "explicacao_original": "Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-6-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-6-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Striations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle tissue is composed of abundant cells and minimal extracellular matrix. Muscle cells are elongate in shape and usually clustered into bundles with a similar orientation, so that they produce coordinated contraction. Muscle tissue is broadly classified as either non-striated (smooth muscle) or striated (skeletal and cardiac muscle). Striations, shown in this section of skeletal muscle, appear as distinct cross-bands in the cells.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Nervous tissue",
+      "explicacao_original": "Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-7-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-7-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Nervous tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Nerve cell bodies",
+      "explicacao_original": "Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-8-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-8-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Nerve cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Nerve cell processes",
+      "explicacao_original": "Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-9-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-9-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Nerve cell processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Supporting cells",
+      "explicacao_original": "Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2-10-ping.png",
+      "arquivo": "imagens/marcadores/T.TB-2-10-ping.png",
+      "imagem_base": "imagens/base/T.TB-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Muscle and nervous'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB-2.jpg'. Destaca a estrutura ou conceito 'Supporting cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nervous tissue, with abundant cells and minimal extracellular matrix, is composed of nerve cells (neurons) and their supporting cells. Neurons are specialized to conduct electrical impulses, convey sensory stimuli from the environment, and produce appropriate motor responses. Additionally, nervous tissue provides integration and storage of information.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 2. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-2/, acesso em 2026-08-07."
+    }
+  ]
+}

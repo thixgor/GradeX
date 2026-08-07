@@ -1,0 +1,103 @@
+{
+  "id": 17843,
+  "titulo": "Interalveolar septum",
+  "titulo_wordpress": "Overview 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Overview of the respiratory system",
+    "Overview 6"
+  ],
+  "descricao_original": "At the level of the alveoli, where gas exchange occurs, the wall of the passage has been reduced to minimal layers and minimal thickness: a simple squamous epithelium resting on a thin connective tissue core that houses a vast capillary plexus. The thinness of the barrier separating incoming air from capillary blood facilitates gaseous exchange. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "arquivo": "imagens/base/O.R.O.06-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Interalveolar septum', no setor Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Descricao original da pagina: At the level of the alveoli, where gas exchange occurs, the wall of the passage has been reduced to minimal layers and minimal thickness: a simple squamous epithelium resting on a thin connective tissue core that houses a vast capillary plexus. The thinness of the barrier separating incoming air from capillary blood facilitates gaseous exchange. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar lumens",
+      "explicacao_original": "At the level of the alveoli, where gas exchange occurs, the wall of the passage has been reduced to minimal layers and minimal thickness: a simple squamous epithelium resting on a thin connective tissue core that houses a vast capillary plexus. The thinness of the barrier separating incoming air from capillary blood facilitates gaseous exchange. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P01A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P01A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Alveolar lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the level of the alveoli, where gas exchange occurs, the wall of the passage has been reduced to minimal layers and minimal thickness: a simple squamous epithelium resting on a thin connective tissue core that houses a vast capillary plexus. The thinness of the barrier separating incoming air from capillary blood facilitates gaseous exchange. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interalveolar septa",
+      "explicacao_original": "The walls of adjacent alveoli abut to form interalveolar septa. Each septum is lined by a simple squamous epithelium; connective tissue forms the core of the septum. Numerous capillaries bulge from the septa into the lumen of each alveolus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P02A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P02A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Interalveolar septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The walls of adjacent alveoli abut to form interalveolar septa. Each septum is lined by a simple squamous epithelium; connective tissue forms the core of the septum. Numerous capillaries bulge from the septa into the lumen of each alveolus.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lining epithelium",
+      "explicacao_original": "The epithelium lining the alveolus consists of an extremely thin simple squamous epithelium (arrows) along with cuboidal secretory cells (squares). Most of the alveolar surface is covered by the squamous cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P03AA.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P03AA.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Lining epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium lining the alveolus consists of an extremely thin simple squamous epithelium (arrows) along with cuboidal secretory cells (squares). Most of the alveolar surface is covered by the squamous cells.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Surfactant",
+      "explicacao_original": "The surface of the alveolus is coated by surfactant, a thin lipoprotein layer that reduces surface tension in the alveolus, thus aiding inspiration. The surfactant is produced by the cuboidal cells in the lining epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P04A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P04A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Surfactant' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The surface of the alveolus is coated by surfactant, a thin lipoprotein layer that reduces surface tension in the alveolus, thus aiding inspiration. The surfactant is produced by the cuboidal cells in the lining epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Connective tissue core",
+      "explicacao_original": "The alveolar epithelium rests on a thin core of connective tissue consisting of elastic and reticular fibers and various connective tissue cells. An extensive capillary network is present in the core.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P05A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P05A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Connective tissue core' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The alveolar epithelium rests on a thin core of connective tissue consisting of elastic and reticular fibers and various connective tissue cells. An extensive capillary network is present in the core.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Due to the thinness of the septum, capillaries bulge into the alveolar lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P06A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P06A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Due to the thinness of the septum, capillaries bulge into the alveolar lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Endothelium",
+      "explicacao_original": "Each capillary is lined by a simple squamous epithelium, the endothelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P07A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P07A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each capillary is lined by a simple squamous epithelium, the endothelium.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Air-blood barrier",
+      "explicacao_original": "The barrier through which oxygen and carbon dioxide must pass consists of the simple squamous epithelium lining the alveolus, the capillary endothelium, and the fused basal laminae of each epithelium. This is often referred to as the blood-air-barrier.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.06.P08A.png",
+      "arquivo": "imagens/marcadores/O.R.O.06.P08A.png",
+      "imagem_base": "imagens/base/O.R.O.06-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.O.06-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.06-fix.jpg'. Destaca a estrutura ou conceito 'Air-blood barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The barrier through which oxygen and carbon dioxide must pass consists of the simple squamous epithelium lining the alveolus, the capillary endothelium, and the fused basal laminae of each epithelium. This is often referred to as the blood-air-barrier.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-6/, acesso em 2026-08-07."
+    }
+  ]
+}

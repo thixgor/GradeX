@@ -1,0 +1,65 @@
+{
+  "id": 15797,
+  "titulo": "Seminal vesicle",
+  "titulo_wordpress": "Seminal vesicle 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Genital Glands",
+    "Seminal Vesicle",
+    "Seminal vesicle 1"
+  ],
+  "descricao_original": "The paired seminal vesicles lie posterior to the urinary bladder. Each consists of a single, highly convoluted, tubular gland surrounded by a layer of smooth muscle. The duct of the seminal vesicle joins with the ampulla of the ductus deferens, just as the ductus enters the prostate gland to become the ejaculatory duct. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A.jpg",
+      "arquivo": "imagens/base/O.R.M.SV_.01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Seminal vesicle', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 1. Descricao original da pagina: The paired seminal vesicles lie posterior to the urinary bladder. Each consists of a single, highly convoluted, tubular gland surrounded by a layer of smooth muscle. The duct of the seminal vesicle joins with the ampulla of the ductus deferens, just as the ductus enters the prostate gland to become the ejaculatory duct. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory tubule",
+      "explicacao_original": "The seminal vesicles contribute fructose, prostaglandins and ascorbic acid to the seminal fluid. Fructose provides the major nutritional source for spermatozoa. The secretion of the seminal vesicle is slightly alkaline, helping to neutralize the acidity of the vagina. The seminal vesicle secretes the majority of the seminal fluid.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.SV_.01A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.SV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SV_.01A.jpg'. Destaca a estrutura ou conceito 'Secretory tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The seminal vesicles contribute fructose, prostaglandins and ascorbic acid to the seminal fluid. Fructose provides the major nutritional source for spermatozoa. The secretion of the seminal vesicle is slightly alkaline, helping to neutralize the acidity of the vagina. The seminal vesicle secretes the majority of the seminal fluid.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lumen",
+      "explicacao_original": "The mucosa of the gland forms innumerable, interconnecting arches subdividing the lumen. Therefore, the lumen of the gland is seen not only as a central space (black arrows) but also as a lacey maze of chambers (blue arrows) between the arches and surrounding the central lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.SV_.01A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.M.SV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SV_.01A.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the gland forms innumerable, interconnecting arches subdividing the lumen. Therefore, the lumen of the gland is seen not only as a central space (black arrows) but also as a lacey maze of chambers (blue arrows) between the arches and surrounding the central lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "The mucosa of the seminal vesicle is surrounded by a layer of smooth muscle that helps propel the secretions from the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.SV_.01A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.SV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SV_.01A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the seminal vesicle is surrounded by a layer of smooth muscle that helps propel the secretions from the gland.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to that outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.SV_.01A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.SV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminal vesicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SV_.01A.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Seminal Vesicle > Seminal vesicle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/seminal-vesicle/seminal-vesicle-1/, acesso em 2026-08-07."
+    }
+  ]
+}

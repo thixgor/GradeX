@@ -1,0 +1,93 @@
+{
+  "id": 28268,
+  "titulo": "Overview: Primary lymphoid organs",
+  "titulo_wordpress": "Overview 5A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Overview 5A"
+  ],
+  "descricao_original": "Primary lymphoid tissues consist of the bone marrow and thymus. They are not directly involved with immune responses, rather, they generate the effector cells that mount these defenses.",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Primary lymphoid organs', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Descricao original da pagina: Primary lymphoid tissues consist of the bone marrow and thymus. They are not directly involved with immune responses, rather, they generate the effector cells that mount these defenses.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Red bone marrow",
+      "explicacao_original": "Red bone marrow is the site of blood cell formation (hemopoiesis), producing erythrocytes, granular leukocytes (neutrophils, eosinophils and basophils), B lymphocytes, T cell precursors, monocytes, and platelets. B cells exit the bone marrow and migrate into secondary lymphoid tissues and organs where they differentiate into antibody-producing plasma cells that provide humoral immunity. T cell precursors migrate to the thymus where selection and maturation occur before final migration into secondary structures to provide cell-mediated immunity. Monocytes enter connective tissues and differentiate into macrophages. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Red bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red bone marrow is the site of blood cell formation (hemopoiesis), producing erythrocytes, granular leukocytes (neutrophils, eosinophils and basophils), B lymphocytes, T cell precursors, monocytes, and platelets. B cells exit the bone marrow and migrate into secondary lymphoid tissues and organs where they differentiate into antibody-producing plasma cells that provide humoral immunity. T cell precursors migrate to the thymus where selection and maturation occur before final migration into secondary structures to provide cell-mediated immunity. Monocytes enter connective tissues and differentiate into macrophages. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Bone marrow tissue",
+      "explicacao_original": "Red bone marrow consists of multipotential stem cells and their progeny that form mature blood cells and platelets. Newly formed blood cells enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Red marrow also contains adipocytes that, with age, increase in number eventually constituting the major cell type forming inactive, yellow marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Bone marrow tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red bone marrow consists of multipotential stem cells and their progeny that form mature blood cells and platelets. Newly formed blood cells enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Red marrow also contains adipocytes that, with age, increase in number eventually constituting the major cell type forming inactive, yellow marrow.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sinusoids",
+      "explicacao_original": "Red bone marrow consists of multipotential stem cells and their progeny that form mature blood cells and platelets. Newly formed blood cells enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Red marrow also contains adipocytes that, with age, increase in number eventually constituting the major cell type forming inactive, yellow marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-1B-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-1B-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red bone marrow consists of multipotential stem cells and their progeny that form mature blood cells and platelets. Newly formed blood cells enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Red marrow also contains adipocytes that, with age, increase in number eventually constituting the major cell type forming inactive, yellow marrow.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "Red bone marrow consists of multipotential stem cells and their progeny that form mature blood cells and platelets. Newly formed blood cells enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Red marrow also contains adipocytes that, with age, increase in number eventually constituting the major cell type forming inactive, yellow marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-1C-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-1C-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red bone marrow consists of multipotential stem cells and their progeny that form mature blood cells and platelets. Newly formed blood cells enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Red marrow also contains adipocytes that, with age, increase in number eventually constituting the major cell type forming inactive, yellow marrow.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Thymus",
+      "explicacao_original": "Thymus is the second primary lymphoid organ. Immature T cells produced in the bone marrow, first migrate to the thymus where they undergo maturation and selection. Thereafter, they migrate from the thymus to peripheral tissues as well as lymphoid organs, including lymph node and spleen. T lymphocytes are involved with cell-mediated immunity as well as initiation of the humoral immune response. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Thymus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thymus is the second primary lymphoid organ. Immature T cells produced in the bone marrow, first migrate to the thymus where they undergo maturation and selection. Thereafter, they migrate from the thymus to peripheral tissues as well as lymphoid organs, including lymph node and spleen. T lymphocytes are involved with cell-mediated immunity as well as initiation of the humoral immune response. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cortex",
+      "explicacao_original": "The thymus is a highly lobulated organ that consists of a cortex and medulla. Cortex, intensely basophilic due to the large number of T cells present, is the site of T cell maturation and selection. Migration of mature T cells from the thymus occurs in the medulla, which is less intensely stained.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thymus is a highly lobulated organ that consists of a cortex and medulla. Cortex, intensely basophilic due to the large number of T cells present, is the site of T cell maturation and selection. Migration of mature T cells from the thymus occurs in the medulla, which is less intensely stained.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Medulla",
+      "explicacao_original": "The thymus is a highly lobulated organ that consists of a cortex and medulla. Cortex, intensely basophilic due to the large number of T cells present, is the site of T cell maturation and selection. Migration of mature T cells from the thymus occurs in the medulla, which is less intensely stained.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW-2B-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-4-NEW-2B-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Primary lymphoid organs'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-4-NEW.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thymus is a highly lobulated organ that consists of a cortex and medulla. Cortex, intensely basophilic due to the large number of T cells present, is the site of T cell maturation and selection. Migration of mature T cells from the thymus occurs in the medulla, which is less intensely stained.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-14/, acesso em 2026-08-07."
+    }
+  ]
+}

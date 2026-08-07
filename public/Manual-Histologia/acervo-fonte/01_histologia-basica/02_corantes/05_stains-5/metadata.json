@@ -1,0 +1,52 @@
+{
+  "id": 656,
+  "titulo": "Osmium",
+  "titulo_wordpress": "Stains 5",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Corantes",
+    "Stains 5"
+  ],
+  "descricao_original": "Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x",
+  "url_origem": "https://digitalhistology.org/histology-basics/stains/stains-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A.jpg",
+      "arquivo": "imagens/base/C.B.St-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Osmium', no setor Histologia Básica > Corantes > Stains 5. Descricao original da pagina: Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-5A-1-ping.png",
+      "imagem_base": "imagens/base/C.B.St-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Osmium'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-5A.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-5A-2-ping.png",
+      "imagem_base": "imagens/base/C.B.St-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Osmium'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-5A.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-5A-3-ping.png",
+      "imagem_base": "imagens/base/C.B.St-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Osmium'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-5A.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osmium tetroxide is both a stain and a fixative for lipid, a chemical reaction that produces a brown color visible by light microscopy. Lipid can be distributed as small, cytoplasmic droplets (left) or a single large droplet that nearly fills the cell (right). This latter distribution occurs in adipocytes, which are specialized fat storage cells. The use of osmium to preserve lipids for electron microscopy, provides electron density to tissues. Toluidine blue stain, 1000x, 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-5/, acesso em 2026-08-07."
+    }
+  ]
+}

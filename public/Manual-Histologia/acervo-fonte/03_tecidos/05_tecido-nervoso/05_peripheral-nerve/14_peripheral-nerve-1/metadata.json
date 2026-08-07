@@ -1,0 +1,73 @@
+{
+  "id": 3076,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 14"
+  ],
+  "descricao_original": "These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-13.jpg",
+      "arquivo": "imagens/base/T.N.PN-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 14. Descricao original da pagina: These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Myelinated axons",
+      "explicacao_original": "Although myelinated axons in the PNS are usually larger than unmyelinated axons, they can vary greatly in their diameters. In general, larger axons have thicker myelin sheaths. Here, the myelin is visible as dark bands surrounding each axon. PNS myelin is produced by Schwann cells, which associate with a single axon and produce a single internode of myelin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-13-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-13-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-13.jpg'. Destaca a estrutura ou conceito 'Myelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Although myelinated axons in the PNS are usually larger than unmyelinated axons, they can vary greatly in their diameters. In general, larger axons have thicker myelin sheaths. Here, the myelin is visible as dark bands surrounding each axon. PNS myelin is produced by Schwann cells, which associate with a single axon and produce a single internode of myelin.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Unmyelinated axons",
+      "explicacao_original": "Unmyelinated axons are generally less than one micron in diameter. Numerous unmyelinated axons associate with a single Schwann cell, each lying in a longitudinal indentation of the Schwann cell surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-13-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-13-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-13.jpg'. Destaca a estrutura ou conceito 'Unmyelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Unmyelinated axons are generally less than one micron in diameter. Numerous unmyelinated axons associate with a single Schwann cell, each lying in a longitudinal indentation of the Schwann cell surface.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Perineurium",
+      "explicacao_original": "These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-13-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-13-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-13.jpg'. Destaca a estrutura ou conceito 'Perineurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-13-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-13-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-13.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-13-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-13-5-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-13.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the structure of a small peripheral nerve at the light (left, toluidine blue stain) and electron microscopic (right) levels. These peripheral nerves contain a mixture of myelinated and unmyelinated axons. Both nerves are located in dense irregular connective and a distinct perineurium demarcates the nerves from the surrounding connective tissue. 1000x, 1500x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-14/, acesso em 2026-08-07."
+    }
+  ]
+}

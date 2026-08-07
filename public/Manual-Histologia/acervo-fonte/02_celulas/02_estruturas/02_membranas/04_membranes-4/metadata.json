@@ -1,0 +1,73 @@
+{
+  "id": 1114,
+  "titulo": "Membranes",
+  "titulo_wordpress": "Membranes 4",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Membranas",
+    "Membranes 4"
+  ],
+  "descricao_original": "The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/membranes/membranes-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.M.-4.jpg",
+      "arquivo": "imagens/base/C.S.M.-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Membranes', no setor Células > Estruturas > Membranas > Membranes 4. Descricao original da pagina: The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Plasma membranes",
+      "explicacao_original": "The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-4-1-ping.png",
+      "imagem_base": "imagens/base/C.S.M.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.M.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M.-4.jpg'. Destaca a estrutura ou conceito 'Plasma membranes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Columnar cells",
+      "explicacao_original": "The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-4-2-ping.png",
+      "imagem_base": "imagens/base/C.S.M.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.M.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M.-4.jpg'. Destaca a estrutura ou conceito 'Columnar cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cuboidal cells",
+      "explicacao_original": "The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-4-3-ping.png",
+      "imagem_base": "imagens/base/C.S.M.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.M.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M.-4.jpg'. Destaca a estrutura ou conceito 'Cuboidal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Squamous cells",
+      "explicacao_original": "The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-4-4-ping.png",
+      "imagem_base": "imagens/base/C.S.M.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.M.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M.-4.jpg'. Destaca a estrutura ou conceito 'Squamous cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumens",
+      "explicacao_original": "The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-4-5-ping.png",
+      "imagem_base": "imagens/base/C.S.M.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.M.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.M.-4.jpg'. Destaca a estrutura ou conceito 'Lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane is the unique membrane surrounding the cell. A single membrane cannot be resolved by the light microscope and thus the prominent line visible between adjacent cells represents the plasma membranes of each cell, as well as intercellular space, cytoskeletal elements, and proteins associated with the membrane. Kidney tubules 1000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-4/, acesso em 2026-08-07."
+    }
+  ]
+}

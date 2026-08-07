@@ -1,0 +1,64 @@
+{
+  "id": 12324,
+  "titulo": "Ovary",
+  "titulo_wordpress": "Ovary 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 4"
+  ],
+  "descricao_original": "The surface of the ovary shows the position and size of the smallest follicles, the primordial and primary unilaminar follicles, located just beneath the tunica albuginea. Larger follicles (primary multilaminar and secondary follicles) are located deeper in the cortex. Follicles are epithelial structures that house developing oocytes, the germ cells. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04-1.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.04-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 4. Descricao original da pagina: The surface of the ovary shows the position and size of the smallest follicles, the primordial and primary unilaminar follicles, located just beneath the tunica albuginea. Larger follicles (primary multilaminar and secondary follicles) are located deeper in the cortex. Follicles are epithelial structures that house developing oocytes, the germ cells. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Follicles",
+      "explicacao_original": "The surface of the ovary shows the position and size of the smallest follicles, the primordial and primary unilaminar follicles, located just beneath the tunica albuginea. Larger follicles (primary multilaminar and secondary follicles) are located deeper in the cortex. Follicles are epithelial structures that house developing oocytes, the germ cells. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04.P01-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.04.P01-1.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.04-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.04-1.jpg'. Destaca a estrutura ou conceito 'Follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The surface of the ovary shows the position and size of the smallest follicles, the primordial and primary unilaminar follicles, located just beneath the tunica albuginea. Larger follicles (primary multilaminar and secondary follicles) are located deeper in the cortex. Follicles are epithelial structures that house developing oocytes, the germ cells. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Primary oocytes",
+      "explicacao_original": "The surface of the ovary shows the position and size of the smallest follicles, the primordial and primary unilaminar follicles, located just beneath the tunica albuginea. Larger follicles (primary multilaminar and secondary follicles) are located deeper in the cortex. Follicles are epithelial structures that house developing oocytes, the germ cells. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04.P02-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.04.P02-1.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.04-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.04-1.jpg'. Destaca a estrutura ou conceito 'Primary oocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The surface of the ovary shows the position and size of the smallest follicles, the primordial and primary unilaminar follicles, located just beneath the tunica albuginea. Larger follicles (primary multilaminar and secondary follicles) are located deeper in the cortex. Follicles are epithelial structures that house developing oocytes, the germ cells. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Germinal epithelium",
+      "explicacao_original": "The germinal epithelium, the surface layer of the serosa, is located on the periphery of the ovary at the tips of the arrows. Tunica albuginea is the dense connective tissue layer beneath the serosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04.P03-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.04.P03-1.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.04-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.04-1.jpg'. Destaca a estrutura ou conceito 'Germinal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The germinal epithelium, the surface layer of the serosa, is located on the periphery of the ovary at the tips of the arrows. Tunica albuginea is the dense connective tissue layer beneath the serosa.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The germinal epithelium, the surface layer of the serosa, is located on the periphery of the ovary at the tips of the arrows. Tunica albuginea is the dense connective tissue layer beneath the serosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04.P04-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.04.P04-1.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.04-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.04-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.04-1.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The germinal epithelium, the surface layer of the serosa, is located on the periphery of the ovary at the tips of the arrows. Tunica albuginea is the dense connective tissue layer beneath the serosa.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-4/, acesso em 2026-08-07."
+    }
+  ]
+}

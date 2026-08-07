@@ -1,0 +1,63 @@
+{
+  "id": 5366,
+  "titulo": "Myocardium",
+  "titulo_wordpress": "Heart 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Heart",
+    "Heart 4"
+  ],
+  "descricao_original": "Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2024.jpg",
+      "arquivo": "imagens/base/Or.CV_.H-4-2024.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Myocardium', no setor Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 4. Descricao original da pagina: Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Branching fibers",
+      "explicacao_original": "Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2-2024-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-4-2-2024-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-4-2024.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2024.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Myocardium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-4-2024.jpg'. Destaca a estrutura ou conceito 'Branching fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Central nuclei",
+      "explicacao_original": "Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-1-2024-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-4-1-2024-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-4-2024.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2024.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Myocardium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-4-2024.jpg'. Destaca a estrutura ou conceito 'Central nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Intercalated discs",
+      "explicacao_original": "Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-3-2024-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-4-3-2024-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-4-2024.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2024.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Myocardium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-4-2024.jpg'. Destaca a estrutura ou conceito 'Intercalated discs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Striations",
+      "explicacao_original": "Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2024-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-4-2024-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-4-2024.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/08/Or.CV_.H-4-2024.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Myocardium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-4-2024.jpg'. Destaca a estrutura ou conceito 'Striations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diagnostic features of cardiac muscle fibers are branching fibers, intercalated discs and centrally-located nuclei. Intercalated discs, appearing as thick lines, are specialized junctions between fibers; each is composed of interdigitating plasma membranes (sarcolemmae), myofilaments and cell junctions. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-4/, acesso em 2026-08-07."
+    }
+  ]
+}

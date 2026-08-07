@@ -1,0 +1,83 @@
+{
+  "id": 9238,
+  "titulo": "Sensory retina",
+  "titulo_wordpress": "Retina 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 7"
+  ],
+  "descricao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina', no setor Órgãos e Sistemas > Olho > Retina > Retina 7. Descricao original da pagina: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Choroid",
+      "explicacao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-7.jpg'. Destaca a estrutura ou conceito 'Choroid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pigment epithelium",
+      "explicacao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-7.jpg'. Destaca a estrutura ou conceito 'Pigment epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Bruch's membrane",
+      "explicacao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-7.jpg'. Destaca a estrutura ou conceito 'Bruch's membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Choriocapillaris",
+      "explicacao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-7.jpg'. Destaca a estrutura ou conceito 'Choriocapillaris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Outer segments of rods and cones",
+      "explicacao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-7.jpg'. Destaca a estrutura ou conceito 'Outer segments of rods and cones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Inner segment of rods and cones",
+      "explicacao_original": "This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-7-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-7-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-7.jpg'. Destaca a estrutura ou conceito 'Inner segment of rods and cones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the interface of the outer sensory retina with the pigment epithelium. The pigment epithelium consists of cuboidal cells with basal nuclei and unique elongated melanin granules in their apical cytoplasm. The epithelium rests on its basement membrane, which forms a portion of Bruch’s membrane. The choriocapillaris is a layer of capillaries that supplies the outer portions of the retina. 1000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-7/, acesso em 2026-08-07."
+    }
+  ]
+}

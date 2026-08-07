@@ -1,0 +1,43 @@
+{
+  "id": 28376,
+  "titulo": "Overview: Lymph nodes",
+  "titulo_wordpress": "Lymphoid 12A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Lymphoid 12A"
+  ],
+  "descricao_original": "Lymph travels through lymphatic vessels of increasing size and eventually reaches lymph nodes that are located along these vessels. Lymph nodes are kidney-shaped, encapsulated lymphoid organs that serve as in-line monitors of lymph. Although located throughout the body, lymph nodes are concentrated in the axilla, groin, neck and abdomen. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-21/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-10-NEW.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-10-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Lymph nodes', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 12A. Descricao original da pagina: Lymph travels through lymphatic vessels of increasing size and eventually reaches lymph nodes that are located along these vessels. Lymph nodes are kidney-shaped, encapsulated lymphoid organs that serve as in-line monitors of lymph. Although located throughout the body, lymph nodes are concentrated in the axilla, groin, neck and abdomen. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-21/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lymph nodes",
+      "explicacao_original": "Lymph nodes are small, kidney bean-shaped, encapsulated organs located along lymph vessels. Lymph nodes filter lymph, monitoring it for foreign antigens present. Lymph nodes enlarge in response to this antigenic activity and are commonly referred to as “swollen glands,” when they do so.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-10-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-10-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-10-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-10-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymph nodes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-10-NEW.jpg'. Destaca a estrutura ou conceito 'Lymph nodes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymph nodes are small, kidney bean-shaped, encapsulated organs located along lymph vessels. Lymph nodes filter lymph, monitoring it for foreign antigens present. Lymph nodes enlarge in response to this antigenic activity and are commonly referred to as “swollen glands,” when they do so.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 12A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lymph vessels",
+      "explicacao_original": "Lymph nodes are small, kidney bean-shaped, encapsulated organs located along lymph vessels. Lymph nodes filter lymph, monitoring it for foreign antigens present. Lymph nodes enlarge in response to this antigenic activity and are commonly referred to as “swollen glands,” when they do so.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-NEW-10-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-NEW-10-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-10-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-10-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymph nodes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-10-NEW.jpg'. Destaca a estrutura ou conceito 'Lymph vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymph nodes are small, kidney bean-shaped, encapsulated organs located along lymph vessels. Lymph nodes filter lymph, monitoring it for foreign antigens present. Lymph nodes enlarge in response to this antigenic activity and are commonly referred to as “swollen glands,” when they do so.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Lymphoid 12A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/lymphoid-21/, acesso em 2026-08-07."
+    }
+  ]
+}

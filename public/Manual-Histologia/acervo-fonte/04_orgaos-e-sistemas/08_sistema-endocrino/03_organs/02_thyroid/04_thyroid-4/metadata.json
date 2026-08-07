@@ -1,0 +1,84 @@
+{
+  "id": 4826,
+  "titulo": "Thyroid gland",
+  "titulo_wordpress": "Thyroid 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Thyroid",
+    "Thyroid 4"
+  ],
+  "descricao_original": "These images demonstrate the transition of follicle cells from inactive (left) to active (right). The tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones. Note also the large number of capillaries which receive the T3 and T4 hormones. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thyroid gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Descricao original da pagina: These images demonstrate the transition of follicle cells from inactive (left) to active (right). The tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones. Note also the large number of capillaries which receive the T3 and T4 hormones. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Inactive follicle cells",
+      "explicacao_original": "These images demonstrate the transition of follicle cells from inactive (left) to active (right). The tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones. Note also the large number of capillaries which receive the T3 and T4 hormones. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-4.jpg'. Destaca a estrutura ou conceito 'Inactive follicle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images demonstrate the transition of follicle cells from inactive (left) to active (right). The tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones. Note also the large number of capillaries which receive the T3 and T4 hormones. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intermediate activity follicle cells",
+      "explicacao_original": "These images demonstrate the transition of follicle cells from inactive (left) to active (right). The tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones. Note also the large number of capillaries which receive the T3 and T4 hormones. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-4.jpg'. Destaca a estrutura ou conceito 'Intermediate activity follicle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images demonstrate the transition of follicle cells from inactive (left) to active (right). The tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones. Note also the large number of capillaries which receive the T3 and T4 hormones. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Active follicle cells",
+      "explicacao_original": "The increased height of the follicle cells results from a greater abundance of synthetic and protein-processing organelles. Also present are granules, which are involved either in the transport and release of thyroglobulin into the lumen or resorption and processing of thyroglobulin to release T3 and T4 into the surrounding capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-4.jpg'. Destaca a estrutura ou conceito 'Active follicle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The increased height of the follicle cells results from a greater abundance of synthetic and protein-processing organelles. Also present are granules, which are involved either in the transport and release of thyroglobulin into the lumen or resorption and processing of thyroglobulin to release T3 and T4 into the surrounding capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Granules",
+      "explicacao_original": "The increased height of the follicle cells results from a greater abundance of synthetic and protein-processing organelles. Also present are granules, which are involved either in the transport and release of thyroglobulin into the lumen or resorption and processing of thyroglobulin to release T3 and T4 into the surrounding capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-4.jpg'. Destaca a estrutura ou conceito 'Granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The increased height of the follicle cells results from a greater abundance of synthetic and protein-processing organelles. Also present are granules, which are involved either in the transport and release of thyroglobulin into the lumen or resorption and processing of thyroglobulin to release T3 and T4 into the surrounding capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Thyroglobulin",
+      "explicacao_original": "The increased height of the follicle cells results from a greater abundance of synthetic and protein-processing organelles. Also present are granules, which are involved either in the transport and release of thyroglobulin into the lumen or resorption and processing of thyroglobulin to release T3 and T4 into the surrounding capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-4.jpg'. Destaca a estrutura ou conceito 'Thyroglobulin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The increased height of the follicle cells results from a greater abundance of synthetic and protein-processing organelles. Also present are granules, which are involved either in the transport and release of thyroglobulin into the lumen or resorption and processing of thyroglobulin to release T3 and T4 into the surrounding capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "As in other endocrine organs, these capillaries are fenestrated. Fenestrations are small pores in the endothelium, which facilitate movement of materials in and out of the blood stream. Capillaries are present in all follicles, but are more visible in the intermediate and highly active follicle wall.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-4.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As in other endocrine organs, these capillaries are fenestrated. Fenestrations are small pores in the endothelium, which facilitate movement of materials in and out of the blood stream. Capillaries are present in all follicles, but are more visible in the intermediate and highly active follicle wall.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-4/, acesso em 2026-08-07."
+    }
+  ]
+}

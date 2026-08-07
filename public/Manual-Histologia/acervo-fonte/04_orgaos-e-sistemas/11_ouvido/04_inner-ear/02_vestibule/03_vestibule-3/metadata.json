@@ -1,0 +1,124 @@
+{
+  "id": 13737,
+  "titulo": "Vestibule",
+  "titulo_wordpress": "Vestibule 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Vestibule",
+    "Vestibule 3"
+  ],
+  "descricao_original": "This image demonstrates several subdivisions of the middle and inner ear: stapes, oval window, vestibule with utricle, semicircular canal and duct, and cochlea. 30x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "arquivo": "imagens/base/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Vestibule', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Descricao original da pagina: This image demonstrates several subdivisions of the middle and inner ear: stapes, oval window, vestibule with utricle, semicircular canal and duct, and cochlea. 30x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Middle ear",
+      "explicacao_original": "The middle ear houses the ear ossicles. The stapes is the ossicle that fits into the oval window in the wall separating the middle ear from the vestibule of the inner ear. Movement of the stapes results in change of pressure in the perilymph of the inner ear, thus triggering a response in the inner ear receptors.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Middle ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear houses the ear ossicles. The stapes is the ossicle that fits into the oval window in the wall separating the middle ear from the vestibule of the inner ear. Movement of the stapes results in change of pressure in the perilymph of the inner ear, thus triggering a response in the inner ear receptors.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stapes",
+      "explicacao_original": "The middle ear houses the ear ossicles. The stapes is the ossicle that fits into the oval window in the wall separating the middle ear from the vestibule of the inner ear. Movement of the stapes results in change of pressure in the perilymph of the inner ear, thus triggering a response in the inner ear receptors.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Stapes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear houses the ear ossicles. The stapes is the ossicle that fits into the oval window in the wall separating the middle ear from the vestibule of the inner ear. Movement of the stapes results in change of pressure in the perilymph of the inner ear, thus triggering a response in the inner ear receptors.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Oval window",
+      "explicacao_original": "The middle ear houses the ear ossicles. The stapes is the ossicle that fits into the oval window in the wall separating the middle ear from the vestibule of the inner ear. Movement of the stapes results in change of pressure in the perilymph of the inner ear, thus triggering a response in the inner ear receptors.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Oval window' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear houses the ear ossicles. The stapes is the ossicle that fits into the oval window in the wall separating the middle ear from the vestibule of the inner ear. Movement of the stapes results in change of pressure in the perilymph of the inner ear, thus triggering a response in the inner ear receptors.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule is a part of the osseous labyrinth forming a portion of the inner ear. The vestibule houses the saccule (not seen here) and utricle, components of the membranous labyrinth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule is a part of the osseous labyrinth forming a portion of the inner ear. The vestibule houses the saccule (not seen here) and utricle, components of the membranous labyrinth.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Utricle",
+      "explicacao_original": "This section cuts through the utricle in two locations. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, that responds to linear acceleration and gravitational forces, thereby initiating a nerve impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Utricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section cuts through the utricle in two locations. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, that responds to linear acceleration and gravitational forces, thereby initiating a nerve impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Macula of utricle",
+      "explicacao_original": "This section cuts through the utricle in two locations. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, that responds to linear acceleration and gravitational forces, thereby initiating a nerve impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Macula of utricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section cuts through the utricle in two locations. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, that responds to linear acceleration and gravitational forces, thereby initiating a nerve impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Semicircular ducts",
+      "explicacao_original": "A portion of one (blue arrow) of the three semicircular ducts (membranous labyrinth) is sectioned at its attachment to the utricle. A second semicircular duct (black arrow) is seen a short distance from its utricular attachment.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Semicircular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A portion of one (blue arrow) of the three semicircular ducts (membranous labyrinth) is sectioned at its attachment to the utricle. A second semicircular duct (black arrow) is seen a short distance from its utricular attachment.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The cochlear duct (membranous labyrinth) with its organ of Corti, the receptor for audition or hearing, is encased in the cochlea, part of the osseous labyrinth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P09.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P09.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct (membranous labyrinth) with its organ of Corti, the receptor for audition or hearing, is encased in the cochlea, part of the osseous labyrinth.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Cochlear duct",
+      "explicacao_original": "The cochlear duct (membranous labyrinth) with its organ of Corti, the receptor for audition or hearing, is encased in the cochlea, part of the osseous labyrinth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.03.P10.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P10.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Cochlear duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct (membranous labyrinth) with its organ of Corti, the receptor for audition or hearing, is encased in the cochlea, part of the osseous labyrinth.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Tensor tympani and vestibulocochlear nerve",
+      "explicacao_original": "The tensor tympani muscle (X) modulates excessively loud sounds by pulling the malleus away from the tympanic membrane. Cranial nerve VIII, the vestibulocochlear, transmits impulses from the maculae and christae ampullares to the brain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.03.P10-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.03.P10-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.03A.jpg'. Destaca a estrutura ou conceito 'Tensor tympani and vestibulocochlear nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tensor tympani muscle (X) modulates excessively loud sounds by pulling the malleus away from the tympanic membrane. Cranial nerve VIII, the vestibulocochlear, transmits impulses from the maculae and christae ampullares to the brain.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-3/, acesso em 2026-08-07."
+    }
+  ]
+}

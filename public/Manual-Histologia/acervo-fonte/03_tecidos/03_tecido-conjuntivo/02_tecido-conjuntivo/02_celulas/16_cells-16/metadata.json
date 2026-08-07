@@ -1,0 +1,74 @@
+{
+  "id": 16827,
+  "titulo": "Mast cell",
+  "titulo_wordpress": "Cells 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 16"
+  ],
+  "descricao_original": "Mast cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain heparin, histamine and protease enzymes that function in the inflammatory response. Shown here are connective tissue mast cells that are located in a loose connective tissue. Toluidine blue 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-16.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mast cell', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 16. Descricao original da pagina: Mast cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain heparin, histamine and protease enzymes that function in the inflammatory response. Shown here are connective tissue mast cells that are located in a loose connective tissue. Toluidine blue 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mast cells",
+      "explicacao_original": "Mast cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain heparin, histamine and protease enzymes that function in the inflammatory response. Shown here are connective tissue mast cells that are located in a loose connective tissue. Toluidine blue 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-16-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-16.jpg'. Destaca a estrutura ou conceito 'Mast cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells are spherical to oval-shaped with a centrally-located, spherical nucleus. Their cytoplasm is filled with numerous granules that contain heparin, histamine and protease enzymes that function in the inflammatory response. Shown here are connective tissue mast cells that are located in a loose connective tissue. Toluidine blue 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Metachromatic granules",
+      "explicacao_original": "Mast cell granules exhibit metachromasia, due to their proteoglycan content. Metachromatic staining results when cellular structures with abundant polyanions, e.g., sulfate groups, are stained with a basic dye, such as toluidine blue. Dye molecules bind in close proximity and form aggregates having different absorptive properties from the single dye molecule, thus producing a different color. Note how the color of the granules is purple in contrast to the non-metachromatic blue staining of the other tissue elements.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-16-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-16.jpg'. Destaca a estrutura ou conceito 'Metachromatic granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cell granules exhibit metachromasia, due to their proteoglycan content. Metachromatic staining results when cellular structures with abundant polyanions, e.g., sulfate groups, are stained with a basic dye, such as toluidine blue. Dye molecules bind in close proximity and form aggregates having different absorptive properties from the single dye molecule, thus producing a different color. Note how the color of the granules is purple in contrast to the non-metachromatic blue staining of the other tissue elements.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "Blood vessels, an adipocyte and collagen fibers are also visible in the loose connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-16-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-16.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood vessels, an adipocyte and collagen fibers are also visible in the loose connective tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Adipocyte",
+      "explicacao_original": "Blood vessels, an adipocyte and collagen fibers are also visible in the loose connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-16-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-16.jpg'. Destaca a estrutura ou conceito 'Adipocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood vessels, an adipocyte and collagen fibers are also visible in the loose connective tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Blood vessels, an adipocyte and collagen fibers are also visible in the loose connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-16-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mast cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-16.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood vessels, an adipocyte and collagen fibers are also visible in the loose connective tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-16/, acesso em 2026-08-07."
+    }
+  ]
+}

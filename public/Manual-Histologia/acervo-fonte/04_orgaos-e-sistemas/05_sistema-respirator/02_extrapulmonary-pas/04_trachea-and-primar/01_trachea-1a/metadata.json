@@ -1,0 +1,106 @@
+{
+  "id": 17864,
+  "titulo": "Trachea",
+  "titulo_wordpress": "Trachea 1A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Trachea and Primary Bronchus",
+    "Trachea 1A"
+  ],
+  "descricao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/",
+  "creditos_identificados": [
+    "Image credit: Image taken of a slide in the University of Iowa slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "arquivo": "imagens/base/O.R.E.T.01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Trachea', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Descricao original da pagina: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Esophagus",
+      "explicacao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-1A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-1A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Esophagus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Trachea",
+      "explicacao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-2A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-2A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Trachea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Primary bronchi",
+      "explicacao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-3A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-3A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Primary bronchi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cartilage ring",
+      "explicacao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-4A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-4A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Cartilage ring' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cartilage ring opening",
+      "explicacao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-5A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-5A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Cartilage ring opening' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Thyroid gland",
+      "explicacao_original": "The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-6A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-6A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Thyroid gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea is an extrapulmonary component of the conducting portion, continuing inferiorly from the larynx. It lies anterior to the esophagus and its walls are supported by C-shaped cartilage rings, whose openings face the esophagus. The two main lobes of the thyroid gland are visible at the lateral boundaries of the trachea. The trachea is about 2.5 cm in diameter and 10-12 cm long. It bifurcates into left and right primary (main) bronchi which enter the lung. The histological structure of the trachea and main bronchi is similar. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to that outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A-7A.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.01A-7A.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image credit",
+      "explicacao_original": "Image taken of a slide in the University of Iowa slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Iowa-source-ping-left.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping-left.png",
+      "imagem_base": "imagens/base/O.R.E.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.01A.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Iowa slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/larynx-2/, acesso em 2026-08-07."
+    }
+  ]
+}

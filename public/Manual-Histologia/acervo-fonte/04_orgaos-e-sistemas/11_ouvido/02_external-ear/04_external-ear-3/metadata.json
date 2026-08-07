@@ -1,0 +1,73 @@
+{
+  "id": 13576,
+  "titulo": "External ear: External auditory meatus",
+  "titulo_wordpress": "External ear 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "External Ear",
+    "External ear 3"
+  ],
+  "descricao_original": "The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands-loB-sharp.jpg",
+      "arquivo": "imagens/base/Ceruminous-glands-loB-sharp.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'External ear: External auditory meatus', no setor Órgãos e Sistemas > Ouvido > External Ear > External ear 3. Descricao original da pagina: The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen",
+      "explicacao_original": "The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ear-Meatus.png",
+      "arquivo": "imagens/marcadores/Ear-Meatus.png",
+      "imagem_base": "imagens/base/Ceruminous-glands-loB-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands-loB-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Ceruminous-glands-loB-sharp.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epidermis",
+      "explicacao_original": "The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ear-Epidermis.png",
+      "arquivo": "imagens/marcadores/Ear-Epidermis.png",
+      "imagem_base": "imagens/base/Ceruminous-glands-loB-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands-loB-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Ceruminous-glands-loB-sharp.jpg'. Destaca a estrutura ou conceito 'Epidermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hair follicles",
+      "explicacao_original": "The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ear-Hair-follicles.png",
+      "arquivo": "imagens/marcadores/Ear-Hair-follicles.png",
+      "imagem_base": "imagens/base/Ceruminous-glands-loB-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands-loB-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Ceruminous-glands-loB-sharp.jpg'. Destaca a estrutura ou conceito 'Hair follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Sebaceous glands",
+      "explicacao_original": "The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ear-Sebaceous.png",
+      "arquivo": "imagens/marcadores/Ear-Sebaceous.png",
+      "imagem_base": "imagens/base/Ceruminous-glands-loB-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands-loB-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Ceruminous-glands-loB-sharp.jpg'. Destaca a estrutura ou conceito 'Sebaceous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin skin lining the external meatus possesses hair follicles with large sebaceous glands. Also present are ceruminous glands, specialized apocrine sweat glands that produce a waxy secretion called cerumen. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ceruminous glands",
+      "explicacao_original": "Ceruminous glands are modified apocrine sweat glands that open onto the skin surface directly or into the hair follicles along with the sebum from sebaceous glands. Secretions from both ceruminous and sebaceous glands form a waxy material, called cerumen (earwax) that provides, protection, lubrication, self-cleansing and acts as a deterrent for microbial growth in the ear canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ear-Ceruminous.png",
+      "arquivo": "imagens/marcadores/Ear-Ceruminous.png",
+      "imagem_base": "imagens/base/Ceruminous-glands-loB-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands-loB-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Ceruminous-glands-loB-sharp.jpg'. Destaca a estrutura ou conceito 'Ceruminous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ceruminous glands are modified apocrine sweat glands that open onto the skin surface directly or into the hair follicles along with the sebum from sebaceous glands. Secretions from both ceruminous and sebaceous glands form a waxy material, called cerumen (earwax) that provides, protection, lubrication, self-cleansing and acts as a deterrent for microbial growth in the ear canal.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-3/, acesso em 2026-08-07."
+    }
+  ]
+}

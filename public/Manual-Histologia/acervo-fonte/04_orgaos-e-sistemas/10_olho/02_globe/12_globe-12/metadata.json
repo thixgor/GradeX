@@ -1,0 +1,95 @@
+{
+  "id": 9214,
+  "titulo": "Globe: Ciliary body",
+  "titulo_wordpress": "Globe 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 12"
+  ],
+  "descricao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-12/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Ciliary body', no setor Órgãos e Sistemas > Olho > Globe > Globe 12. Descricao original da pagina: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ciliary processes",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Globe-12-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-12-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Ciliary processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ciliary epithelium: pigmented layer",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Globe-12-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-12-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Ciliary epithelium: pigmented layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ciliary epithelium: non-pigmented layer",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Globe-12-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-12-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Ciliary epithelium: non-pigmented layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Zonular fibers",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-12-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-12-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Zonular fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Iris",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-12-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-12-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Iris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Posterior iris epithelium",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-12-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-12-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Posterior iris epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. The ciliary epithelium produces the zonule fibers and secretes aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Vet-Lab-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Vet-Lab-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-12.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-12/, acesso em 2026-08-07."
+    }
+  ]
+}

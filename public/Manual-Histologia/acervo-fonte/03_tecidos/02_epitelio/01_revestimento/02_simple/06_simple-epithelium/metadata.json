@@ -1,0 +1,44 @@
+{
+  "id": 3673,
+  "titulo": "Simple cuboidal epithelium",
+  "titulo_wordpress": "Simple epithelium 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 6"
+  ],
+  "descricao_original": "Simple cuboidal epithelia form the walls of ducts, as seen in these longitudinal sections. Note the spherical nuclei and mostly cube-shaped cells of the epithelium. Kidney (l), Liver (r), 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/Simple-cuboidal-combo.jpg",
+      "arquivo": "imagens/base/Simple-cuboidal-combo.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple cuboidal epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 6. Descricao original da pagina: Simple cuboidal epithelia form the walls of ducts, as seen in these longitudinal sections. Note the spherical nuclei and mostly cube-shaped cells of the epithelium. Kidney (l), Liver (r), 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple cuboidal epithelium",
+      "explicacao_original": "Simple cuboidal epithelia form the walls of ducts, as seen in these longitudinal sections. Note the spherical nuclei and mostly cube-shaped cells of the epithelium. Kidney (l), Liver (r), 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-6-1-ping.png",
+      "imagem_base": "imagens/base/Simple-cuboidal-combo.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/Simple-cuboidal-combo.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple cuboidal epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Simple-cuboidal-combo.jpg'. Destaca a estrutura ou conceito 'Simple cuboidal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple cuboidal epithelia form the walls of ducts, as seen in these longitudinal sections. Note the spherical nuclei and mostly cube-shaped cells of the epithelium. Kidney (l), Liver (r), 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lumen",
+      "explicacao_original": "Simple cuboidal epithelia form the walls of ducts, as seen in these longitudinal sections. Note the spherical nuclei and mostly cube-shaped cells of the epithelium. Kidney (l), Liver (r), 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-6-2-ping.png",
+      "imagem_base": "imagens/base/Simple-cuboidal-combo.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/Simple-cuboidal-combo.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple cuboidal epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Simple-cuboidal-combo.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple cuboidal epithelia form the walls of ducts, as seen in these longitudinal sections. Note the spherical nuclei and mostly cube-shaped cells of the epithelium. Kidney (l), Liver (r), 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-6/, acesso em 2026-08-07."
+    }
+  ]
+}

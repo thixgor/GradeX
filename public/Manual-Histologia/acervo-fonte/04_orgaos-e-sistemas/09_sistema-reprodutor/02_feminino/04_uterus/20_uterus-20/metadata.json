@@ -1,0 +1,94 @@
+{
+  "id": 12771,
+  "titulo": "Uterus: cervix",
+  "titulo_wordpress": "Uterus 20",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 20"
+  ],
+  "descricao_original": "This longitudinal section of cervix demonstrates the external os that marks the transition from the epithelium lining the endocervical canal to the epithelium covering the ectocervix. The wall of the cervix is composed primarily of dense connective tissue with minimal smooth muscle. The cervix does not participate in menstruation. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "arquivo": "imagens/base/O.R.F.U.20.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: cervix', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Descricao original da pagina: This longitudinal section of cervix demonstrates the external os that marks the transition from the epithelium lining the endocervical canal to the epithelium covering the ectocervix. The wall of the cervix is composed primarily of dense connective tissue with minimal smooth muscle. The cervix does not participate in menstruation. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen",
+      "explicacao_original": "This longitudinal section of cervix demonstrates the external os that marks the transition from the epithelium lining the endocervical canal to the epithelium covering the ectocervix. The wall of the cervix is composed primarily of dense connective tissue with minimal smooth muscle. The cervix does not participate in menstruation. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This longitudinal section of cervix demonstrates the external os that marks the transition from the epithelium lining the endocervical canal to the epithelium covering the ectocervix. The wall of the cervix is composed primarily of dense connective tissue with minimal smooth muscle. The cervix does not participate in menstruation. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Simple columnar epithelium",
+      "explicacao_original": "Simple columnar epithelium lines the endocervical canal. Mucus-secreting folds, plicae palmatae, extend from the endocervical canal. Under the influence of estrogen at the time of ovulation, these folds release an abundant mucus that is favorable for sperm migration. With low estrogen or with progesterone, the mucus is scant, viscous and difficult for sperm to penetrate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'Simple columnar epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the endocervical canal. Mucus-secreting folds, plicae palmatae, extend from the endocervical canal. Under the influence of estrogen at the time of ovulation, these folds release an abundant mucus that is favorable for sperm migration. With low estrogen or with progesterone, the mucus is scant, viscous and difficult for sperm to penetrate.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Plicae palmatae",
+      "explicacao_original": "Simple columnar epithelium lines the endocervical canal. Mucus-secreting folds, plicae palmatae, extend from the endocervical canal. Under the influence of estrogen at the time of ovulation, these folds release an abundant mucus that is favorable for sperm migration. With low estrogen or with progesterone, the mucus is scant, viscous and difficult for sperm to penetrate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'Plicae palmatae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the endocervical canal. Mucus-secreting folds, plicae palmatae, extend from the endocervical canal. Under the influence of estrogen at the time of ovulation, these folds release an abundant mucus that is favorable for sperm migration. With low estrogen or with progesterone, the mucus is scant, viscous and difficult for sperm to penetrate.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "External os",
+      "explicacao_original": "The external os marks the junction of the simple columnar epithelium lining the endocervical canal with the stratified squamous moist epithelium covering the ectocervix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'External os' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external os marks the junction of the simple columnar epithelium lining the endocervical canal with the stratified squamous moist epithelium covering the ectocervix.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ectocervix",
+      "explicacao_original": "The ectocervix extends from the external os and protrudes into the vagina. Stratified squamous moist epithelium covers the ectocervix (vaginal portion of the cervix) and cannot be differentiated from vaginal epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.R.F.U.20.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P06.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'Ectocervix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectocervix extends from the external os and protrudes into the vagina. Stratified squamous moist epithelium covers the ectocervix (vaginal portion of the cervix) and cannot be differentiated from vaginal epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Stratified squamous moist epithelium",
+      "explicacao_original": "The ectocervix extends from the external os and protrudes into the vagina. Stratified squamous moist epithelium covers the ectocervix (vaginal portion of the cervix) and cannot be differentiated from vaginal epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'Stratified squamous moist epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectocervix extends from the external os and protrudes into the vagina. Stratified squamous moist epithelium covers the ectocervix (vaginal portion of the cervix) and cannot be differentiated from vaginal epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the areas outlined by the rectangles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.20.P06-2.png",
+      "imagem_base": "imagens/base/O.R.F.U.20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.20.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the areas outlined by the rectangles.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 20. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-20/, acesso em 2026-08-07."
+    }
+  ]
+}

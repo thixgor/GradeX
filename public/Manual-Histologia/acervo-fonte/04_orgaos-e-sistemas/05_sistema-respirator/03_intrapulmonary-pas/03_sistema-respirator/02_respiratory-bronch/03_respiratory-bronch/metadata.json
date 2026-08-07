@@ -1,0 +1,77 @@
+{
+  "id": 18685,
+  "titulo": "Respiratory bronchiole",
+  "titulo_wordpress": "Respiratory bronchiole 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Respiratory Bronchiole",
+    "Respiratory bronchiole 4"
+  ],
+  "descricao_original": "A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A.jpg",
+      "arquivo": "imagens/base/O.R.I.R.RB_.03A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Respiratory bronchiole', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 4. Descricao original da pagina: A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Respiratory bronchiole",
+      "explicacao_original": "A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.R.RB_.04-1A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.04-1A-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.03A.jpg'. Destaca a estrutura ou conceito 'Respiratory bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Associated alveoli",
+      "explicacao_original": "A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.R.RB_.04-2A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.04-2A-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.03A.jpg'. Destaca a estrutura ou conceito 'Associated alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Adjacent alveoli",
+      "explicacao_original": "A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.R.RB_.04-3A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.04-3A-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.03A.jpg'. Destaca a estrutura ou conceito 'Adjacent alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pulmonary vessels",
+      "explicacao_original": "A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.03A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.03A.jpg'. Destaca a estrutura ou conceito 'Pulmonary vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A respiratory bronchiole, seen here in cross section, is lined by a simple, ciliated cuboidal epithelium with club cells and scattered cilia. The epithelium appears interrupted due to presence of alveoli which are an integral part of its wall. Alveoli from adjacent respiratory bronchioles and alveolar ducts surround this bronchiole. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.02A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.02A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.03A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-4/, acesso em 2026-08-07."
+    }
+  ]
+}

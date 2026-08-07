@@ -1,0 +1,63 @@
+{
+  "id": 3608,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 15",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 15"
+  ],
+  "descricao_original": "These cross sections of peripheral nerves contain unmyelinated axons. Each nerve is surrounded by a distinct perineurium. 1000x, 3000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-14.jpg",
+      "arquivo": "imagens/base/T.N.PN-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 15. Descricao original da pagina: These cross sections of peripheral nerves contain unmyelinated axons. Each nerve is surrounded by a distinct perineurium. 1000x, 3000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Unmyelinated axons",
+      "explicacao_original": "These cross sections of peripheral nerves contain unmyelinated axons. Each nerve is surrounded by a distinct perineurium. 1000x, 3000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-14-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-14-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-14.jpg'. Destaca a estrutura ou conceito 'Unmyelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cross sections of peripheral nerves contain unmyelinated axons. Each nerve is surrounded by a distinct perineurium. 1000x, 3000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "These cross sections of peripheral nerves contain unmyelinated axons. Each nerve is surrounded by a distinct perineurium. 1000x, 3000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-14-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-14-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-14.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These cross sections of peripheral nerves contain unmyelinated axons. Each nerve is surrounded by a distinct perineurium. 1000x, 3000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Perineurium",
+      "explicacao_original": "The perineurial cells form a compact wrapping around fascicles. The cells of the perinerium are highly unique and contribute to the formation of the protective blood-nerve barrier. They are distinct from fibroblasts which can be found within the fascicle where the secrete collagen fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-14-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-14-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-14.jpg'. Destaca a estrutura ou conceito 'Perineurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perineurial cells form a compact wrapping around fascicles. The cells of the perinerium are highly unique and contribute to the formation of the protective blood-nerve barrier. They are distinct from fibroblasts which can be found within the fascicle where the secrete collagen fibrils.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fibroblasts",
+      "explicacao_original": "The perineurial cells form a compact wrapping around fascicles. The cells of the perinerium are highly unique and contribute to the formation of the protective blood-nerve barrier. They are distinct from fibroblasts which can be found within the fascicle where the secrete collagen fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-14-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-14-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-14.jpg'. Destaca a estrutura ou conceito 'Fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perineurial cells form a compact wrapping around fascicles. The cells of the perinerium are highly unique and contribute to the formation of the protective blood-nerve barrier. They are distinct from fibroblasts which can be found within the fascicle where the secrete collagen fibrils.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-15/, acesso em 2026-08-07."
+    }
+  ]
+}

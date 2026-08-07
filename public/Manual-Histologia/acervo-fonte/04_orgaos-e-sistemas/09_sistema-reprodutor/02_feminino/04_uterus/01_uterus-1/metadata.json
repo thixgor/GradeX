@@ -1,0 +1,124 @@
+{
+  "id": 12733,
+  "titulo": "Overview",
+  "titulo_wordpress": "Uterus 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 1"
+  ],
+  "descricao_original": "The lining of the uterus, the endometrium, is divided into a functional zone (gold), that is sloughed during menstruation, and a basal zone (orange), that is not sloughed and from which the functional zone regenerates. The structural variation of the functional zone is an excellent example of the influence of the ovarian hormones on other organs of the female reproductive system.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "arquivo": "imagens/base/O.R.F.U.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Descricao original da pagina: The lining of the uterus, the endometrium, is divided into a functional zone (gold), that is sloughed during menstruation, and a basal zone (orange), that is not sloughed and from which the functional zone regenerates. The structural variation of the functional zone is an excellent example of the influence of the ovarian hormones on other organs of the female reproductive system.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Implantation",
+      "explicacao_original": "The uterine function is to house and nourish the embryo/fetus during pregnancy. Thus, the endometrium reaches peak activity at implantation (day 21) when: endometrium is thickest; blood supply is well developed; glands are actively secreting. Cells will soon appear to form the maternal placenta. The endometrium is stimulated by estrogen and then by progesterone and estrogen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Implantation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The uterine function is to house and nourish the embryo/fetus during pregnancy. Thus, the endometrium reaches peak activity at implantation (day 21) when: endometrium is thickest; blood supply is well developed; glands are actively secreting. Cells will soon appear to form the maternal placenta. The endometrium is stimulated by estrogen and then by progesterone and estrogen.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Days 1-5",
+      "explicacao_original": "The corpus luteum diminishes production of its hormones after 12 days (about day 26). The endometrium cannot maintain peak activity without these hormones and begins to degenerate. When enough tissue has been compromised, the entire functional zone of the endometrium is sloughed, leaving only the basal zone intact.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Days 1-5' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum diminishes production of its hormones after 12 days (about day 26). The endometrium cannot maintain peak activity without these hormones and begins to degenerate. When enough tissue has been compromised, the entire functional zone of the endometrium is sloughed, leaving only the basal zone intact.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stage",
+      "explicacao_original": "This phase of the menstrual (uterine) cycle (Days 1-5), when the functional zone of the endometrium is sloughed, is called menstruation. Menstruation is really the end of the menstrual cycle, but since the beginning of menstrual flow is easy to verify, the beginning of menstruation is called Day 1 of the menstrual (uterine) cycle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This phase of the menstrual (uterine) cycle (Days 1-5), when the functional zone of the endometrium is sloughed, is called menstruation. Menstruation is really the end of the menstrual cycle, but since the beginning of menstrual flow is easy to verify, the beginning of menstruation is called Day 1 of the menstrual (uterine) cycle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Days 6-14",
+      "explicacao_original": "At the end of menstruation, ovarian follicles are growing and increasing their production of estrogen, which stimulates the regrowth of the functional zone of the endometrium. During this phase, glands are narrow and straight; spiral arteries are narrow, not coiled, making their identification difficult; and the functional zone is thickening.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Days 6-14' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the end of menstruation, ovarian follicles are growing and increasing their production of estrogen, which stimulates the regrowth of the functional zone of the endometrium. During this phase, glands are narrow and straight; spiral arteries are narrow, not coiled, making their identification difficult; and the functional zone is thickening.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stage",
+      "explicacao_original": "Because the functional zone is proliferating, Days 6-14 are called the proliferative phase of the menstrual (uterine) cycle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the functional zone is proliferating, Days 6-14 are called the proliferative phase of the menstrual (uterine) cycle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Days 14-26",
+      "explicacao_original": "Ovulation occurs and a corpus luteum forms, secreting progesterone and estrogen. These hormones cause the functional zone to reach maximal activity by Day 21 (implantation). At this time the functional zone is thickest; glands are wide and secretory; and spiral arteries are coiled and readily visible. By Day 24 some cells (predecidual) in the functional zone differentiate into cells capable of forming the maternal placenta.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P06.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Days 14-26' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ovulation occurs and a corpus luteum forms, secreting progesterone and estrogen. These hormones cause the functional zone to reach maximal activity by Day 21 (implantation). At this time the functional zone is thickest; glands are wide and secretory; and spiral arteries are coiled and readily visible. By Day 24 some cells (predecidual) in the functional zone differentiate into cells capable of forming the maternal placenta.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Stage",
+      "explicacao_original": "Because uterine glands are actively secreting, this phase, from Days 14-26, is called the secretory phase of the menstrual (uterine) cycle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P07.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because uterine glands are actively secreting, this phase, from Days 14-26, is called the secretory phase of the menstrual (uterine) cycle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Days 26-28",
+      "explicacao_original": "The corpus luteum diminishes production of progesterone and estrogen about day 26. Hormone reduction causes the endometrium to collapse, which compresses the spiral arteries. A series of compressions and decompressions of these arteries results in ischemia to the superficial portion of the functional zone and this tissue degenerates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P08.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Days 26-28' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum diminishes production of progesterone and estrogen about day 26. Hormone reduction causes the endometrium to collapse, which compresses the spiral arteries. A series of compressions and decompressions of these arteries results in ischemia to the superficial portion of the functional zone and this tissue degenerates.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Stage",
+      "explicacao_original": "This stage of the menstrual (uterine) cycle from Days 26-28 is called the pre-menstrual phase, because the changes in the endometrium result in menstruation. (This phase can also be considered a subdivision of the secretory phase and would then be called the ischemic portion of the secretory phase.)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P09.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P09.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This stage of the menstrual (uterine) cycle from Days 26-28 is called the pre-menstrual phase, because the changes in the endometrium result in menstruation. (This phase can also be considered a subdivision of the secretory phase and would then be called the ischemic portion of the secretory phase.). Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Begin again",
+      "explicacao_original": "The uterine endometrium is divided in to a functional zone (gold), that is sloughed during menstruation, and a basal zone (orange), that is not sloughed and from which the functional zone regenerates. The structural fluctuation of the functional zone is an excellent example of the influence of the ovarian hormones on other organs of the female reproductive system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.P10.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.01.P10.png",
+      "imagem_base": "imagens/base/O.R.F.U.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.01.jpg'. Destaca a estrutura ou conceito 'Begin again' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The uterine endometrium is divided in to a functional zone (gold), that is sloughed during menstruation, and a basal zone (orange), that is not sloughed and from which the functional zone regenerates. The structural fluctuation of the functional zone is an excellent example of the influence of the ovarian hormones on other organs of the female reproductive system.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-1/, acesso em 2026-08-07."
+    }
+  ]
+}

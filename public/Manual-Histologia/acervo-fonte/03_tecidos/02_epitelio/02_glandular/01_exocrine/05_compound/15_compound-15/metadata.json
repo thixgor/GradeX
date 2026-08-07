@@ -1,0 +1,55 @@
+{
+  "id": 4567,
+  "titulo": "Compound tubuloacinar gland",
+  "titulo_wordpress": "Compound 15",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 15"
+  ],
+  "descricao_original": "A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-14.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound tubuloacinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 15. Descricao original da pagina: A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucus-secreting tubules",
+      "explicacao_original": "A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-14-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-14-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-14.jpg'. Destaca a estrutura ou conceito 'Mucus-secreting tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Serous-secreting acini",
+      "explicacao_original": "A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-14-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-14-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-14.jpg'. Destaca a estrutura ou conceito 'Serous-secreting acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-14-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-14-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-14.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobule of a compound tubuloacinar gland displays both elongated, mucus-secreting tubules and spherical, serous-secreting acini. Intralobular ducts are also visible. This gland is the submandibular (submaxillary) salivary gland and the saliva it secretes contains both mucus and serous components. 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-15/, acesso em 2026-08-07."
+    }
+  ]
+}

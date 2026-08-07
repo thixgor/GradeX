@@ -1,0 +1,114 @@
+{
+  "id": 8557,
+  "titulo": "Lymph node: paracortex",
+  "titulo_wordpress": "Lymph node 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Lymph Node",
+    "Lymph node 8"
+  ],
+  "descricao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymph node: paracortex', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Descricao original da pagina: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lymphoid nodule",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Lymphoid nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Germinal center",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Paracortex",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Paracortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Trabeculum with sinus",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Trabeculum with sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Medullary sinus",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Medullary sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "High endothelial venules",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'High endothelial venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Venules",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Reticular cells",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Reticular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Lymphocytes",
+      "explicacao_original": "The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-8-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-8-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-8-lighter.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-8-lighter.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: paracortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-8-lighter.jpg'. Destaca a estrutura ou conceito 'Lymphocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex or deep cortex is a T-dependent area possessing high endothelial venules (lined with simple cuboidal epithelium) and ordinary venules (lined by simple squamous epithelium). Lymphocytes leave the high endothelial venules to enter lymphatic tissue, where they initiate an immune response in the lymph node. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-8/, acesso em 2026-08-07."
+    }
+  ]
+}

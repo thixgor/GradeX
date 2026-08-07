@@ -1,0 +1,103 @@
+{
+  "id": 10819,
+  "titulo": "Cortex: juxtaglomerular apparatus",
+  "titulo_wordpress": "Tubules and collecting system 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 7"
+  ],
+  "descricao_original": "The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cortex: juxtaglomerular apparatus', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Descricao original da pagina: The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Renal corpuscle",
+      "explicacao_original": "The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Renal corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Proximal convoluted tubules",
+      "explicacao_original": "The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Proximal convoluted tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ascending thick limb",
+      "explicacao_original": "The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.Tub-7-3-NEW-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-3-NEW-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Ascending thick limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted regions of the cortex contain renal corpuscles, proximal and distal convoluted tubules, terminal ends of the ascending thick limbs, and connective tubules. A specialization of the ascending thick limb (distal straight tubule) and the adjacent afferent arteriole is called the juxtaglomerular apparatus, which regulates blood pressure and volume by activating the renin-angiotensin-aldosterone system. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Juxtaglomerular apparatus",
+      "explicacao_original": "The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Juxtaglomerular apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Macula densa",
+      "explicacao_original": "The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Macula densa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Afferent arteriole",
+      "explicacao_original": "The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Afferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Juxtaglomerular cells",
+      "explicacao_original": "The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Juxtaglomerular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The juxtaglomerular apparatus, located at the vascular pole of the renal corpuscle, is composed of the macula densa of the distal convoluted tubule and the juxtaglomerular cells of the afferent arteriole. The macula densa, a region of tightly packed cells in the distal convoluted tubule, lies adjacent to the juxtaglomerular cells (modified smooth muscle) of the afferent arteriole.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "The area in the rectangle is shown at higher magnification in the next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-7-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-7-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-7a-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-7a-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: juxtaglomerular apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-7a-use.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The area in the rectangle is shown at higher magnification in the next image.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-7/, acesso em 2026-08-07."
+    }
+  ]
+}

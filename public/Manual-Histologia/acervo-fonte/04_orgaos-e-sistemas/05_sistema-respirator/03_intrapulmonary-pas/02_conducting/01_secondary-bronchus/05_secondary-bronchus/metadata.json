@@ -1,0 +1,75 @@
+{
+  "id": 17900,
+  "titulo": "Bronchus",
+  "titulo_wordpress": "Secondary bronchus 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Conducting",
+    "Secondary Bronchus",
+    "Secondary bronchus 6"
+  ],
+  "descricao_original": "The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.0A.jpg",
+      "arquivo": "imagens/base/O.R.I.C.SB_.0A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bronchus', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 6. Descricao original da pagina: The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.05A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.05A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.0A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.0A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.0A.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.05A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.05A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.0A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.0A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.0A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cartilage plates",
+      "explicacao_original": "The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.05A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.05A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.0A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.0A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.0A.jpg'. Destaca a estrutura ou conceito 'Cartilage plates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Alveoli",
+      "explicacao_original": "The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.05A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.05A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.0A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.0A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.0A.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bronchial mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a circularly-arranged layer of smooth muscle. As bronchi reduce in size, the epithelium becomes shorter, mixed glands are reduced and cartilage plates become smaller. Cartilage plates do not persist into bronchioles. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Bronchial vessels",
+      "explicacao_original": "Numerous, small bronchial vessels (filled with red blood cells) are present in the wall of the passageway. These vessels provide oxygenated blood nutritive support for the tissues, they are not involved with gas exchange with inspired air.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.05A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.05A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.0A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.I.C.SB_.0A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.0A.jpg'. Destaca a estrutura ou conceito 'Bronchial vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Numerous, small bronchial vessels (filled with red blood cells) are present in the wall of the passageway. These vessels provide oxygenated blood nutritive support for the tissues, they are not involved with gas exchange with inspired air.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-5/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": 2410,
+  "titulo": "Metaphase",
+  "titulo_wordpress": "Mitosis light micrographs 5",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Light Micrographs",
+    "Mitosis light micrographs 5"
+  ],
+  "descricao_original": "These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-5-new.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.LM-5-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Metaphase', no setor Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 5. Descricao original da pagina: These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Metaphase plates",
+      "explicacao_original": "These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-5-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-5-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-5-new.jpg'. Destaca a estrutura ou conceito 'Metaphase plates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-5-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-5-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-5-new.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interphase cells",
+      "explicacao_original": "These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-5-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-5-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.Mit_.LM-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-5-new.jpg'. Destaca a estrutura ou conceito 'Interphase cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These three panels show cells in metaphase from the lining epithelium of the esophagus. Paired sister chromatids are tightly aligned in the center of the cell forming the metaphase plate. Though not visible in this image, spindle apparatuses composed of microtubules are present, as are two centrosomes at opposite ends of the spindle. Esophageal epithelium 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-5/, acesso em 2026-08-07."
+    }
+  ]
+}

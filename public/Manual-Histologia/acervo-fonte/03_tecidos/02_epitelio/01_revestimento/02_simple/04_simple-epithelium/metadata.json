@@ -1,0 +1,84 @@
+{
+  "id": 3669,
+  "titulo": "Simple squamous epithelium",
+  "titulo_wordpress": "Simple epithelium 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 4"
+  ],
+  "descricao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple squamous epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Descricao original da pagina: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-4-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-4.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-4-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-4.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-4-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-4.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cell junction",
+      "explicacao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-4-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-4-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-4.jpg'. Destaca a estrutura ou conceito 'Cell junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-4-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-4-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-4.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Collagen fibrils",
+      "explicacao_original": "This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-4-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-4-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-4.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a squamous cell that forms part of the lining (serosa) of an internal body cavity. The cell has very little cytoplasm and a highly flattened nucleus, characteristic of a squamous cell. At its thinnest point, this cell is only 0.5 micron thick. Serosa, 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 4. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-4/, acesso em 2026-08-07."
+    }
+  ]
+}

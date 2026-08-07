@@ -1,0 +1,74 @@
+{
+  "id": 2424,
+  "titulo": "Late telophase and cytokinesis",
+  "titulo_wordpress": "Mitosis light micrographs 12",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Light Micrographs",
+    "Mitosis light micrographs 12"
+  ],
+  "descricao_original": "An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.LM-12-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Late telophase and cytokinesis', no setor Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 12. Descricao original da pagina: An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Daughter cells",
+      "explicacao_original": "An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-12-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12-1.jpg'. Destaca a estrutura ou conceito 'Daughter cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 12. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chromosomes",
+      "explicacao_original": "An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-12-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12-1.jpg'. Destaca a estrutura ou conceito 'Chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 12. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cytokinesis (near completion)",
+      "explicacao_original": "An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-12-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12-1.jpg'. Destaca a estrutura ou conceito 'Cytokinesis (near completion)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 12. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Microtubules",
+      "explicacao_original": "An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-12-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12-1.jpg'. Destaca a estrutura ou conceito 'Microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 12. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Centriole",
+      "explicacao_original": "An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-12-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12-1.jpg'. Destaca a estrutura ou conceito 'Centriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An electron micrograph shows two daughter cells in late telophase and cytokinesis. The chromosomes are still condensed and the nuclear envelopes have not started to reform. In the cell on the left, microtubules are seen extending from the centriole to the chromosomes. Inset: Magnified view of the area in the box. 5000x; Inset 15,000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 12. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-12/, acesso em 2026-08-07."
+    }
+  ]
+}

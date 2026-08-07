@@ -1,0 +1,124 @@
+{
+  "id": 13093,
+  "titulo": "Placenta: 1st trimester",
+  "titulo_wordpress": "Placenta 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 1"
+  ],
+  "descricao_original": "The placenta is a union of maternal and fetal tissues. The decidua, the maternal portion, is derived from decidual cells of the uterine endometrium. The fetal portion, the chorion, is an extraembryonic tissue. The placenta has two major functions: maintenance of pregnancy through the production of hormones; and exchange of nutrients and oxygen from the mother with wastes and carbon dioxide from the embryo/fetus, respectively. 4x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "arquivo": "imagens/base/O.R.F.P.01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Placenta: 1st trimester', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Descricao original da pagina: The placenta is a union of maternal and fetal tissues. The decidua, the maternal portion, is derived from decidual cells of the uterine endometrium. The fetal portion, the chorion, is an extraembryonic tissue. The placenta has two major functions: maintenance of pregnancy through the production of hormones; and exchange of nutrients and oxygen from the mother with wastes and carbon dioxide from the embryo/fetus, respectively. 4x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Embryo",
+      "explicacao_original": "The embryo would be located at “X.” An extraembryonic membrane, the amnion, is also absent in this image; its location is indicated by Y and the blue lines. The amnion is a fluid-filled sac that surrounds the embryo/fetus, suspending and protecting it. The amnion becomes continuous with the chorion as pregnancy progresses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01.P01A.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P01A.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Embryo' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The embryo would be located at “X.” An extraembryonic membrane, the amnion, is also absent in this image; its location is indicated by Y and the blue lines. The amnion is a fluid-filled sac that surrounds the embryo/fetus, suspending and protecting it. The amnion becomes continuous with the chorion as pregnancy progresses.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chorion",
+      "explicacao_original": "Chorion, the embryonic portion of the placenta, surrounds the amnion (and, therefore, the embryo/fetus), forming the outer rind of the embryonic placenta. The chorion has three components. A chorionic plate lies closest to the embryo. Chorionic villi extend from the plate into an intervillous space filled with maternal blood. The third component, the (cyto)trophoblastic shell, forms an outer rind of the embryonic placenta and is fused with the maternal decidua.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Chorion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chorion, the embryonic portion of the placenta, surrounds the amnion (and, therefore, the embryo/fetus), forming the outer rind of the embryonic placenta. The chorion has three components. A chorionic plate lies closest to the embryo. Chorionic villi extend from the plate into an intervillous space filled with maternal blood. The third component, the (cyto)trophoblastic shell, forms an outer rind of the embryonic placenta and is fused with the maternal decidua.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chorionic plate",
+      "explicacao_original": "The chorionic plate is composed of extraembryonic connective tissue covered by an epithelium, the trophoblast, which faces the intervillous space. The trophoblast is composed of two layers: cytotrophoblast lies adjacent to the connective tissue and syncytiotrophoblast faces the intervillous space. The syncytiotrophoblast is a multinucleated syncytium formed from the cytotrophoblast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01.P04A.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P04A.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Chorionic plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The chorionic plate is composed of extraembryonic connective tissue covered by an epithelium, the trophoblast, which faces the intervillous space. The trophoblast is composed of two layers: cytotrophoblast lies adjacent to the connective tissue and syncytiotrophoblast faces the intervillous space. The syncytiotrophoblast is a multinucleated syncytium formed from the cytotrophoblast.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Chorionic villi",
+      "explicacao_original": "Chorionic villi are fingerlike projections of the chorion that form the bulk of the embryonic placenta. Chorionic villi extend from the chorionic plate into the intervillous space, which is filled with maternal blood supplied by the spiral arteries. Therefore, the villi are the site of exchange of nutrients and wastes in the placenta. Like the chorionic plate, villi have a central core of connective tissue covered by the double-layered trophoblast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01.P05A-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P05A-1.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Chorionic villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chorionic villi are fingerlike projections of the chorion that form the bulk of the embryonic placenta. Chorionic villi extend from the chorionic plate into the intervillous space, which is filled with maternal blood supplied by the spiral arteries. Therefore, the villi are the site of exchange of nutrients and wastes in the placenta. Like the chorionic plate, villi have a central core of connective tissue covered by the double-layered trophoblast.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intervillous space",
+      "explicacao_original": "Chorionic villi are fingerlike projections of the chorion that form the bulk of the embryonic placenta. Chorionic villi extend from the chorionic plate into the intervillous space, which is filled with maternal blood supplied by the spiral arteries. Therefore, the villi are the site of exchange of nutrients and wastes in the placenta. Like the chorionic plate, villi have a central core of connective tissue covered by the double-layered trophoblast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01.P05B-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P05B-1.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Intervillous space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chorionic villi are fingerlike projections of the chorion that form the bulk of the embryonic placenta. Chorionic villi extend from the chorionic plate into the intervillous space, which is filled with maternal blood supplied by the spiral arteries. Therefore, the villi are the site of exchange of nutrients and wastes in the placenta. Like the chorionic plate, villi have a central core of connective tissue covered by the double-layered trophoblast.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Trophoblastic shell",
+      "explicacao_original": "The (cyto)trophoblastic shell is a thickened layer of cytotrophoblastic cells that forms the outer perimeter of the embryonic placenta and lies adjacent to the maternal portion of the placenta, the decidua. The (cyto)trophoblastic shell is lined with syncytiotrophoblast on the surface facing the intervillous space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.01.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P06.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Trophoblastic shell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The (cyto)trophoblastic shell is a thickened layer of cytotrophoblastic cells that forms the outer perimeter of the embryonic placenta and lies adjacent to the maternal portion of the placenta, the decidua. The (cyto)trophoblastic shell is lined with syncytiotrophoblast on the surface facing the intervillous space.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Decidua",
+      "explicacao_original": "The maternal portion of the placenta, the decidua, is composed of a layer of decidual cells. Decidual cells differentiate from stromal cells in the functional zone of the uterine endometrium a few days after implantation occurs. The decidua is separated from the trophoblastic shell by a fibrinoid layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.01.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P07.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Decidua' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The maternal portion of the placenta, the decidua, is composed of a layer of decidual cells. Decidual cells differentiate from stromal cells in the functional zone of the uterine endometrium a few days after implantation occurs. The decidua is separated from the trophoblastic shell by a fibrinoid layer.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Fibrinoid",
+      "explicacao_original": "The maternal portion of the placenta, the decidua, is composed of a layer of decidual cells. Decidual cells differentiate from stromal cells in the functional zone of the uterine endometrium a few days after implantation occurs. The decidua is separated from the trophoblastic shell by a fibrinoid layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.01.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P08.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Fibrinoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The maternal portion of the placenta, the decidua, is composed of a layer of decidual cells. Decidual cells differentiate from stromal cells in the functional zone of the uterine endometrium a few days after implantation occurs. The decidua is separated from the trophoblastic shell by a fibrinoid layer.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Maternal blood vessels",
+      "explicacao_original": "Maternal blood vessels are visible in the decidual layer. Uterine arteries supply the spiral arteries that spurt blood into the intervillous space. Blood drains from the intervillous space into veins that eventually form the uterine veins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.01.P09.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P09.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Maternal blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Maternal blood vessels are visible in the decidual layer. Uterine arteries supply the spiral arteries that spurt blood into the intervillous space. Blood drains from the intervillous space into veins that eventually form the uterine veins.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Next images",
+      "explicacao_original": "The next image shows a portion of the embryonic surface of the placenta on the left and the maternal surface on the right, similar to the areas outlined by the rectangles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.01.P10.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.01.P10.png",
+      "imagem_base": "imagens/base/O.R.F.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.01A.jpg'. Destaca a estrutura ou conceito 'Next images' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image shows a portion of the embryonic surface of the placenta on the left and the maternal surface on the right, similar to the areas outlined by the rectangles.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "id": 29519,
+  "titulo": "Root stage of tooth development - Neck region",
+  "titulo_wordpress": "Tooth development 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 12"
+  ],
+  "descricao_original": "The image on the right shows the region of the tooth where the cementum and enamel meet (indicated in the lower magnification image on the left). The junction marks the transition from the crown of the tooth to the root. 10x (l), 600x (r)",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide in the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "arquivo": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Root stage of tooth development - Neck region', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Descricao original da pagina: The image on the right shows the region of the tooth where the cementum and enamel meet (indicated in the lower magnification image on the left). The junction marks the transition from the crown of the tooth to the root. 10x (l), 600x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ameloblasts",
+      "explicacao_original": "The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically. Ameloblasts have a shovel-shaped process at their base called Tomes process, that is visible in this micrograph as a light line",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Ameloblasts-12.png",
+      "arquivo": "imagens/marcadores/Ameloblasts-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Ameloblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically. Ameloblasts have a shovel-shaped process at their base called Tomes process, that is visible in this micrograph as a light line. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tomes' processes",
+      "explicacao_original": "The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically. Ameloblasts have a shovel-shaped process at their base called Tomes process, that is visible in this micrograph as a light line.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Tomes-process-12.png",
+      "arquivo": "imagens/marcadores/Tomes-process-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Tomes' processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically. Ameloblasts have a shovel-shaped process at their base called Tomes process, that is visible in this micrograph as a light line.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Enamel",
+      "explicacao_original": "The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically. Ameloblasts have a shovel-shaped process at their base called Tomes process, that is visible in this micrograph as a light line",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Enamel-12.png",
+      "arquivo": "imagens/marcadores/Enamel-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically. Ameloblasts have a shovel-shaped process at their base called Tomes process, that is visible in this micrograph as a light line. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cemento-enamel junction",
+      "explicacao_original": "The cemento-enamel junction is the site where enamel deposition ends and cementum deposition begins. This junction is located in the neck region of the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cemento-enamel-junction-12.png",
+      "arquivo": "imagens/marcadores/Cemento-enamel-junction-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Cemento-enamel junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cemento-enamel junction is the site where enamel deposition ends and cementum deposition begins. This junction is located in the neck region of the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cementum",
+      "explicacao_original": "Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cementum-12.png",
+      "arquivo": "imagens/marcadores/Cementum-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cementoblasts",
+      "explicacao_original": "Cementoblasts deposit the organic matrix of cementum which rapidly becomes mineralized by hydroxyapatite. Scattered cementocytes are visible within cementum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cementoblasts-12.png",
+      "arquivo": "imagens/marcadores/Cementoblasts-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Cementoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementoblasts deposit the organic matrix of cementum which rapidly becomes mineralized by hydroxyapatite. Scattered cementocytes are visible within cementum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Cementocytes",
+      "explicacao_original": "Cementoblasts deposit the organic matrix of cementum which rapidly becomes mineralized by hydroxyapatite. Scattered cementocytes are visible within cementum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cementocytes-12.png",
+      "arquivo": "imagens/marcadores/Cementocytes-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Cementocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementoblasts deposit the organic matrix of cementum which rapidly becomes mineralized by hydroxyapatite. Scattered cementocytes are visible within cementum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin is the first hard tissue deposited during tooth development and makes up the majority of the hard tissue of the tooth. Dentin is produced by odontoblasts, which, like ameloblasts, secrete an organic matrix that rapidly becomes mineralized with hydroxyapatite crystals.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dentin-12.png",
+      "arquivo": "imagens/marcadores/Dentin-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin is the first hard tissue deposited during tooth development and makes up the majority of the hard tissue of the tooth. Dentin is produced by odontoblasts, which, like ameloblasts, secrete an organic matrix that rapidly becomes mineralized with hydroxyapatite crystals.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Odontoblasts",
+      "explicacao_original": "Odontoblasts line the pulp cavity and deposit dentin similarly to bone. The organic matrix, called predentin, is deposited first and provides a framework on which hydroxyapatite crystals are laid down. Mineralized dentin is more darkly stained. A layer of pre-dentin is present throughout the life of the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Odontoblasts-12.png",
+      "arquivo": "imagens/marcadores/Odontoblasts-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Odontoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts line the pulp cavity and deposit dentin similarly to bone. The organic matrix, called predentin, is deposited first and provides a framework on which hydroxyapatite crystals are laid down. Mineralized dentin is more darkly stained. A layer of pre-dentin is present throughout the life of the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Tomes' fibers",
+      "explicacao_original": "Tomes’ fibers are odontoblast processes that are responsible for forming dentin and extend into the dentinal tubules toward the cementum of the tooth. They provide sensitivity to the tooth and elongate as dentin matrix formation continues.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Tombes-fibers-12.png",
+      "arquivo": "imagens/marcadores/Tombes-fibers-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Tomes' fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tomes’ fibers are odontoblast processes that are responsible for forming dentin and extend into the dentinal tubules toward the cementum of the tooth. They provide sensitivity to the tooth and elongate as dentin matrix formation continues.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Predentin",
+      "explicacao_original": "Odontoblasts line the pulp cavity and deposit dentin similarly to bone. The organic matrix, called predentin, is deposited first and provides a framework on which hydroxyapatite crystals are laid down. Mineralized dentin is more darkly stained. A layer of pre-dentin is present throughout the life of the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Predentin-12.png",
+      "arquivo": "imagens/marcadores/Predentin-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Predentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts line the pulp cavity and deposit dentin similarly to bone. The organic matrix, called predentin, is deposited first and provides a framework on which hydroxyapatite crystals are laid down. Mineralized dentin is more darkly stained. A layer of pre-dentin is present throughout the life of the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Dental pulp",
+      "explicacao_original": "At the root stage of tooth development the ectomesenchymal cells of the dental papillae have fully differentiated into the dental pulp organ. This will form the dental pulp that houses the odontoblast cell bodies, nerves, and many blood vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Pulp-12.png",
+      "arquivo": "imagens/marcadores/Pulp-12.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Dental pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the root stage of tooth development the ectomesenchymal cells of the dental papillae have fully differentiated into the dental pulp organ. This will form the dental pulp that houses the odontoblast cell bodies, nerves, and many blood vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide in the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-2-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-2-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Neck region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-2-black.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide in the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-12/, acesso em 2026-08-07."
+    }
+  ]
+}

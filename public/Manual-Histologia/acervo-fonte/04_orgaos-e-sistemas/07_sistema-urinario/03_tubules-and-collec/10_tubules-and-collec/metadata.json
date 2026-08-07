@@ -1,0 +1,63 @@
+{
+  "id": 10825,
+  "titulo": "Cortex: Medullary ray",
+  "titulo_wordpress": "Tubules and collecting system 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 10"
+  ],
+  "descricao_original": "Components of medullary rays (medullary tissue in the cortex) are continuous with those in the medulla. Tubules in the medullary ray are arranged parallel to each other and, thus, in this region, longitudinal sections predominate. Medullary rays contain straight portions of proximal tubules, ascending thick limbs (distal straight tubules) and cortical portions of collecting ducts. The straight portions of the proximal tubule is also referred to as the descending thick limb. 10x, 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-10-inset.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-10-inset.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cortex: Medullary ray', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 10. Descricao original da pagina: Components of medullary rays (medullary tissue in the cortex) are continuous with those in the medulla. Tubules in the medullary ray are arranged parallel to each other and, thus, in this region, longitudinal sections predominate. Medullary rays contain straight portions of proximal tubules, ascending thick limbs (distal straight tubules) and cortical portions of collecting ducts. The straight portions of the proximal tubule is also referred to as the descending thick limb. 10x, 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Proximal straight tubules",
+      "explicacao_original": "Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-10-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-10-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-10-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-10-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Medullary ray'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-10-inset.jpg'. Destaca a estrutura ou conceito 'Proximal straight tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Brush border",
+      "explicacao_original": "Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-10-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-10-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-10-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-10-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Medullary ray'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-10-inset.jpg'. Destaca a estrutura ou conceito 'Brush border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ascending thick limb",
+      "explicacao_original": "Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-10-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-10-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-10-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-10-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Medullary ray'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-10-inset.jpg'. Destaca a estrutura ou conceito 'Ascending thick limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collecting duct",
+      "explicacao_original": "Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-10-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-10-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-10-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-10-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Medullary ray'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-10-inset.jpg'. Destaca a estrutura ou conceito 'Collecting duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal straight tubules have a tall cuboidal epithelium, regular arrangement of nuclei around the tubule and a brush border (obscured here by the luminal contents). Ascending thick tubules are lined by a lower cuboidal epithelium with irregularly spaced nuclei that frequently bulge into the lumen. Collecting tubules have columnar epithelia with conspicuous lateral cell boundaries. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-10/, acesso em 2026-08-07."
+    }
+  ]
+}

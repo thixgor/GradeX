@@ -1,0 +1,63 @@
+{
+  "id": 3324,
+  "titulo": "Bipolar neuron",
+  "titulo_wordpress": "Neuron types 18",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 18"
+  ],
+  "descricao_original": "In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-18/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17B-USE.jpg",
+      "arquivo": "imagens/base/T.N.Type-17B-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 18. Descricao original da pagina: In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-18/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neuronal cell bodies",
+      "explicacao_original": "In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-17-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-17B-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17B-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-17B-USE.jpg'. Destaca a estrutura ou conceito 'Neuronal cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 18. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Neuronal processes",
+      "explicacao_original": "In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-17-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-17B-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17B-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-17B-USE.jpg'. Destaca a estrutura ou conceito 'Neuronal processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 18. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-17-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-17B-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17B-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-17B-USE.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 18. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-17-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-17B-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-17B-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-17B-USE.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, special sensory stimuli are transduced by receptor cells and the signal is carried by a dendrite toward the cell body. An axon leaves the cell body from its opposite pole to form a cranial nerve that enters the brain. Axonal and dendritic processes cannot be differentiated in this image. Vestibular ganglion of the ear 1200x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 18. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-18/, acesso em 2026-08-07."
+    }
+  ]
+}

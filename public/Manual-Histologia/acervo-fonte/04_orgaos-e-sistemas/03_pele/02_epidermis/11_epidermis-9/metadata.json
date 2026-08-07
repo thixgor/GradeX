@@ -1,0 +1,73 @@
+{
+  "id": 6102,
+  "titulo": "Stratum basale: melanocytes",
+  "titulo_wordpress": "Epidermis 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 9"
+  ],
+  "descricao_original": "Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-9.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum basale: melanocytes', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 9. Descricao original da pagina: Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Melanocyte",
+      "explicacao_original": "Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-9.jpg'. Destaca a estrutura ou conceito 'Melanocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Melanosomes",
+      "explicacao_original": "Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-9.jpg'. Destaca a estrutura ou conceito 'Melanosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Keratinocyte",
+      "explicacao_original": "Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-9.jpg'. Destaca a estrutura ou conceito 'Keratinocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Melanosome in keratinocyte",
+      "explicacao_original": "Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-9.jpg'. Destaca a estrutura ou conceito 'Melanosome in keratinocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tonofibrils",
+      "explicacao_original": "Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-9-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-9-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale: melanocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-9.jpg'. Destaca a estrutura ou conceito 'Tonofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pale-staining melanocytes contain melanosomes distributed throughout the cell. Melanosomes, containing the pigment melanin, are transferred into the neighboring keratinocytes. Tonofibrils, composed of keratin intermediate filaments (tonofilaments), can be seen in the keratinocytes of stratum basale. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-9/, acesso em 2026-08-07."
+    }
+  ]
+}

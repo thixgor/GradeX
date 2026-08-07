@@ -1,0 +1,54 @@
+{
+  "id": 2422,
+  "titulo": "Late telophase and cytokinesis",
+  "titulo_wordpress": "Mitosis light micrographs 11",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Light Micrographs",
+    "Mitosis light micrographs 11"
+  ],
+  "descricao_original": "These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.LM-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Late telophase and cytokinesis', no setor Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 11. Descricao original da pagina: These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chromsomes (decondensing)",
+      "explicacao_original": "These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-11-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-11-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12.jpg'. Destaca a estrutura ou conceito 'Chromsomes (decondensing)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 11. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope (reforming)",
+      "explicacao_original": "These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-11-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-11-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope (reforming)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 11. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cytoplasmic bridge",
+      "explicacao_original": "These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-11-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-11-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late telophase and cytokinesis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-12.jpg'. Destaca a estrutura ou conceito 'Cytoplasmic bridge' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two cells in the lining epithelium of the esophagus in the final stages of cytokinesis and telophase. In the left panel, the daughter cells are still attached by a thin connection, whereas in the right panel, the daughter cells are completely separate. The chromosomes are decondensing and the nuclear envelopes are reforming. Esophageal epithelium 1000x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 11. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-11/, acesso em 2026-08-07."
+    }
+  ]
+}

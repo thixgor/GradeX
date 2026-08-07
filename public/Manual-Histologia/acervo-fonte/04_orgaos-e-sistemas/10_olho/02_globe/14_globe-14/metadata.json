@@ -1,0 +1,85 @@
+{
+  "id": 9218,
+  "titulo": "Globe: Iris",
+  "titulo_wordpress": "Globe 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 14"
+  ],
+  "descricao_original": "A higher magnification image shows details of the iris musculature and stroma. The image is rotated 90 degrees clockwise from the previous image; the aperture of the pupil would be to the left.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-14/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of Iowa collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Iris', no setor Órgãos e Sistemas > Olho > Globe > Globe 14. Descricao original da pagina: A higher magnification image shows details of the iris musculature and stroma. The image is rotated 90 degrees clockwise from the previous image; the aperture of the pupil would be to the left.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lens",
+      "explicacao_original": "This higher magnification image shows details of the iris musculature and stroma. The image rotated 90 degrees from the previous image, the aperture of the pupil would be to the left.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-14.jpg'. Destaca a estrutura ou conceito 'Lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification image shows details of the iris musculature and stroma. The image rotated 90 degrees from the previous image, the aperture of the pupil would be to the left.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Posterior iris epithelium",
+      "explicacao_original": "The epithelium covering the posterior surface is a continuation of the non-sensory retina and consists of two layers. The anterior surface of the iris is not lined by an epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-14.jpg'. Destaca a estrutura ou conceito 'Posterior iris epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium covering the posterior surface is a continuation of the non-sensory retina and consists of two layers. The anterior surface of the iris is not lined by an epithelium.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Constrictor pupillae muscle",
+      "explicacao_original": "The constrictor pupillae muscle consists of smooth muscle fibers located at the internal perimeter of the iris. These muscle fibers are oriented circumferentially around the pupillary rim of the iris and contraction, controlled by the parasympathetic nervous system, decreases the aperture of the pupil.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-14-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-14-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-14.jpg'. Destaca a estrutura ou conceito 'Constrictor pupillae muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The constrictor pupillae muscle consists of smooth muscle fibers located at the internal perimeter of the iris. These muscle fibers are oriented circumferentially around the pupillary rim of the iris and contraction, controlled by the parasympathetic nervous system, decreases the aperture of the pupil.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dilator pupillae muscle",
+      "explicacao_original": "The thin dilator pupillae muscle is the antagonist of the constrictor. Contraction of this muscle, controlled by the sympathetic nervous system, results in an increase in pupillary diameter. The dilator muscle consists of myoepithelial cells derived from the epithelial layer adjacent to the stroma. The individual layers of the epithelium cannot be distinguished in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-14-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-14-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-14.jpg'. Destaca a estrutura ou conceito 'Dilator pupillae muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin dilator pupillae muscle is the antagonist of the constrictor. Contraction of this muscle, controlled by the sympathetic nervous system, results in an increase in pupillary diameter. The dilator muscle consists of myoepithelial cells derived from the epithelial layer adjacent to the stroma. The individual layers of the epithelium cannot be distinguished in this image.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stroma",
+      "explicacao_original": "Stroma forms the bulk of the iris and is composed of loose connective tissue, containing fibroblasts and melanocytes. The stroma is highly vascular. The anterior surface of the iris has numerous grooves and ridges and is not covered by an epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-14-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-14-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-14.jpg'. Destaca a estrutura ou conceito 'Stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stroma forms the bulk of the iris and is composed of loose connective tissue, containing fibroblasts and melanocytes. The stroma is highly vascular. The anterior surface of the iris has numerous grooves and ridges and is not covered by an epithelium.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of Iowa collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Iowa-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-14.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of Iowa collection.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-14/, acesso em 2026-08-07."
+    }
+  ]
+}

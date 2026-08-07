@@ -1,0 +1,74 @@
+{
+  "id": 10336,
+  "titulo": "Bone resorption",
+  "titulo_wordpress": "Deposition and Resorption 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 11"
+  ],
+  "descricao_original": "A cross section through the diaphysis of a long bone shows a resorption canal, the eroding tip of a remodeling unit. The process of bone remodeling forms a columnar-shaped channel in which bone is eroded at one tip by osteoclasts (forming a resorption canal) and is deposited at the other end by osteoblasts depositing the concentric lamellae of an osteon. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.jpg",
+      "arquivo": "imagens/base/T.C.B.D.11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone resorption', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 11. Descricao original da pagina: A cross section through the diaphysis of a long bone shows a resorption canal, the eroding tip of a remodeling unit. The process of bone remodeling forms a columnar-shaped channel in which bone is eroded at one tip by osteoclasts (forming a resorption canal) and is deposited at the other end by osteoblasts depositing the concentric lamellae of an osteon. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Resorption canal",
+      "explicacao_original": "A cross section of a resorption canal can be identified by its irregular outline and lack of concentric lamellae. A resorption canal, like an Haversian canal, is lined by an endosteum, is filled with loose connective tissue and possesses a blood vessel(s). Active osteoclasts are present in the endosteum of a resorption canal, but would be absent in the endosteum of an Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.11.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.11.jpg'. Destaca a estrutura ou conceito 'Resorption canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of a resorption canal can be identified by its irregular outline and lack of concentric lamellae. A resorption canal, like an Haversian canal, is lined by an endosteum, is filled with loose connective tissue and possesses a blood vessel(s). Active osteoclasts are present in the endosteum of a resorption canal, but would be absent in the endosteum of an Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "A cross section of a resorption canal can be identified by its irregular outline and lack of concentric lamellae. A resorption canal, like an Haversian canal, is lined by an endosteum, is filled with loose connective tissue and possesses a blood vessel(s). Active osteoclasts are present in the endosteum of a resorption canal, but would be absent in the endosteum of an Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.11.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.11.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of a resorption canal can be identified by its irregular outline and lack of concentric lamellae. A resorption canal, like an Haversian canal, is lined by an endosteum, is filled with loose connective tissue and possesses a blood vessel(s). Active osteoclasts are present in the endosteum of a resorption canal, but would be absent in the endosteum of an Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "A cross section of a resorption canal can be identified by its irregular outline and lack of concentric lamellae. A resorption canal, like an Haversian canal, is lined by an endosteum, is filled with loose connective tissue and possesses a blood vessel(s). Active osteoclasts are present in the endosteum of a resorption canal, but would be absent in the endosteum of an Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.11.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.11.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of a resorption canal can be identified by its irregular outline and lack of concentric lamellae. A resorption canal, like an Haversian canal, is lined by an endosteum, is filled with loose connective tissue and possesses a blood vessel(s). Active osteoclasts are present in the endosteum of a resorption canal, but would be absent in the endosteum of an Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Woven bone",
+      "explicacao_original": "The bone in this image is classified as compact woven and lamellar bone",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.D.11.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.11.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.11.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bone in this image is classified as compact woven and lamellar bone. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamellar bone",
+      "explicacao_original": "The bone in this image is classified as compact woven and lamellar bone",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.D.11.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.11.P05.png",
+      "imagem_base": "imagens/base/T.C.B.D.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone resorption'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.11.jpg'. Destaca a estrutura ou conceito 'Lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bone in this image is classified as compact woven and lamellar bone. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 11. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-11/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "id": 4314,
+  "titulo": "Simple tubular gland",
+  "titulo_wordpress": "Simple 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Simple",
+    "Simple 1"
+  ],
+  "descricao_original": "Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple tubular gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Descricao original da pagina: Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple tubular glands",
+      "explicacao_original": "Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-2-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-2.jpg'. Destaca a estrutura ou conceito 'Simple tubular glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Gland lumens",
+      "explicacao_original": "Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-2-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-2.jpg'. Destaca a estrutura ou conceito 'Gland lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-2-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-2.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Absorptive cells",
+      "explicacao_original": "Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-2-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-2.jpg'. Destaca a estrutura ou conceito 'Absorptive cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "In this section of the large intestine, the simple tubular glands are slightly longer than the mucosal layer in which they are located. Therefore, the bases of the glands curve as they reach the muscle layer (muscularis muscosae) below them.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-2-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-2.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this section of the large intestine, the simple tubular glands are slightly longer than the mucosal layer in which they are located. Therefore, the bases of the glands curve as they reach the muscle layer (muscularis muscosae) below them.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Intestinal lumen",
+      "explicacao_original": "Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-2-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-2-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-2.jpg'. Destaca a estrutura ou conceito 'Intestinal lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple tubular glands resemble test tubes. Each gland forms a single, unbranched tubule that is directly connected to the overlying epithelium. Tubular glands in which a duct is absent, as in this case, or is unbranched, are both classified as simple. These glands, named intestinal glands, are composed primarily of goblet and absorptive cells and are located in the small and large intestines. Colon 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-1/, acesso em 2026-08-07."
+    }
+  ]
+}

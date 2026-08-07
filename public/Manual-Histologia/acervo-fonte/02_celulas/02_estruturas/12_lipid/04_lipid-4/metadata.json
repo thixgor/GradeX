@@ -1,0 +1,73 @@
+{
+  "id": 2081,
+  "titulo": "Lipid droplets",
+  "titulo_wordpress": "Lipid 4",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Lipid",
+    "Lipid 4"
+  ],
+  "descricao_original": "The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/lipid/lipid-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4.jpg",
+      "arquivo": "imagens/base/C.S.Lip-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lipid droplets', no setor Células > Estruturas > Lipid > Lipid 4. Descricao original da pagina: The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-4-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-4.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cilia",
+      "explicacao_original": "The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-4-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-4.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Columnar cells",
+      "explicacao_original": "The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-4-5-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-4.jpg'. Destaca a estrutura ou conceito 'Columnar cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nuclei",
+      "explicacao_original": "The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-4-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-4.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumen of oviduct",
+      "explicacao_original": "The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-4-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-4.jpg'. Destaca a estrutura ou conceito 'Lumen of oviduct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelial cells lining the oviduct, seen here, possess numerous small lipid droplets in their apical cytoplasm. This tissue has been fixed with osmium tetroxide, which stabilizes the lipid, preventing it from being extracted by fat solvents used during tissue processing. This reaction of osmium with lipid results in a yellowish-brown product that is visible by light microscopy. Toluidine blue stain, 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-4/, acesso em 2026-08-07."
+    }
+  ]
+}

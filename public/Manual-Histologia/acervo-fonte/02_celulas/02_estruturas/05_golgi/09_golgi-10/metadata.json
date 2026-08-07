@@ -1,0 +1,133 @@
+{
+  "id": 1675,
+  "titulo": "Protein secretory pathway",
+  "titulo_wordpress": "Golgi 10",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Golgi",
+    "Golgi 10"
+  ],
+  "descricao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "arquivo": "imagens/base/C.S.Go-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Protein secretory pathway', no setor Células > Estruturas > Golgi > Golgi 10. Descricao original da pagina: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "RER",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ribosomes",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Ribosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Transport vesicles",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Transport vesicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Golgi apparatus",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Golgi apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Forming (cis) face",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-5-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Forming (cis) face' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Maturing (trans) face",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-6-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Maturing (trans) face' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Trans-Golgi network",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-7-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Trans-Golgi network' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Vesicles, secretory granules",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-8-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-8-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Vesicles, secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-9-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-9-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-10-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-10-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Nuclear pores",
+      "explicacao_original": "The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10-11-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-10-11-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Protein secretory pathway'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-10.jpg'. Destaca a estrutura ou conceito 'Nuclear pores' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The protein secretory pathway is the cellular route through which proteins destined for export, the cell membrane, or lysosomes are synthesized, modified, and transported. Proteins are synthesized on the rough endoplasmic reticulum and transferred to the Golgi via transport vesicles. Transport vesicles fuse with the cis or forming face of the Golgi, delivering proteins that are post-translationally modified while moving toward the trans or maturing face. There, they are packaged into vesicles and secretory granules that are targeted to the plasma membrane. Additionally, some vesicles contribute to the formation of lysosomes.. Contexto setorial: Células > Estruturas > Golgi > Golgi 10. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-10-2/, acesso em 2026-08-07."
+    }
+  ]
+}

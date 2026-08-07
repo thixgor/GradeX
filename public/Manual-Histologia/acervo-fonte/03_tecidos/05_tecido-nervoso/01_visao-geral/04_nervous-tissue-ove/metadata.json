@@ -1,0 +1,115 @@
+{
+  "id": 2959,
+  "titulo": "Spinal cord",
+  "titulo_wordpress": "Nervous tissue overview 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Visão Geral",
+    "Nervous tissue overview 4"
+  ],
+  "descricao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "arquivo": "imagens/base/T.N.Ov-4A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Spinal cord', no setor Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Descricao original da pagina: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Grey matter",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-1A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Grey matter' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "White matter",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-2A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'White matter' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dorsal horns",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-7A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-7A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Dorsal horns' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ventral horns",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-8A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-8A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Ventral horns' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cell bodies",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-6A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-6A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dorsal roots",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-3A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-3A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Dorsal roots' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ventral roots",
+      "explicacao_original": "A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-4A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-4A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Ventral roots' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section of human lumbar spinal cord has been stained to show areas of white matter (myelinated axons) and grey matter (neuronal cell bodies). The grey matter is subdivided into dorsal and ventral horns. The cell bodies of multipolar neurons are located in the ventral horn. Small segments of dorsal and ventral roots are also present, though their attachment to cord is not visible. 20x. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Central canal",
+      "explicacao_original": "In the center of the cord is the central canal which is continuous with the ventricular system in the brain and contains cerebrospinal fluid. The canal is lined by a simple cuboidal to columnar epithelium composed of ependymal cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-4-5A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Central canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the center of the cord is the central canal which is continuous with the ventricular system in the brain and contains cerebrospinal fluid. The canal is lined by a simple cuboidal to columnar epithelium composed of ependymal cells.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/T.N.Ov-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Ov-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spinal cord'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-4A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan collection.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-4/, acesso em 2026-08-07."
+    }
+  ]
+}

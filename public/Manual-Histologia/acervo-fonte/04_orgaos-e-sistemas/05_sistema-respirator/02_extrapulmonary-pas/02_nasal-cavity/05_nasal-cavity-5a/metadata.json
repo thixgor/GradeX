@@ -1,0 +1,86 @@
+{
+  "id": 30903,
+  "titulo": "Nasal cavities: Olfactory epithelium",
+  "titulo_wordpress": "Nasal cavity 5A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Nasal Cavity",
+    "Nasal cavity 5A"
+  ],
+  "descricao_original": "This high magnification image shows the cell types present in the olfactory epithelium. The pseudostratified epithelium consists of olfactory neurons, supporting (sustentactular cells) and basal cells. 800x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Colorado collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "arquivo": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nasal cavities: Olfactory epithelium', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Descricao original da pagina: This high magnification image shows the cell types present in the olfactory epithelium. The pseudostratified epithelium consists of olfactory neurons, supporting (sustentactular cells) and basal cells. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Olfactory neuron nuclei",
+      "explicacao_original": "Olfactory neurons constitute up to 50% of the cells in the epithelium. They are bipolar neurons that span the epithelium; their nuclei are generally located in the mid to lower regions of the epithelium. Dendrites extend apically, ending in an olfactory vesicle from which numerous, odorant-detecting, non-motile cilia extend. Axons from olfactory neurons form fascicles that pass through the cribriform plate to enter the olfactory bulb of the brain. Collectively, they form the olfactory nerve (cranial nerve I).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.05-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.05-NEW.jpg'. Destaca a estrutura ou conceito 'Olfactory neuron nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory neurons constitute up to 50% of the cells in the epithelium. They are bipolar neurons that span the epithelium; their nuclei are generally located in the mid to lower regions of the epithelium. Dendrites extend apically, ending in an olfactory vesicle from which numerous, odorant-detecting, non-motile cilia extend. Axons from olfactory neurons form fascicles that pass through the cribriform plate to enter the olfactory bulb of the brain. Collectively, they form the olfactory nerve (cranial nerve I).. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cilia",
+      "explicacao_original": "Cilia on olfactory neurons are non-motile and express odorant receptors specific for each neuron. They extend from a knob-like swelling at the end of the dendrite called the olfactory vesicle",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.05-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.05-NEW.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cilia on olfactory neurons are non-motile and express odorant receptors specific for each neuron. They extend from a knob-like swelling at the end of the dendrite called the olfactory vesicle. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Supporting cell nuclei",
+      "explicacao_original": "Supporting (sustentacular) cells are columnar cells that also span the epithelium. They possess microvilli and their nuclei are generally located in the upper portions of the epithelium. Sustentacular cells provide physical and metabolic support for the neurons, similar to glial cells in the brain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.05-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.05-NEW.jpg'. Destaca a estrutura ou conceito 'Supporting cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Supporting (sustentacular) cells are columnar cells that also span the epithelium. They possess microvilli and their nuclei are generally located in the upper portions of the epithelium. Sustentacular cells provide physical and metabolic support for the neurons, similar to glial cells in the brain.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal cells",
+      "explicacao_original": "Basal cells are progenitor or stem cells, resupplying the epithelium with olfactory neurons and supporting cells. The turnover rate for olfactory neurons is around 30-60 days, with some potentially surviving up to 6 months.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.05-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.05-NEW.jpg'. Destaca a estrutura ou conceito 'Basal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basal cells are progenitor or stem cells, resupplying the epithelium with olfactory neurons and supporting cells. The turnover rate for olfactory neurons is around 30-60 days, with some potentially surviving up to 6 months.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "Basal cells are progenitor or stem cells, resupplying the epithelium with olfactory neurons and supporting cells. The turnover rate for olfactory neurons is around 30-60 days, with some potentially surviving up to 6 months.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.05-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.05-NEW.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basal cells are progenitor or stem cells, resupplying the epithelium with olfactory neurons and supporting cells. The turnover rate for olfactory neurons is around 30-60 days, with some potentially surviving up to 6 months.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Colorado collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/Colorado-singular.png",
+      "arquivo": "imagens/marcadores/Colorado-singular.png",
+      "imagem_base": "imagens/base/O.R.E.N.05-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.05-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Olfactory epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.05-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Colorado collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

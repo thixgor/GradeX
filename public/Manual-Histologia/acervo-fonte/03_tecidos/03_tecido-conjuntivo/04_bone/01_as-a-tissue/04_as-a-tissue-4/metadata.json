@@ -1,0 +1,114 @@
+{
+  "id": 29878,
+  "titulo": "Bone tissue: cells and matrix",
+  "titulo_wordpress": "As a tissue 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 4"
+  ],
+  "descricao_original": "Bone, like any other connective tissue, is composed of cells and matrix. Bone cells consist of osteocytes, osteoblasts, osteoclasts and bone lining cells (inactive osteoblasts and osteoprogenitor cells), which collectively make up the endosteum that lines all bone surfaces. Bone matrix consists of an organic, extracellular matrix of ground substance and fibers. Unique to bone, the matrix also contains an inorganic component of calcium phosphate (hydroxyapatite) giving bone rigidity. Decalcified preparation of spongy bone, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "arquivo": "imagens/base/T.C.B.T.4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone tissue: cells and matrix', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Descricao original da pagina: Bone, like any other connective tissue, is composed of cells and matrix. Bone cells consist of osteocytes, osteoblasts, osteoclasts and bone lining cells (inactive osteoblasts and osteoprogenitor cells), which collectively make up the endosteum that lines all bone surfaces. Bone matrix consists of an organic, extracellular matrix of ground substance and fibers. Unique to bone, the matrix also contains an inorganic component of calcium phosphate (hydroxyapatite) giving bone rigidity. Decalcified preparation of spongy bone, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "Osteoblasts lie on the surface of bone and produce the organic components of the extracellular matrix: ground substance and collagen fibers. Osteoblasts are large, plump cells filled with the organelles necessary for protein production. Osteoblasts are located wherever bone growth is occurring, i.e., in both the endosteum and the periosteum",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts lie on the surface of bone and produce the organic components of the extracellular matrix: ground substance and collagen fibers. Osteoblasts are large, plump cells filled with the organelles necessary for protein production. Osteoblasts are located wherever bone growth is occurring, i.e., in both the endosteum and the periosteum. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteoid (organic matrix)",
+      "explicacao_original": "Formation of the extracellular matrix of bone begins with deposition of the organic portion, osteoid, by osteoblasts. Osteoid appears as a pale band on the bone surface immediately beneath the active osteoblasts and consists mainly of type I collagen fibrils. Type I collagen fibrils comprise about 90% of the total protein of osteoid and thus the matrix is highly eosinophilic. In addition to collagen, osteoid also contains proteoglycan aggregates. Osteoid rapidly becomes mineralized with calcium phosphate (hydroxyapatite).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-6-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-6-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Osteoid (organic matrix)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Formation of the extracellular matrix of bone begins with deposition of the organic portion, osteoid, by osteoblasts. Osteoid appears as a pale band on the bone surface immediately beneath the active osteoblasts and consists mainly of type I collagen fibrils. Type I collagen fibrils comprise about 90% of the total protein of osteoid and thus the matrix is highly eosinophilic. In addition to collagen, osteoid also contains proteoglycan aggregates. Osteoid rapidly becomes mineralized with calcium phosphate (hydroxyapatite).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Extracellular matrix",
+      "explicacao_original": "After osteoid is formed, it becomes mineralized with an inorganic matrix of calcium phosphate (hydroxyapatite). Hydroxyapatite is deposited along collagen fibers in the matrix, giving bone rigidity to serve as a framework for the body, support and as protection. The matrix also serves as a reservoir for calcium. The abundance of collagen and calcium produces an eosinophilically-stained, extracellular matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.4-7A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-7A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Extracellular matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After osteoid is formed, it becomes mineralized with an inorganic matrix of calcium phosphate (hydroxyapatite). Hydroxyapatite is deposited along collagen fibers in the matrix, giving bone rigidity to serve as a framework for the body, support and as protection. The matrix also serves as a reservoir for calcium. The abundance of collagen and calcium produces an eosinophilically-stained, extracellular matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Osteocytes are osteoblasts that have surrounded themselves with matrix and, therefore, lie within (rather than on) bone. Although not visible here, numerous processes radiate out from each cell body, communicating with other osteocytes and with surface cells. Osteocytes lie within spaces called lacunae, seen here as a halo surrounding each cell body. Osteocytes maintain the bone matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes are osteoblasts that have surrounded themselves with matrix and, therefore, lie within (rather than on) bone. Although not visible here, numerous processes radiate out from each cell body, communicating with other osteocytes and with surface cells. Osteocytes lie within spaces called lacunae, seen here as a halo surrounding each cell body. Osteocytes maintain the bone matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Osteoclast",
+      "explicacao_original": "Osteoclasts are large, multinucleated cells that resorb bone. They are located in both the endosteum and the periosteum. Each possesses elaborate infoldings of the plasma membrane, which aid in bone resorption, creating a small bony depression (Howship’s lacuna) in the process. Osteoclasts are derived from the monocyte/macrophage cell lineage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Osteoclast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts are large, multinucleated cells that resorb bone. They are located in both the endosteum and the periosteum. Each possesses elaborate infoldings of the plasma membrane, which aid in bone resorption, creating a small bony depression (Howship’s lacuna) in the process. Osteoclasts are derived from the monocyte/macrophage cell lineage.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Howship's lacuna",
+      "explicacao_original": "Osteoclasts are large, multinucleated cells that resorb bone. They are located in both the endosteum and the periosteum. Each possesses elaborate infoldings of the plasma membrane, which aid in bone resorption, creating a small bony depression (Howship’s lacuna) in the process. Osteoclasts are derived from the monocyte/macrophage cell lineage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-5-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-5-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Howship's lacuna' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts are large, multinucleated cells that resorb bone. They are located in both the endosteum and the periosteum. Each possesses elaborate infoldings of the plasma membrane, which aid in bone resorption, creating a small bony depression (Howship’s lacuna) in the process. Osteoclasts are derived from the monocyte/macrophage cell lineage.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "Bone lining cells are quiescent, flattened osteoblasts that cover bone surfaces, where neither bone resorption nor bone formation is occurring. They can be induced to proliferate and differentiate into osteoblasts and may also represent a source of “determined” osteogenic precursors. Bone lining cells, often called endosteal cells, maintain bone remodeling and mineral homeostasis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-3-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone lining cells are quiescent, flattened osteoblasts that cover bone surfaces, where neither bone resorption nor bone formation is occurring. They can be induced to proliferate and differentiate into osteoblasts and may also represent a source of “determined” osteogenic precursors. Bone lining cells, often called endosteal cells, maintain bone remodeling and mineral homeostasis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Bone marrow",
+      "explicacao_original": "The spicule is surrounded by red bone marrow which produces all the circulating blood cells. Numerous blood vessels (sinusoids) in the bone marrow serve to transport newly formed blood cells into the general circulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-Marrow.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-Marrow.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spicule is surrounded by red bone marrow which produces all the circulating blood cells. Numerous blood vessels (sinusoids) in the bone marrow serve to transport newly formed blood cells into the general circulation.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The spicule is surrounded by red bone marrow which produces all the circulating blood cells. Numerous blood vessels (sinusoids) in the bone marrow serve to transport newly formed blood cells into the general circulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4-9-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.4-9-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone tissue: cells and matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.4.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The spicule is surrounded by red bone marrow which produces all the circulating blood cells. Numerous blood vessels (sinusoids) in the bone marrow serve to transport newly formed blood cells into the general circulation.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-4-cells/, acesso em 2026-08-07."
+    }
+  ]
+}

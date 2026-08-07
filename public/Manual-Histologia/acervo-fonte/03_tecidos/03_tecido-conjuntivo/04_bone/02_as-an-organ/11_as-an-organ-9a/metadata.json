@@ -1,0 +1,84 @@
+{
+  "id": 30262,
+  "titulo": "Bone: the organ - bone marrow",
+  "titulo_wordpress": "As an organ 9A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 9A"
+  ],
+  "descricao_original": "Two types of bone marrow occur in bony spaces: red and yellow varieties. Red bone marrow is composed primarily of hemopoietic tissue and sinusoids, where red blood cells, white blood cells and megakaryocytes differentiate. Yellow bone marrow is composed of 80-90% adipocytes and 10-20% hemopoietic tissue. The lipid in the adipocytes causes yellow bone marrow to appear yellow to the naked eye. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "arquivo": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ - bone marrow', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Descricao original da pagina: Two types of bone marrow occur in bony spaces: red and yellow varieties. Red bone marrow is composed primarily of hemopoietic tissue and sinusoids, where red blood cells, white blood cells and megakaryocytes differentiate. Yellow bone marrow is composed of 80-90% adipocytes and 10-20% hemopoietic tissue. The lipid in the adipocytes causes yellow bone marrow to appear yellow to the naked eye. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Yellow bone marrow",
+      "explicacao_original": "Yellow bone marrow functions primarily in fat storage, however small islands of hemopoietic tissue may be present. Under physiological stress, yellow marrow increases its ability to produce blood cells through the differentiation of stem cells. Adipocytes do not differentiate into blood-forming cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-Yellow.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.9-Yellow.png",
+      "imagem_base": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - bone marrow'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.9-NEW.jpg'. Destaca a estrutura ou conceito 'Yellow bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Yellow bone marrow functions primarily in fat storage, however small islands of hemopoietic tissue may be present. Under physiological stress, yellow marrow increases its ability to produce blood cells through the differentiation of stem cells. Adipocytes do not differentiate into blood-forming cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hemopoietic tissue in yellow marrow",
+      "explicacao_original": "Yellow bone marrow functions primarily in fat storage, however small islands of hemopoietic tissue may be present. Under physiological stress, yellow marrow increases its ability to produce blood cells through the differentiation of stem cells. Adipocytes do not differentiate into blood-forming cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-Hemo-islands.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.9-Hemo-islands.png",
+      "imagem_base": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - bone marrow'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.9-NEW.jpg'. Destaca a estrutura ou conceito 'Hemopoietic tissue in yellow marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Yellow bone marrow functions primarily in fat storage, however small islands of hemopoietic tissue may be present. Under physiological stress, yellow marrow increases its ability to produce blood cells through the differentiation of stem cells. Adipocytes do not differentiate into blood-forming cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Red bone marrow",
+      "explicacao_original": "Red bone marrow is composed mostly of hemopoietic tissue rather than adipocytes. As individuals age, adipocytes replace hemopoietic tissue, resulting in a gradual increase in yellow bone marrow to about 70% or more in the elderly.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-Red.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.9-Red.png",
+      "imagem_base": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - bone marrow'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.9-NEW.jpg'. Destaca a estrutura ou conceito 'Red bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red bone marrow is composed mostly of hemopoietic tissue rather than adipocytes. As individuals age, adipocytes replace hemopoietic tissue, resulting in a gradual increase in yellow bone marrow to about 70% or more in the elderly.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Sinusoids",
+      "explicacao_original": "Sinusoids are large diameter, thin walled capillaries (discontinuous capillaries). After maturing in the hemopoietic tissue, red and white blood cells migrate into the sinusoids for dispersal throughout the body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-Sinusoid.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.9-Sinusoid.png",
+      "imagem_base": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - bone marrow'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.9-NEW.jpg'. Destaca a estrutura ou conceito 'Sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids are large diameter, thin walled capillaries (discontinuous capillaries). After maturing in the hemopoietic tissue, red and white blood cells migrate into the sinusoids for dispersal throughout the body.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Megakaryocytes",
+      "explicacao_original": "Megakaryocytes are large cells in the marrow that produce platelets, which are essential for blood clotting. Platelets are cell fragments shed from megakaryocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-Megakaryo.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.9-Megakaryo.png",
+      "imagem_base": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - bone marrow'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.9-NEW.jpg'. Destaca a estrutura ou conceito 'Megakaryocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Megakaryocytes are large cells in the marrow that produce platelets, which are essential for blood clotting. Platelets are cell fragments shed from megakaryocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bone spicules",
+      "explicacao_original": "Bone spicules form the spongy bone in which most hemopoiesis occurs in adults.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-Spicules.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.9-Spicules.png",
+      "imagem_base": "imagens/base/T.C.B.O.9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.O.9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - bone marrow'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.9-NEW.jpg'. Destaca a estrutura ou conceito 'Bone spicules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone spicules form the spongy bone in which most hemopoiesis occurs in adults.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 9A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-9a/, acesso em 2026-08-07."
+    }
+  ]
+}

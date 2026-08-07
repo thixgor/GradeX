@@ -1,0 +1,53 @@
+{
+  "id": 3007,
+  "titulo": "Receptors",
+  "titulo_wordpress": "Receptors and terminals 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Receptors and Terminals",
+    "Receptors and terminals 2"
+  ],
+  "descricao_original": "Pacinian corpuscles are encapsulated sensory receptors located in connective tissues throughout the body, but are most numerous in the deep layers of the skin. Pacinian corpuscles consist of a centrally located axon surrounded by multiple layers of endoneurial and Schwann cells. These receptors respond to pressure and vibration and can be up to 1 mm in diameter. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-2.jpg",
+      "arquivo": "imagens/base/T.N.Rec-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Receptors', no setor Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 2. Descricao original da pagina: Pacinian corpuscles are encapsulated sensory receptors located in connective tissues throughout the body, but are most numerous in the deep layers of the skin. Pacinian corpuscles consist of a centrally located axon surrounded by multiple layers of endoneurial and Schwann cells. These receptors respond to pressure and vibration and can be up to 1 mm in diameter. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pacinian corpuscle",
+      "explicacao_original": "Pacinian corpuscles consist of concentric layers of endoneurial cells and Schwann cells, which surround a central, unmyelinated axon. When cut in cross section, the internal structure of the receptor resembles a sliced onion, and the lymph-like fluid between the lamellae allows the receptor to adapt and respond to stimuli for deep pressure and vibration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-2-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-2.jpg'. Destaca a estrutura ou conceito 'Pacinian corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pacinian corpuscles consist of concentric layers of endoneurial cells and Schwann cells, which surround a central, unmyelinated axon. When cut in cross section, the internal structure of the receptor resembles a sliced onion, and the lymph-like fluid between the lamellae allows the receptor to adapt and respond to stimuli for deep pressure and vibration.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Axon",
+      "explicacao_original": "Pacinian corpuscles consist of concentric layers of endoneurial cells and Schwann cells, which surround a central, unmyelinated axon. When cut in cross section, the internal structure of the receptor resembles a sliced onion, and the lymph-like fluid between the lamellae allows the receptor to adapt and respond to stimuli for deep pressure and vibration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1-2-ping-1.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-1-2-ping-1.png",
+      "imagem_base": "imagens/base/T.N.Rec-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-2.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pacinian corpuscles consist of concentric layers of endoneurial cells and Schwann cells, which surround a central, unmyelinated axon. When cut in cross section, the internal structure of the receptor resembles a sliced onion, and the lymph-like fluid between the lamellae allows the receptor to adapt and respond to stimuli for deep pressure and vibration.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endoneurial and Schwann cells",
+      "explicacao_original": "Pacinian corpuscles consist of concentric layers of endoneurial cells and Schwann cells, which surround a central, unmyelinated axon. When cut in cross section, the internal structure of the receptor resembles a sliced onion, and the lymph-like fluid between the lamellae allows the receptor to adapt and respond to stimuli for deep pressure and vibration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1-3-ping-1.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-1-3-ping-1.png",
+      "imagem_base": "imagens/base/T.N.Rec-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-2.jpg'. Destaca a estrutura ou conceito 'Endoneurial and Schwann cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pacinian corpuscles consist of concentric layers of endoneurial cells and Schwann cells, which surround a central, unmyelinated axon. When cut in cross section, the internal structure of the receptor resembles a sliced onion, and the lymph-like fluid between the lamellae allows the receptor to adapt and respond to stimuli for deep pressure and vibration.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-2/, acesso em 2026-08-07."
+    }
+  ]
+}

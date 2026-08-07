@@ -1,0 +1,74 @@
+{
+  "id": 3949,
+  "titulo": "Cilia",
+  "titulo_wordpress": "Associated structures 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 9"
+  ],
+  "descricao_original": "Cilia are hair-like, highly motile extensions, greater than 1 micron in height, that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia captures and transports the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-9b-use.jpeg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-9b-use.jpeg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cilia', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 9. Descricao original da pagina: Cilia are hair-like, highly motile extensions, greater than 1 micron in height, that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia captures and transports the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cilia",
+      "explicacao_original": "Each cilium is attached to a basal body located in the apex of the cell that anchors the cilium to the cell. Both the core of the cilium and the basal body are composed of microtubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-9-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-9-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-9b-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-9b-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-9b-use.jpeg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each cilium is attached to a basal body located in the apex of the cell that anchors the cilium to the cell. Both the core of the cilium and the basal body are composed of microtubules.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "Each cilium is associated with a basal body which collectively form a prominent band along the uppermost portion of the cell. This is one feature that can be used to distinguish cilia from a border of microvilli. Additionally, cilia are much taller than microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-9-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-9-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-9b-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-9b-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-9b-use.jpeg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each cilium is associated with a basal body which collectively form a prominent band along the uppermost portion of the cell. This is one feature that can be used to distinguish cilia from a border of microvilli. Additionally, cilia are much taller than microvilli.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory cells (non-ciliated)",
+      "explicacao_original": "Cilia are hair-like, highly motile extensions, greater than 1 micron in height that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia serves to capture and transport the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-9-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-9-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-9b-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-9b-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-9b-use.jpeg'. Destaca a estrutura ou conceito 'Secretory cells (non-ciliated)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cilia are hair-like, highly motile extensions, greater than 1 micron in height that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia serves to capture and transport the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osmium-stained lipid droplets",
+      "explicacao_original": "Cilia are hair-like, highly motile extensions, greater than 1 micron in height that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia serves to capture and transport the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-9-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-9-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-9b-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-9b-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-9b-use.jpeg'. Destaca a estrutura ou conceito 'Osmium-stained lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cilia are hair-like, highly motile extensions, greater than 1 micron in height that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia serves to capture and transport the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumen of the oviduct",
+      "explicacao_original": "Cilia are hair-like, highly motile extensions, greater than 1 micron in height that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia serves to capture and transport the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-9-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-9-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-9b-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-9b-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-9b-use.jpeg'. Destaca a estrutura ou conceito 'Lumen of the oviduct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cilia are hair-like, highly motile extensions, greater than 1 micron in height that project from the apical surface of some cells. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface. In the oviduct, seen here, the beating action of these cilia serves to capture and transport the ovum. Also present in the epithelium are secretory cells whose products nourish the egg cell. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": 2079,
+  "titulo": "Lipid droplets",
+  "titulo_wordpress": "Lipid 3",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Lipid",
+    "Lipid 3"
+  ],
+  "descricao_original": "In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/lipid/lipid-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3.jpg",
+      "arquivo": "imagens/base/C.S.Lip-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lipid droplets', no setor Células > Estruturas > Lipid > Lipid 3. Descricao original da pagina: In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Adipocytes filled with lipid",
+      "explicacao_original": "In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-3-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-3.jpg'. Destaca a estrutura ou conceito 'Adipocytes filled with lipid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 3. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-3-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-3.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 3. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Peripheral nerve",
+      "explicacao_original": "In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Lip-3-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Lip-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Lip-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lipid droplets'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Lip-3.jpg'. Destaca a estrutura ou conceito 'Peripheral nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In specialized lipid storage cells (adipocytes), a single, large droplet nearly fills the entire cell, with only a thin rim of cytoplasm around it. This image shows a small accumulation of adipocytes in loose connective tissue. The tissue has been fixed with osmium tetroxide, which preserves the large lipid droplet in the cytoplasm and provides the brown-black staining of the lipid. The lipid in these vesicles consists of triglycerides and cholesterol esters. Toluidine blue stain. 1000x. Contexto setorial: Células > Estruturas > Lipid > Lipid 3. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lipid/lipid-3/, acesso em 2026-08-07."
+    }
+  ]
+}

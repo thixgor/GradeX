@@ -1,0 +1,84 @@
+{
+  "id": 6055,
+  "titulo": "Blood",
+  "titulo_wordpress": "Blood 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Blood",
+    "Blood 1"
+  ],
+  "descricao_original": "Blood, shown here as a blood smear, is a specialized form of connective tissue. Like all connective tissues, blood is composed of cells (erythrocytes, leucocytes and cell fragments called platelets), and an extracellular matrix (the liquid, plasma). Although fibers (fibrin) are only present during clotting, the fiber precursor (fibrinogen) is always present in blood. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "arquivo": "imagens/base/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Blood', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Descricao original da pagina: Blood, shown here as a blood smear, is a specialized form of connective tissue. Like all connective tissues, blood is composed of cells (erythrocytes, leucocytes and cell fragments called platelets), and an extracellular matrix (the liquid, plasma). Although fibers (fibrin) are only present during clotting, the fiber precursor (fibrinogen) is always present in blood. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Erythrocytes",
+      "explicacao_original": "Erythrocytes, or red blood cells, are the most numerous of the blood cells. They lack nuclei and the typical organelles. Erythrocytes are shaped like biconcave discs and are specialized for the transport of oxygen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-1.jpg'. Destaca a estrutura ou conceito 'Erythrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Erythrocytes, or red blood cells, are the most numerous of the blood cells. They lack nuclei and the typical organelles. Erythrocytes are shaped like biconcave discs and are specialized for the transport of oxygen.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Leucocytes",
+      "explicacao_original": "Leucocytes, or white blood cells, can be divided into two categories: those with specific granules (granulocytes) and those without specific granules (agranulocytes). All leucocytes possess nonspecific granules, which are actually lysosomes. Leucocytes are transported by the blood but are not functional until they leave the blood to enter a connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-1.jpg'. Destaca a estrutura ou conceito 'Leucocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Leucocytes, or white blood cells, can be divided into two categories: those with specific granules (granulocytes) and those without specific granules (agranulocytes). All leucocytes possess nonspecific granules, which are actually lysosomes. Leucocytes are transported by the blood but are not functional until they leave the blood to enter a connective tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Granulocytes",
+      "explicacao_original": "Granulocytes are white blood cells that possess specific granules; these granules aid in distinguishing one type of granulocyte from another. The three types of granulocytes are neutrophils (with neutral-staining granules), eosinophils (with red, eosin-staining granules) and basophils (whose granules stain dark purple with basic dyes).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-1.jpg'. Destaca a estrutura ou conceito 'Granulocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Granulocytes are white blood cells that possess specific granules; these granules aid in distinguishing one type of granulocyte from another. The three types of granulocytes are neutrophils (with neutral-staining granules), eosinophils (with red, eosin-staining granules) and basophils (whose granules stain dark purple with basic dyes).. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Agranulocyes",
+      "explicacao_original": "Agranulocytes are leucocytes that lack specific granules, although nonspecific granules (lysosomes) are present. The two types of agranular leucocytes are monocytes and lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-1.jpg'. Destaca a estrutura ou conceito 'Agranulocyes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Agranulocytes are leucocytes that lack specific granules, although nonspecific granules (lysosomes) are present. The two types of agranular leucocytes are monocytes and lymphocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Platelets",
+      "explicacao_original": "Platelets (thrombocytes) are fragments of megakaryocytes (located in bone marrow) that are released into the blood stream. Platelets adhere to collagen beneath a defective endothelium, forming a plug. Secondarily, they initiate the blood clotting cascade, which results in the formation of an insoluble fibrin network, stabilizing the plug.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-1.jpg'. Destaca a estrutura ou conceito 'Platelets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Platelets (thrombocytes) are fragments of megakaryocytes (located in bone marrow) that are released into the blood stream. Platelets adhere to collagen beneath a defective endothelium, forming a plug. Secondarily, they initiate the blood clotting cascade, which results in the formation of an insoluble fibrin network, stabilizing the plug.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Plasma",
+      "explicacao_original": "Plasma is composed primarily of water, which is a solvent for the proteins albumin, immunoglobulins, non-immune proteins and fibrinogen, the precursor to fibrin fibers. Dissolved gases, electrolytes, nutrients, hormones, enzymes and wastes are present. Plasma is not preserved during histologic preparation of the blood smear and, thus, appears as the clear spaces surrounding cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-1.jpg'. Destaca a estrutura ou conceito 'Plasma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plasma is composed primarily of water, which is a solvent for the proteins albumin, immunoglobulins, non-immune proteins and fibrinogen, the precursor to fibrin fibers. Dissolved gases, electrolytes, nutrients, hormones, enzymes and wastes are present. Plasma is not preserved during histologic preparation of the blood smear and, thus, appears as the clear spaces surrounding cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-1/, acesso em 2026-08-07."
+    }
+  ]
+}

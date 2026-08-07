@@ -1,0 +1,73 @@
+{
+  "id": 1029,
+  "titulo": "Cell shapes: cuboidal",
+  "titulo_wordpress": "Cell shapes 6",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 6"
+  ],
+  "descricao_original": "In this kidney section, tubular structures are composed of cells with a wide range of shapes from squamous to cuboidal. Cuboidal cells are shaped like a cube with roughly equal height and width; their nuclei are usually spherical. Cuboidal cells often form tubes or tubules, a number of which are seen in this image. 1000x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-NEW-light.jpg",
+      "arquivo": "imagens/base/C.B.Sh-6-NEW-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: cuboidal', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 6. Descricao original da pagina: In this kidney section, tubular structures are composed of cells with a wide range of shapes from squamous to cuboidal. Cuboidal cells are shaped like a cube with roughly equal height and width; their nuclei are usually spherical. Cuboidal cells often form tubes or tubules, a number of which are seen in this image. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cuboidal cells",
+      "explicacao_original": "In this kidney section, tubular structures are composed of cells with a wide range of shapes from squamous to cuboidal. Cuboidal cells are shaped like a cube with roughly equal height and width; their nuclei are usually spherical. Cuboidal cells often form tubes or tubules, a number of which are seen in this image. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-1-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-6-1-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-6-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: cuboidal'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-6-NEW-light.jpg'. Destaca a estrutura ou conceito 'Cuboidal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this kidney section, tubular structures are composed of cells with a wide range of shapes from squamous to cuboidal. Cuboidal cells are shaped like a cube with roughly equal height and width; their nuclei are usually spherical. Cuboidal cells often form tubes or tubules, a number of which are seen in this image. 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 6. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Each cuboidal cell has a spherical nucleus, reflecting the box-like shape of the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-2-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-6-2-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-6-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: cuboidal'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-6-NEW-light.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each cuboidal cell has a spherical nucleus, reflecting the box-like shape of the cell.. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 6. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Low cuboidal cells",
+      "explicacao_original": "Note the intermediate shapes of the nuclei in the low cuboidal cells lining these tubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-3-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-6-3-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-6-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: cuboidal'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-6-NEW-light.jpg'. Destaca a estrutura ou conceito 'Low cuboidal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Note the intermediate shapes of the nuclei in the low cuboidal cells lining these tubules.. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 6. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Squamous cells",
+      "explicacao_original": "Squamous cells with their flattened nuclei and attenuated cytoplasm line a glomerulus and a blood vessel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-4-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-6-4-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-6-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: cuboidal'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-6-NEW-light.jpg'. Destaca a estrutura ou conceito 'Squamous cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Squamous cells with their flattened nuclei and attenuated cytoplasm line a glomerulus and a blood vessel.. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 6. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumens",
+      "explicacao_original": "The space within a tube is called the lumen",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-5-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-6-5-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-6-NEW-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-6-NEW-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: cuboidal'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-6-NEW-light.jpg'. Destaca a estrutura ou conceito 'Lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The space within a tube is called the lumen. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 6. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-6/, acesso em 2026-08-07."
+    }
+  ]
+}

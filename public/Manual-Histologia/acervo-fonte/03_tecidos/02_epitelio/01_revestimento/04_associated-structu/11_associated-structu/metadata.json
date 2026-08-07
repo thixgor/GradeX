@@ -1,0 +1,84 @@
+{
+  "id": 3953,
+  "titulo": "Cilia",
+  "titulo_wordpress": "Associated structures 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 11"
+  ],
+  "descricao_original": "Much of the epithelium of the respiratory tract possesses cilia. Inhaled particulate material is captured in a sheet of mucus produced by goblet cells. This mucous sheet is swept upward in the respiratory tract by the action of the cilia. Each cilium contains a microtubule complex called the axoneme, which emanates from the basal body. Note the uniquely thick basal lamina of this epithelium. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cilia', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Descricao original da pagina: Much of the epithelium of the respiratory tract possesses cilia. Inhaled particulate material is captured in a sheet of mucus produced by goblet cells. This mucous sheet is swept upward in the respiratory tract by the action of the cilia. Each cilium contains a microtubule complex called the axoneme, which emanates from the basal body. Note the uniquely thick basal lamina of this epithelium. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Airway space",
+      "explicacao_original": "These goblet cells secrete mucus, which creates a sticky film across the surface of the epithelium. The mucus traps inhaled particulate material and is swept upward by the cilia, a process called muco-ciliary transport.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-11-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-11-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-11-use.jpeg'. Destaca a estrutura ou conceito 'Airway space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These goblet cells secrete mucus, which creates a sticky film across the surface of the epithelium. The mucus traps inhaled particulate material and is swept upward by the cilia, a process called muco-ciliary transport.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pseudostratified epithelium",
+      "explicacao_original": "Much of the epithelium of the respiratory tract possesses cilia. Inhaled particulate material is captured in a sheet of mucus produced by goblet cells. This mucous sheet is swept upward in the respiratory tract by the action of the cilia. Each cilium contains a microtubule complex called the axoneme, which emanates from the basal body. Note the uniquely thick basal lamina of this epithelium. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-11-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-11-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-11-use.jpeg'. Destaca a estrutura ou conceito 'Pseudostratified epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Much of the epithelium of the respiratory tract possesses cilia. Inhaled particulate material is captured in a sheet of mucus produced by goblet cells. This mucous sheet is swept upward in the respiratory tract by the action of the cilia. Each cilium contains a microtubule complex called the axoneme, which emanates from the basal body. Note the uniquely thick basal lamina of this epithelium. 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "Much of the epithelium of the respiratory tract possesses cilia. Inhaled particulate material is captured in a sheet of mucus produced by goblet cells. This mucous sheet is swept upward in the respiratory tract by the action of the cilia. Each cilium contains a microtubule complex called the axoneme, which emanates from the basal body. Note the uniquely thick basal lamina of this epithelium. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-11-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-11-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-11-use.jpeg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Much of the epithelium of the respiratory tract possesses cilia. Inhaled particulate material is captured in a sheet of mucus produced by goblet cells. This mucous sheet is swept upward in the respiratory tract by the action of the cilia. Each cilium contains a microtubule complex called the axoneme, which emanates from the basal body. Note the uniquely thick basal lamina of this epithelium. 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "Though not as evident as in the previous images, the basal bodies form a distinct, visible band at the surface of the epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-11-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-11-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-11-use.jpeg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Though not as evident as in the previous images, the basal bodies form a distinct, visible band at the surface of the epithelium.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "These goblet cells secrete mucus, which creates a sticky film across the surface of the epithelium. The mucus traps inhaled particulate material and is swept upward by the cilia, a process called muco-ciliary transport.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-11-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-11-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-11-use.jpeg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These goblet cells secrete mucus, which creates a sticky film across the surface of the epithelium. The mucus traps inhaled particulate material and is swept upward by the cilia, a process called muco-ciliary transport.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "The basement membrane is more prominent in the respiratory system than in other organ systems.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-11-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-11-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-11-use.jpeg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-11-use.jpeg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-11-use.jpeg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basement membrane is more prominent in the respiratory system than in other organ systems.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-11/, acesso em 2026-08-07."
+    }
+  ]
+}

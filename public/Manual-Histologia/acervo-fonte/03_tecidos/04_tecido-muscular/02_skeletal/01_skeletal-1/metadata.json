@@ -1,0 +1,73 @@
+{
+  "id": 232,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 1"
+  ],
+  "descricao_original": "A skeletal muscle is an organ, composed mostly of skeletal muscle fibers that are surrounded by three connective tissue layers: endomysium, perimysium and epimysium. These layers (1) bind the muscle fibers together; (2) separate groups of fibers into compartments; and (3) transmit the force of contraction to the point of muscle insertion. The three layers and are clearly shown in this section stained for connective tissue. Masson stain 100x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-1.jpg",
+      "arquivo": "imagens/base/T.M.Sk-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 1. Descricao original da pagina: A skeletal muscle is an organ, composed mostly of skeletal muscle fibers that are surrounded by three connective tissue layers: endomysium, perimysium and epimysium. These layers (1) bind the muscle fibers together; (2) separate groups of fibers into compartments; and (3) transmit the force of contraction to the point of muscle insertion. The three layers and are clearly shown in this section stained for connective tissue. Masson stain 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "A skeletal muscle is an organ, composed mostly of skeletal muscle fibers that are surrounded by three connective tissue layers: endomysium, perimysium and epimysium. These layers (1) bind the muscle fibers together; (2) separate groups of fibers into compartments; and (3) transmit the force of contraction to the point of muscle insertion. The three layers and are clearly shown in this section stained for connective tissue. Masson stain 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk1-1a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk1-1a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-1.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A skeletal muscle is an organ, composed mostly of skeletal muscle fibers that are surrounded by three connective tissue layers: endomysium, perimysium and epimysium. These layers (1) bind the muscle fibers together; (2) separate groups of fibers into compartments; and (3) transmit the force of contraction to the point of muscle insertion. The three layers and are clearly shown in this section stained for connective tissue. Masson stain 100x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endomysium",
+      "explicacao_original": "The endomysium surrounds individual muscle fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk1-5a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk1-5a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-1.jpg'. Destaca a estrutura ou conceito 'Endomysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endomysium surrounds individual muscle fibers.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Perimysium",
+      "explicacao_original": "The perimysium encloses groups of fibers, defining fascicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk1-4a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk1-4a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-1.jpg'. Destaca a estrutura ou conceito 'Perimysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perimysium encloses groups of fibers, defining fascicles.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fascicle",
+      "explicacao_original": "The perimysium encloses groups of fibers, defining fascicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk1-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk1-2a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-1.jpg'. Destaca a estrutura ou conceito 'Fascicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perimysium encloses groups of fibers, defining fascicles.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epimysium",
+      "explicacao_original": "The epimysium surrounds the entire muscle and is continuous with a tendon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk1-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk1-3a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-1.jpg'. Destaca a estrutura ou conceito 'Epimysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epimysium surrounds the entire muscle and is continuous with a tendon.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": 27291,
+  "titulo": "Stroma and parenchyma",
+  "titulo_wordpress": "Stroma and parenchyma 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Stroma and Parenchyma",
+    "Stroma and parenchyma 5"
+  ],
+  "descricao_original": "Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of British Columbia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Stroma-1C.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stroma and parenchyma', no setor Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 5. Descricao original da pagina: Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Parenchyma",
+      "explicacao_original": "Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-1C-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-1C.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-1C.jpg'. Destaca a estrutura ou conceito 'Parenchyma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mammary glands",
+      "explicacao_original": "Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-1C-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-1C.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-1C.jpg'. Destaca a estrutura ou conceito 'Mammary glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Duct",
+      "explicacao_original": "Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-1C-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-1C.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-1C.jpg'. Destaca a estrutura ou conceito 'Duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stroma",
+      "explicacao_original": "Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-1C-4-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-1C.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-1C.jpg'. Destaca a estrutura ou conceito 'Stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Organs are made up of two basic components: the functional cells and tissues, termed parenchyma, and a supportive framework, called stroma. The types of parenchymal components vary with the function of the organ, but are usually composed of connective tissue. This image shows a section of a non-lactating breast in which the parenchymal elements, mammary glands and ducts, are supported by a collagenous stromal framework. 100x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of British Columbia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1B-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-1B-5-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-1C.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-1C.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-1C.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of British Columbia collection.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-5/, acesso em 2026-08-07."
+    }
+  ]
+}

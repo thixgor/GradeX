@@ -1,0 +1,52 @@
+{
+  "id": 668,
+  "titulo": "Elastin stain (Verhoeff's-van Gieson)",
+  "titulo_wordpress": "Stains 9",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Corantes",
+    "Stains 9"
+  ],
+  "descricao_original": "Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r)",
+  "url_origem": "https://digitalhistology.org/histology-basics/stains/stains-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA.jpg",
+      "arquivo": "imagens/base/C.B.St-9-NEWA.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastin stain (Verhoeff's-van Gieson)', no setor Histologia Básica > Corantes > Stains 9. Descricao original da pagina: Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-9-NEWA-1-ping.png",
+      "imagem_base": "imagens/base/C.B.St-9-NEWA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastin stain (Verhoeff's-van Gieson)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-9-NEWA.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r). Contexto setorial: Histologia Básica > Corantes > Stains 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Elastic sheets",
+      "explicacao_original": "Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-9-NEWA-2-ping.png",
+      "imagem_base": "imagens/base/C.B.St-9-NEWA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastin stain (Verhoeff's-van Gieson)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-9-NEWA.jpg'. Destaca a estrutura ou conceito 'Elastic sheets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r). Contexto setorial: Histologia Básica > Corantes > Stains 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-9-NEWA-3-ping.png",
+      "imagem_base": "imagens/base/C.B.St-9-NEWA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.B.St-9-NEWA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastin stain (Verhoeff's-van Gieson)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-9-NEWA.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastin stains, such as Verhoeff’s-van Gieson, are used to specifically reveal elastic fibers and sheets. The specificity of the stain is due to the unique chemical properties of elastin, a major protein component of elastic fibers and sheets and results in a black or brown-colored stain. Elastin stains clearly distinguish elastic fibers from collagen fibers, both of which stain with eosin. Connective tissue, 400x (l); Muscular artery, 200x (r). Contexto setorial: Histologia Básica > Corantes > Stains 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-9/, acesso em 2026-08-07."
+    }
+  ]
+}

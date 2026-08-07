@@ -1,0 +1,65 @@
+{
+  "id": 4354,
+  "titulo": "Sheet gland",
+  "titulo_wordpress": "Sheet 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Sheet",
+    "Sheet 2"
+  ],
+  "descricao_original": "This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sheet gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 2. Descricao original da pagina: This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sheet gland nuclei",
+      "explicacao_original": "This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Sheet-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-2-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-2-NEW.jpg'. Destaca a estrutura ou conceito 'Sheet gland nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucin granules",
+      "explicacao_original": "This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Sheet-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-2-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-2-NEW.jpg'. Destaca a estrutura ou conceito 'Mucin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stomach lumen",
+      "explicacao_original": "This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Sheet-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-2-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-2-NEW.jpg'. Destaca a estrutura ou conceito 'Stomach lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Sheet-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Sheet-2-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.E.Gl_.Ex_.Sheet-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sheet gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Sheet-2-NEW.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This sheet gland, consists entirely of mucus-secreting cells. The nucleus of each of these columnar cells is located just beneath the mucin. Stomach 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Sheet > Sheet 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/sheet/sheet-2/, acesso em 2026-08-07."
+    }
+  ]
+}

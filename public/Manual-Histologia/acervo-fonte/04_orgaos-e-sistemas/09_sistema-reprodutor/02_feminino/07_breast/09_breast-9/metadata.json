@@ -1,0 +1,54 @@
+{
+  "id": 13306,
+  "titulo": "Breast: stages",
+  "titulo_wordpress": "Breast 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Breast",
+    "Breast 9"
+  ],
+  "descricao_original": "A comparison of the three stages of breast development is shown in this image. The inactive breast is on the left; the breast during pregnancy is in the middle; and the breast during lactation is on the right. 100x, 100x, 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.09.jpg",
+      "arquivo": "imagens/base/O.R.F.B.09.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Breast: stages', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 9. Descricao original da pagina: A comparison of the three stages of breast development is shown in this image. The inactive breast is on the left; the breast during pregnancy is in the middle; and the breast during lactation is on the right. 100x, 100x, 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Inactive",
+      "explicacao_original": "The breast during the inactive stage can be identified in two ways. First, by the abundance of interlobular connective tissue and ducts; secondly by the lack of acini and secretory product.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.09.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.09.P01.png",
+      "imagem_base": "imagens/base/O.R.F.B.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: stages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.09.jpg'. Destaca a estrutura ou conceito 'Inactive' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The breast during the inactive stage can be identified in two ways. First, by the abundance of interlobular connective tissue and ducts; secondly by the lack of acini and secretory product.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pregnancy",
+      "explicacao_original": "During pregnancy the ducts branch and grow; acini form from the ducts. Interlobular connective tissue decreases as the secretory components increase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.09.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.09.P02.png",
+      "imagem_base": "imagens/base/O.R.F.B.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: stages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.09.jpg'. Destaca a estrutura ou conceito 'Pregnancy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During pregnancy the ducts branch and grow; acini form from the ducts. Interlobular connective tissue decreases as the secretory components increase.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lactation",
+      "explicacao_original": "During lactation the breast reaches maximal development. Acini are widely distended and milk products can be seen dilating the acini and ducts. The relative abundance of the interlobular connective tissue is reduced as the secretory components increase in size and number.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.09.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.09.P03.png",
+      "imagem_base": "imagens/base/O.R.F.B.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: stages'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.09.jpg'. Destaca a estrutura ou conceito 'Lactation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During lactation the breast reaches maximal development. Acini are widely distended and milk products can be seen dilating the acini and ducts. The relative abundance of the interlobular connective tissue is reduced as the secretory components increase in size and number.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-9/, acesso em 2026-08-07."
+    }
+  ]
+}

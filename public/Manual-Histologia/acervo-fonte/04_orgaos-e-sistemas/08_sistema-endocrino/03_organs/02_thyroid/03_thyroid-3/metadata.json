@@ -1,0 +1,84 @@
+{
+  "id": 4824,
+  "titulo": "Thyroid gland",
+  "titulo_wordpress": "Thyroid 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Thyroid",
+    "Thyroid 3"
+  ],
+  "descricao_original": "These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thyroid gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Descricao original da pagina: These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Inactive follicle",
+      "explicacao_original": "These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-3.jpg'. Destaca a estrutura ou conceito 'Inactive follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Inactive follicle cells",
+      "explicacao_original": "These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-3.jpg'. Destaca a estrutura ou conceito 'Inactive follicle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Active follicle",
+      "explicacao_original": "These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-3.jpg'. Destaca a estrutura ou conceito 'Active follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Active follicle cells",
+      "explicacao_original": "These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-3.jpg'. Destaca a estrutura ou conceito 'Active follicle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare two follicles at different stages of activity: low activity (left) and high activity (right). Follicular epithelium varies in height depending on activity, with more active cells being columnar. A tall, active, follicular epithelium indicates that cells are either actively secreting thyroglobulin into the follicular lumen or are resorbing thyroglobulin for processing into thyroid hormones.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Thyroglobulin",
+      "explicacao_original": "Thyroglobulin is the storage form of the thyroid hormones. It is produced by the follicular cells and released into the lumen of the follicle as colloid. When needed in the body, thyroglobulin is taken up by the follicular cells and broken down into thyroxine (T4) and triiodothyronine (T3) for release into the blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-3.jpg'. Destaca a estrutura ou conceito 'Thyroglobulin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thyroglobulin is the storage form of the thyroid hormones. It is produced by the follicular cells and released into the lumen of the follicle as colloid. When needed in the body, thyroglobulin is taken up by the follicular cells and broken down into thyroxine (T4) and triiodothyronine (T3) for release into the blood.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Numerous capillaries are present in the wall of the follicle to receive the T3 and T4 hormones released by the follicle cells. Additionally, these vessels transport thyroid stimulating hormone released by throtropes in the pituitary to regulate follicle cell activity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-3.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Numerous capillaries are present in the wall of the follicle to receive the T3 and T4 hormones released by the follicle cells. Additionally, these vessels transport thyroid stimulating hormone released by throtropes in the pituitary to regulate follicle cell activity.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-3/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": 1019,
+  "titulo": "Cell shapes: spherical",
+  "titulo_wordpress": "Cell shapes 1",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 1"
+  ],
+  "descricao_original": "Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-NEW.jpg",
+      "arquivo": "imagens/base/C.B.Sh-1-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: spherical', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 1. Descricao original da pagina: Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "White blood cells",
+      "explicacao_original": "Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-1-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-1-1-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-1-NEW.jpg'. Destaca a estrutura ou conceito 'White blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-2-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-1-2-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-1-NEW.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Platelets",
+      "explicacao_original": "Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-3-new-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-1-3-new-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-1-NEW.jpg'. Destaca a estrutura ou conceito 'Platelets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells that are in a fluid environment, e.g., blood, usually take on a spherical shape. In this blood smear, white blood cells are spherical. The red blood cells, in contrast, are bi-concave discs, which afford greater surface area for exchange of gases across the cell membrane. 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-1/, acesso em 2026-08-07."
+    }
+  ]
+}

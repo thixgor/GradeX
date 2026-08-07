@@ -1,0 +1,27 @@
+{
+  "id": 29073,
+  "titulo": "test",
+  "titulo_wordpress": "Advanced",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Advanced"
+  ],
+  "descricao_original": "test",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/advanced/",
+  "creditos_identificados": [],
+  "bases": [],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "test",
+      "explicacao_original": "test",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "",
+      "url_imagem_base": "",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'test'. Deve ser sobreposta, sem redimensionamento independente, a 'imagem-base da pagina'. Destaca a estrutura ou conceito 'test' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: test. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Advanced. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/advanced/, acesso em 2026-08-07."
+    }
+  ]
+}

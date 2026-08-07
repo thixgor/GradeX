@@ -1,0 +1,116 @@
+{
+  "id": 30680,
+  "titulo": "Bone cells: osteoclasts",
+  "titulo_wordpress": "As a tissue 8 NEW",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 8 NEW"
+  ],
+  "descricao_original": "These spicules of bone are being resorbed by osteoclasts; large, motile cells with multiple nuclei. Throughout life, bone is resorbed and deposited to both renew and repair the matrix and to respond to mechanical stresses. Resorption results in the formation of depressions in the bone called Howship’s lacunae. Osteoclasts belong to the monocyte lineage and are not related to osteoblasts or osteocytes. Spongy bone, 400x, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide in the University of Cincinnati collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "arquivo": "imagens/base/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone cells: osteoclasts', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Descricao original da pagina: These spicules of bone are being resorbed by osteoclasts; large, motile cells with multiple nuclei. Throughout life, bone is resorbed and deposited to both renew and repair the matrix and to respond to mechanical stresses. Resorption results in the formation of depressions in the bone called Howship’s lacunae. Osteoclasts belong to the monocyte lineage and are not related to osteoblasts or osteocytes. Spongy bone, 400x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "These spicules of bone are being resorbed by osteoclasts; large, motile cells with multiple nuclei. Throughout life, bone is resorbed and deposited to both renew and repair the matrix and to respond to mechanical stresses. Resorption results in the formation of depressions in the bone called Howship’s lacunae. Osteoclasts belong to the monocyte lineage and are not related to osteoblasts or osteocytes. Spongy bone, 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These spicules of bone are being resorbed by osteoclasts; large, motile cells with multiple nuclei. Throughout life, bone is resorbed and deposited to both renew and repair the matrix and to respond to mechanical stresses. Resorption results in the formation of depressions in the bone called Howship’s lacunae. Osteoclasts belong to the monocyte lineage and are not related to osteoblasts or osteocytes. Spongy bone, 400x, 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ruffled border",
+      "explicacao_original": "The ruffled border consists of the highly folded plasma membrane on the bone-facing surface of an active osteoclast. The ruffled border creates a microenvironment into which the osteoclast secretes acid and proteases to dissolve and degrade the bone matrix, resulting in a Howship’s lacuna.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Ruffled border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ruffled border consists of the highly folded plasma membrane on the bone-facing surface of an active osteoclast. The ruffled border creates a microenvironment into which the osteoclast secretes acid and proteases to dissolve and degrade the bone matrix, resulting in a Howship’s lacuna.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Howship's lacunae",
+      "explicacao_original": "The ruffled border consists of the highly folded plasma membrane on the bone-facing surface of an active osteoclast. The ruffled border creates a microenvironment into which the osteoclast secretes acid and proteases to dissolve and degrade the bone matrix, resulting in a Howship’s lacuna.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-3-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Howship's lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ruffled border consists of the highly folded plasma membrane on the bone-facing surface of an active osteoclast. The ruffled border creates a microenvironment into which the osteoclast secretes acid and proteases to dissolve and degrade the bone matrix, resulting in a Howship’s lacuna.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "Osteoblasts are depositing bone onto the surface of the spicule opposite from the osteoclast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-5A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts are depositing bone onto the surface of the spicule opposite from the osteoclast.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Osteoid",
+      "explicacao_original": "Osteoblasts are depositing bone onto the surface of the spicule opposite from the osteoclast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-6A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-6A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Osteoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts are depositing bone onto the surface of the spicule opposite from the osteoclast.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "Bone lining cells are quiescent, flattened osteoblasts that cover bone surfaces where neither bone resorption nor bone formation is occurring. They can be induced to proliferate and differentiate into osteoblasts and may also represent a source of “determined” osteogenic precursors. Bone lining cells maintain bone remodeling and mineral homeostasis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-7-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-7-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone lining cells are quiescent, flattened osteoblasts that cover bone surfaces where neither bone resorption nor bone formation is occurring. They can be induced to proliferate and differentiate into osteoblasts and may also represent a source of “determined” osteogenic precursors. Bone lining cells maintain bone remodeling and mineral homeostasis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Osteocytes in lacunae",
+      "explicacao_original": "Osteocytes are located within lacunae, small spaces within the mineralized bone matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Osteocytes in lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes are located within lacunae, small spaces within the mineralized bone matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Spicules",
+      "explicacao_original": "Osteocytes are located within lacunae, small spaces within the mineralized bone matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New-8-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-New-8-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Spicules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes are located within lacunae, small spaces within the mineralized bone matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide in the University of Cincinnati collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/Cincinnati-center-plural.png",
+      "arquivo": "imagens/marcadores/Cincinnati-center-plural.png",
+      "imagem_base": "imagens/base/T.C.B.T.8-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.T.8-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoclasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.8-New.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide in the University of Cincinnati collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 8 NEW. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8-new/, acesso em 2026-08-07."
+    }
+  ]
+}

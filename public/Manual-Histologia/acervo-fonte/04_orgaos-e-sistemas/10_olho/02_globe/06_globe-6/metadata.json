@@ -1,0 +1,105 @@
+{
+  "id": 9202,
+  "titulo": "Globe: Sclera",
+  "titulo_wordpress": "Globe 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 6"
+  ],
+  "descricao_original": "This image of the globe shows a region of the sclera about midway between the limbus and the exit point of the optic nerve. The sclera forms the posterior portion of the outer tunic and is composed mostly of dense connective tissue. Most of the scleral thickness is comprised of the substantia propria or Tenon’s capsule. The sclera gives the eye its shape, protects the eye structurally, and serves as the attachment for extraocular muscles. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-6/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the Drexel University collection. Inset: Arizona Veterinary Diagnostic Laboratory"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Sclera', no setor Órgãos e Sistemas > Olho > Globe > Globe 6. Descricao original da pagina: This image of the globe shows a region of the sclera about midway between the limbus and the exit point of the optic nerve. The sclera forms the posterior portion of the outer tunic and is composed mostly of dense connective tissue. Most of the scleral thickness is comprised of the substantia propria or Tenon’s capsule. The sclera gives the eye its shape, protects the eye structurally, and serves as the attachment for extraocular muscles. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sclera",
+      "explicacao_original": "This image of the globe shows a region of the sclera about midway between the limbus and the exit point of the optic nerve. The sclera forms the posterior portion of the outer tunic and is composed mostly of dense connective tissue. Most of the scleral thickness is comprised of the substantia propria or Tenon’s capsule. The sclera gives the eye its shape, protects the eye structurally, and serves as the attachment for extraocular muscles. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image of the globe shows a region of the sclera about midway between the limbus and the exit point of the optic nerve. The sclera forms the posterior portion of the outer tunic and is composed mostly of dense connective tissue. Most of the scleral thickness is comprised of the substantia propria or Tenon’s capsule. The sclera gives the eye its shape, protects the eye structurally, and serves as the attachment for extraocular muscles. 200x. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Episclera",
+      "explicacao_original": "The episcleral layer consists of loose connective tissue and lies adjacent to the periorbital fat (not present in this section).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Episclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The episcleral layer consists of loose connective tissue and lies adjacent to the periorbital fat (not present in this section).. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Substantia propria (Tenon’s capsule)",
+      "explicacao_original": "The substantia propria forms the majority of the sclera, consisting of dense connective tissue. It is also called Tenon’s capsule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Substantia propria (Tenon’s capsule)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The substantia propria forms the majority of the sclera, consisting of dense connective tissue. It is also called Tenon’s capsule.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Subchoroid lamina (lamina fusca)",
+      "explicacao_original": "The thin subchoroid lamina lies between the substania propria and the choroid. It consists of loose connective tissue as well as scattered melanocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Subchoroid lamina (lamina fusca)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin subchoroid lamina lies between the substania propria and the choroid. It consists of loose connective tissue as well as scattered melanocytes.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Choroid",
+      "explicacao_original": "The choroid forms the majority of the vascular or middle tunic (uvea), covering the posterior portion of the eye. The choroid is composed of loose connective tissue, with an abundant vascular supply and pigmented cells. The choroid supplies nutrients to the deep layers of the retina; its pigmented cells serve to absorb reflected and stray light within the globe.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Choroid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroid forms the majority of the vascular or middle tunic (uvea), covering the posterior portion of the eye. The choroid is composed of loose connective tissue, with an abundant vascular supply and pigmented cells. The choroid supplies nutrients to the deep layers of the retina; its pigmented cells serve to absorb reflected and stray light within the globe.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Retina",
+      "explicacao_original": "The retina forms the multilayered inner tunic. Its posterior portion, seen here, is photosensitive. The retina lies adjacent to the vitreous chamber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The retina forms the multilayered inner tunic. Its posterior portion, seen here, is photosensitive. The retina lies adjacent to the vitreous chamber.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Vitreous chamber",
+      "explicacao_original": "The retina forms the multilayered inner tunic. Its posterior portion, seen here, is photosensitive. The retina lies adjacent to the vitreous chamber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-6-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-6-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Vitreous chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The retina forms the multilayered inner tunic. Its posterior portion, seen here, is photosensitive. The retina lies adjacent to the vitreous chamber.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the Drexel University collection. Inset: Arizona Veterinary Diagnostic Laboratory",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Drexel-source-ping.png",
+      "arquivo": "imagens/marcadores/Drexel-source-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Sclera'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-6.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the Drexel University collection. Inset: Arizona Veterinary Diagnostic Laboratory. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-6/, acesso em 2026-08-07."
+    }
+  ]
+}

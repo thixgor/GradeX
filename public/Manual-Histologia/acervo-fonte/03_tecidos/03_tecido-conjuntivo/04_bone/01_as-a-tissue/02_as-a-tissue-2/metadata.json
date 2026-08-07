@@ -1,0 +1,116 @@
+{
+  "id": 29848,
+  "titulo": "Bone types: spongy and compact bone",
+  "titulo_wordpress": "As a tissue 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 2"
+  ],
+  "descricao_original": "Bone tissue is organized as spongy (cancellous) or compact (cortical) bone. Compact bone covers all exterior surfaces of a bone (except for the articular surfaces) and forms the majority of the shaft (diaphysis) of long bones, such as the femur. Spongy bone is located at the ends of the bone (epiphyses) and in the interior. 10X (top), 100x (bottom)",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/",
+  "creditos_identificados": [
+    "Image credit: This image was taken of slide in the University of Cincinnati collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "arquivo": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone types: spongy and compact bone', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Descricao original da pagina: Bone tissue is organized as spongy (cancellous) or compact (cortical) bone. Compact bone covers all exterior surfaces of a bone (except for the articular surfaces) and forms the majority of the shaft (diaphysis) of long bones, such as the femur. Spongy bone is located at the ends of the bone (epiphyses) and in the interior. 10X (top), 100x (bottom). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spongy bone",
+      "explicacao_original": "Spongy bone, also called cancellous or trabecular bone, forms a honeycombed structure composed of interconnected, bony spicules. The spaces between the spicules are filled with red marrow. Spongy bone fills the epiphysis and is also present in the marrow cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Spongy.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Spongy.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Spongy bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spongy bone, also called cancellous or trabecular bone, forms a honeycombed structure composed of interconnected, bony spicules. The spaces between the spicules are filled with red marrow. Spongy bone fills the epiphysis and is also present in the marrow cavity.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Spicules",
+      "explicacao_original": "Spongy bone, also called cancellous or trabecular bone, forms a honeycombed structure composed of interconnected, bony spicules. The spaces between the spicules are filled with red marrow. Spongy bone fills the epiphysis and is also present in the marrow cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Spicules.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Spicules.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Spicules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spongy bone, also called cancellous or trabecular bone, forms a honeycombed structure composed of interconnected, bony spicules. The spaces between the spicules are filled with red marrow. Spongy bone fills the epiphysis and is also present in the marrow cavity.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Red marrow",
+      "explicacao_original": "Spongy bone, also called cancellous or trabecular bone, forms a honeycombed structure composed of interconnected, bony spicules. The spaces between the spicules are filled with red marrow. Spongy bone fills the epiphysis and is also present in the marrow cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Marrow.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Marrow.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Red marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spongy bone, also called cancellous or trabecular bone, forms a honeycombed structure composed of interconnected, bony spicules. The spaces between the spicules are filled with red marrow. Spongy bone fills the epiphysis and is also present in the marrow cavity.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Compact bone",
+      "explicacao_original": "Compact bone, also called cortical bone, is present as a thin shell over the surface of the epiphyses as well as forming a solid mass, comprising the shaft (diaphysis) of long bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Compact-New.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Compact-New.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone, also called cortical bone, is present as a thin shell over the surface of the epiphyses as well as forming a solid mass, comprising the shaft (diaphysis) of long bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epiphysis",
+      "explicacao_original": "A thin shell of compact bone covers the surface of the epiphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Epiphyseal.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Epiphyseal.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Epiphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A thin shell of compact bone covers the surface of the epiphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Diaphysis",
+      "explicacao_original": "Compact bone in the diaphysis can be organized either as flat, parallel sheets (lamellae), or in cylinders composed of concentric lamellae (Haversian systems).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Diphysis-New.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Diphysis-New.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Diaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone in the diaphysis can be organized either as flat, parallel sheets (lamellae), or in cylinders composed of concentric lamellae (Haversian systems).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Parallel lamellae",
+      "explicacao_original": "Compact bone is deposited as flat, parallel sheets around the internal and external surfaces of the diaphysis, forming inner circumferential lamellae and outer circumferential lamellae, respectively.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Diphysis-New-flat.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Diphysis-New-flat.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Parallel lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone is deposited as flat, parallel sheets around the internal and external surfaces of the diaphysis, forming inner circumferential lamellae and outer circumferential lamellae, respectively.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Concentric lamellae",
+      "explicacao_original": "Compact bone on the interior of the diaphysis is organized in concentric lamellae forming Haversian systems. Haversian systems are oriented parallel to the long axis of the bone to provide strength and rigidity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.2-Diphysis-New-Haversian.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.2-Diphysis-New-Haversian.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Concentric lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact bone on the interior of the diaphysis is organized in concentric lamellae forming Haversian systems. Haversian systems are oriented parallel to the long axis of the bone to provide strength and rigidity.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image credit",
+      "explicacao_original": "This image was taken of slide in the University of Cincinnati collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/Cincinnati-credit.png",
+      "arquivo": "imagens/marcadores/Cincinnati-credit.png",
+      "imagem_base": "imagens/base/T.C.B.T.2-NEW-wide-line.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.2-NEW-wide-line.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone types: spongy and compact bone'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.2-NEW-wide-line.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide in the University of Cincinnati collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-spongy-compact/, acesso em 2026-08-07."
+    }
+  ]
+}

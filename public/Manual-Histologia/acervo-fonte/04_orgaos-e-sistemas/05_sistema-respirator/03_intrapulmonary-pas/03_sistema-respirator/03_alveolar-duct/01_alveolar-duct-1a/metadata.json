@@ -1,0 +1,75 @@
+{
+  "id": 31302,
+  "titulo": "Transition of respiratory bronchiole to alveolar duct",
+  "titulo_wordpress": "Alveolar duct 1A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveolar Duct",
+    "Alveolar duct 1A"
+  ],
+  "descricao_original": "Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-fix.jpg",
+      "arquivo": "imagens/base/O.R.I.R.AD_.01-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Transition of respiratory bronchiole to alveolar duct', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 1A. Descricao original da pagina: Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Terminal bronchiole",
+      "explicacao_original": "Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.01-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.01-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of respiratory bronchiole to alveolar duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.01-fix.jpg'. Destaca a estrutura ou conceito 'Terminal bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Respiratory bronchiole",
+      "explicacao_original": "Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.01-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.01-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of respiratory bronchiole to alveolar duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.01-fix.jpg'. Destaca a estrutura ou conceito 'Respiratory bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Alveolar ducts",
+      "explicacao_original": "Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-3A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.01-3A-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.01-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of respiratory bronchiole to alveolar duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.01-fix.jpg'. Destaca a estrutura ou conceito 'Alveolar ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Alveolar sacs",
+      "explicacao_original": "Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.01-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.01-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of respiratory bronchiole to alveolar duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.01-fix.jpg'. Destaca a estrutura ou conceito 'Alveolar sacs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Pulmonary vessels",
+      "explicacao_original": "Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.01-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.01-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.01-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of respiratory bronchiole to alveolar duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.01-fix.jpg'. Destaca a estrutura ou conceito 'Pulmonary vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles transition to alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth muscle that appears like a knob in cross section. Each respiratory bronchiole branches to form multiple alveolar ducts that end in alveolar sacs. 40X. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

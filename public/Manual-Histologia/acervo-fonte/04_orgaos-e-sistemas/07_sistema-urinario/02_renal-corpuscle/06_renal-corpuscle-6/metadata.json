@@ -1,0 +1,103 @@
+{
+  "id": 10799,
+  "titulo": "Glomerulus",
+  "titulo_wordpress": "Renal corpuscle 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Renal Corpuscle",
+    "Renal corpuscle 6"
+  ],
+  "descricao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "arquivo": "imagens/base/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Glomerulus', no setor Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Descricao original da pagina: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Podocyte",
+      "explicacao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Podocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Primary process",
+      "explicacao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Primary process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pedicels",
+      "explicacao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Pedicels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glomerular capillaries",
+      "explicacao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Glomerular capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fenestrated endothelium",
+      "explicacao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Fenestrated endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a podocyte, with its processes contacting three glomerular capillaries. A primary process of the podocyte branches to form secondary processes called pedicels, which rest on the glomerular basal lamina. Pedicels from one podocyte alternate with those from a different podocyte as they contact the capillary. Also visible is the fenestrated capillary endothelium. 6000x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Basal laminae",
+      "explicacao_original": "The thick basal lamina is formed by fusion of the individual podocyte and endothelial cell basal laminae. This layer plays a critical role in the glomerular filtration process as fluid leaves the capillary lumen and enters Bowman’s space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Basal laminae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thick basal lamina is formed by fusion of the individual podocyte and endothelial cell basal laminae. This layer plays a critical role in the glomerular filtration process as fluid leaves the capillary lumen and enters Bowman’s space.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Bowman’s space",
+      "explicacao_original": "The thick basal lamina is formed by fusion of the individual podocyte and endothelial cell basal laminae. This layer plays a critical role in the glomerular filtration process as fluid leaves the capillary lumen and enters Bowman’s space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-6-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-6-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-6.jpg'. Destaca a estrutura ou conceito 'Bowman’s space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thick basal lamina is formed by fusion of the individual podocyte and endothelial cell basal laminae. This layer plays a critical role in the glomerular filtration process as fluid leaves the capillary lumen and enters Bowman’s space.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-6/, acesso em 2026-08-07."
+    }
+  ]
+}

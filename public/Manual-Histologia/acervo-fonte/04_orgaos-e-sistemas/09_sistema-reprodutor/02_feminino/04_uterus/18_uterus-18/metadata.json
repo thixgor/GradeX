@@ -1,0 +1,136 @@
+{
+  "id": 12767,
+  "titulo": "Uterus: cervix",
+  "titulo_wordpress": "Uterus 18",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 18"
+  ],
+  "descricao_original": "The cervix, the most inferior portion of the uterus, begins above and extends into the vagina. Its endocervical canal interconnects the uterine lumen with that of the vagina. The vaginal portion (ectocervix, portio vaginalis) is the region that protrudes into the vagina. The cervix does not menstruate, but reaches peak activity at mid-cycle for maximal sperm transport. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/",
+  "creditos_identificados": [
+    "Image credit: Image credit"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "arquivo": "imagens/base/O.R.F.U.18.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: cervix', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Descricao original da pagina: The cervix, the most inferior portion of the uterus, begins above and extends into the vagina. Its endocervical canal interconnects the uterine lumen with that of the vagina. The vaginal portion (ectocervix, portio vaginalis) is the region that protrudes into the vagina. The cervix does not menstruate, but reaches peak activity at mid-cycle for maximal sperm transport. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cervix",
+      "explicacao_original": "The endocervical canal of the cervix is lined by a simple columnar epithelium. The junction of this epithelium with that of the uterus is termed the internal os (above this image), while its junction with stratified squamous epithelium covering the vaginal portion forms the external os. The position of the external os varies with the reproductive stage of the female.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Cervix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endocervical canal of the cervix is lined by a simple columnar epithelium. The junction of this epithelium with that of the uterus is termed the internal os (above this image), while its junction with stratified squamous epithelium covering the vaginal portion forms the external os. The position of the external os varies with the reproductive stage of the female.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Internal os",
+      "explicacao_original": "The cervix surrounds an endocervical canal, lined by a simple columnar epithelium. The junction of this epithelium with that of the uterus is termed the internal os (above this image), while its junction with stratified squamous epithelium covering the vaginal portion forms the external os. The position of the external os varies with the reproductive stage of the female.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Internal os' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cervix surrounds an endocervical canal, lined by a simple columnar epithelium. The junction of this epithelium with that of the uterus is termed the internal os (above this image), while its junction with stratified squamous epithelium covering the vaginal portion forms the external os. The position of the external os varies with the reproductive stage of the female.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "External os",
+      "explicacao_original": "The cervix surrounds an endocervical canal, lined by a simple columnar epithelium. The junction of this epithelium with that of the uterus is termed the internal os (above this image), while its junction with stratified squamous epithelium covering the vaginal portion forms the external os. The position of the external os varies with the reproductive stage of the female.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'External os' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cervix surrounds an endocervical canal, lined by a simple columnar epithelium. The junction of this epithelium with that of the uterus is termed the internal os (above this image), while its junction with stratified squamous epithelium covering the vaginal portion forms the external os. The position of the external os varies with the reproductive stage of the female.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endocervical canal",
+      "explicacao_original": "The endocervical canal, the continuation of the uterine lumen, is lined by a simple columnar epithelium. Palm shaped folds, plicae palmatae, extend from this epithelium into the cervical connective tissue and secrete mucus. At ovulation, under the influence of high estrogen, these folds secrete abundant mucus with a linear molecular composition that guides sperm into the cervix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Endocervical canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endocervical canal, the continuation of the uterine lumen, is lined by a simple columnar epithelium. Palm shaped folds, plicae palmatae, extend from this epithelium into the cervical connective tissue and secrete mucus. At ovulation, under the influence of high estrogen, these folds secrete abundant mucus with a linear molecular composition that guides sperm into the cervix.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Plicae palmatae",
+      "explicacao_original": "The endocervical canal, the continuation of the uterine lumen, is lined by a simple columnar epithelium. Palm shaped folds, plicae palmatae, extend from this epithelium into the cervical connective tissue and secrete mucus. At ovulation, under the influence of high estrogen, these folds secrete abundant mucus with a linear molecular composition that guides sperm into the cervix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Plicae palmatae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endocervical canal, the continuation of the uterine lumen, is lined by a simple columnar epithelium. Palm shaped folds, plicae palmatae, extend from this epithelium into the cervical connective tissue and secrete mucus. At ovulation, under the influence of high estrogen, these folds secrete abundant mucus with a linear molecular composition that guides sperm into the cervix.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ectocervix",
+      "explicacao_original": "The ectocervix protrudes into the vagina and is covered by a stratified squamous moist epithelium that cannot be distinguished from the epithelium lining the vagina. The external os is the junction of the simple columnar epithelium lining the endocervical canal with the stratified squamous moist epithelium covering the ectocervix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P06.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Ectocervix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectocervix protrudes into the vagina and is covered by a stratified squamous moist epithelium that cannot be distinguished from the epithelium lining the vagina. The external os is the junction of the simple columnar epithelium lining the endocervical canal with the stratified squamous moist epithelium covering the ectocervix.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Vagina",
+      "explicacao_original": "The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P07.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Vagina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Anterior fornix",
+      "explicacao_original": "The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P08.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Anterior fornix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Posterior fornix",
+      "explicacao_original": "The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P09.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P09.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Posterior fornix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.P10.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P10.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vagina forms a right angle with the anteverted uterus, creating pouches (fornices) around the protruding cervix. The vaginal walls are usually collapsed; numerous rugae allow for distension during parturition. The vagina is lined by a stratified squamous moist epithelium, and an extensive plexus of thin-walled blood vessels is located in the subepithelial connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Image credit",
+      "explicacao_original": "Image credit",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.R.F.U.18.P11.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.18.P11.png",
+      "imagem_base": "imagens/base/O.R.F.U.18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: cervix'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.18.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image credit. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 18. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-18/, acesso em 2026-08-07."
+    }
+  ]
+}

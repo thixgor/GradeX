@@ -1,0 +1,64 @@
+{
+  "id": 3667,
+  "titulo": "Simple squamous epithelium",
+  "titulo_wordpress": "Simple epithelium 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 3"
+  ],
+  "descricao_original": "Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.Simp-3-fix.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Simp-3-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple squamous epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 3. Descricao original da pagina: Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple squamous epithelium",
+      "explicacao_original": "Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-3-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-3-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.Simp-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-3-fix.jpg'. Destaca a estrutura ou conceito 'Simple squamous epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tubules",
+      "explicacao_original": "Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-3-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-3-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.Simp-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-3-fix.jpg'. Destaca a estrutura ou conceito 'Tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-3-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-3-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.Simp-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-3-fix.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lumens",
+      "explicacao_original": "Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-3-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-3-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-3-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.Simp-3-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-3-fix.jpg'. Destaca a estrutura ou conceito 'Lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium is seen lining tubules in the kidney, as well as blood vessels. In both structures, the nuclei of the epithelium can be seen bulging slightly into the lumen with thin bands of cytoplasm extending away from them. 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-3/, acesso em 2026-08-07."
+    }
+  ]
+}

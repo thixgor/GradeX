@@ -1,0 +1,65 @@
+{
+  "id": 6781,
+  "titulo": "Tooth",
+  "titulo_wordpress": "Tooth 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "General",
+    "Tooth 7"
+  ],
+  "descricao_original": "This section of ground tooth shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 7. Descricao original da pagina: This section of ground tooth shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dentino-enamel-cementum junction",
+      "explicacao_original": "This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-7-with-insert.jpg'. Destaca a estrutura ou conceito 'Dentino-enamel-cementum junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enamel",
+      "explicacao_original": "This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-7-with-insert.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dentin",
+      "explicacao_original": "This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-7-with-insert.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cementum",
+      "explicacao_original": "This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth_.-7-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-7-with-insert.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section of demineralized bone shows the junction of the enamel, dentin and cementum. Cementum is a thin layer of bone-like tissue that covers the dentin from this junction to the root of the tooth. The tooth is stabilized in the tooth socket by anchoring collagen fibers of the periodontal ligament, which extends from cementum to alveolar bone. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-7/, acesso em 2026-08-07."
+    }
+  ]
+}

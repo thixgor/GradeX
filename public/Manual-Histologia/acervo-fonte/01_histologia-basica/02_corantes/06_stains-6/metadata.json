@@ -1,0 +1,52 @@
+{
+  "id": 659,
+  "titulo": "Periodic acid-Schiff (PAS) stain",
+  "titulo_wordpress": "Stains 6",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Corantes",
+    "Stains 6"
+  ],
+  "descricao_original": "Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x",
+  "url_origem": "https://digitalhistology.org/histology-basics/stains/stains-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-6.jpg",
+      "arquivo": "imagens/base/C.B.St-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Periodic acid-Schiff (PAS) stain', no setor Histologia Básica > Corantes > Stains 6. Descricao original da pagina: Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glycogen",
+      "explicacao_original": "Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-6-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-6-1-ping.png",
+      "imagem_base": "imagens/base/C.B.St-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodic acid-Schiff (PAS) stain'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-6.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 6. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-6-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-6-2-ping.png",
+      "imagem_base": "imagens/base/C.B.St-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodic acid-Schiff (PAS) stain'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-6.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 6. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-6-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-6-3-ping.png",
+      "imagem_base": "imagens/base/C.B.St-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodic acid-Schiff (PAS) stain'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-6.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periodic acid-Schiff (PAS) is a histochemical stain, that specifically localizes carbohydrates in tissues. The reaction produces a magenta color, thus identifying glycogen deposits in these liver hepatocytes. Histochemical stains are more specific than conventional stains which rely on simple charge interactions to label tissue structures. Liver 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 6. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-6/, acesso em 2026-08-07."
+    }
+  ]
+}

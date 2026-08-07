@@ -24,3 +24,5 @@ tsconfig.tsbuildinfo
 __tests__/
 *.test.*
 *.spec.*
+# Acervo-fonte da Histologia: migrar para Blob/CDN; nao enviar ao deploy
+public/Manual-Histologia/acervo-fonte/**

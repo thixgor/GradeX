@@ -1,0 +1,103 @@
+{
+  "id": 8481,
+  "titulo": "Overview: Lymphoid organs and tissue",
+  "titulo_wordpress": "Overview 1A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Overview 1A"
+  ],
+  "descricao_original": "The immune system protects the body against foreign antigens and infectious agents. Primary components of the immune system produce cells that seed secondary lymphoid structures. Secondary lymphoid components filter body fluids and respond by producing antibodies and cells, which will neutralize or inactivate foreign material and destroy foreign microorganisms or cells.",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Lymphoid organs and tissue', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Descricao original da pagina: The immune system protects the body against foreign antigens and infectious agents. Primary components of the immune system produce cells that seed secondary lymphoid structures. Secondary lymphoid components filter body fluids and respond by producing antibodies and cells, which will neutralize or inactivate foreign material and destroy foreign microorganisms or cells.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary components",
+      "explicacao_original": "Primary lymphoid components of the immune system consist of the thymus and bone marrow. These components produce T lymphocytes (thymus) and B lymphocytes (bone marrow) that seed secondary lymphoid structures. Primary lymphoid components do not directly participate in the immune response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Primary components' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary lymphoid components of the immune system consist of the thymus and bone marrow. These components produce T lymphocytes (thymus) and B lymphocytes (bone marrow) that seed secondary lymphoid structures. Primary lymphoid components do not directly participate in the immune response.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Thymus",
+      "explicacao_original": "The thymus is a primary lymphoid organ and, therefore, is not involved directly with defending against foreign antigens and infectious agents. This organ produces T lymphocytes that migrate from the thymus to seed other lymphoid structures, such as lymph node and spleen. T lymphocytes are involved with cell-mediated immunity by recognizing and responding to foreign antigens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Thymus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thymus is a primary lymphoid organ and, therefore, is not involved directly with defending against foreign antigens and infectious agents. This organ produces T lymphocytes that migrate from the thymus to seed other lymphoid structures, such as lymph node and spleen. T lymphocytes are involved with cell-mediated immunity by recognizing and responding to foreign antigens.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Bone marrow",
+      "explicacao_original": "Bone marrow is the second primary lymphoid tissue. Bone marrow produces B lymphocytes that migrate to other lymphoid structures, such as lymphoid nodules, lymph node and spleen, and are involved with production of humoral antibodies. Bone marrow also produces other types of white blood cells that enter the connective tissues to neutralize and destroy foreign material.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone marrow is the second primary lymphoid tissue. Bone marrow produces B lymphocytes that migrate to other lymphoid structures, such as lymphoid nodules, lymph node and spleen, and are involved with production of humoral antibodies. Bone marrow also produces other types of white blood cells that enter the connective tissues to neutralize and destroy foreign material.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Secondary components",
+      "explicacao_original": "Secondary lymphoid components of the immune system consist of lymphoid tissue located in the mucosal lamina propria (mucosa-associated lymphoid tissue, MALT), tonsils, lymph nodes and spleen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Secondary components' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secondary lymphoid components of the immune system consist of lymphoid tissue located in the mucosal lamina propria (mucosa-associated lymphoid tissue, MALT), tonsils, lymph nodes and spleen.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "MALT",
+      "explicacao_original": "Any organ system opening to the exterior (GI, respiratory, urinary, reproductive) has lymphoid tissue (diffuse lymphoid tissue and lymphoid nodules) in mucosal lamina propria. These tissues, known as mucosa-associated lymphoid tissue (MALT), filter tissue fluid percolating through lamina propria and respond by initiating an immune response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'MALT' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Any organ system opening to the exterior (GI, respiratory, urinary, reproductive) has lymphoid tissue (diffuse lymphoid tissue and lymphoid nodules) in mucosal lamina propria. These tissues, known as mucosa-associated lymphoid tissue (MALT), filter tissue fluid percolating through lamina propria and respond by initiating an immune response.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tonsils",
+      "explicacao_original": "The three groups of tonsils (palatine, pharyngeal and lingual) form a ring of lymphoid tissue called “Waldeyer’s ring” around the entrances of the nasal and oral cavities into the pharynx. Tonsils are partially encapsulated aggregations of diffuse and nodular lymphoid tissues located in lamina propria. Tonsils filter tissue fluid and are part of MALT.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Tonsils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The three groups of tonsils (palatine, pharyngeal and lingual) form a ring of lymphoid tissue called “Waldeyer’s ring” around the entrances of the nasal and oral cavities into the pharynx. Tonsils are partially encapsulated aggregations of diffuse and nodular lymphoid tissues located in lamina propria. Tonsils filter tissue fluid and are part of MALT.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lymph nodes",
+      "explicacao_original": "Tissue fluid filtered by MALT structures accumulates as lymph in lymph vessels, accompanied by lymphocytes from MALT. Located along these lymph vessels are lymph nodes that filter lymph and respond to the presence of any foreign agents carried in it.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Lymph nodes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue fluid filtered by MALT structures accumulates as lymph in lymph vessels, accompanied by lymphocytes from MALT. Located along these lymph vessels are lymph nodes that filter lymph and respond to the presence of any foreign agents carried in it.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Spleen",
+      "explicacao_original": "Lymph vessels, which drain lymph nodes, empty into the blood vascular system. The spleen, the largest lymphoid organ, filters this blood and reacts to any foreign agents it carries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.OV-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid organs and tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-1.jpg'. Destaca a estrutura ou conceito 'Spleen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymph vessels, which drain lymph nodes, empty into the blood vascular system. The spleen, the largest lymphoid organ, filters this blood and reacts to any foreign agents it carries.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

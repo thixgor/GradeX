@@ -1,0 +1,76 @@
+{
+  "id": 9829,
+  "titulo": "Bone matrix: remodeling (compact bone)",
+  "titulo_wordpress": "As a tissue 13",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 13"
+  ],
+  "descricao_original": "These images compare, compact immature (woven) bone (left) with more mature, compact adult (lamellar) bone (right). Woven bone is the first bone deposited during development, adult bone remodeling as well as repair following a fracture. In each case, woven bone is remodeled and replaced by lamellar bone. Woven bone (l), lamellar bone (r), 300x, 300x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/",
+  "creditos_identificados": [
+    "Image source: Image from the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13.jpg",
+      "arquivo": "imagens/base/T.C.B.T.13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone matrix: remodeling (compact bone)', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 13. Descricao original da pagina: These images compare, compact immature (woven) bone (left) with more mature, compact adult (lamellar) bone (right). Woven bone is the first bone deposited during development, adult bone remodeling as well as repair following a fracture. In each case, woven bone is remodeled and replaced by lamellar bone. Woven bone (l), lamellar bone (r), 300x, 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Woven, immature bone",
+      "explicacao_original": "Woven bone is usually present only temporarily and is replaced by lamellar bone through the process of remodeling. Woven bone is characterized as having a large number of osteocytes that appear randomly arranged. Additionally, woven bone has a more basophilic matrix due to its lower content of collagen fibers and mineralization compared with lamellar (adult) bone. Both of these features contribute to the lower strength of woven bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.12A-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.12A-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.13.jpg'. Destaca a estrutura ou conceito 'Woven, immature bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Woven bone is usually present only temporarily and is replaced by lamellar bone through the process of remodeling. Woven bone is characterized as having a large number of osteocytes that appear randomly arranged. Additionally, woven bone has a more basophilic matrix due to its lower content of collagen fibers and mineralization compared with lamellar (adult) bone. Both of these features contribute to the lower strength of woven bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lamellar, mature bone",
+      "explicacao_original": "Mature bone is organized in lamellae with orderly arranged lacunae located between the lamellae. Lamellar bone can be arranged as cylindrical structures, seen here, called Haversian systems (osteons) or as flattened plates on the surface of bone (inner and outer circumferential lamellae). Mature bone is highly eosinophilic due to the large number of collagen fibers in the matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.12A-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.12A-NEW-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.13.jpg'. Destaca a estrutura ou conceito 'Lamellar, mature bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mature bone is organized in lamellae with orderly arranged lacunae located between the lamellae. Lamellar bone can be arranged as cylindrical structures, seen here, called Haversian systems (osteons) or as flattened plates on the surface of bone (inner and outer circumferential lamellae). Mature bone is highly eosinophilic due to the large number of collagen fibers in the matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Haversian systems",
+      "explicacao_original": "Mature bone is organized in lamellae with orderly arranged lacunae located between the lamellae. Lamellar bone can be arranged as cylindrical structures, seen here, called Haversian systems (osteons) or as flattened plates on the surface of bone (inner and outer circumferential lamellae). Mature bone is highly eosinophilic due to the large number of collagen fibers in the matrix.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13-Haversian.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.13-Haversian.png",
+      "imagem_base": "imagens/base/T.C.B.T.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.13.jpg'. Destaca a estrutura ou conceito 'Haversian systems' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mature bone is organized in lamellae with orderly arranged lacunae located between the lamellae. Lamellar bone can be arranged as cylindrical structures, seen here, called Haversian systems (osteons) or as flattened plates on the surface of bone (inner and outer circumferential lamellae). Mature bone is highly eosinophilic due to the large number of collagen fibers in the matrix.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Woven (immature) bone contains a greater number of osteocytes compared with lamellar (mature) bone and the cells are more rounded in their lacunae. Additionally, the matrix of woven both is less eosinophilic due to the lower content of collagen fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/T.C.B.T.12A-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.12A-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.13.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Woven (immature) bone contains a greater number of osteocytes compared with lamellar (mature) bone and the cells are more rounded in their lacunae. Additionally, the matrix of woven both is less eosinophilic due to the lower content of collagen fibers.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "Image from the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/Michigan-source-ping-half-frame-rt.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-half-frame-rt.png",
+      "imagem_base": "imagens/base/T.C.B.T.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.13.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image from the University of Michigan slide collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-12/, acesso em 2026-08-07."
+    }
+  ]
+}

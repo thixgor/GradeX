@@ -1,0 +1,73 @@
+{
+  "id": 6114,
+  "titulo": "Stratum granulosum",
+  "titulo_wordpress": "Epidermis 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 15"
+  ],
+  "descricao_original": "The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-14.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum granulosum', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 15. Descricao original da pagina: The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Stratum spinosum",
+      "explicacao_original": "The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-14.jpg'. Destaca a estrutura ou conceito 'Stratum spinosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stratum granulosum",
+      "explicacao_original": "The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-14.jpg'. Destaca a estrutura ou conceito 'Stratum granulosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Keratohyalin granules",
+      "explicacao_original": "The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-14-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-14-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-14.jpg'. Destaca a estrutura ou conceito 'Keratohyalin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum granulosum is three to five cell layers thick and is composed of cells filled with prominent, basophilic, keratohyalin granules. The contents of these granules aggregate the tonofibrils into a matrix and initiate cornification of the plasma membrane. Simultaneously, the organelles in these cells degenerate, resulting in cornified scales that form the stratum corneum. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stratum lucidum",
+      "explicacao_original": "The stratum lucidum is a clear layer of non-nucleated, flattened cells that is only visible in thick skin. It is often considered to be a subdivision of the stratum corneum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-14-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-14-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-14.jpg'. Destaca a estrutura ou conceito 'Stratum lucidum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum lucidum is a clear layer of non-nucleated, flattened cells that is only visible in thick skin. It is often considered to be a subdivision of the stratum corneum.. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stratum corneum",
+      "explicacao_original": "As cells transition from the stratum granulosum to the stratum corneum, contents of the keratohyalin granules combine with tonofibrils to produce an aggregated matrix within the cell. Additionally, subplasmalemmal proteins become cross-linked, resulting in a thickened, cornified cell envelope. The resultant non-living scales or squames form the stratum corneum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-14-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-14-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-14.jpg'. Destaca a estrutura ou conceito 'Stratum corneum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As cells transition from the stratum granulosum to the stratum corneum, contents of the keratohyalin granules combine with tonofibrils to produce an aggregated matrix within the cell. Additionally, subplasmalemmal proteins become cross-linked, resulting in a thickened, cornified cell envelope. The resultant non-living scales or squames form the stratum corneum.. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-15/, acesso em 2026-08-07."
+    }
+  ]
+}

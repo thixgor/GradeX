@@ -1,0 +1,73 @@
+{
+  "id": 1446,
+  "titulo": "Rough endoplasmic reticulum and polysomes",
+  "titulo_wordpress": "Endoplasmic reticulum 9",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Endoplasmic Reticulum",
+    "Endoplasmic reticulum 9"
+  ],
+  "descricao_original": "This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.ER-9.jpg",
+      "arquivo": "imagens/base/C.S.ER-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Rough endoplasmic reticulum and polysomes', no setor Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 9. Descricao original da pagina: This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ribosomes on RER",
+      "explicacao_original": "This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-9-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-9-2-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.ER-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum and polysomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-9.jpg'. Destaca a estrutura ou conceito 'Ribosomes on RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Polysomes",
+      "explicacao_original": "Each polyribosome contains a single mRNA molecule being translated by many ribosomes. For some proteins, e.g., cytoskeletal and metabolic proteins, translation occurs in the cytoplasm. For others, such as secreted proteins or membrane spanning proteins, translation is temporarily halted while the polyribosome is translocated to the ER where translation continues. The signal for where translation occurs is contained in the leader sequence of the mRNA.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-9-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-9-1-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.ER-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum and polysomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-9.jpg'. Destaca a estrutura ou conceito 'Polysomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each polyribosome contains a single mRNA molecule being translated by many ribosomes. For some proteins, e.g., cytoskeletal and metabolic proteins, translation occurs in the cytoplasm. For others, such as secreted proteins or membrane spanning proteins, translation is temporarily halted while the polyribosome is translocated to the ER where translation continues. The signal for where translation occurs is contained in the leader sequence of the mRNA.. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-9-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-9-3-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.ER-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum and polysomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-9.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-9-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-9-4-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.ER-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum and polysomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-9.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intercellular space",
+      "explicacao_original": "This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.ER-9-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.ER-9-5-ping.png",
+      "imagem_base": "imagens/base/C.S.ER-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.ER-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Rough endoplasmic reticulum and polysomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.ER-9.jpg'. Destaca a estrutura ou conceito 'Intercellular space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a cell with modest amounts of RER but many polysomes, or polyribosomes. Polysomes are groups of ribosomes attached to a single messenger RNA molecule that synthesize proteins primarily for internal use by the cell. 30,000x. Contexto setorial: Células > Estruturas > Endoplasmic Reticulum > Endoplasmic reticulum 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/endoplasmic-reticulum/endoplasmic-reticulum-9/, acesso em 2026-08-07."
+    }
+  ]
+}

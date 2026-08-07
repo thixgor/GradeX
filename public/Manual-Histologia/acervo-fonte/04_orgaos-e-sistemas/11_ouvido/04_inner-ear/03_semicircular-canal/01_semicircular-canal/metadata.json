@@ -1,0 +1,64 @@
+{
+  "id": 14064,
+  "titulo": "Semicircular canals",
+  "titulo_wordpress": "Semicircular canals 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Semicircular Canals",
+    "Semicircular canals 1"
+  ],
+  "descricao_original": "The three semicircular canals of the osseous labyrinth are circularly arranged, tubular spaces in the petrous portion of the temporal bone. Both ends of two canals attach to and open into the vestibule; one end of the third canal attaches to another canal. A semicircular duct of the membranous labyrinth occupies each semicircular canal. Both ends of two ducts attach to and open into the utricle; one end of the third canal opens into another duct.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01.jpg",
+      "arquivo": "imagens/base/O.E.IE_.SC_.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Semicircular canals', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 1. Descricao original da pagina: The three semicircular canals of the osseous labyrinth are circularly arranged, tubular spaces in the petrous portion of the temporal bone. Both ends of two canals attach to and open into the vestibule; one end of the third canal attaches to another canal. A semicircular duct of the membranous labyrinth occupies each semicircular canal. Both ends of two ducts attach to and open into the utricle; one end of the third canal opens into another duct.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Semicircular canals",
+      "explicacao_original": "The three semicircular canals of the osseous labyrinth are circularly arranged, tubular spaces in the petrous portion of the temporal bone. Both ends of two canals attach to and open into the vestibule; one end of the third canal attaches to another canal. A semicircular duct of the membranous labyrinth occupies each semicircular canal. Both ends of two ducts attach to and open into the utricle; one end of the third canal opens into another duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01.jpg'. Destaca a estrutura ou conceito 'Semicircular canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The three semicircular canals of the osseous labyrinth are circularly arranged, tubular spaces in the petrous portion of the temporal bone. Both ends of two canals attach to and open into the vestibule; one end of the third canal attaches to another canal. A semicircular duct of the membranous labyrinth occupies each semicircular canal. Both ends of two ducts attach to and open into the utricle; one end of the third canal opens into another duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Semicircular ducts",
+      "explicacao_original": "The three semicircular ducts, located in their semicircular canals, are oriented in perpendicular planes to each other. The opening at each end of two ducts joins with the utricle; the third duct opens into another duct. An enlargement in one end of each semicircular duct, the ampulla, houses the receptor for that duct, the crista ampullaris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01.jpg'. Destaca a estrutura ou conceito 'Semicircular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The three semicircular ducts, located in their semicircular canals, are oriented in perpendicular planes to each other. The opening at each end of two ducts joins with the utricle; the third duct opens into another duct. An enlargement in one end of each semicircular duct, the ampulla, houses the receptor for that duct, the crista ampullaris.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ampullae",
+      "explicacao_original": "The three semicircular ducts, located in their semicircular canals, are oriented in perpendicular planes to each other. The opening at each end of two ducts joins with the utricle; the third duct opens into another duct. An enlargement in one end of each semicircular duct, the ampulla, houses the receptor for that duct, the crista ampullaris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01.jpg'. Destaca a estrutura ou conceito 'Ampullae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The three semicircular ducts, located in their semicircular canals, are oriented in perpendicular planes to each other. The opening at each end of two ducts joins with the utricle; the third duct opens into another duct. An enlargement in one end of each semicircular duct, the ampulla, houses the receptor for that duct, the crista ampullaris.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cristae ampullares",
+      "explicacao_original": "The crista ampullaris (black arrows) is a ridge-like structure located in the ampulla of each semicircular duct. Each crista lies perpendicular to the long axis of each duct; a gelatinous cupula (red arrow) extends from each crista to the opposite wall of the ampulla. Changes in body position after angular acceleration stimulates the cristae and initiates a neural, sensory impulse in the vestibular division of cranial nerve VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semicircular canals'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01.jpg'. Destaca a estrutura ou conceito 'Cristae ampullares' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The crista ampullaris (black arrows) is a ridge-like structure located in the ampulla of each semicircular duct. Each crista lies perpendicular to the long axis of each duct; a gelatinous cupula (red arrow) extends from each crista to the opposite wall of the ampulla. Changes in body position after angular acceleration stimulates the cristae and initiates a neural, sensory impulse in the vestibular division of cranial nerve VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Semicircular Canals > Semicircular canals 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/semicircular-canals/semicircular-canals-1/, acesso em 2026-08-07."
+    }
+  ]
+}

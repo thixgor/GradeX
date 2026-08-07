@@ -1,0 +1,54 @@
+{
+  "id": 13304,
+  "titulo": "Breast: lactation",
+  "titulo_wordpress": "Breast 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Breast",
+    "Breast 8"
+  ],
+  "descricao_original": "Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.08.jpg",
+      "arquivo": "imagens/base/O.R.F.B.08.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Breast: lactation', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 8. Descricao original da pagina: Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.08.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.08.P01.png",
+      "imagem_base": "imagens/base/O.R.F.B.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.08.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.08.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.08.P03.png",
+      "imagem_base": "imagens/base/O.R.F.B.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.08.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory product",
+      "explicacao_original": "Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.08.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.08.P02.png",
+      "imagem_base": "imagens/base/O.R.F.B.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.08.jpg'. Destaca a estrutura ou conceito 'Secretory product' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secretory cells of the breast secrete by both the merocrine (protein) and apocrine (lipid) modes of secretion. In the lower right of the field, secretory product is in the process of being released from the cells. The clear regions in the cytoplasm contain lipid. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-8/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": 28571,
+  "titulo": "Mucosa: Intestinal glands",
+  "titulo_wordpress": "Small intestine 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 10"
+  ],
+  "descricao_original": "Intestinal glands are lined by an epithelium composed of absorptive enterocytes, goblet cells, Paneth cells, enteroendocrine cells and stem cells. Stem cells are proliferative cells that replenish both absorptive and goblet cells. Differentiated cells migrate up the intestinal glands onto the villi, where they are eventually shed into the lumen. Epithelial cells in the small intestine turnover every 3-5 days. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Mississippi slide collection"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosa: Intestinal glands', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Descricao original da pagina: Intestinal glands are lined by an epithelium composed of absorptive enterocytes, goblet cells, Paneth cells, enteroendocrine cells and stem cells. Stem cells are proliferative cells that replenish both absorptive and goblet cells. Differentiated cells migrate up the intestinal glands onto the villi, where they are eventually shed into the lumen. Epithelial cells in the small intestine turnover every 3-5 days. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "Intestinal glands are lined by an epithelium composed of absorptive enterocytes, goblet cells, Paneth cells, enteroendocrine cells and stem cells. Stem cells are proliferative cells that replenish both absorptive and goblet cells. Differentiated cells migrate up the intestinal glands onto the villi, where they are eventually shed into the lumen. Epithelial cells in the small intestine turnover every 3-5 days. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-9-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Intestinal glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-9-New.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intestinal glands are lined by an epithelium composed of absorptive enterocytes, goblet cells, Paneth cells, enteroendocrine cells and stem cells. Stem cells are proliferative cells that replenish both absorptive and goblet cells. Differentiated cells migrate up the intestinal glands onto the villi, where they are eventually shed into the lumen. Epithelial cells in the small intestine turnover every 3-5 days. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enterocytes",
+      "explicacao_original": "Enterocytes are the absorptive cells lining the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-9-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Intestinal glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-9-New.jpg'. Destaca a estrutura ou conceito 'Enterocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enterocytes are the absorptive cells lining the gland.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cell",
+      "explicacao_original": "Goblet cells produce mucus for lubrication along the intestinal surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-9-NEW-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Intestinal glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-9-New.jpg'. Destaca a estrutura ou conceito 'Goblet cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Goblet cells produce mucus for lubrication along the intestinal surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Paneth cells",
+      "explicacao_original": "Paneth cells are located primarily at the bases of intestinal glands and display bright red granules adjacent to the lumen. Paneth cells secrete lysozyme that digests bacterial cell walls and helps regulate the normal bacterial flora.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-9-NEW-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Intestinal glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-9-New.jpg'. Destaca a estrutura ou conceito 'Paneth cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Paneth cells are located primarily at the bases of intestinal glands and display bright red granules adjacent to the lumen. Paneth cells secrete lysozyme that digests bacterial cell walls and helps regulate the normal bacterial flora.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Enteroendocrine cell",
+      "explicacao_original": "Enteroendocrine cells belong to a larger class of endocrine cells, the diffuse neuroendocrine system (DNES). At least 15 different types of hormone-secreting enteroendocrine cells are present in the digestive tract. Because they secrete into the lamina propria, rather than the lumen of the intestinal gland, their granules face the basement membrane of the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-9-NEW-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Intestinal glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-9-New.jpg'. Destaca a estrutura ou conceito 'Enteroendocrine cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enteroendocrine cells belong to a larger class of endocrine cells, the diffuse neuroendocrine system (DNES). At least 15 different types of hormone-secreting enteroendocrine cells are present in the digestive tract. Because they secrete into the lamina propria, rather than the lumen of the intestinal gland, their granules face the basement membrane of the gland.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Mississippi slide collection",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-9-NEW-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-9-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Intestinal glands'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-9-New.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Mississippi slide collection. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-10/, acesso em 2026-08-07."
+    }
+  ]
+}

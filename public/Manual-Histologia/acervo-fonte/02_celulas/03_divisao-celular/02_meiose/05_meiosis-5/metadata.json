@@ -1,0 +1,73 @@
+{
+  "id": 2164,
+  "titulo": "Meiosis I: Anaphase",
+  "titulo_wordpress": "Meiosis 5",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Meiose",
+    "Meiosis 5"
+  ],
+  "descricao_original": "Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5.jpg",
+      "arquivo": "imagens/base/C.CD_.Mei-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meiosis I: Anaphase', no setor Células > Divisão Celular > Meiose > Meiosis 5. Descricao original da pagina: Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pair of homologous chromosomes",
+      "explicacao_original": "Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-5-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-5.jpg'. Destaca a estrutura ou conceito 'Pair of homologous chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-5-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-5.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mitotic spindle",
+      "explicacao_original": "Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-5-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-5.jpg'. Destaca a estrutura ou conceito 'Mitotic spindle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-5-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-5.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Centromere",
+      "explicacao_original": "Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-5-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-5.jpg'. Destaca a estrutura ou conceito 'Centromere' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase begins as chiasmata break, allowing homologous chromosomes to separate. Unlike mitosis, sister chromatids remain attached by cohesive proteins at their centromeres, and their kinetochores function together. Anaphase ends with the segregation of one duplicated chromosome of each homologous pair to each spindle pole.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 5. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-5/, acesso em 2026-08-07."
+    }
+  ]
+}

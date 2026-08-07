@@ -1,0 +1,75 @@
+{
+  "id": 9208,
+  "titulo": "Globe: Lens",
+  "titulo_wordpress": "Globe 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 9"
+  ],
+  "descricao_original": "This image of the equatorial region of the lens shows the lens epithelium lying just beneath the capsule. These cells proliferate, generating lens fibers. This process allows for growth of the lens and continues at a slow, but decreasing rate throughout adult life. The equatorial region also serves as the site of attachment for the zonule fibers extending from the ciliary body.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-9/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-9.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Lens', no setor Órgãos e Sistemas > Olho > Globe > Globe 9. Descricao original da pagina: This image of the equatorial region of the lens shows the lens epithelium lying just beneath the capsule. These cells proliferate, generating lens fibers. This process allows for growth of the lens and continues at a slow, but decreasing rate throughout adult life. The equatorial region also serves as the site of attachment for the zonule fibers extending from the ciliary body.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Zonule fibers",
+      "explicacao_original": "This image of the equatorial region of the lens shows the lens epithelium lying just beneath the capsule. These cells proliferate, generating lens fibers. This process allows for growth of the lens and continues at a slow, but decreasing rate throughout adult life. The equatorial region also serves as the site of attachment for the zonule fibers extending from the ciliary body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Lens'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-9.jpg'. Destaca a estrutura ou conceito 'Zonule fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image of the equatorial region of the lens shows the lens epithelium lying just beneath the capsule. These cells proliferate, generating lens fibers. This process allows for growth of the lens and continues at a slow, but decreasing rate throughout adult life. The equatorial region also serves as the site of attachment for the zonule fibers extending from the ciliary body.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lens epithelium",
+      "explicacao_original": "The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. Near the equator of the lens, the cells divide to produce new cells that differentiate into lens fibers. The lens capsule is formed by the thickened basal lamina of the lens epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Lens'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-9.jpg'. Destaca a estrutura ou conceito 'Lens epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. Near the equator of the lens, the cells divide to produce new cells that differentiate into lens fibers. The lens capsule is formed by the thickened basal lamina of the lens epithelium.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lens capsule",
+      "explicacao_original": "The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. Near the equator of the lens, the cells divide to produce new cells that differentiate into lens fibers. The lens capsule is formed by the thickened basal lamina of the lens epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Lens'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-9.jpg'. Destaca a estrutura ou conceito 'Lens capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. Near the equator of the lens, the cells divide to produce new cells that differentiate into lens fibers. The lens capsule is formed by the thickened basal lamina of the lens epithelium.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lens fibers",
+      "explicacao_original": "Once generated, lens fibers elongate and flatten in an axis parallel to the light path. They gradually lose their nuclei and other organelles as they descend into the lens. During this process, their cytoplasm becomes filled with a group of proteins called crystallins that provide transparency and a high refractive index. Mature lens fibers are extremely long, typically 7–10 mm and are densely packed together forming a perfectly transparent tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Lens'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-9.jpg'. Destaca a estrutura ou conceito 'Lens fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Once generated, lens fibers elongate and flatten in an axis parallel to the light path. They gradually lose their nuclei and other organelles as they descend into the lens. During this process, their cytoplasm becomes filled with a group of proteins called crystallins that provide transparency and a high refractive index. Mature lens fibers are extremely long, typically 7–10 mm and are densely packed together forming a perfectly transparent tissue.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Vet-Lab-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Vet-Lab-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Lens'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-9.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-9/, acesso em 2026-08-07."
+    }
+  ]
+}

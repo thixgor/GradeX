@@ -1,0 +1,105 @@
+{
+  "id": 18766,
+  "titulo": "Alveolar macrophage",
+  "titulo_wordpress": "Alveoli 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveoli",
+    "Alveoli 5"
+  ],
+  "descricao_original": "The third cell type present in the alveolus is the alveolar macrophage, which can be can also be found in the interalveolar septum. Because the surface of the alveolus is continuous with the exterior, these cells actually function outside the body. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "arquivo": "imagens/base/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Alveolar macrophage', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Descricao original da pagina: The third cell type present in the alveolus is the alveolar macrophage, which can be can also be found in the interalveolar septum. Because the surface of the alveolus is continuous with the exterior, these cells actually function outside the body. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar lumen",
+      "explicacao_original": "The third cell type present in the alveolus is the alveolar macrophage, which can be can also be found in the interalveolar septum. Because the surface of the alveolus is continuous with the exterior, these cells actually function outside the body. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Alveolar lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The third cell type present in the alveolus is the alveolar macrophage, which can be can also be found in the interalveolar septum. Because the surface of the alveolus is continuous with the exterior, these cells actually function outside the body. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interalveolar septum",
+      "explicacao_original": "The third cell type present in the alveolus is the alveolar macrophage, which can be can also be found in the interalveolar septum. Because the surface of the alveolus is continuous with the exterior, these cells actually function outside the body. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Interalveolar septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The third cell type present in the alveolus is the alveolar macrophage, which can be can also be found in the interalveolar septum. Because the surface of the alveolus is continuous with the exterior, these cells actually function outside the body. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Type I cell",
+      "explicacao_original": "Type I cells (pulmonary epithelial cells) line the alveolus; their nuclei protrude into the alveolar space. Endothelial cell nuclei face the capillary lumen and are frequently curved to assume the shape of that lumen. Septal cells (type II alveolar cells) are large, vacuolated cells that bulge into the alveolus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Type I cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Type I cells (pulmonary epithelial cells) line the alveolus; their nuclei protrude into the alveolar space. Endothelial cell nuclei face the capillary lumen and are frequently curved to assume the shape of that lumen. Septal cells (type II alveolar cells) are large, vacuolated cells that bulge into the alveolus.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Type II cell",
+      "explicacao_original": "Type I cells (pulmonary epithelial cells) line the alveolus; their nuclei protrude into the alveolar space. Endothelial cell nuclei face the capillary lumen and are frequently curved to assume the shape of that lumen. Septal cells (type II alveolar cells) are large, vacuolated cells that bulge into the alveolus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Type II cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Type I cells (pulmonary epithelial cells) line the alveolus; their nuclei protrude into the alveolar space. Endothelial cell nuclei face the capillary lumen and are frequently curved to assume the shape of that lumen. Septal cells (type II alveolar cells) are large, vacuolated cells that bulge into the alveolus.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Capillaries form 80% of the wall of the alveolus and are supplied with deoxygenated blood by branches of pulmonary arteries. After oxygenation, blood is returned by the pulmonary venous system. The air-blood barrier consists of a simple squamous epithelium (type I) lining the alveolus and a simple squamous epithelium (endothelium) lining the capillary, along with their fused basal laminae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-6-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries form 80% of the wall of the alveolus and are supplied with deoxygenated blood by branches of pulmonary arteries. After oxygenation, blood is returned by the pulmonary venous system. The air-blood barrier consists of a simple squamous epithelium (type I) lining the alveolus and a simple squamous epithelium (endothelium) lining the capillary, along with their fused basal laminae.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Endothelial cell nuclei",
+      "explicacao_original": "Capillaries form 80% of the wall of the alveolus and are supplied with deoxygenated blood by branches of pulmonary arteries. After oxygenation, blood is returned by the pulmonary venous system. The air-blood barrier consists of a simple squamous epithelium (type I) lining the alveolus and a simple squamous epithelium (endothelium) lining the capillary, along with their fused basal laminae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-7-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries form 80% of the wall of the alveolus and are supplied with deoxygenated blood by branches of pulmonary arteries. After oxygenation, blood is returned by the pulmonary venous system. The air-blood barrier consists of a simple squamous epithelium (type I) lining the alveolus and a simple squamous epithelium (endothelium) lining the capillary, along with their fused basal laminae.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveolar macrophages",
+      "explicacao_original": "Alveolar macrophages are derived from monocytes and normally phagocytose foreign debris that reaches the lungs. During congestive heart failure, they phagocytose extravasated blood accumulating in alveoli and are then called “heart failure” cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Alveolar macrophages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar macrophages are derived from monocytes and normally phagocytose foreign debris that reaches the lungs. During congestive heart failure, they phagocytose extravasated blood accumulating in alveoli and are then called “heart failure” cells.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Air-blood barrier",
+      "explicacao_original": "Capillaries form 80% of the wall of the alveolus and are supplied with deoxygenated blood by branches of pulmonary arteries. After oxygenation, blood is returned by the pulmonary venous system. The air-blood barrier consists of a simple squamous epithelium (type I) lining the alveolus and a simple squamous epithelium (endothelium) lining the capillary, along with their fused basal laminae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.07-8-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar macrophage'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.07.jpg'. Destaca a estrutura ou conceito 'Air-blood barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries form 80% of the wall of the alveolus and are supplied with deoxygenated blood by branches of pulmonary arteries. After oxygenation, blood is returned by the pulmonary venous system. The air-blood barrier consists of a simple squamous epithelium (type I) lining the alveolus and a simple squamous epithelium (endothelium) lining the capillary, along with their fused basal laminae.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-5/, acesso em 2026-08-07."
+    }
+  ]
+}

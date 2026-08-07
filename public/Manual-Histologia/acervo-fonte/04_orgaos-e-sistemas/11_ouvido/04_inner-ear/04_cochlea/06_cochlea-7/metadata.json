@@ -1,0 +1,144 @@
+{
+  "id": 14274,
+  "titulo": "Cochlea: innervation",
+  "titulo_wordpress": "Cochlea 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 7"
+  ],
+  "descricao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "arquivo": "imagens/base/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cochlea: innervation', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Descricao original da pagina: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Scala vestibuli",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Scala vestibuli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Vestibular membrane",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Vestibular membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Scali tympani",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Scali tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basilar membrane",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P04-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P04-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Basilar membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cochlear duct",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Cochlear duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Organ of Corti",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Organ of Corti' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Tectorial membrane",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Tectorial membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Stria vascularis",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P09.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P09.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Stria vascularis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Spiral limbus",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P10.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P10.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Spiral limbus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "CN VIII",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P13.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P13.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Osseous spiral lamina",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P11b.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P11b.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Osseous spiral lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Spiral ganglion",
+      "explicacao_original": "The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.06.P12.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.06.P12.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.07A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.07A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.07A.jpg'. Destaca a estrutura ou conceito 'Spiral ganglion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image illustrates the course of peripheral processes of cranial nerve VIII from their passage through the osseous spiral lamina to the spiral ganglion. Central axons from the bipolar cells in this ganglion continue into the modiolus as the cochlear division of the nerve. 200x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-7/, acesso em 2026-08-07."
+    }
+  ]
+}

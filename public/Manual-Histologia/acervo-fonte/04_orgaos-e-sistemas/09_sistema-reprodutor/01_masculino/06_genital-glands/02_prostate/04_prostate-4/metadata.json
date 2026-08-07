@@ -1,0 +1,67 @@
+{
+  "id": 15815,
+  "titulo": "Prostate",
+  "titulo_wordpress": "Prostate 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Genital Glands",
+    "Prostate",
+    "Prostate 4"
+  ],
+  "descricao_original": "Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-4/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from The University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.jpg",
+      "arquivo": "imagens/base/O.R.M.GG_.P.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Prostate', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 4. Descricao original da pagina: Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.04.P01.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.04.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Prostatic concretions",
+      "explicacao_original": "Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.04.P02.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.04.jpg'. Destaca a estrutura ou conceito 'Prostatic concretions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.04.P03.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.04.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several individual prostate glands fill the image. The epithelium of the prostate, simple or pseudostratified columnar, and its underlying connective tissue are thrown into low folds. Prostatic concretions, probably precipitates of secretory products, accumulate with age and may calcify; concretions are diagnostic for the prostate. 300x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from The University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Michigan-source-ping-2-3.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-3.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.04.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from The University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-4/, acesso em 2026-08-07."
+    }
+  ]
+}

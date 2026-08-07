@@ -1,0 +1,155 @@
+{
+  "id": 29425,
+  "titulo": "Crown stage of tooth development",
+  "titulo_wordpress": "Tooth development 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 9"
+  ],
+  "descricao_original": "These images show the enamel organ at the crown stage (l) and a high magnification of the cusp (r). During the crown the hard tissues of the tooth are deposited, beginning at the cusp of the tooth. 50x (l), 300x (r)",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "arquivo": "imagens/base/Page-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Crown stage of tooth development', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Descricao original da pagina: These images show the enamel organ at the crown stage (l) and a high magnification of the cusp (r). During the crown the hard tissues of the tooth are deposited, beginning at the cusp of the tooth. 50x (l), 300x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Outer enamel epithelium",
+      "explicacao_original": "The outer enamel epithelium forms the outer surface of the enamel organ and consists of cuboidal ectodermal cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/OEE-9.png",
+      "arquivo": "imagens/marcadores/OEE-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Outer enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer enamel epithelium forms the outer surface of the enamel organ and consists of cuboidal ectodermal cells.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Inner enamel epithelium",
+      "explicacao_original": "The inner enamel epithelium consists of columnar ectodermal cells that form the inner surface of the enamel organ in close proximity to the ectomesenchymal cells of the papilla. The cells differentiate into ameloblasts that secrete enamel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/IEE-9-1.png",
+      "arquivo": "imagens/marcadores/IEE-9-1.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Inner enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner enamel epithelium consists of columnar ectodermal cells that form the inner surface of the enamel organ in close proximity to the ectomesenchymal cells of the papilla. The cells differentiate into ameloblasts that secrete enamel.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cervical loop",
+      "explicacao_original": "The location where the inner and outer enamel epithelia meet is called the cervical loop. This structure will elongate during the root phase of tooth development to form the Hertwig’s epithelium root sheath.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cervical-loop-9.png",
+      "arquivo": "imagens/marcadores/Cervical-loop-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Cervical loop' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The location where the inner and outer enamel epithelia meet is called the cervical loop. This structure will elongate during the root phase of tooth development to form the Hertwig’s epithelium root sheath.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stellate reticulum",
+      "explicacao_original": "The ectodermal cells within the center of the enamel organ secrete glycosaminoglycans that draw in water, causing the cells to appear star-shaped. The large stellate reticulum allows space for the morphodifferentiation of the crown of the tooth. At the cusp to this tooth the stellate reticulum is condensed with the other layers of the enamel organ to form the reduced enamel epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Stellate-reticulum-9-2.png",
+      "arquivo": "imagens/marcadores/Stellate-reticulum-9-2.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Stellate reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectodermal cells within the center of the enamel organ secrete glycosaminoglycans that draw in water, causing the cells to appear star-shaped. The large stellate reticulum allows space for the morphodifferentiation of the crown of the tooth. At the cusp to this tooth the stellate reticulum is condensed with the other layers of the enamel organ to form the reduced enamel epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dental follicle",
+      "explicacao_original": "The dental follicle is formed by ectomesenchymal stem cells that surround the outer most aspect of the apical part of the tooth germ. These cells differentiate into cementoblasts that deposit cementum, fibroblasts that deposit collagen fibers as part of the periodontal ligament, and osteoblasts that deposit the alveolar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dental-follicle-9.png",
+      "arquivo": "imagens/marcadores/Dental-follicle-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Dental follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental follicle is formed by ectomesenchymal stem cells that surround the outer most aspect of the apical part of the tooth germ. These cells differentiate into cementoblasts that deposit cementum, fibroblasts that deposit collagen fibers as part of the periodontal ligament, and osteoblasts that deposit the alveolar bone.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dental pulp organ",
+      "explicacao_original": "During the crown stage of tooth development the ectomesenchymal cells of the dental papillae differentiate into the dental pulp organ that will form the dental pulp",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Pulp-organ-9.png",
+      "arquivo": "imagens/marcadores/Pulp-organ-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Dental pulp organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the crown stage of tooth development the ectomesenchymal cells of the dental papillae differentiate into the dental pulp organ that will form the dental pulp. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Developing cusp",
+      "explicacao_original": "The cusp is the pointed or rounded projection on the occlusal or incisal surface of the tooth that first emerges through the gingiva.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cusp-9.png",
+      "arquivo": "imagens/marcadores/Cusp-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Developing cusp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cusp is the pointed or rounded projection on the occlusal or incisal surface of the tooth that first emerges through the gingiva.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Odontoblasts",
+      "explicacao_original": "During the crown stage, ectomesenchymal pre-odontoblasts fully differentiate into odontoblasts that deposit pre-dentin, the organic matrix of dentine into the basement membrane that separates the ameloblasts (ectodermal cells) from these ectomesenchymal cells. Processes extend from the odontoblasts through dentinal tubules toward the enamel or cementum. Odontoblasts are retained in the dental pulp throughout life.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Odontoblasts-9.png",
+      "arquivo": "imagens/marcadores/Odontoblasts-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Odontoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the crown stage, ectomesenchymal pre-odontoblasts fully differentiate into odontoblasts that deposit pre-dentin, the organic matrix of dentine into the basement membrane that separates the ameloblasts (ectodermal cells) from these ectomesenchymal cells. Processes extend from the odontoblasts through dentinal tubules toward the enamel or cementum. Odontoblasts are retained in the dental pulp throughout life.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Predentin",
+      "explicacao_original": "Dentin is deposited similarly to bone: the organic matrix is deposited first and provides a framework on which hydroxyapatite crystals are laid down to form dentin. The organic matrix that is deposited by the odontoblasts that reside in the tooth pulp is called pre-dentin. There is always a layer of organic predentin between the mineralized dentin and the odontoblast cell bodies throughout the life of the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Predentin-9-1.png",
+      "arquivo": "imagens/marcadores/Predentin-9-1.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Predentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin is deposited similarly to bone: the organic matrix is deposited first and provides a framework on which hydroxyapatite crystals are laid down to form dentin. The organic matrix that is deposited by the odontoblasts that reside in the tooth pulp is called pre-dentin. There is always a layer of organic predentin between the mineralized dentin and the odontoblast cell bodies throughout the life of the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin is deposited similarly to bone: the organic matrix is deposited first and provides a framework on which hydroxyapatite crystals are laid down to form dentin. Dentin makes up the bulk of the hard tissue of the tooth and is 70% mineralized. Dentin is the first hard tissue deposited during tooth development.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dentin-9.png",
+      "arquivo": "imagens/marcadores/Dentin-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin is deposited similarly to bone: the organic matrix is deposited first and provides a framework on which hydroxyapatite crystals are laid down to form dentin. Dentin makes up the bulk of the hard tissue of the tooth and is 70% mineralized. Dentin is the first hard tissue deposited during tooth development.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Enamel",
+      "explicacao_original": "Enamel is the most mineralized tissue in the human body, being 96% mineralized with hydroxyapatite calcium phosphate crystals. Enamel is mineralized quickly after the organic matrix is deposited by ameloblasts, so there is no apparent organic matrix layer, as there is in dentin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Enamel-9.png",
+      "arquivo": "imagens/marcadores/Enamel-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel is the most mineralized tissue in the human body, being 96% mineralized with hydroxyapatite calcium phosphate crystals. Enamel is mineralized quickly after the organic matrix is deposited by ameloblasts, so there is no apparent organic matrix layer, as there is in dentin.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Ameloblasts",
+      "explicacao_original": "The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Ameloblasts-9.png",
+      "arquivo": "imagens/marcadores/Ameloblasts-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Ameloblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The columnar ectodermal cells on the inner aspect of the enamel organ that deposit the organic matrix of enamel are fully differentiated ameloblasts. During the crown stage of tooth development the pre-ameloblasts fully differentiate into ameloblasts that deposit enamel starting at the cusp of the tooth and moving apically.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Reduced enamel epithelium",
+      "explicacao_original": "Starting at the cusp of the tooth, the cell layers of the enamel organ will condense together forming a reduced enamel epithelium. The reduced enamel epithelium contains the inner enamel epithelium/pre-ameloblasts/ameloblasts, the stratum intermedium, the stellate reticulum, and the outer enamel epithelium. The reduced enamel epithelium will allow nutrients from blood vessels on the outside of the outer enamel epithelium to be supplied to the pre-ameloblasts/ameloblasts once hard tissue is deposited.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Reduced-enamel-E-9.png",
+      "arquivo": "imagens/marcadores/Reduced-enamel-E-9.png",
+      "imagem_base": "imagens/base/Page-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Crown stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-9.jpg'. Destaca a estrutura ou conceito 'Reduced enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Starting at the cusp of the tooth, the cell layers of the enamel organ will condense together forming a reduced enamel epithelium. The reduced enamel epithelium contains the inner enamel epithelium/pre-ameloblasts/ameloblasts, the stratum intermedium, the stellate reticulum, and the outer enamel epithelium. The reduced enamel epithelium will allow nutrients from blood vessels on the outside of the outer enamel epithelium to be supplied to the pre-ameloblasts/ameloblasts once hard tissue is deposited.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "id": 27042,
+  "titulo": "Basic tissues: Epithelial and connective",
+  "titulo_wordpress": "Tissue basics 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Fundamentos dos Tecidos",
+    "Tissue basics 1"
+  ],
+  "descricao_original": "Tissues are groups of cells organized for specific functions. The four tissue types, epithelial, connective, muscle and nervous, differ in composition and appearance, reflecting their various functions. Epithelial, muscle and nervous tissues are composed of closely packed cells with little extracellular material. Connective tissues are unique in their abundant extracellular components along with various cells types. Left: 1000x, 400x; Right: 600x, 600x",
+  "url_origem": "https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "arquivo": "imagens/base/T.TB_.-1A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Basic tissues: Epithelial and connective', no setor Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Descricao original da pagina: Tissues are groups of cells organized for specific functions. The four tissue types, epithelial, connective, muscle and nervous, differ in composition and appearance, reflecting their various functions. Epithelial, muscle and nervous tissues are composed of closely packed cells with little extracellular material. Connective tissues are unique in their abundant extracellular components along with various cells types. Left: 1000x, 400x; Right: 600x, 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelial tissue",
+      "explicacao_original": "Epithelial tissues consist of closely-spaced cells, arranged in single or multiple layers, that both line or cover all body surfaces as well as form glands. Single-layer epithelia often have surface specializations, like cilia seen here. Individual cells are bound together by junctions that isolate the surface space from the intercellular space, thus providing integrity to the epithelial layer. All epithelia rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1-1-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Epithelial tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Epithelial tissues consist of closely-spaced cells, arranged in single or multiple layers, that both line or cover all body surfaces as well as form glands. Single-layer epithelia often have surface specializations, like cilia seen here. Individual cells are bound together by junctions that isolate the surface space from the intercellular space, thus providing integrity to the epithelial layer. All epithelia rest on a basement membrane.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A-2-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1A-2-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Free surface",
+      "explicacao_original": "The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A-3-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1A-3-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Free surface' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cilia",
+      "explicacao_original": "The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1-4-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A-5-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1A-5-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The upper panel shows an epithelium with a single layer of cells with cilia. The epithelium in the lower panel has multiple cell layers. All epithelia have a free surface and rest on a basement membrane.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1-6-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Cells",
+      "explicacao_original": "Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1-7-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Fibers",
+      "explicacao_original": "Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1-8-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1-8-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Ground substance",
+      "explicacao_original": "Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1-9-ping.png",
+      "arquivo": "imagens/marcadores/T.TB_.-1-9-ping.png",
+      "imagem_base": "imagens/base/T.TB_.-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/T.TB_.-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic tissues: Epithelial and connective'. Deve ser sobreposta, sem redimensionamento independente, a 'T.TB_.-1A.jpg'. Destaca a estrutura ou conceito 'Ground substance' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissues possess cells and an abundant extracellular matrix. The matrix, imparting unique functions to this tissue, is composed of ground substance (with the consistency of a liquid, a gel or a flexible rubber) and fibers (providing a framework and strength). Major connective tissue types include blood, connective tissue proper, cartilage and bone.. Contexto setorial: Tecidos > Fundamentos dos Tecidos > Tissue basics 1. Origem: Digital Histology, https://digitalhistology.org/tissues/tissues-basics/tissue-basics-1/, acesso em 2026-08-07."
+    }
+  ]
+}

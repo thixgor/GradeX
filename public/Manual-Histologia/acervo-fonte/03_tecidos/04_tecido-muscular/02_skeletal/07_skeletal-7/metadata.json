@@ -1,0 +1,85 @@
+{
+  "id": 2560,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 7"
+  ],
+  "descricao_original": "This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/",
+  "creditos_identificados": [
+    "Image source: This image is taken of a slide in the University of Mississippi slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "arquivo": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Descricao original da pagina: This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk7-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk7-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-7-NEW.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk7-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk7-NEW-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-7-NEW.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk7-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk7-NEW-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-7-NEW.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk7-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk7-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-7-NEW.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endomysium",
+      "explicacao_original": "This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk7-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk7-NEW-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-7-NEW.jpg'. Destaca a estrutura ou conceito 'Endomysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This H&E section shows muscle fibers cut in cross section and clearly demonstrates the myofibrils that fill the muscle fibers. Numerous capillaries are also visible. This is a section of the tongue which contains interlacing skeletal muscle fascicles and thus at the top and bottom of the image are fibers cut longitudinally. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is taken of a slide in the University of Mississippi slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/Mississippi-source-ping.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-7-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.M.Sk-7-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-7-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is taken of a slide in the University of Mississippi slide collection.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 7. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-muscle-7/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "id": 11776,
+  "titulo": "Elastic cartilage",
+  "titulo_wordpress": "Elastic 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Elastic",
+    "Elastic 2"
+  ],
+  "descricao_original": "Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/",
+  "creditos_identificados": [
+    "Image credit: This image is taken from a slide in The University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "arquivo": "imagens/base/T.C.C.E.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Descricao original da pagina: Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Elastic cartilage",
+      "explicacao_original": "Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P01.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P01.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Elastic cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P02.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P02.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Isogenous groups",
+      "explicacao_original": "Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.02Anew-5-ping-1.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.02Anew-5-ping-1.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Isogenous groups' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P03.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P03.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes in elastic cartilage are larger and more numerous than in hyaline cartilage and form fewer isogenous groups. The extracellular matrix of elastic cartilage is less abundant than in hyaline cartilage. This special stain demonstrates the abundant elastic fibers in the matrix. Masson stain 100x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Perichondrium",
+      "explicacao_original": "A perichondrium surrounds elastic cartilage and consists of an outer portion, the fibrous layer, and an inner chondrogenic layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P04.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P04.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Perichondrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A perichondrium surrounds elastic cartilage and consists of an outer portion, the fibrous layer, and an inner chondrogenic layer.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fibrous layer",
+      "explicacao_original": "The fibrous layer resembles a dense connective tissue and is a reserve cell layer for the inner layer, the chondrogenic layer. The chondrogenic layer blends imperceptibly with the cartilage, so that its innermost boundary cannot be easily established. Chondroblasts lie in the inner layer immediately adjacent to the cartilage and secrete cartilage matrix around themselves.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P05-1.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P05-1.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibrous layer resembles a dense connective tissue and is a reserve cell layer for the inner layer, the chondrogenic layer. The chondrogenic layer blends imperceptibly with the cartilage, so that its innermost boundary cannot be easily established. Chondroblasts lie in the inner layer immediately adjacent to the cartilage and secrete cartilage matrix around themselves.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Chondrogenic layer",
+      "explicacao_original": "The fibrous layer resembles a dense connective tissue and is a reserve cell layer for the inner layer, the chondrogenic layer. The chondrogenic layer blends imperceptibly with the cartilage, so that its innermost boundary cannot be easily established. Chondroblasts lie in the inner layer immediately adjacent to the cartilage and secrete cartilage matrix around themselves.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P06.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P06.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Chondrogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibrous layer resembles a dense connective tissue and is a reserve cell layer for the inner layer, the chondrogenic layer. The chondrogenic layer blends imperceptibly with the cartilage, so that its innermost boundary cannot be easily established. Chondroblasts lie in the inner layer immediately adjacent to the cartilage and secrete cartilage matrix around themselves.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Chondroblasts",
+      "explicacao_original": "A perichondrium surrounds elastic cartilage. The outer portion,the fibrous layer, is a reserve cell layer for the inner layer, the chondrogenic layer. This layer blends imperceptibly with the cartilage, so that its innermost boundary cannot be easily established. Chondroblasts lie in the inner layer immediately adjacent to the cartilage and secrete cartilage matrix around themselves.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.P07.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.02.P07.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Chondroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A perichondrium surrounds elastic cartilage. The outer portion,the fibrous layer, is a reserve cell layer for the inner layer, the chondrogenic layer. This layer blends imperceptibly with the cartilage, so that its innermost boundary cannot be easily established. Chondroblasts lie in the inner layer immediately adjacent to the cartilage and secrete cartilage matrix around themselves.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image credit",
+      "explicacao_original": "This image is taken from a slide in The University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Michigan-source-ping-2-1.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-1.png",
+      "imagem_base": "imagens/base/T.C.C.E.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.E.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.02.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is taken from a slide in The University of Michigan collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-2/, acesso em 2026-08-07."
+    }
+  ]
+}

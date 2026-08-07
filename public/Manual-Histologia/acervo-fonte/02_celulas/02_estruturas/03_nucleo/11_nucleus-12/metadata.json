@@ -1,0 +1,113 @@
+{
+  "id": 1251,
+  "titulo": "Nuclear envelope",
+  "titulo_wordpress": "Nucleus 12",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Núcleo",
+    "Nucleus 12"
+  ],
+  "descricao_original": "This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "arquivo": "imagens/base/C.S.N.-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nuclear envelope', no setor Células > Estruturas > Núcleo > Nucleus 12. Descricao original da pagina: This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-1-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-2-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner nuclear membrane",
+      "explicacao_original": "This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-3-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Inner nuclear membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer nuclear membrane",
+      "explicacao_original": "This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-4-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Outer nuclear membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Perinuclear space",
+      "explicacao_original": "This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-5-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Perinuclear space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the inner and outer nuclear membranes and the intervening perinuclear space. The outer membrane possesses ribosomes and is continuous with the rough endoplasmic reticulum (RER). 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "RER",
+      "explicacao_original": "The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-6-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ribosomes",
+      "explicacao_original": "The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-7-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Ribosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "SER",
+      "explicacao_original": "The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-8-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-8-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'SER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-12-9-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-12-9-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-12.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer membrane possesses ribosomes and is continuous with the RER (blue arrow). Smooth endoplasmic reticulum and mitochondria are visible in the cytoplasm.. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 12. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-12/, acesso em 2026-08-07."
+    }
+  ]
+}

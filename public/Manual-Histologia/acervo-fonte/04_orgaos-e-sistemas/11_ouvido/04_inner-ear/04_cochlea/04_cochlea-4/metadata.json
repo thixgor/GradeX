@@ -1,0 +1,124 @@
+{
+  "id": 14268,
+  "titulo": "Cochlear duct",
+  "titulo_wordpress": "Cochlea 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 4"
+  ],
+  "descricao_original": "The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "arquivo": "imagens/base/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cochlear duct', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Descricao original da pagina: The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Scala vestibuli",
+      "explicacao_original": "The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Scala vestibuli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Vestibular membrane",
+      "explicacao_original": "The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Vestibular membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Scala tympani",
+      "explicacao_original": "The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Scala tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basilar membrane",
+      "explicacao_original": "The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Basilar membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cochlear duct",
+      "explicacao_original": "The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Cochlear duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlear duct, part of the membranous labyrinth, is a triangular-shaped wedge located in the cochlea. The cochlear duct, filled with endolymph, lies in the middle of the cochlea, dividing it into thirds, with the scala vestibuli above and the scala tympani below the cochlear duct. The organ of Corti, the receptor for sound, is housed in the cochlear duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Organ of Corti",
+      "explicacao_original": "The organ of Corti consists of a complex of supportive cells and hair cells with elongated microvilli (stereocilia). Some of the stereocilia are embedded in the tectorial membrane, extending laterally over the organ of Corti. This membrane is frequently displaced during tissue preparation and, therefore, is not always seen in its proper location.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P06-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P06-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Organ of Corti' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The organ of Corti consists of a complex of supportive cells and hair cells with elongated microvilli (stereocilia). Some of the stereocilia are embedded in the tectorial membrane, extending laterally over the organ of Corti. This membrane is frequently displaced during tissue preparation and, therefore, is not always seen in its proper location.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Hair cells",
+      "explicacao_original": "Hair cells are the auditory receptors in the organ of Corti. These cells possess stereocilia, the tallest of which are embedded in the gelatinous tectorial membrane. Peripheral processes of CN VIII that innervate the hair cells exit the organ of Corti through the osseous spiral lamina and continue to the spiral ganglia where their bipolar nerve cell bodies are located. Central processes of these neurons form the cochlear division of CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Hair cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hair cells are the auditory receptors in the organ of Corti. These cells possess stereocilia, the tallest of which are embedded in the gelatinous tectorial membrane. Peripheral processes of CN VIII that innervate the hair cells exit the organ of Corti through the osseous spiral lamina and continue to the spiral ganglia where their bipolar nerve cell bodies are located. Central processes of these neurons form the cochlear division of CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Tectorial membrane",
+      "explicacao_original": "Hair cells are the auditory receptors in the organ of Corti. These cells possess stereocilia, the tallest of which are embedded in the gelatinous tectorial membrane. Peripheral processes of CN VIII that innervate the hair cells exit the organ of Corti through the osseous spiral lamina and continue to the spiral ganglia where their bipolar nerve cell bodies are located. Central processes of these neurons form the cochlear division of CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P08.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P08.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Tectorial membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hair cells are the auditory receptors in the organ of Corti. These cells possess stereocilia, the tallest of which are embedded in the gelatinous tectorial membrane. Peripheral processes of CN VIII that innervate the hair cells exit the organ of Corti through the osseous spiral lamina and continue to the spiral ganglia where their bipolar nerve cell bodies are located. Central processes of these neurons form the cochlear division of CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "CN VIII",
+      "explicacao_original": "Cranial nerve VIII innervates the hair cells. Peripheral axons (blue arrows) of this nerve pass medially from the hair cells through the osseous spiral lamina (black arrows) to the spiral ganglion, where their bipolar nerve cell bodies are located. Central processes of these neurons form the cochlear division of the nerve.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P10.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P10.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cranial nerve VIII innervates the hair cells. Peripheral axons (blue arrows) of this nerve pass medially from the hair cells through the osseous spiral lamina (black arrows) to the spiral ganglion, where their bipolar nerve cell bodies are located. Central processes of these neurons form the cochlear division of the nerve.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Stria vascularis",
+      "explicacao_original": "The stria vascularis, an epithelium located on the outer wall of the cochlear duct, is unique in that it is the only vascularized epithelium in mammals. The stria vascularis, along with related cells in the maculae and cristae ampullares, produces endolymph.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.P09.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.04.P09.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.04.jpg'. Destaca a estrutura ou conceito 'Stria vascularis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stria vascularis, an epithelium located on the outer wall of the cochlear duct, is unique in that it is the only vascularized epithelium in mammals. The stria vascularis, along with related cells in the maculae and cristae ampullares, produces endolymph.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-4/, acesso em 2026-08-07."
+    }
+  ]
+}

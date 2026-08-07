@@ -1,0 +1,113 @@
+{
+  "id": 10805,
+  "titulo": "Glomerulus: Blood supply",
+  "titulo_wordpress": "Renal corpuscle 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Renal Corpuscle",
+    "Renal corpuscle 9"
+  ],
+  "descricao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "arquivo": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Glomerulus: Blood supply', no setor Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Descricao original da pagina: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Renal corpuscle",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Renal corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Glomerulus",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Glomerulus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interlobular artery",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Interlobular artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Afferent arteriole",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Afferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Vascular pole",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Vascular pole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Juxtaglomerular apparatus",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Juxtaglomerular apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ascending thick limb",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Ascending thick limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Urinary pole",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Urinary pole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Proximal convoluted tubule",
+      "explicacao_original": "The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-9-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-9-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.RC-9-with-inset-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.RC-9-with-inset-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glomerulus: Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.RC-9-with-inset-use.jpg'. Destaca a estrutura ou conceito 'Proximal convoluted tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interlobular artery, a branch from the arcuate artery, gives rise to afferent arterioles, one of which supplies each glomerulus of a renal corpuscle. Renal corpuscles are located in the convoluted portions of the cortex, which form the lateral boundaries of each renal lobule. An interlobular artery and vein mark the lateral boundary of a lobule. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-9/, acesso em 2026-08-07."
+    }
+  ]
+}

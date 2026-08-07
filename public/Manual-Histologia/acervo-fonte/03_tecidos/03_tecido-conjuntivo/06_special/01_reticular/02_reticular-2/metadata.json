@@ -1,0 +1,44 @@
+{
+  "id": 16925,
+  "titulo": "Reticular connective tissue",
+  "titulo_wordpress": "Reticular 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Special",
+    "Reticular",
+    "Reticular 2"
+  ],
+  "descricao_original": "Reticular fibers are composed of Type III collagen and are unique from Type I collagen fibers in that they branch. Additionally, reticular fibers are glycosylated. They require special stains to be clearly identified, such as silver (seen here) or periodic acid Schiff (PAS). Lymph node 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/special/reticular/reticular-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-2.jpg",
+      "arquivo": "imagens/base/T.CT_.Special.Retic-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Reticular connective tissue', no setor Tecidos > Tecido Conjuntivo > Special > Reticular > Reticular 2. Descricao original da pagina: Reticular fibers are composed of Type III collagen and are unique from Type I collagen fibers in that they branch. Additionally, reticular fibers are glycosylated. They require special stains to be clearly identified, such as silver (seen here) or periodic acid Schiff (PAS). Lymph node 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/reticular/reticular-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Reticular fibers",
+      "explicacao_original": "Reticular fibers are composed of Type III collagen and are unique from Type I collagen fibers in that they branch. Additionally, reticular fibers are glycosylated. They require special stains to be clearly identified, such as silver (seen here) or periodic acid Schiff (PAS). Lymph node 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Retic-2-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Retic-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Reticular connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Retic-2.jpg'. Destaca a estrutura ou conceito 'Reticular fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Reticular fibers are composed of Type III collagen and are unique from Type I collagen fibers in that they branch. Additionally, reticular fibers are glycosylated. They require special stains to be clearly identified, such as silver (seen here) or periodic acid Schiff (PAS). Lymph node 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Reticular > Reticular 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/reticular/reticular-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Branching points",
+      "explicacao_original": "Reticular fibers are composed of Type III collagen and are unique from Type I collagen fibers in that they branch. Additionally, reticular fibers are glycosylated. They require special stains to be clearly identified, such as silver (seen here) or periodic acid Schiff (PAS). Lymph node 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Retic-2-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Retic-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Reticular connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Retic-2.jpg'. Destaca a estrutura ou conceito 'Branching points' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Reticular fibers are composed of Type III collagen and are unique from Type I collagen fibers in that they branch. Additionally, reticular fibers are glycosylated. They require special stains to be clearly identified, such as silver (seen here) or periodic acid Schiff (PAS). Lymph node 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Reticular > Reticular 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/reticular/reticular-2/, acesso em 2026-08-07."
+    }
+  ]
+}

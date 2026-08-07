@@ -1,0 +1,73 @@
+{
+  "id": 2967,
+  "titulo": "Synapse",
+  "titulo_wordpress": "Nervous tissue overview 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Visão Geral",
+    "Nervous tissue overview 8"
+  ],
+  "descricao_original": "Neuron communicate with other neurons and muscle cells primarily by a chemical synapse. Shown here is a synapse in the central nervous system and is composed of three elements: the terminal bouton (presynaptic terminal) of the presynaptic neuron; a synaptic cleft; and a postsynaptic density of the plasma membrane of the postsynaptic neuron. 50,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Ov-8.jpg",
+      "arquivo": "imagens/base/T.N.Ov-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Synapse', no setor Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 8. Descricao original da pagina: Neuron communicate with other neurons and muscle cells primarily by a chemical synapse. Shown here is a synapse in the central nervous system and is composed of three elements: the terminal bouton (presynaptic terminal) of the presynaptic neuron; a synaptic cleft; and a postsynaptic density of the plasma membrane of the postsynaptic neuron. 50,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Presynaptic terminals",
+      "explicacao_original": "The presynaptic terminal (terminal bouton) of the presynaptic neuron contains synaptic vesicles filled with neurotransmitter. An action potential triggers calcium influx into the terminal, causing the release of this neurotransmitter into the synaptic cleft. Though not visible in this image, numerous mitochondria are also present in the presynaptic terminal for energy production and as a calcium buffer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-8-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Synapse'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-8.jpg'. Destaca a estrutura ou conceito 'Presynaptic terminals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presynaptic terminal (terminal bouton) of the presynaptic neuron contains synaptic vesicles filled with neurotransmitter. An action potential triggers calcium influx into the terminal, causing the release of this neurotransmitter into the synaptic cleft. Though not visible in this image, numerous mitochondria are also present in the presynaptic terminal for energy production and as a calcium buffer.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Synaptic vesicles",
+      "explicacao_original": "The presynaptic terminal (terminal bouton) of the presynaptic neuron contains synaptic vesicles filled with neurotransmitter. An action potential triggers calcium influx into the terminal, causing the release of this neurotransmitter into the synaptic cleft. Though not visible in this image, numerous mitochondria are also present in the presynaptic terminal for energy production and as a calcium buffer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-8-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Synapse'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-8.jpg'. Destaca a estrutura ou conceito 'Synaptic vesicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The presynaptic terminal (terminal bouton) of the presynaptic neuron contains synaptic vesicles filled with neurotransmitter. An action potential triggers calcium influx into the terminal, causing the release of this neurotransmitter into the synaptic cleft. Though not visible in this image, numerous mitochondria are also present in the presynaptic terminal for energy production and as a calcium buffer.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Synaptic cleft",
+      "explicacao_original": "The synaptic cleft is a narrow space separating the pre- and postsynaptic neurons. The neurotransmitter released from the presynaptic terminal must diffuse cross the cleft to access the postsynaptic neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-8-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-8-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Synapse'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-8.jpg'. Destaca a estrutura ou conceito 'Synaptic cleft' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The synaptic cleft is a narrow space separating the pre- and postsynaptic neurons. The neurotransmitter released from the presynaptic terminal must diffuse cross the cleft to access the postsynaptic neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Postsynaptic density",
+      "explicacao_original": "After the neurotransmitter diffuses across the synaptic cleft, it binds to receptors clustered in the plasma membrane of the postsynaptic neuron immediately opposite the presynaptic terminal. This region is called the postsynaptic density. Binding of neurotransmitter to these receptors results in local changes in the membrane potential of the postsynaptic neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-8-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-8-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Synapse'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-8.jpg'. Destaca a estrutura ou conceito 'Postsynaptic density' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After the neurotransmitter diffuses across the synaptic cleft, it binds to receptors clustered in the plasma membrane of the postsynaptic neuron immediately opposite the presynaptic terminal. This region is called the postsynaptic density. Binding of neurotransmitter to these receptors results in local changes in the membrane potential of the postsynaptic neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Postsynaptic neuron",
+      "explicacao_original": "After the neurotransmitter diffuses across the synaptic cleft, it binds to receptors clustered in the plasma membrane of the postsynaptic neuron immediately opposite the presynaptic terminal. This region is called the postsynaptic density. Binding of neurotransmitter to these receptors results in local changes in the membrane potential of the postsynaptic neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-8-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-8-6-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Synapse'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-8.jpg'. Destaca a estrutura ou conceito 'Postsynaptic neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After the neurotransmitter diffuses across the synaptic cleft, it binds to receptors clustered in the plasma membrane of the postsynaptic neuron immediately opposite the presynaptic terminal. This region is called the postsynaptic density. Binding of neurotransmitter to these receptors results in local changes in the membrane potential of the postsynaptic neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-8/, acesso em 2026-08-07."
+    }
+  ]
+}

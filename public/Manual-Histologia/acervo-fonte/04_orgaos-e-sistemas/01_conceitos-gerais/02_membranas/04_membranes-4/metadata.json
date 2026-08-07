@@ -1,0 +1,63 @@
+{
+  "id": 11840,
+  "titulo": "Mucosal membrane",
+  "titulo_wordpress": "Membranes 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Membranas",
+    "Membranes 4"
+  ],
+  "descricao_original": "A mucosa, lining the lumen of any hollow organ opening to the exterior, is the most variable of the three types of membranes. It typically consists of an epithelium, a connective tissue lamina propria, and a muscularis mucosae of smooth muscle. A mucous membrane is so named because mucus-producing glands frequently secrete onto its surface, providing lubrication. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Membr-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosal membrane', no setor Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 4. Descricao original da pagina: A mucosa, lining the lumen of any hollow organ opening to the exterior, is the most variable of the three types of membranes. It typically consists of an epithelium, a connective tissue lamina propria, and a muscularis mucosae of smooth muscle. A mucous membrane is so named because mucus-producing glands frequently secrete onto its surface, providing lubrication. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The epithelium of a mucous membrane varies greatly depending on the location and function of the organ. Examples include simple columnar epithelium, simple cuboidal epithelium, pseudostratified epithelium, stratified squamous epithelium and transitional epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-4.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of a mucous membrane varies greatly depending on the location and function of the organ. Examples include simple columnar epithelium, simple cuboidal epithelium, pseudostratified epithelium, stratified squamous epithelium and transitional epithelium.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Glands",
+      "explicacao_original": "The tubes extending through lamina propria are glands, consisting of a secretory epithelium whose secretions lubricate the surface of this organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-4.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tubes extending through lamina propria are glands, consisting of a secretory epithelium whose secretions lubricate the surface of this organ.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The lamina propria of a mucosa is loose connective tissue. Because the ground substance of loose connective tissue is a watery gel, this layer provides good cushioning for its covering epithelium, padding for any glands present, diffusion of nutrients and migration of cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-4.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria of a mucosa is loose connective tissue. Because the ground substance of loose connective tissue is a watery gel, this layer provides good cushioning for its covering epithelium, padding for any glands present, diffusion of nutrients and migration of cells.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The muscularis mucosae of a mucous membrane is smooth muscle. This layer may be incomplete or lacking in some organs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-4.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis mucosae of a mucous membrane is smooth muscle. This layer may be incomplete or lacking in some organs.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-4/, acesso em 2026-08-07."
+    }
+  ]
+}

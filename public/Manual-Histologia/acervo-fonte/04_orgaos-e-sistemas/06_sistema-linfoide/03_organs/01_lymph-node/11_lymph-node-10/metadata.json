@@ -1,0 +1,96 @@
+{
+  "id": 8561,
+  "titulo": "Lymph node: hilum",
+  "titulo_wordpress": "Lymph node 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Lymph Node",
+    "Lymph node 10"
+  ],
+  "descricao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymph node: hilum', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Descricao original da pagina: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hilum",
+      "explicacao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Hilum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sinuses entering hilum",
+      "explicacao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Sinuses entering hilum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Efferent lymphatic vessels",
+      "explicacao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Efferent lymphatic vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Arteriole",
+      "explicacao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Medulla",
+      "explicacao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cortex",
+      "explicacao_original": "The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of a lymph node where the efferent lymphatics and venules exit and where arterioles enter. The hilum contains a network of anastomosing efferent vessels that receive the lymph passing through the medullary sinuses. Filling the hilum is supporting connective tissue and adipose tissue. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-10-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-10-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Node-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: hilum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-10.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-10/, acesso em 2026-08-07."
+    }
+  ]
+}

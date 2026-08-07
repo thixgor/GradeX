@@ -1,0 +1,66 @@
+{
+  "id": 25112,
+  "titulo": "Brown adipose connective tissue",
+  "titulo_wordpress": "Adipose 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Special",
+    "Adipose",
+    "Adipose 5"
+  ],
+  "descricao_original": "At higher magnification, the numerous, small lipid droplets in the cytoplasm of the multilocular adipocytes are clearly evident. The spherical nuclei are centrally placed and minimal connective tissue is present between the cells. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/special/adipose/adipose-5/",
+  "creditos_identificados": [
+    "Image source: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5.jpg",
+      "arquivo": "imagens/base/T.CT_.Special.Adipose-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Brown adipose connective tissue', no setor Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 5. Descricao original da pagina: At higher magnification, the numerous, small lipid droplets in the cytoplasm of the multilocular adipocytes are clearly evident. The spherical nuclei are centrally placed and minimal connective tissue is present between the cells. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Multilocular adipocyte",
+      "explicacao_original": "At higher magnification, the numerous, small lipid droplets in the cytoplasm of the multilocular adipocytes are clearly evident. The spherical nuclei are centrally placed and minimal connective tissue is present between the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Adipose-5-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Brown adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-5.jpg'. Destaca a estrutura ou conceito 'Multilocular adipocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At higher magnification, the numerous, small lipid droplets in the cytoplasm of the multilocular adipocytes are clearly evident. The spherical nuclei are centrally placed and minimal connective tissue is present between the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "At higher magnification, the numerous, small lipid droplets in the cytoplasm of the multilocular adipocytes are clearly evident. The spherical nuclei are centrally placed and minimal connective tissue is present between the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Adipose-5-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Brown adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-5.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At higher magnification, the numerous, small lipid droplets in the cytoplasm of the multilocular adipocytes are clearly evident. The spherical nuclei are centrally placed and minimal connective tissue is present between the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "The oxidation of lipids in most cells is coupled to the production of ATP in mitochondria. However, in multilocular adipocytes, metabolism of lipid generates heat in process known as non-shivering thermogenesis. This alternate path results from the presence of an uncoupling protein that which uncouples the oxidation of fatty acids from the production of ATP in the mitochondria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Adipose-5-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Brown adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-5.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The oxidation of lipids in most cells is coupled to the production of ATP in mitochondria. However, in multilocular adipocytes, metabolism of lipid generates heat in process known as non-shivering thermogenesis. This alternate path results from the presence of an uncoupling protein that which uncouples the oxidation of fatty acids from the production of ATP in the mitochondria.. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Calvo.png",
+      "arquivo": "imagens/marcadores/Calvo.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Adipose-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Brown adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-5.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-5/, acesso em 2026-08-07."
+    }
+  ]
+}

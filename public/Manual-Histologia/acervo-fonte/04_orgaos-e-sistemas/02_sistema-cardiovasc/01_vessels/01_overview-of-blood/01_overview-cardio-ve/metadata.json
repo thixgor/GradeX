@@ -1,0 +1,74 @@
+{
+  "id": 5246,
+  "titulo": "Blood vessels",
+  "titulo_wordpress": "Overview (cardio vessels) 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Overview of blood vessels",
+    "Overview (cardio vessels) 1"
+  ],
+  "descricao_original": "This drawing of an artery illustrates the layers comprising blood vessels. Tunica intima is the innermost layer facing the blood, tunica media is the middle layer and tunica adventitia, the outermost tunic, is continuous with the connective tissue that surrounds it. The three tunics of blood vessels are continuous with analogous layers of the heart.",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Blood vessels', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Overview of blood vessels > Overview (cardio vessels) 1. Descricao original da pagina: This drawing of an artery illustrates the layers comprising blood vessels. Tunica intima is the innermost layer facing the blood, tunica media is the middle layer and tunica adventitia, the outermost tunic, is continuous with the connective tissue that surrounds it. The three tunics of blood vessels are continuous with analogous layers of the heart.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "The tunica intima is lined by an inner layer of specialized simple squamous epithelium termed endothelium. Underlying the endothelium is a thin connective tissue layer. Beneath the connective tissue is the internal elastic lamina, consisting of a single, broad, fenestrated elastic sheet. This lamina is lacking in the smallest arteries and all but the larger veins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Ov-1.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima is lined by an inner layer of specialized simple squamous epithelium termed endothelium. Underlying the endothelium is a thin connective tissue layer. Beneath the connective tissue is the internal elastic lamina, consisting of a single, broad, fenestrated elastic sheet. This lamina is lacking in the smallest arteries and all but the larger veins.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Overview of blood vessels > Overview (cardio vessels) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Internal elastic lamina",
+      "explicacao_original": "The tunica intima is lined by an inner layer of specialized simple squamous epithelium termed endothelium. Underlying the endothelium is a thin connective tissue layer. Beneath the connective tissue is the internal elastic lamina, consisting of a single, broad, fenestrated elastic sheet. This lamina is lacking in the smallest arteries and all but the larger veins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Ov-1.jpg'. Destaca a estrutura ou conceito 'Internal elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima is lined by an inner layer of specialized simple squamous epithelium termed endothelium. Underlying the endothelium is a thin connective tissue layer. Beneath the connective tissue is the internal elastic lamina, consisting of a single, broad, fenestrated elastic sheet. This lamina is lacking in the smallest arteries and all but the larger veins.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Overview of blood vessels > Overview (cardio vessels) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica media",
+      "explicacao_original": "The tunica media is the middle layer and contains circularly arranged smooth muscle cells. These cells are the source of the connective tissue components of tunica media, including fenestrated elastic sheets in elastic arteries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Ov-1.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica media is the middle layer and contains circularly arranged smooth muscle cells. These cells are the source of the connective tissue components of tunica media, including fenestrated elastic sheets in elastic arteries.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Overview of blood vessels > Overview (cardio vessels) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "External elastic lamina",
+      "explicacao_original": "The external elastic lamina is only present in medium or muscular arteries and consists of a layer of fenestrated elastic sheets at the junction of the tunica media and tunica adventitia. This layer is also referred to as external elastic lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Ov-1.jpg'. Destaca a estrutura ou conceito 'External elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external elastic lamina is only present in medium or muscular arteries and consists of a layer of fenestrated elastic sheets at the junction of the tunica media and tunica adventitia. This layer is also referred to as external elastic lamellae.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Overview of blood vessels > Overview (cardio vessels) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "Tunica adventitia is the outermost tunic of blood vessels. This layer is composed of connective tissue, however, in the largest veins, it also contains longitudinally-oriented smooth muscle cells. The connective tissue of tunica adventitia blends imperceptibly with surrounding connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Ov-1.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tunica adventitia is the outermost tunic of blood vessels. This layer is composed of connective tissue, however, in the largest veins, it also contains longitudinally-oriented smooth muscle cells. The connective tissue of tunica adventitia blends imperceptibly with surrounding connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Overview of blood vessels > Overview (cardio vessels) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/overview-cardio-vessels/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

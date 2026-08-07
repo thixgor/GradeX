@@ -1,0 +1,143 @@
+{
+  "id": 2957,
+  "titulo": "Basic neural function",
+  "titulo_wordpress": "Nervous tissue overview 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Visão Geral",
+    "Nervous tissue overview 3"
+  ],
+  "descricao_original": "Stimuli are perceived from the internal or external environment and conveyed into the CNS via sensory neurons whose cell bodies are located in a spinal or a cranial ganglion. This input is processed by associative neurons within the CNS and a response is elicited via a motor neuron to an appropriate effector, e.g., skeletal muscle, as illustrated here.",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "arquivo": "imagens/base/T.N.Ov-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Basic neural function', no setor Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Descricao original da pagina: Stimuli are perceived from the internal or external environment and conveyed into the CNS via sensory neurons whose cell bodies are located in a spinal or a cranial ganglion. This input is processed by associative neurons within the CNS and a response is elicited via a motor neuron to an appropriate effector, e.g., skeletal muscle, as illustrated here.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "CNS: Brain and spinal cord",
+      "explicacao_original": "The central nervous system (CNS) consists of the brain and spinal cord, seen here. Both subdivisions have areas where nerve cell bodies are located (grey matter), and areas where axon tracts predominate (white matter). The spinal cord has a central, H-shaped area of grey matter and a peripheral zone of white matter (shaded in orange), containing axons traveling to or from higher and lower CNS centers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.N.Ov-3-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-1A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'CNS: Brain and spinal cord' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The central nervous system (CNS) consists of the brain and spinal cord, seen here. Both subdivisions have areas where nerve cell bodies are located (grey matter), and areas where axon tracts predominate (white matter). The spinal cord has a central, H-shaped area of grey matter and a peripheral zone of white matter (shaded in orange), containing axons traveling to or from higher and lower CNS centers.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "PNS",
+      "explicacao_original": "The peripheral nervous system (PNS, shaded in orange) consists of cranial nerves, spinal nerves, sensory ganglia of both cranial and spinal nerves, autonomic motor ganglia and nerves.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.N.Ov-3-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-2A-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'PNS' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The peripheral nervous system (PNS, shaded in orange) consists of cranial nerves, spinal nerves, sensory ganglia of both cranial and spinal nerves, autonomic motor ganglia and nerves.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spinal nerve",
+      "explicacao_original": "Attached to the spinal cord at regular intervals are spinal nerves, carrying information into and from the spinal cord. Each spinal nerve has a dorsal root and a ventral root.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Spinal nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Attached to the spinal cord at regular intervals are spinal nerves, carrying information into and from the spinal cord. Each spinal nerve has a dorsal root and a ventral root.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dorsal root",
+      "explicacao_original": "The dorsal root carries sensory information, via pseudounipolar neurons (in blue), into the spinal cord from receptors in the internal or external environment. Cell bodies of these neurons are located in a sensory ganglion on the dorsal root called a dorsal root ganglion. A ganglion is an accumulation of nerve cell bodies in the peripheral nervous system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Dorsal root' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsal root carries sensory information, via pseudounipolar neurons (in blue), into the spinal cord from receptors in the internal or external environment. Cell bodies of these neurons are located in a sensory ganglion on the dorsal root called a dorsal root ganglion. A ganglion is an accumulation of nerve cell bodies in the peripheral nervous system.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dorsal root ganglion",
+      "explicacao_original": "The dorsal root carries sensory information, via pseudounipolar neurons (in blue), into the spinal cord from receptors in the internal or external environment. Cell bodies of these neurons are located in a sensory ganglion on the dorsal root called a dorsal root ganglion (green oval). A ganglion is an accumulation of nerve cell bodies in the peripheral nervous system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Dorsal root ganglion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsal root carries sensory information, via pseudounipolar neurons (in blue), into the spinal cord from receptors in the internal or external environment. Cell bodies of these neurons are located in a sensory ganglion on the dorsal root called a dorsal root ganglion (green oval). A ganglion is an accumulation of nerve cell bodies in the peripheral nervous system.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ventral root",
+      "explicacao_original": "The ventral root of a spinal nerve carries motor information via multipolar neurons (in red) from the CNS to effector structures, such as muscles, glands, or other neurons. The nerve cell body for each multipolar neuron is located in the grey matter of the spinal cord; the axon of each neuron exits via the ventral root.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-6-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Ventral root' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ventral root of a spinal nerve carries motor information via multipolar neurons (in red) from the CNS to effector structures, such as muscles, glands, or other neurons. The nerve cell body for each multipolar neuron is located in the grey matter of the spinal cord; the axon of each neuron exits via the ventral root.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Receptor",
+      "explicacao_original": "Receptors (such as free nerve endings, Meissner’s corpuscles or Pacinian corpuscles), illustrated here in the skin, perceive changes in the environment. These changes are transmitted into the CNS via a process of a sensory, pseudounipolar neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-7-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Receptor' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Receptors (such as free nerve endings, Meissner’s corpuscles or Pacinian corpuscles), illustrated here in the skin, perceive changes in the environment. These changes are transmitted into the CNS via a process of a sensory, pseudounipolar neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Sensory neurons",
+      "explicacao_original": "Sensory information is carried into the CNS by pseudounipolar neurons (in blue). These sensory neurons begin at the receptor and have their cell bodies located either in a dorsal root ganglion (as illustrated here) or in a sensory ganglion of a cranial nerve. The central process of each neuron terminates in the CNS.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-8-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-8-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Sensory neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sensory information is carried into the CNS by pseudounipolar neurons (in blue). These sensory neurons begin at the receptor and have their cell bodies located either in a dorsal root ganglion (as illustrated here) or in a sensory ganglion of a cranial nerve. The central process of each neuron terminates in the CNS.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Interneurons (association neurons)",
+      "explicacao_original": "Association neurons are multipolar neurons located entirely within the CNS. These neurons integrate information they receive from multiple sources, including neurons located elsewhere in the CNS and in the PNS, such as these pseudounipolar neurons. In the reflex arc illustrated here, this processed information is conveyed to effector neurons which stimulate muscles or glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-9-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-9-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Interneurons (association neurons)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Association neurons are multipolar neurons located entirely within the CNS. These neurons integrate information they receive from multiple sources, including neurons located elsewhere in the CNS and in the PNS, such as these pseudounipolar neurons. In the reflex arc illustrated here, this processed information is conveyed to effector neurons which stimulate muscles or glands.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Motor neuron",
+      "explicacao_original": "Motor neurons are multipolar with their cell bodies predominately located in the CNS. Axons of these motor, multipolar neurons travel via the ventral root of a spinal nerve to an effector organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-10-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-10-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Motor neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Motor neurons are multipolar with their cell bodies predominately located in the CNS. Axons of these motor, multipolar neurons travel via the ventral root of a spinal nerve to an effector organ.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Effector organ",
+      "explicacao_original": "Effector structures in the periphery respond to input from a multipolar, motor neuron whose axon travels in the ventral root. This nerve stimulus results in the contraction of a muscle (such as the skeletal muscle illustrated here), the secretion of a gland, or the stimulation of another neuron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-11-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-11-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Effector organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Effector structures in the periphery respond to input from a multipolar, motor neuron whose axon travels in the ventral root. This nerve stimulus results in the contraction of a muscle (such as the skeletal muscle illustrated here), the secretion of a gland, or the stimulation of another neuron.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Integration",
+      "explicacao_original": "Spinal cord activity does not remain confined to a single segment of the spinal cord. Activity can be relayed upward or downward a few spinal cord segments or it may reach higher cognitive centers in the brain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3-12-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-3-12-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basic neural function'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-3.jpg'. Destaca a estrutura ou conceito 'Integration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spinal cord activity does not remain confined to a single segment of the spinal cord. Activity can be relayed upward or downward a few spinal cord segments or it may reach higher cognitive centers in the brain.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

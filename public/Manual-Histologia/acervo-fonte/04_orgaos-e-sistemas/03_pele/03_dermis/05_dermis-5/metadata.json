@@ -1,0 +1,93 @@
+{
+  "id": 6134,
+  "titulo": "Dermis",
+  "titulo_wordpress": "Dermis 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Dermis",
+    "Dermis 5"
+  ],
+  "descricao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Dermis', no setor Órgãos e Sistemas > Pele > Dermis > Dermis 5. Descricao original da pagina: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epidermis",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Epidermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Melanocytes",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-7-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Melanocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dermis",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Papillary layer",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Papillary layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Reticular layer",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Reticular layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Collagen fiber bundles",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Collagen fiber bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-5-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-5-6-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-5.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This toluidine-blue stained section shows the dermal-epidermal junction. The papillary layer of the dermis contains finer caliber collagen fibers and is more cellular than the reticular layer, which is marked by thicker collagen bundles and fewer cells. Toluidine blue stain, 200x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-5/, acesso em 2026-08-07."
+    }
+  ]
+}

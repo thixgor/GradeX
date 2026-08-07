@@ -1,0 +1,97 @@
+{
+  "id": 29092,
+  "titulo": "Periodontal ligament principal fiber groups",
+  "titulo_wordpress": "Periodontium 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth peridontium",
+    "Periodontium 3"
+  ],
+  "descricao_original": "The principal fibers of the periodontal ligament secure the tooth in the socket and consist of five major subgroups: alveolar crest, horizontal, oblique, apical, and interradicular fibers, on multi-root teeth. These collagen fibers connect the cementum to the alveolar bone and grouped according to the regions they connect. Three of the five groups are visible in these images. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide from the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Periodontal ligament principal fiber groups', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Descricao original da pagina: The principal fibers of the periodontal ligament secure the tooth in the socket and consist of five major subgroups: alveolar crest, horizontal, oblique, apical, and interradicular fibers, on multi-root teeth. These collagen fibers connect the cementum to the alveolar bone and grouped according to the regions they connect. Three of the five groups are visible in these images. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Aleolar crest",
+      "explicacao_original": "The alveolar crest is the uppermost part of the alveolar process. It forms a ridge of bone that surrounds the tooth at the level of the cementoenamel junction.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3-Crest-bone.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-3-Crest-bone.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Aleolar crest' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The alveolar crest is the uppermost part of the alveolar process. It forms a ridge of bone that surrounds the tooth at the level of the cementoenamel junction.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Alveolar crest principal fibers",
+      "explicacao_original": "The alveolar crest principal fibers connect the acellular cervical cementum to the alveolar crest bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3-Alveolar-crest.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-3-Alveolar-crest.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Alveolar crest principal fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The alveolar crest principal fibers connect the acellular cervical cementum to the alveolar crest bone.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Horizontal principal fibers",
+      "explicacao_original": "The horizontal principal fibers connect the acellular cervical cementum to the more superior regions of the alveolar bone proper. These fibers are oriented horizontally.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3-Horizontal.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-3-Horizontal.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Horizontal principal fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The horizontal principal fibers connect the acellular cervical cementum to the more superior regions of the alveolar bone proper. These fibers are oriented horizontally.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Oblique principal fibers",
+      "explicacao_original": "The oblique principal fibers are the most numerous fibers in the periodontal ligament. They connect the cementum along the remaining length of the root to the alveolar bone proper. These fibers provide the majority of support against the forces of mastication.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3-Oblique.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-3-Oblique.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Oblique principal fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The oblique principal fibers are the most numerous fibers in the periodontal ligament. They connect the cementum along the remaining length of the root to the alveolar bone proper. These fibers provide the majority of support against the forces of mastication.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cementum",
+      "explicacao_original": "The principal fibers of the periodontal ligament secure the tooth in the socket and consist of five major subgroups: alveolar crest, horizontal, oblique, apical, and interradicular fibers, on multi-root teeth. These collagen fibers connect the cementum to the alveolar bone and grouped according to the regions they connect. Three of the five groups are visible in these images. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3-Cementum.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-3-Cementum.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal fibers of the periodontal ligament secure the tooth in the socket and consist of five major subgroups: alveolar crest, horizontal, oblique, apical, and interradicular fibers, on multi-root teeth. These collagen fibers connect the cementum to the alveolar bone and grouped according to the regions they connect. Three of the five groups are visible in these images. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dentin",
+      "explicacao_original": "The principal fibers of the periodontal ligament secure the tooth in the socket and consist of five major subgroups: alveolar crest, horizontal, oblique, apical, and interradicular fibers, on multi-root teeth. These collagen fibers connect the cementum to the alveolar bone and grouped according to the regions they connect. Three of the five groups are visible in these images. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3-Dentin.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-3-Dentin.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The principal fibers of the periodontal ligament secure the tooth in the socket and consist of five major subgroups: alveolar crest, horizontal, oblique, apical, and interradicular fibers, on multi-root teeth. These collagen fibers connect the cementum to the alveolar bone and grouped according to the regions they connect. Three of the five groups are visible in these images. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide from the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodontal ligament principal fiber groups'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-3.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide from the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/advanced-tooth/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": 18762,
+  "titulo": "Alveolus",
+  "titulo_wordpress": "Alveoli 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveoli",
+    "Alveoli 4"
+  ],
+  "descricao_original": "The interalveolar septum is lined by a simple squamous epithelium of Type I cells and cuboidal Type II septal cells. Septal cells produce secretory granules containing surfactant, a mixture of phospholipids and proteins. Their frothy appearance results from extraction of these components during tissue processing. Septal cells are more numerous than type I cells, but only cover 5% to 7% of the surface. Septal cells divide to replenish both their own cell line and type I cells. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "arquivo": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Alveolus', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Descricao original da pagina: The interalveolar septum is lined by a simple squamous epithelium of Type I cells and cuboidal Type II septal cells. Septal cells produce secretory granules containing surfactant, a mixture of phospholipids and proteins. Their frothy appearance results from extraction of these components during tissue processing. Septal cells are more numerous than type I cells, but only cover 5% to 7% of the surface. Septal cells divide to replenish both their own cell line and type I cells. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar duct",
+      "explicacao_original": "This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Alveolar duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Alveolar lumen",
+      "explicacao_original": "This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Alveolar lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Smooth muscle knobs",
+      "explicacao_original": "This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-7-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Smooth muscle knobs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interalveolar septa",
+      "explicacao_original": "This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Interalveolar septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This alveolus is associated with an alveolar duct and thus the tips of the interalveolar septa possess smooth muscle knobs. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Type I cell",
+      "explicacao_original": "The interalveolar septum is lined by a simple squamous epithelium of Type I cells and cuboidal Type II septal cells. Septal cells produce secretory granules containing surfactant, a mixture of phospholipids and proteins. Their frothy appearance results from extraction of these components during tissue processing. Septal cells are more numerous than type I cells, but only cover 5% to 7% of the surface. Septal cells divide to replenish both their own cell line and type I cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Type I cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interalveolar septum is lined by a simple squamous epithelium of Type I cells and cuboidal Type II septal cells. Septal cells produce secretory granules containing surfactant, a mixture of phospholipids and proteins. Their frothy appearance results from extraction of these components during tissue processing. Septal cells are more numerous than type I cells, but only cover 5% to 7% of the surface. Septal cells divide to replenish both their own cell line and type I cells. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Type II cells",
+      "explicacao_original": "The interalveolar septum is lined by a simple squamous epithelium of Type I cells and cuboidal Type II septal cells. Septal cells produce secretory granules containing surfactant, a mixture of phospholipids and proteins. Their frothy appearance results from extraction of these components during tissue processing. Septal cells are more numerous than type I cells, but only cover 5% to 7% of the surface. Septal cells divide to replenish both their own cell line and type I cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Type II cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interalveolar septum is lined by a simple squamous epithelium of Type I cells and cuboidal Type II septal cells. Septal cells produce secretory granules containing surfactant, a mixture of phospholipids and proteins. Their frothy appearance results from extraction of these components during tissue processing. Septal cells are more numerous than type I cells, but only cover 5% to 7% of the surface. Septal cells divide to replenish both their own cell line and type I cells. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Air-blood barrier",
+      "explicacao_original": "The air-blood barrier separates an alveolar space from a capillary lumen; it is the membrane through which oxygen and carbon dioxide diffuse. The barrier is formed by two layers of simple squamous epithelium, one lining the alveolus and the other lining the capillary, and their fused basal laminae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.03-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.03-fixing-light-sharp-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.03-fixing-light-sharp-USE.jpg'. Destaca a estrutura ou conceito 'Air-blood barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The air-blood barrier separates an alveolar space from a capillary lumen; it is the membrane through which oxygen and carbon dioxide diffuse. The barrier is formed by two layers of simple squamous epithelium, one lining the alveolus and the other lining the capillary, and their fused basal laminae.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-4/, acesso em 2026-08-07."
+    }
+  ]
+}

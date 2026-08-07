@@ -1,0 +1,64 @@
+{
+  "id": 30024,
+  "titulo": "Bone: the organ - shapes",
+  "titulo_wordpress": "As an organ 1A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 1A"
+  ],
+  "descricao_original": "Bone tissue along with associated structures form a bone as an organ. Collectively, bones form the scaffolding that supports the body, allows it to move, protects its inner organs, and houses marrow. The human skeleton consists of 206 bones that can be classified according to their shape as either long, short, flat or irregular, thus facilitating many different types of movement and muscle attachment. Bones are continually being remolded in response to bodily changes and needs.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-1a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/Bone-shapes.jpg",
+      "arquivo": "imagens/base/Bone-shapes.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ - shapes', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 1A. Descricao original da pagina: Bone tissue along with associated structures form a bone as an organ. Collectively, bones form the scaffolding that supports the body, allows it to move, protects its inner organs, and houses marrow. The human skeleton consists of 206 bones that can be classified according to their shape as either long, short, flat or irregular, thus facilitating many different types of movement and muscle attachment. Bones are continually being remolded in response to bodily changes and needs.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Long bone",
+      "explicacao_original": "Long bones have greater length than width and are mostly located in the upper and lower limbs. Long bones include the femur in the thigh, humerus in the upper arm and metacarpals in the hand. Long bones often have structural specialization on their ends for muscle attachment and articulation with other bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/Long-bone.png",
+      "arquivo": "imagens/marcadores/Long-bone.png",
+      "imagem_base": "imagens/base/Bone-shapes.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/Bone-shapes.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - shapes'. Deve ser sobreposta, sem redimensionamento independente, a 'Bone-shapes.jpg'. Destaca a estrutura ou conceito 'Long bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Long bones have greater length than width and are mostly located in the upper and lower limbs. Long bones include the femur in the thigh, humerus in the upper arm and metacarpals in the hand. Long bones often have structural specialization on their ends for muscle attachment and articulation with other bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 1A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Short bones",
+      "explicacao_original": "Short bones are roughly cube shaped and located in the wrist and ankle. Short bones provide support and stability and facilitate a limited range of movement.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/Short-bones.png",
+      "arquivo": "imagens/marcadores/Short-bones.png",
+      "imagem_base": "imagens/base/Bone-shapes.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/Bone-shapes.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - shapes'. Deve ser sobreposta, sem redimensionamento independente, a 'Bone-shapes.jpg'. Destaca a estrutura ou conceito 'Short bones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Short bones are roughly cube shaped and located in the wrist and ankle. Short bones provide support and stability and facilitate a limited range of movement.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 1A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Flat bone",
+      "explicacao_original": "Flat bones are shield-shaped for protection of internal organs as well as providing large surfaces for muscle attachment. Flat bones form the cranium (e.g., frontal and parietal bones) and the pelvis (e.g., ilium and pubis). The sternum, scapula and ribs are also classified as flat bones. Flat bone image adapted from Anatomy.app; other images are courtesy of of Dr. Kelly Harrell, Virginia Commonwealth University.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/Flat-bone.png",
+      "arquivo": "imagens/marcadores/Flat-bone.png",
+      "imagem_base": "imagens/base/Bone-shapes.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/Bone-shapes.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - shapes'. Deve ser sobreposta, sem redimensionamento independente, a 'Bone-shapes.jpg'. Destaca a estrutura ou conceito 'Flat bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Flat bones are shield-shaped for protection of internal organs as well as providing large surfaces for muscle attachment. Flat bones form the cranium (e.g., frontal and parietal bones) and the pelvis (e.g., ilium and pubis). The sternum, scapula and ribs are also classified as flat bones. Flat bone image adapted from Anatomy.app; other images are courtesy of of Dr. Kelly Harrell, Virginia Commonwealth University.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 1A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Irregular bone",
+      "explicacao_original": "Irregular bones have complex shapes and provide protection for internal organs as well as muscle attachment. Irregular bones include vertebrae as well as some bones forming the base of the skull and face.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/Irregular-bone.png",
+      "arquivo": "imagens/marcadores/Irregular-bone.png",
+      "imagem_base": "imagens/base/Bone-shapes.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/Bone-shapes.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - shapes'. Deve ser sobreposta, sem redimensionamento independente, a 'Bone-shapes.jpg'. Destaca a estrutura ou conceito 'Irregular bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Irregular bones have complex shapes and provide protection for internal organs as well as muscle attachment. Irregular bones include vertebrae as well as some bones forming the base of the skull and face.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 1A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

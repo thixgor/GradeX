@@ -1,0 +1,74 @@
+{
+  "id": 12328,
+  "titulo": "Ovary: primary follicles",
+  "titulo_wordpress": "Ovary 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 6"
+  ],
+  "descricao_original": "Primordial follicles are the smallest follicles, with their follicular cells forming a simple squamous layer surrounding the oocyte. One follicle (red arrow) is in transition, lined with simple squamous follicular cells to the right of the arrow (primordial follicle) and by simple cuboidal follicular cells (primary unilaminar follicle) to the left of the arrow. A primary oocyte is housed within each follicle. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: primary follicles', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 6. Descricao original da pagina: Primordial follicles are the smallest follicles, with their follicular cells forming a simple squamous layer surrounding the oocyte. One follicle (red arrow) is in transition, lined with simple squamous follicular cells to the right of the arrow (primordial follicle) and by simple cuboidal follicular cells (primary unilaminar follicle) to the left of the arrow. A primary oocyte is housed within each follicle. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primordial follicles",
+      "explicacao_original": "Primordial follicles are the smallest follicles, with their follicular cells forming a simple squamous layer. One follicle (red arrow) is in transition, lined with simple squamous follicular cells to the right of the arrow (primordial follicle) and by simple cuboidal follicular cells (primary unilaminar follicle) to the left of the arrow. A primary oocyte is housed within each follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.06.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.06.jpg'. Destaca a estrutura ou conceito 'Primordial follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primordial follicles are the smallest follicles, with their follicular cells forming a simple squamous layer. One follicle (red arrow) is in transition, lined with simple squamous follicular cells to the right of the arrow (primordial follicle) and by simple cuboidal follicular cells (primary unilaminar follicle) to the left of the arrow. A primary oocyte is housed within each follicle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Primary unilaminar follicles",
+      "explicacao_original": "Primary unilaminar follicles are larger than primordial follicles; their follicular cells have increased in height to form a simple cuboidal or columnar epithelium. The primary oocyte has also increased in size from that present in the primordial follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.06.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.06.jpg'. Destaca a estrutura ou conceito 'Primary unilaminar follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary unilaminar follicles are larger than primordial follicles; their follicular cells have increased in height to form a simple cuboidal or columnar epithelium. The primary oocyte has also increased in size from that present in the primordial follicle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Primary multilaminar follicle",
+      "explicacao_original": "Follicular cells continue to increase in volume and number, becoming a stratified epithelial layer and forming a primary multilaminar follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.06.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.06.jpg'. Destaca a estrutura ou conceito 'Primary multilaminar follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Follicular cells continue to increase in volume and number, becoming a stratified epithelial layer and forming a primary multilaminar follicle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Oocytes",
+      "explicacao_original": "Each primordial and primary follicle contains a primary oocyte. Each oocyte increases in diameter as the follicular cells increase in size and number.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.06.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.06.jpg'. Destaca a estrutura ou conceito 'Oocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each primordial and primary follicle contains a primary oocyte. Each oocyte increases in diameter as the follicular cells increase in size and number.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stromal cells",
+      "explicacao_original": "Stromal cells are located in the connective tissue surrounding the follicles. These connective tissue cells are multipotential and produce not only the connective tissue stroma of the ovary, but also differentiate into the thecal layers that surround advanced follicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.06.P05.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: primary follicles'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.06.jpg'. Destaca a estrutura ou conceito 'Stromal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stromal cells are located in the connective tissue surrounding the follicles. These connective tissue cells are multipotential and produce not only the connective tissue stroma of the ovary, but also differentiate into the thecal layers that surround advanced follicles.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-6/, acesso em 2026-08-07."
+    }
+  ]
+}

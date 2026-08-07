@@ -1,0 +1,96 @@
+{
+  "id": 6990,
+  "titulo": "Liver",
+  "titulo_wordpress": "Liver 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Liver",
+    "Liver 1"
+  ],
+  "descricao_original": "The liver, the largest organ in the body, plays a major role in the uptake, storage and distribution of nutrients. It also maintains blood glucose levels, degrades drugs and toxins, and recycles aged red blood cells. Its secretory products include the majority of circulating plasma proteins (endocrine function) and bile (exocrine function). Bile primarily contains bile salts (e.g., deoxycholic acid) for emulsifying fat in the intestine, bile pigments (e.g., bilirubin) from the breakdown of hemoglobin, phospholipids and cholesterol. Bile is transported to the duodenum via the common bile duct. Pig liver, 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Liver', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Descricao original da pagina: The liver, the largest organ in the body, plays a major role in the uptake, storage and distribution of nutrients. It also maintains blood glucose levels, degrades drugs and toxins, and recycles aged red blood cells. Its secretory products include the majority of circulating plasma proteins (endocrine function) and bile (exocrine function). Bile primarily contains bile salts (e.g., deoxycholic acid) for emulsifying fat in the intestine, bile pigments (e.g., bilirubin) from the breakdown of hemoglobin, phospholipids and cholesterol. Bile is transported to the duodenum via the common bile duct. Pig liver, 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Liver lobules",
+      "explicacao_original": "The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Liver lobules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Portal canals",
+      "explicacao_original": "The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Portal canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Central veins",
+      "explicacao_original": "The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Central veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hepatocytes",
+      "explicacao_original": "The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Hepatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Sinusoids",
+      "explicacao_original": "The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lobule, the basic structure of the liver, is formed by anastomosing rows of hepatocytes and intervening sinusoids, which extend from the periphery of the lobule toward a central vein. Portal canals, located at the marginal angles around the perimeter of the lobule, contain branches of the hepatic portal vein, hepatic artery and bile duct. This image of pig liver shows bands of connective tissue outlining lobules; these distinctions are not so obvious in the human.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Michigan-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.MajGl_.Liv-1-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-1-light.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-1/, acesso em 2026-08-07."
+    }
+  ]
+}

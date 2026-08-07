@@ -1,0 +1,74 @@
+{
+  "id": 5304,
+  "titulo": "Continuous capillary",
+  "titulo_wordpress": "Capillaries and Sinusoids 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 4"
+  ],
+  "descricao_original": "These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-4.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Continuous capillary', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 4. Descricao original da pagina: These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capillaries",
+      "explicacao_original": "These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-4.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cell nuclei",
+      "explicacao_original": "These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-4.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-4.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-4.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fibroblast nuclei",
+      "explicacao_original": "These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-4.jpg'. Destaca a estrutura ou conceito 'Fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show continuous capillaries in highly vascularized adipose tissue. Capillaries branch extensively, insinuating among the adipocytes forming expansive capillary beds. Because of their narrow lumen, capillaries only allow erythrocytes to pass through in single file. Capillaries consists of only endothelial cells and their basal laminae. Hypodermis of the skin 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-4/, acesso em 2026-08-07."
+    }
+  ]
+}

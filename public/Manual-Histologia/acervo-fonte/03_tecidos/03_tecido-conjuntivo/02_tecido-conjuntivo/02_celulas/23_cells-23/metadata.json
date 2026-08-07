@@ -1,0 +1,134 @@
+{
+  "id": 16841,
+  "titulo": "Neutrophil",
+  "titulo_wordpress": "Cells 23",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 23"
+  ],
+  "descricao_original": "Neutrophils, or polymorphonuclear (PMN) leukocytes, are highly motile, phagocytic white blood cells that migrate from the blood to sites of tissue damage and infection. Each cell has a distinctive, 3-5 lobed nucleus. Neutrophils, along with eosinophils and basophils, are classified as granular leukocytes because of their characteristic cytoplasmic granules. Neutrophil granules are not visible with routine hematoxylin and eosin staining. 1000x, 6,000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Neutrophil', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Descricao original da pagina: Neutrophils, or polymorphonuclear (PMN) leukocytes, are highly motile, phagocytic white blood cells that migrate from the blood to sites of tissue damage and infection. Each cell has a distinctive, 3-5 lobed nucleus. Neutrophils, along with eosinophils and basophils, are classified as granular leukocytes because of their characteristic cytoplasmic granules. Neutrophil granules are not visible with routine hematoxylin and eosin staining. 1000x, 6,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neutrophil in circulation",
+      "explicacao_original": "The multiple lobes of this neutrophil nucleus, connected by thin chromatin strands, are clearly evident in this blood smear. Granules are present in the cytoplasm but they are not revealed by this stain. This nucleus also shows a distinctive Barr body, which represents the inactivated second X chromosome in the female. The Barr body appears as a “drumstick-shaped” appendage of the nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Neutrophil in circulation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The multiple lobes of this neutrophil nucleus, connected by thin chromatin strands, are clearly evident in this blood smear. Granules are present in the cytoplasm but they are not revealed by this stain. This nucleus also shows a distinctive Barr body, which represents the inactivated second X chromosome in the female. The Barr body appears as a “drumstick-shaped” appendage of the nucleus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Neutrophil",
+      "explicacao_original": "The multiple lobes of this neutrophil nucleus, connected by thin chromatin strands, are clearly evident in this blood smear. Granules are present in the cytoplasm but they are not revealed by this stain. This nucleus also shows a distinctive Barr body, which represents the inactivated second X chromosome in the female. The Barr body appears as a “drumstick-shaped” appendage of the nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Neutrophil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The multiple lobes of this neutrophil nucleus, connected by thin chromatin strands, are clearly evident in this blood smear. Granules are present in the cytoplasm but they are not revealed by this stain. This nucleus also shows a distinctive Barr body, which represents the inactivated second X chromosome in the female. The Barr body appears as a “drumstick-shaped” appendage of the nucleus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Barr body",
+      "explicacao_original": "The multiple lobes of this neutrophil nucleus, connected by thin chromatin strands, are clearly evident in this blood smear. Granules are present in the cytoplasm but they are not revealed by this stain. This nucleus also shows a distinctive Barr body, which represents the inactivated second X chromosome in the female. The Barr body appears as a “drumstick-shaped” appendage of the nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Barr body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The multiple lobes of this neutrophil nucleus, connected by thin chromatin strands, are clearly evident in this blood smear. Granules are present in the cytoplasm but they are not revealed by this stain. This nucleus also shows a distinctive Barr body, which represents the inactivated second X chromosome in the female. The Barr body appears as a “drumstick-shaped” appendage of the nucleus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Neutrophils in tissue",
+      "explicacao_original": "Neutrophils are frequently encountered in connective tissues, where they form the first line of defense. They are recruited from the blood stream in response to chemotactic factors released at sites of infection or tissue damage. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Neutrophils in tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophils are frequently encountered in connective tissues, where they form the first line of defense. They are recruited from the blood stream in response to chemotactic factors released at sites of infection or tissue damage. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Neutrophils",
+      "explicacao_original": "Neutrophils are frequently encountered in connective tissues, where they form the first line of defense. They are recruited from the blood stream in response to chemotactic factors released at sites of infection or tissue damage. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Neutrophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophils are frequently encountered in connective tissues, where they form the first line of defense. They are recruited from the blood stream in response to chemotactic factors released at sites of infection or tissue damage. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Barr body",
+      "explicacao_original": "Neutrophils are frequently encountered in connective tissues, where they form the first line of defense. They are recruited from the blood stream in response to chemotactic factors released at sites of infection or tissue damage. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-6-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Barr body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neutrophils are frequently encountered in connective tissues, where they form the first line of defense. They are recruited from the blood stream in response to chemotactic factors released at sites of infection or tissue damage. Neutrophils are phagocytic and remove pathogens and cellular debris. Accumulation of dead neutrophils, bacteria and tissue debris form the whitish-yellow exudate called pus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Electron microscopy",
+      "explicacao_original": "This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-7-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-7-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Electron microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Cytoplasmic granules",
+      "explicacao_original": "This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-8-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-8-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Cytoplasmic granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Nuclear lobes",
+      "explicacao_original": "This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-9-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-9-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Nuclear lobes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Golgi",
+      "explicacao_original": "This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-10-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-10-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Golgi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24-11-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-24-11-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-24.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-24.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophil'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-24.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph reveals the neutrophil granules. There are two types of granules, azurophilic (primary) granules that contain myeloperoxidase and specific (secondary) granules that are more numerous and contain a variety of antimicrobial enzymes. It is often difficult to distinguish the granule types without special histochemical stains.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 23. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-23/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 10318,
+  "titulo": "Bone: deposition",
+  "titulo_wordpress": "Deposition and Resorption 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 2"
+  ],
+  "descricao_original": "The diaphysis of a long bone shows how growth in width occurs because of bone deposition on the inner and outer bony surfaces. Skeletal muscle can be seen in the upper right corner, and a small amount of bone marrow is present at the bottom of the image. 40x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.jpg",
+      "arquivo": "imagens/base/T.C.B.D.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: deposition', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 2. Descricao original da pagina: The diaphysis of a long bone shows how growth in width occurs because of bone deposition on the inner and outer bony surfaces. Skeletal muscle can be seen in the upper right corner, and a small amount of bone marrow is present at the bottom of the image. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pre-existing bone",
+      "explicacao_original": "The pre-existing bone is represented by the arrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.02.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.02.jpg'. Destaca a estrutura ou conceito 'Pre-existing bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pre-existing bone is represented by the arrow.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Outer circumferential lamellae",
+      "explicacao_original": "The periosteum deposits lamellae around the outer circumference of the diaphysis, depositing the first lamella on the pre-existing bone. These layers are called the outer circumferential lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.02.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.02.jpg'. Destaca a estrutura ou conceito 'Outer circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum deposits lamellae around the outer circumference of the diaphysis, depositing the first lamella on the pre-existing bone. These layers are called the outer circumferential lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner circumferential lamellae",
+      "explicacao_original": "The endosteum at the marrow surface also participates in growth in width of the diaphysis by depositing lamellae around the inner surface of the diaphysis, forming the inner circumferential lamellae. Thus, the diameter of the marrow cavity decreases in size.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.02.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.02.jpg'. Destaca a estrutura ou conceito 'Inner circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum at the marrow surface also participates in growth in width of the diaphysis by depositing lamellae around the inner surface of the diaphysis, forming the inner circumferential lamellae. Thus, the diameter of the marrow cavity decreases in size.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "1st lamellae",
+      "explicacao_original": "Since bone must be deposited on a pre-existing layer of bone or cartilage, the first layer of bone deposited by the periosteum is located at X, and the first layer of bone deposited by the endosteum is located at Y.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.02.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.02.jpg'. Destaca a estrutura ou conceito '1st lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Since bone must be deposited on a pre-existing layer of bone or cartilage, the first layer of bone deposited by the periosteum is located at X, and the first layer of bone deposited by the endosteum is located at Y.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-2/, acesso em 2026-08-07."
+    }
+  ]
+}

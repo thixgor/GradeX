@@ -1,0 +1,85 @@
+{
+  "id": 28999,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 20",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 20"
+  ],
+  "descricao_original": "Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/",
+  "creditos_identificados": [
+    "Image source: This image was taken of slide in the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "arquivo": "imagens/base/T.M.Sk-20.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Descricao original da pagina: Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Skeletal muscle fibers",
+      "explicacao_original": "Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk-20-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-20.jpg'. Destaca a estrutura ou conceito 'Skeletal muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Peripheral nuclei",
+      "explicacao_original": "Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk-20-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-20.jpg'. Destaca a estrutura ou conceito 'Peripheral nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk-20-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-20.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "A bands",
+      "explicacao_original": "Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk-20-4-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-20.jpg'. Destaca a estrutura ou conceito 'A bands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "I bands",
+      "explicacao_original": "Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk-20-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-20.jpg'. Destaca a estrutura ou conceito 'I bands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Closely spaced myofibrils almost totally fill the cytoplasm of skeletal muscle fibers, and thus are not normally visible individually. A region of artifactual separation in the upper fiber reveals individual myofibrils as well as the banding pattern present in each. In other regions of the section, the myofibrils remain tightly compacted and their alignment results in the banding seen across the entire muscle fiber. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of slide in the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/Mississippi-source-ping.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/T.M.Sk-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-20.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide in the University of Mississippi collection.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 20. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-20/, acesso em 2026-08-07."
+    }
+  ]
+}

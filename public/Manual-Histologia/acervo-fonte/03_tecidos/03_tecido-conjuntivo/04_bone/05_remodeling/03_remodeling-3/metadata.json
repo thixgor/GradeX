@@ -1,0 +1,94 @@
+{
+  "id": 11171,
+  "titulo": "Bone remodeling",
+  "titulo_wordpress": "Remodeling 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Remodeling",
+    "Remodeling 3"
+  ],
+  "descricao_original": "During bone growth and remodeling, areas of spongy bone will be converted to compact bone. On the left is the woven bone of the periosteal collar (developing diaphysis). The large space in the middle of the field was formed in the epiphyseal plate as chondrocytes died, leaving behind cylinders of calcified cartilage on which bone was deposited. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "arquivo": "imagens/base/T.C.B.R.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone remodeling', no setor Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Descricao original da pagina: During bone growth and remodeling, areas of spongy bone will be converted to compact bone. On the left is the woven bone of the periosteal collar (developing diaphysis). The large space in the middle of the field was formed in the epiphyseal plate as chondrocytes died, leaving behind cylinders of calcified cartilage on which bone was deposited. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Periosteal collar",
+      "explicacao_original": "The periosteal collar forms by intramembranous ossification from the periosteum of a developing long bone. This woven bone will eventually be remodeled into the compact lamellar bone of the adult diaphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P01.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Periosteal collar' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteal collar forms by intramembranous ossification from the periosteum of a developing long bone. This woven bone will eventually be remodeled into the compact lamellar bone of the adult diaphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Calcified cartilage",
+      "explicacao_original": "Blue-staining calcified cartilage forms the cylindrical framework on which woven bone was deposited. The presence of these calcified remnants indicates that these areas were formed in the epiphyseal plate during endochondral ossification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P02.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Calcified cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blue-staining calcified cartilage forms the cylindrical framework on which woven bone was deposited. The presence of these calcified remnants indicates that these areas were formed in the epiphyseal plate during endochondral ossification.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Woven bone",
+      "explicacao_original": "Woven bone was deposited on the calcified cartilage spicules in the zone of ossification during endochondral ossification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P03.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Woven bone was deposited on the calcified cartilage spicules in the zone of ossification during endochondral ossification.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Bone is a very vascular tissue, and each of the three spaces illustrated here contains a blood vessel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P04.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone is a very vascular tissue, and each of the three spaces illustrated here contains a blood vessel.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endosteum",
+      "explicacao_original": "Each internal space is lined with an endosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P05.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each internal space is lined with an endosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bone deposition",
+      "explicacao_original": "If this area were to become compact bone of the diaphysis, the endosteum would deposit lamellae at the perimeter of the large cylindrical space, decreasing its diameter. Lamellar deposition would continue inwardly (centripetally), forming an osteon. Such an osteon, therefore, would be surrounded by the woven bone-calcified cartilage framework of the cylinder.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P06.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P06.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Bone deposition' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: If this area were to become compact bone of the diaphysis, the endosteum would deposit lamellae at the perimeter of the large cylindrical space, decreasing its diameter. Lamellar deposition would continue inwardly (centripetally), forming an osteon. Such an osteon, therefore, would be surrounded by the woven bone-calcified cartilage framework of the cylinder.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image illustrates how this area would look if it were filled in by an osteon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.P07.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.03.P07.png",
+      "imagem_base": "imagens/base/T.C.B.R.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.03.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image illustrates how this area would look if it were filled in by an osteon.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-3/, acesso em 2026-08-07."
+    }
+  ]
+}

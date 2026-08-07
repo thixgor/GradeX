@@ -1,0 +1,86 @@
+{
+  "id": 22522,
+  "titulo": "Lip: Comparison of epithelia",
+  "titulo_wordpress": "Lip 1A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Lip",
+    "Lip 1A"
+  ],
+  "descricao_original": "These images compare the epithelia of the vermillion zone (left) with that of the lining mucosa (right). (Iron hematoxylin/alcian blue stain) 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide from the University of Virginia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lip: Comparison of epithelia', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Descricao original da pagina: These images compare the epithelia of the vermillion zone (left) with that of the lining mucosa (right). (Iron hematoxylin/alcian blue stain) 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Vermillion zone",
+      "explicacao_original": "The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-1-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Comparison of epithelia'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1A-1.jpg'. Destaca a estrutura ou conceito 'Vermillion zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stratum granulosum",
+      "explicacao_original": "The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Comparison of epithelia'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1A-1.jpg'. Destaca a estrutura ou conceito 'Stratum granulosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dermal papillae",
+      "explicacao_original": "The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-3-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-3-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Comparison of epithelia'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1A-1.jpg'. Destaca a estrutura ou conceito 'Dermal papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-4-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-4-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Comparison of epithelia'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1A-1.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermillion zone forms the red portion of the lip and like the skin on the surface of the lip, the epithelium here is keratinized and a stratum granulosum is present. Imparting the red color to this region are the numerous, dermal papillae that allow close approximation of blood vessels to the surface.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Oral (lining) mucosa",
+      "explicacao_original": "Lining mucosa, surfaced by a thick stratified squamous moist epithelium, lines the inner surface of the lip. The epithelium of the lining mucosa lacks a stratum granulosum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-5-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-5-ping-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Comparison of epithelia'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1A-1.jpg'. Destaca a estrutura ou conceito 'Oral (lining) mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa, surfaced by a thick stratified squamous moist epithelium, lines the inner surface of the lip. The epithelium of the lining mucosa lacks a stratum granulosum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide from the University of Virginia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/UVa-source-ping-plural.png",
+      "arquivo": "imagens/marcadores/UVa-source-ping-plural.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Comparison of epithelia'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1A-1.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide from the University of Virginia collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

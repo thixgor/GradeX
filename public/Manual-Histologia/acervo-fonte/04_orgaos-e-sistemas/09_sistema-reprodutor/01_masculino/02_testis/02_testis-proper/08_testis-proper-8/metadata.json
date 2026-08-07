@@ -1,0 +1,127 @@
+{
+  "id": 27749,
+  "titulo": "Seminiferous tubules - convoluted portion",
+  "titulo_wordpress": "Testis Proper 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Testis Proper",
+    "Testis Proper 8"
+  ],
+  "descricao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of New School School of Osteopathic Medicine collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "arquivo": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Seminiferous tubules - convoluted portion', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Descricao original da pagina: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Seminiferous tubule: convoluted portion",
+      "explicacao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Seminiferous tubule: convoluted portion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Spermatogonia",
+      "explicacao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-2-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Spermatogonia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Primary spermatocytes",
+      "explicacao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Primary spermatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Spermatids (early)",
+      "explicacao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Spermatids (early)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Spermatids (late)",
+      "explicacao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-5-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Spermatids (late)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Spermatozoa",
+      "explicacao_original": "Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-6-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Spermatozoa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia and early primary spermatocytes are located in the basal compartment created by the blood-testis barrier. Older primary spermatocytes, secondary spermatocytes and spermatids, all located in the adluminal compartment, are provided with a specialized environment of high testosterone levels and protection from an autoimmune attack. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Residual bodies",
+      "explicacao_original": "During spermiogenesis, spermatocytes shed much of their cytoplasm which is visible as residual bodies. Residual bodies are eventually phagocytosed by Sertoli cells or shed into the lumen of the tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-7-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Residual bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During spermiogenesis, spermatocytes shed much of their cytoplasm which is visible as residual bodies. Residual bodies are eventually phagocytosed by Sertoli cells or shed into the lumen of the tubule.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Sertoli cells",
+      "explicacao_original": "Sertoli cells extend the entire thickness of the epithelium. Lateral extensions from adjacent Sertoli cells form occluding, tight junctions that constitute the blood-testis barrier. The area deep to the barrier, the basal or abluminal compartment, contains spermatogonia. Above the barrier is the apical or adluminal compartment and contains the later stages of spermatogenesis. Sertoli cells do not divide.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-8-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Sertoli cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sertoli cells extend the entire thickness of the epithelium. Lateral extensions from adjacent Sertoli cells form occluding, tight junctions that constitute the blood-testis barrier. The area deep to the barrier, the basal or abluminal compartment, contains spermatogonia. Above the barrier is the apical or adluminal compartment and contains the later stages of spermatogenesis. Sertoli cells do not divide.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Tunica propria",
+      "explicacao_original": "The tunica propria surrounds each tubule and consists of multilayered myoid cells that have contractile properties. Contractions produce peristaltic waves to propel spermatozoa through the seminiferous tubules. These peritubular myoid cells also produce collagen fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-9-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-8-9-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Tunica propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica propria surrounds each tubule and consists of multilayered myoid cells that have contractile properties. Contractions produce peristaltic waves to propel spermatozoa through the seminiferous tubules. These peritubular myoid cells also produce collagen fibers.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of New School School of Osteopathic Medicine collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/UNE-source-ping.png",
+      "arquivo": "imagens/marcadores/UNE-source-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-8-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-8-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-8-1.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of New School School of Osteopathic Medicine collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-8-2/, acesso em 2026-08-07."
+    }
+  ]
+}

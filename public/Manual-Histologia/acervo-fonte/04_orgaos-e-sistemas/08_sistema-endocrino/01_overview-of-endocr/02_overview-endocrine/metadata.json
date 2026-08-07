@@ -1,0 +1,63 @@
+{
+  "id": 4770,
+  "titulo": "Overview",
+  "titulo_wordpress": "Overview (endocrine) 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Overview of endocrine organs",
+    "Overview (endocrine) 2"
+  ],
+  "descricao_original": "Because endocrine cells do not release hormones unidirectionally into a duct, they do not show polarity and are not organized into discrete secretory units, such as tubules or acini. Rather, endocrine cells frequently form plates or cords, interspersed with abundant, large-bore, fenestrated capillaries. Pars distalis of adenohypophysis 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 2. Descricao original da pagina: Because endocrine cells do not release hormones unidirectionally into a duct, they do not show polarity and are not organized into discrete secretory units, such as tubules or acini. Rather, endocrine cells frequently form plates or cords, interspersed with abundant, large-bore, fenestrated capillaries. Pars distalis of adenohypophysis 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Peptide-secreting cells",
+      "explicacao_original": "Peptides form one major classification of hormones. Peptide-secreting cells possess all the organelles needed to produce proteins for export: RER, Golgi apparatus, and secretory granules. Therefore, these cells stain intensely and appear grainy when seen with the light microscope.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Peptide-secreting cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peptides form one major classification of hormones. Peptide-secreting cells possess all the organelles needed to produce proteins for export: RER, Golgi apparatus, and secretory granules. Therefore, these cells stain intensely and appear grainy when seen with the light microscope.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Golgi apparatus",
+      "explicacao_original": "The Golgi apparatus is responsible for packaging the secretory protein into vesicles. The Golgi appears as an unstained area of the cytoplasm adjacent to the nucleus in these cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Golgi apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi apparatus is responsible for packaging the secretory protein into vesicles. The Golgi appears as an unstained area of the cytoplasm adjacent to the nucleus in these cells.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The content of the secretory granules will cause them to stain differentially. In this image, some cells contain granules that stain with hematoxylin; in other cells, the granules stain with eosin. Secretory granules may be positioned around the entire circumference of the cell, thus validating the lack of polarity in endocrine cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The content of the secretory granules will cause them to stain differentially. In this image, some cells contain granules that stain with hematoxylin; in other cells, the granules stain with eosin. Secretory granules may be positioned around the entire circumference of the cell, thus validating the lack of polarity in endocrine cells.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Endocrine glands are highly vascular and possess wide-bore, fenestrated capillaries, which facilitate the uptake of hormone into the blood stream.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Endocrine glands are highly vascular and possess wide-bore, fenestrated capillaries, which facilitate the uptake of hormone into the blood stream.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-2/, acesso em 2026-08-07."
+    }
+  ]
+}

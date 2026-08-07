@@ -1,0 +1,63 @@
+{
+  "id": 1241,
+  "titulo": "Chromatin",
+  "titulo_wordpress": "Nucleus 7",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Núcleo",
+    "Nucleus 7"
+  ],
+  "descricao_original": "This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/nucleus/nucleus-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-7.jpg",
+      "arquivo": "imagens/base/C.S.N.-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Chromatin', no setor Células > Estruturas > Núcleo > Nucleus 7. Descricao original da pagina: This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-7-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-7-1-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Chromatin'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-7.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Euchromatin",
+      "explicacao_original": "This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-7-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-7-2-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Chromatin'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-7.jpg'. Destaca a estrutura ou conceito 'Euchromatin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Heterochromatin",
+      "explicacao_original": "This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-7-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-7-3-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Chromatin'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-7.jpg'. Destaca a estrutura ou conceito 'Heterochromatin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-7-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-7-4-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N.-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Chromatin'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-7.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This mostly euchromatic nucleus possesses a prominent nucleolus. A small amount of heterochromatin is present in a perinuclear distribution immediately beneath the nuclear envelope. This is an example of a cell highly active in gene transcription. 15,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 7. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-7/, acesso em 2026-08-07."
+    }
+  ]
+}

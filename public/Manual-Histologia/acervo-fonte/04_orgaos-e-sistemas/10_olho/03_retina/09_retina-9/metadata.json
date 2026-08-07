@@ -1,0 +1,83 @@
+{
+  "id": 9242,
+  "titulo": "Sensory retina",
+  "titulo_wordpress": "Retina 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 9"
+  ],
+  "descricao_original": "The photosensitive portions of rods are embedded deep in the pigment epithelium and are filled with membranous discs that contain the visual pigment, rhodopsin. These discs are formed continuously by repetitive in-folding of the plasma membrane of the rods and by synthesis of proteins in its inner segment. Discs are exfoliated distally and are phagocytosed by the pigment epithelial cells. 400x, 20,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina', no setor Órgãos e Sistemas > Olho > Retina > Retina 9. Descricao original da pagina: The photosensitive portions of rods are embedded deep in the pigment epithelium and are filled with membranous discs that contain the visual pigment, rhodopsin. These discs are formed continuously by repetitive in-folding of the plasma membrane of the rods and by synthesis of proteins in its inner segment. Discs are exfoliated distally and are phagocytosed by the pigment epithelial cells. 400x, 20,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Rod outer segments",
+      "explicacao_original": "The photosensitive portions of rods are embedded deep in the pigment epithelium and are filled with membranous discs that contain the visual pigment, rhodopsin. These discs are formed continuously by repetitive in-folding of the plasma membrane of the rods and by synthesis of proteins in its inner segment. Discs are exfoliated distally and are phagocytosed by the pigment epithelial cells. 400x, 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-9-arrow.jpg'. Destaca a estrutura ou conceito 'Rod outer segments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The photosensitive portions of rods are embedded deep in the pigment epithelium and are filled with membranous discs that contain the visual pigment, rhodopsin. These discs are formed continuously by repetitive in-folding of the plasma membrane of the rods and by synthesis of proteins in its inner segment. Discs are exfoliated distally and are phagocytosed by the pigment epithelial cells. 400x, 20,000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Membranous discs",
+      "explicacao_original": "The photosensitive portions of rods are embedded deep in the pigment epithelium and are filled with membranous discs that contain the visual pigment, rhodopsin. These discs are formed continuously by repetitive in-folding of the plasma membrane of the rods and by synthesis of proteins in its inner segment. Discs are exfoliated distally and are phagocytosed by the pigment epithelial cells. 400x, 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-9-arrow.jpg'. Destaca a estrutura ou conceito 'Membranous discs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The photosensitive portions of rods are embedded deep in the pigment epithelium and are filled with membranous discs that contain the visual pigment, rhodopsin. These discs are formed continuously by repetitive in-folding of the plasma membrane of the rods and by synthesis of proteins in its inner segment. Discs are exfoliated distally and are phagocytosed by the pigment epithelial cells. 400x, 20,000x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pigment epithelium",
+      "explicacao_original": "It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the pigment epithelium cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-9-arrow.jpg'. Destaca a estrutura ou conceito 'Pigment epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the pigment epithelium cell.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cell processes",
+      "explicacao_original": "It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the epithelial cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-9-arrow.jpg'. Destaca a estrutura ou conceito 'Cell processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the epithelial cytoplasm.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Phagocytosed disc membranes",
+      "explicacao_original": "It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the epithelial cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-9-5-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-9-5-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-9-arrow.jpg'. Destaca a estrutura ou conceito 'Phagocytosed disc membranes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the epithelial cytoplasm.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Melanin pigment",
+      "explicacao_original": "It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the epithelial cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-9-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-9-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-9-arrow.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-9-arrow.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-9-arrow.jpg'. Destaca a estrutura ou conceito 'Melanin pigment' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: It takes about 10 days for newly formed discs to reach the end of the outer segment, where they are shed and phagocytosed by cells of the pigmented epithelium. Note the intact distal segment of a rod surrounded by long, thin processes of the pigment epithelium cells; packets of phagocytosed discs are visible in the epithelial cytoplasm.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-9/, acesso em 2026-08-07."
+    }
+  ]
+}

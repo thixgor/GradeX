@@ -1,0 +1,64 @@
+{
+  "id": 16803,
+  "titulo": "Active fibroblast",
+  "titulo_wordpress": "Cells 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 4"
+  ],
+  "descricao_original": "The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Active fibroblast', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 4. Descricao original da pagina: The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fibroblast nucleus",
+      "explicacao_original": "The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-4-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-4.jpg'. Destaca a estrutura ou conceito 'Fibroblast nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-4-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-4.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen fibrils - longitudinal section",
+      "explicacao_original": "The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-4-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-4.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils - longitudinal section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collagen fibrils - cross section",
+      "explicacao_original": "The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-4-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-4.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils - cross section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoplasm of an active fibroblast is resolved better with the electron microscope. This cell has a euchromatic nucleus with a prominent nucleolus. The cell is surrounded by abundant collagen fibrils that are cut in both longitudinal and cross section. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-4/, acesso em 2026-08-07."
+    }
+  ]
+}

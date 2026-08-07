@@ -1,0 +1,62 @@
+{
+  "id": 26981,
+  "titulo": "Tissue preparation - Overview",
+  "titulo_wordpress": "Tissue preparation 1",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 1"
+  ],
+  "descricao_original": "The preparation of biological tissues for microscopic study requires a series of steps diagrammed in this image.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1.jpg",
+      "arquivo": "imagens/base/HB-TP-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tissue preparation - Overview', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 1. Descricao original da pagina: The preparation of biological tissues for microscopic study requires a series of steps diagrammed in this image.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fixation",
+      "explicacao_original": "The first step in the preparation of a tissue or organ sample is chemical fixation. The goal of fixation is to preserve cell and tissue structure in a state that resembles that in the living state. The process of fixation prevents autolysis (self-digestion) by hydrolytic enzymes and provides rigidity by either cross-linking or denaturing protein molecules. The most commonly used fixative is formaldehyde.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1-1-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-1-1-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tissue preparation - Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-1.jpg'. Destaca a estrutura ou conceito 'Fixation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The first step in the preparation of a tissue or organ sample is chemical fixation. The goal of fixation is to preserve cell and tissue structure in a state that resembles that in the living state. The process of fixation prevents autolysis (self-digestion) by hydrolytic enzymes and provides rigidity by either cross-linking or denaturing protein molecules. The most commonly used fixative is formaldehyde.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 1. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Embedding",
+      "explicacao_original": "The second step is embedding, which involves the infiltration of tissue spaces with a medium that will provide support during subsequent sectioning. The most commonly used embedding media are paraffin wax and epoxy plastics. The embedded tissue along with the medium is called the tissue block.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1-1-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-1-1-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tissue preparation - Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-1.jpg'. Destaca a estrutura ou conceito 'Embedding' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The second step is embedding, which involves the infiltration of tissue spaces with a medium that will provide support during subsequent sectioning. The most commonly used embedding media are paraffin wax and epoxy plastics. The embedded tissue along with the medium is called the tissue block.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 1. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sectioning",
+      "explicacao_original": "The third step is sectioning, which produces tissue slices sufficiently thin to allow transmission of the illumination source through the section. For light microscopy (LM), the illumination is white light; for electron microscopy (EM), the illumination is a beam of electrons. Tissue is sectioned on a microtome and sections are collected either on glass slides (LM) or mesh grids (EM). Paraffin sections for LM range from 5 to 20 microns in thickness; epoxy sections for EM range from 30 to 60 nanometers in thickness.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1-1-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-1-1-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tissue preparation - Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-1.jpg'. Destaca a estrutura ou conceito 'Sectioning' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The third step is sectioning, which produces tissue slices sufficiently thin to allow transmission of the illumination source through the section. For light microscopy (LM), the illumination is white light; for electron microscopy (EM), the illumination is a beam of electrons. Tissue is sectioned on a microtome and sections are collected either on glass slides (LM) or mesh grids (EM). Paraffin sections for LM range from 5 to 20 microns in thickness; epoxy sections for EM range from 30 to 60 nanometers in thickness.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 1. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Staining",
+      "explicacao_original": "The fourth step is staining, which provides contrast and differentiation of the tissue structures. For LM, a variety of colored dyes are used that differentially absorb wavelengths in the white light used for illumination. For EM, heavy metals, e.g., lead, are used to block the path of electrons as they pass through the tissue, resulting black and white images only.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1-1-4-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-1-1-4-ping.png",
+      "imagem_base": "imagens/base/HB-TP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tissue preparation - Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-1.jpg'. Destaca a estrutura ou conceito 'Staining' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fourth step is staining, which provides contrast and differentiation of the tissue structures. For LM, a variety of colored dyes are used that differentially absorb wavelengths in the white light used for illumination. For EM, heavy metals, e.g., lead, are used to block the path of electrons as they pass through the tissue, resulting black and white images only.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 1. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-1/, acesso em 2026-08-07."
+    }
+  ]
+}

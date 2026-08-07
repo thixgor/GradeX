@@ -1,0 +1,93 @@
+{
+  "id": 9240,
+  "titulo": "Sensory retina",
+  "titulo_wordpress": "Retina 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 8"
+  ],
+  "descricao_original": "Each rod and cone photoreceptor consists of an outer photosensitive segment, an inner segment containing most of the metabolic machinery for the biosynthetic and energy-producing processes of the cell, a nuclear region and a thin process that leads inward to make synaptic contact with the neurons in the inner nuclear layer. The electron micrographs show the structure of a rod outer segment. 1000x, 20,000x, 35,000x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina', no setor Órgãos e Sistemas > Olho > Retina > Retina 8. Descricao original da pagina: Each rod and cone photoreceptor consists of an outer photosensitive segment, an inner segment containing most of the metabolic machinery for the biosynthetic and energy-producing processes of the cell, a nuclear region and a thin process that leads inward to make synaptic contact with the neurons in the inner nuclear layer. The electron micrographs show the structure of a rod outer segment. 1000x, 20,000x, 35,000x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Photoreceptor layer",
+      "explicacao_original": "The photoreceptor layer contains rods and cones, the photosensitive cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Photoreceptor layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The photoreceptor layer contains rods and cones, the photosensitive cells.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Rod",
+      "explicacao_original": "The retina contains approximately 120 million rods and 7 million cones. Rods, so named based of the cylindrical shape of their outer segments, are not evenly distributed across the retina. Rods predominate in peripheral regions of the retina and are more responsive to low light levels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Rod' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The retina contains approximately 120 million rods and 7 million cones. Rods, so named based of the cylindrical shape of their outer segments, are not evenly distributed across the retina. Rods predominate in peripheral regions of the retina and are more responsive to low light levels.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cone",
+      "explicacao_original": "The 7 million cones are concentrated in the central retina, notably in in the fovea, the region of greatest visual acuity. Cones are named because of the conical shape of their outer segments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Cone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The 7 million cones are concentrated in the central retina, notably in in the fovea, the region of greatest visual acuity. Cones are named because of the conical shape of their outer segments.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Inner segments",
+      "explicacao_original": "The inner segments of rods and cones contain the majority of the metabolic organelles of the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Inner segments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner segments of rods and cones contain the majority of the metabolic organelles of the cell.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Outer segments",
+      "explicacao_original": "The outer segments of rods (seen in these electron micrographs) are roughly cylindrical and consist mainly of 600–1000 flattened membranous discs. The discs are stacked like coins within the cytoplasm of the outer segment; their membranes are not connected to the plasma membrane. In cones, this outer segment is cone-shaped and the disc membranes remain continuous with the plasma membrane. Phototransduction occurs along the disc membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Outer segments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer segments of rods (seen in these electron micrographs) are roughly cylindrical and consist mainly of 600–1000 flattened membranous discs. The discs are stacked like coins within the cytoplasm of the outer segment; their membranes are not connected to the plasma membrane. In cones, this outer segment is cone-shaped and the disc membranes remain continuous with the plasma membrane. Phototransduction occurs along the disc membranes.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Membranous discs",
+      "explicacao_original": "The outer segments of rods are roughly cylindrical and consist mainly of 600–1000 flattened membranous discs. The discs are stacked like coins within the cytoplasm of the outer segment; their membranes are not connected to the plasma membrane. Phototransduction occurs along the disc membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-8-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Membranous discs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer segments of rods are roughly cylindrical and consist mainly of 600–1000 flattened membranous discs. The discs are stacked like coins within the cytoplasm of the outer segment; their membranes are not connected to the plasma membrane. Phototransduction occurs along the disc membrane.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "The outer segments of rods are roughly cylindrical and consist mainly of 600–1000 flattened membranous discs. The discs are stacked like coins within the cytoplasm of the outer segment; their membranes are not connected to the plasma membrane. Phototransduction occurs along the disc membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-8-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-8.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer segments of rods are roughly cylindrical and consist mainly of 600–1000 flattened membranous discs. The discs are stacked like coins within the cytoplasm of the outer segment; their membranes are not connected to the plasma membrane. Phototransduction occurs along the disc membrane.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-8/, acesso em 2026-08-07."
+    }
+  ]
+}

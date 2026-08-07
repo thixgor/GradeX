@@ -1,0 +1,75 @@
+{
+  "id": 20830,
+  "titulo": "Urinary bladder",
+  "titulo_wordpress": "Excretory passageways 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Excretory passageways",
+    "Excretory passageways 6"
+  ],
+  "descricao_original": "The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/",
+  "creditos_identificados": [
+    "Image source: This image was taken from a slide in the University of New England College of Osteopathic Medicine slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-4.jpg",
+      "arquivo": "imagens/base/Or.Ur_.UB-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Urinary bladder', no setor Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 6. Descricao original da pagina: The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Transitional epithelium",
+      "explicacao_original": "The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-1-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-1-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-4.jpg'. Destaca a estrutura ou conceito 'Transitional epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dome cells",
+      "explicacao_original": "The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-4.jpg'. Destaca a estrutura ou conceito 'Dome cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-3-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-3-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-4.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-4-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-4-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-4.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the bladder has a histologic appearance very similar to that of the ureter. Transitional epithelium has characteristic dome-shaped cells at the surface when the bladder is not distended with urine. Dome cells are often bi-nucleated and become flattened when the bladder is distended. A connective tissue layer (lamina propria continuous with submucosa) underlies this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken from a slide in the University of New England College of Osteopathic Medicine slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-5-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-5-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-4.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken from a slide in the University of New England College of Osteopathic Medicine slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-6/, acesso em 2026-08-07."
+    }
+  ]
+}

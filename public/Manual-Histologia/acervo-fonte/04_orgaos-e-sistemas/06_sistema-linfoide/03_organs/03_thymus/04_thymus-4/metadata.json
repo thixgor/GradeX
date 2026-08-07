@@ -1,0 +1,64 @@
+{
+  "id": 8591,
+  "titulo": "Thymus: cortex",
+  "titulo_wordpress": "Thymus 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Thymus",
+    "Thymus 4"
+  ],
+  "descricao_original": "Lymphoblasts from the bone marrow migrate to the thymic cortex, where they divide and differentiate to form T lymphocytes. These newly formed, small T lymphocytes (thymocytes) migrate to the medulla, where they enter blood or lymph systems for export to T-dependent areas of other lymphoid organs. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-4.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Or_.Thymus-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thymus: cortex', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 4. Descricao original da pagina: Lymphoblasts from the bone marrow migrate to the thymic cortex, where they divide and differentiate to form T lymphocytes. These newly formed, small T lymphocytes (thymocytes) migrate to the medulla, where they enter blood or lymph systems for export to T-dependent areas of other lymphoid organs. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lymphoblasts",
+      "explicacao_original": "Lymphoblasts have spherical nuclei that are larger than those of the thymocytes they form. Lymphoblasts are derived from the bone marrow and migrate into the thymus to form T lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-4.jpg'. Destaca a estrutura ou conceito 'Lymphoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphoblasts have spherical nuclei that are larger than those of the thymocytes they form. Lymphoblasts are derived from the bone marrow and migrate into the thymus to form T lymphocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Thymocytes",
+      "explicacao_original": "Thymic lymphocytes (thymocytes) have small, heterochromatic nuclei and little cytoplasm. The thymic epithelial cells establish mircroenvironments in which T cell maturation and selection occur. They also provide signals for this T cell differentiation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-4.jpg'. Destaca a estrutura ou conceito 'Thymocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thymic lymphocytes (thymocytes) have small, heterochromatic nuclei and little cytoplasm. The thymic epithelial cells establish mircroenvironments in which T cell maturation and selection occur. They also provide signals for this T cell differentiation.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Epithelial reticular cells",
+      "explicacao_original": "The stromal meshwork supporting the thymus is formed by cells of epithelial, rather than connective tissue origin and, therefore, are called epithelial reticular cells. The nuclei of these cells are large, spherical and euchromatic. No extracellular fibers are present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-4.jpg'. Destaca a estrutura ou conceito 'Epithelial reticular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stromal meshwork supporting the thymus is formed by cells of epithelial, rather than connective tissue origin and, therefore, are called epithelial reticular cells. The nuclei of these cells are large, spherical and euchromatic. No extracellular fibers are present.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capsule",
+      "explicacao_original": "A thin capsule surrounds the thymus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Thymus-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-4.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A thin capsule surrounds the thymus.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": 10811,
+  "titulo": "Cortex: Convoluted portion",
+  "titulo_wordpress": "Tubules and collecting system 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 3"
+  ],
+  "descricao_original": "This image compares the histological appearance of the three tubules located in the convoluted portion of the cortex: the proximal and distal convoluted tubules and the connecting tubules. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cortex: Convoluted portion', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Descricao original da pagina: This image compares the histological appearance of the three tubules located in the convoluted portion of the cortex: the proximal and distal convoluted tubules and the connecting tubules. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Proximal tubules",
+      "explicacao_original": "Proximal tubules are lined by a tall, simple cuboidal epithelium with a brush border. Some of these proximal tubules have a precipitate in their lumens, which stains intensely with eosin. Their cytoplasm appears vacuolated due to the poor fixation of the mitochondria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-3.jpg'. Destaca a estrutura ou conceito 'Proximal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal tubules are lined by a tall, simple cuboidal epithelium with a brush border. Some of these proximal tubules have a precipitate in their lumens, which stains intensely with eosin. Their cytoplasm appears vacuolated due to the poor fixation of the mitochondria.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Distal tubules",
+      "explicacao_original": "The convoluted portion of the cortex contains the distal convoluted tubules and the ascending thick limb as it associates with the juxtaglomerular apparatus. Both regions are lined by a simple cuboidal epithelium that lacks a brush border. Nuclei often appear irregularly spaced around each lumen, which is larger in diameter than that of the proximal tubule. Given the proximity of these tubules to the vascular pole, they are most likely the ascending thick limb.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-3.jpg'. Destaca a estrutura ou conceito 'Distal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted portion of the cortex contains the distal convoluted tubules and the ascending thick limb as it associates with the juxtaglomerular apparatus. Both regions are lined by a simple cuboidal epithelium that lacks a brush border. Nuclei often appear irregularly spaced around each lumen, which is larger in diameter than that of the proximal tubule. Given the proximity of these tubules to the vascular pole, they are most likely the ascending thick limb.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connecting tubules",
+      "explicacao_original": "Connecting tubules are lined by a simple cuboidal epithelium that lacks a brush border. These tubules connect the distal convoluted tubule with the collecting duct in the medullary ray.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-3.jpg'. Destaca a estrutura ou conceito 'Connecting tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connecting tubules are lined by a simple cuboidal epithelium that lacks a brush border. These tubules connect the distal convoluted tubule with the collecting duct in the medullary ray.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Renal corpuscle",
+      "explicacao_original": "Also visible in this image are a portion of a renal corpuscle, an afferent or efferent arteriole, and an extensive network of peritubular capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-3.jpg'. Destaca a estrutura ou conceito 'Renal corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also visible in this image are a portion of a renal corpuscle, an afferent or efferent arteriole, and an extensive network of peritubular capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Afferent or efferent arteriole",
+      "explicacao_original": "Also visible in this image are a portion of a renal corpuscle, an afferent or efferent arteriole, and an extensive network of peritubular capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-3.jpg'. Destaca a estrutura ou conceito 'Afferent or efferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also visible in this image are a portion of a renal corpuscle, an afferent or efferent arteriole, and an extensive network of peritubular capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Peritubular capillaries",
+      "explicacao_original": "Also visible in this image are a portion of a renal corpuscle, an afferent or efferent arteriole, and an extensive network of peritubular capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-3.jpg'. Destaca a estrutura ou conceito 'Peritubular capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also visible in this image are a portion of a renal corpuscle, an afferent or efferent arteriole, and an extensive network of peritubular capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-3/, acesso em 2026-08-07."
+    }
+  ]
+}

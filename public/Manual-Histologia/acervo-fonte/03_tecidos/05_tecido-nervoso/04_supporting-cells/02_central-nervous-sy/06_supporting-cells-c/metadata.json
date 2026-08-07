@@ -1,0 +1,54 @@
+{
+  "id": 3701,
+  "titulo": "Oligodendrocytes",
+  "titulo_wordpress": "Supporting cells CNS 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 6"
+  ],
+  "descricao_original": "This image compares interfascicular oligodendrocytes as revealed by conventional H & E staining (left) with those immunostained for an oligodendrocyte-specific protein (right). This fluorescent image shows oligodendrocyte cell bodies, their cytoplasm and cell processes, each of which contacts an axon and produces a single internode of myelin. (Fluorescent image courtesy of Dr. Babette Fuss) 1000x, 1000x.",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5a.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-5a.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oligodendrocytes', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 6. Descricao original da pagina: This image compares interfascicular oligodendrocytes as revealed by conventional H & E staining (left) with those immunostained for an oligodendrocyte-specific protein (right). This fluorescent image shows oligodendrocyte cell bodies, their cytoplasm and cell processes, each of which contacts an axon and produces a single internode of myelin. (Fluorescent image courtesy of Dr. Babette Fuss) 1000x, 1000x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Oligodendrocytes",
+      "explicacao_original": "This image compares interfascicular oligodendrocytes as revealed by conventional H & E staining (left) with those immunostained for an oligodendrocyte-specific protein (right). This fluorescent image shows oligodendrocyte cell bodies, their cytoplasm and cell processes, each of which contacts an axon and produces a single internode of myelin. (Fluorescent image courtesy of Dr. Babette Fuss) 1000x, 1000x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-5a-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5a-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5a.jpg'. Destaca a estrutura ou conceito 'Oligodendrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image compares interfascicular oligodendrocytes as revealed by conventional H & E staining (left) with those immunostained for an oligodendrocyte-specific protein (right). This fluorescent image shows oligodendrocyte cell bodies, their cytoplasm and cell processes, each of which contacts an axon and produces a single internode of myelin. (Fluorescent image courtesy of Dr. Babette Fuss) 1000x, 1000x.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Oligodendrocyte processes",
+      "explicacao_original": "Each oligodendrocyte extends numerous, branched processes. Each branch contacts and wraps around an axon, forming a single internodal segment of myelin. Each oligodendrocyte myelinates multiple axons, up to 40 in some regions of the brain. These processes are not visible by conventional H & E staining methods.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-5a-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5a-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5a.jpg'. Destaca a estrutura ou conceito 'Oligodendrocyte processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each oligodendrocyte extends numerous, branched processes. Each branch contacts and wraps around an axon, forming a single internodal segment of myelin. Each oligodendrocyte myelinates multiple axons, up to 40 in some regions of the brain. These processes are not visible by conventional H & E staining methods.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myelin internodes",
+      "explicacao_original": "Each oligodendrocyte extends numerous, branched processes. Each branch contacts and wraps around an axon, forming a single internodal segment of myelin. Each oligodendrocyte myelinates multiple axons, up to 40 in some regions of the brain. These processes are not visible by conventional H & E staining methods.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-5a-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5a-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppCNS-5a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5a.jpg'. Destaca a estrutura ou conceito 'Myelin internodes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each oligodendrocyte extends numerous, branched processes. Each branch contacts and wraps around an axon, forming a single internodal segment of myelin. Each oligodendrocyte myelinates multiple axons, up to 40 in some regions of the brain. These processes are not visible by conventional H & E staining methods.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-8/, acesso em 2026-08-07."
+    }
+  ]
+}

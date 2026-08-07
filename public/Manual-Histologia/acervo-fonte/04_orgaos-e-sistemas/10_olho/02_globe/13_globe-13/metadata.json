@@ -1,0 +1,135 @@
+{
+  "id": 9216,
+  "titulo": "Globe: Iris",
+  "titulo_wordpress": "Globe 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 13"
+  ],
+  "descricao_original": "This image shows two sections through the iris which is part of the middle or uveal tunic and is continuous with the ciliary body. The inner margin of the iris forms the sphincter bordering the pupillary opening. The iris is located just anterior to the lens and regulates the amount of light that enters the eye. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-13/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of Iowa collection. Inset: Arizona Veterinary Diagnostic Laboratory"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Iris', no setor Órgãos e Sistemas > Olho > Globe > Globe 13. Descricao original da pagina: This image shows two sections through the iris which is part of the middle or uveal tunic and is continuous with the ciliary body. The inner margin of the iris forms the sphincter bordering the pupillary opening. The iris is located just anterior to the lens and regulates the amount of light that enters the eye. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Iris",
+      "explicacao_original": "The iris is a donut-shaped structure surrounding the pupil. The anterior surface of the iris is irregular and rough, covered by a discontinuous layer of cells. Most of the core of the iris consists of loose connective tissue with many melanocytes and blood vessels. Contraction of smooth muscle groups in the iris alters the diameter of the pupil and, therefore, alters the amount of light entering the eye.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Iris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The iris is a donut-shaped structure surrounding the pupil. The anterior surface of the iris is irregular and rough, covered by a discontinuous layer of cells. Most of the core of the iris consists of loose connective tissue with many melanocytes and blood vessels. Contraction of smooth muscle groups in the iris alters the diameter of the pupil and, therefore, alters the amount of light entering the eye.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Iris epithelium",
+      "explicacao_original": "The epithelium covering the posterior surface is a continuation of the non-sensory retina and consists of two layers: a heavily pigmented epithelium next to the posterior chamber and a less pigmented layer of myoepithelial cells from which radially arranged processes extend into the stroma, forming dilator pupillae muscle. Contraction of this muscle results in an increase in pupillary diameter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Iris epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium covering the posterior surface is a continuation of the non-sensory retina and consists of two layers: a heavily pigmented epithelium next to the posterior chamber and a less pigmented layer of myoepithelial cells from which radially arranged processes extend into the stroma, forming dilator pupillae muscle. Contraction of this muscle results in an increase in pupillary diameter.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dilator pupillae muscle",
+      "explicacao_original": "The epithelium covering the posterior surface is a continuation of the non-sensory retina and consists of two layers: a heavily pigmented epithelium next to the posterior chamber and a less pigmented layer of myoepithelial cells from which radially arranged processes extend into the stroma, forming dilator pupillae muscle. Contraction of this muscle results in an increase in pupillary diameter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Dilator pupillae muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium covering the posterior surface is a continuation of the non-sensory retina and consists of two layers: a heavily pigmented epithelium next to the posterior chamber and a less pigmented layer of myoepithelial cells from which radially arranged processes extend into the stroma, forming dilator pupillae muscle. Contraction of this muscle results in an increase in pupillary diameter.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Constrictor pupillae",
+      "explicacao_original": "muscle The constrictor pupillae muscle decreases the diameter of the pupil and is the antagonistic muscle of the dilator pupillae. The constrictor pupillae muscle consists of smooth muscle fibers located at the internal perimeter of the iris. These muscle fibers are oriented circumferentially around the pupillary rim of the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Constrictor pupillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: muscle The constrictor pupillae muscle decreases the diameter of the pupil and is the antagonistic muscle of the dilator pupillae. The constrictor pupillae muscle consists of smooth muscle fibers located at the internal perimeter of the iris. These muscle fibers are oriented circumferentially around the pupillary rim of the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stroma",
+      "explicacao_original": "Stroma, formimg the bulk of the iris, is composed of loose connective tissue, containing fibroblasts and melanocytes. The stroma is highly vascular. The anterior surface of the iris has numerous grooves and ridges and is not covered by an epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stroma, formimg the bulk of the iris, is composed of loose connective tissue, containing fibroblasts and melanocytes. The stroma is highly vascular. The anterior surface of the iris has numerous grooves and ridges and is not covered by an epithelium.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lens",
+      "explicacao_original": "The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lens fibers",
+      "explicacao_original": "The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Lens fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Lens epithelium",
+      "explicacao_original": "The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-8-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Lens epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Lens capsule",
+      "explicacao_original": "The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-9-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Lens capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of the lens is made primarily of elongated lens fibers that are modified cells of the lens epithelium. The lens epithelium is present only on the anterior and equatorial regions of the lens and consists of a single layer of cuboidal cells. The outermost layer of the lens is a capsule, which represents the highly thickened basal lamina of the lens epithelium that lies inside the capsule.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Anterior chamber",
+      "explicacao_original": "The anterior chamber lies anterior to the iris and the lens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-13-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-13-10-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Anterior chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anterior chamber lies anterior to the iris and the lens.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of Iowa collection. Inset: Arizona Veterinary Diagnostic Laboratory",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Iowa-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Iris'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-13.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of Iowa collection. Inset: Arizona Veterinary Diagnostic Laboratory. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-13/, acesso em 2026-08-07."
+    }
+  ]
+}

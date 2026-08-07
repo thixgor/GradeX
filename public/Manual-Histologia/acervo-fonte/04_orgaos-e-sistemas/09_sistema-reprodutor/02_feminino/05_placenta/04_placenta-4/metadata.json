@@ -1,0 +1,94 @@
+{
+  "id": 13099,
+  "titulo": "Placenta: 1st trimester",
+  "titulo_wordpress": "Placenta 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 4"
+  ],
+  "descricao_original": "All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "arquivo": "imagens/base/O.R.F.P.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Placenta: 1st trimester', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Descricao original da pagina: All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intervillous space",
+      "explicacao_original": "All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Intervillous space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Maternal blood",
+      "explicacao_original": "All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P03.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Maternal blood' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Floating villi",
+      "explicacao_original": "All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P01.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Floating villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Embryonic connective tissue",
+      "explicacao_original": "All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P04.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Embryonic connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Embryonic blood vessels",
+      "explicacao_original": "All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P05.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Embryonic blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All chorionic villi extend into the intervillous space filled with maternal blood. Each villus, with a central core of embryonic connective tissue and embryonic blood vessels, is covered by an inner layer of cytotrophoblastic cells and an outer layer of syncytiotrophoblast. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cytotrophoblast",
+      "explicacao_original": "In the early placenta, cytotrophoblastic cells form a continuous, single-cell layer surrounding the embryonic connective tissue. These cells give rise to the multinucleated syncytiotrophoblast that lines the intervillous space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P06.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Cytotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the early placenta, cytotrophoblastic cells form a continuous, single-cell layer surrounding the embryonic connective tissue. These cells give rise to the multinucleated syncytiotrophoblast that lines the intervillous space.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Syncytiotrophoblast",
+      "explicacao_original": "In the early placenta, cytotrophoblastic cells form a continuous, single-cell layer surrounding the embryonic connective tissue. These cells give rise to the multinucleated syncytiotrophoblast that lines the intervillous space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.04.P07.png",
+      "imagem_base": "imagens/base/O.R.F.P.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.04.jpg'. Destaca a estrutura ou conceito 'Syncytiotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the early placenta, cytotrophoblastic cells form a continuous, single-cell layer surrounding the embryonic connective tissue. These cells give rise to the multinucleated syncytiotrophoblast that lines the intervillous space.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-4/, acesso em 2026-08-07."
+    }
+  ]
+}

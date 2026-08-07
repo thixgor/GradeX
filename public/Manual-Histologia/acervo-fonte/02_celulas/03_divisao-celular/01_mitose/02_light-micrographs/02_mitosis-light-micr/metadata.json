@@ -1,0 +1,54 @@
+{
+  "id": 2404,
+  "titulo": "Prophase",
+  "titulo_wordpress": "Mitosis light micrographs 2",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Light Micrographs",
+    "Mitosis light micrographs 2"
+  ],
+  "descricao_original": "Prophase is the initial phase of mitosis. This series of images shows the progression of prophase stages. Whitefish blastula, 1500x",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Prophase', no setor Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 2. Descricao original da pagina: Prophase is the initial phase of mitosis. This series of images shows the progression of prophase stages. Whitefish blastula, 1500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Early prophase",
+      "explicacao_original": "During early prophase, the chromatin is beginning to condense into chromosomes (black arrows) and the nuclear envelope is mostly complete, though evidence of dissolution is present (blue arrows). Also, centrosome migration to opposite poles of the nucleus begins during this phase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-1-1-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-1-1-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-1-new-fix.jpg'. Destaca a estrutura ou conceito 'Early prophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During early prophase, the chromatin is beginning to condense into chromosomes (black arrows) and the nuclear envelope is mostly complete, though evidence of dissolution is present (blue arrows). Also, centrosome migration to opposite poles of the nucleus begins during this phase.. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mid-prophase",
+      "explicacao_original": "By mid-prophase, the replicated chromosomes are clearly evident (black arrows) and demonstrate greater basophilia due to the chromatin condensation. Dissolution of the nuclear envelope is nearly complete, though in some regions, evidence of its presence is visible (blue arrow)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-2-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-2-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-1-new-fix.jpg'. Destaca a estrutura ou conceito 'Mid-prophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By mid-prophase, the replicated chromosomes are clearly evident (black arrows) and demonstrate greater basophilia due to the chromatin condensation. Dissolution of the nuclear envelope is nearly complete, though in some regions, evidence of its presence is visible (blue arrow). Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Late prophase",
+      "explicacao_original": "By late prophase, the chromosomes are fully condensed (black arrows) and the nuclear envelope has completely disappeared. Though not visible in this image, centrosome migration is complete and mitotic spindle formation has begun.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-2-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-2-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-1-new-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.LM-1-new-fix.jpg'. Destaca a estrutura ou conceito 'Late prophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By late prophase, the chromosomes are fully condensed (black arrows) and the nuclear envelope has completely disappeared. Though not visible in this image, centrosome migration is complete and mitotic spindle formation has begun.. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": 3030,
+  "titulo": "Schwann cells",
+  "titulo_wordpress": "Supporting cells PNS 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Peripheral Nervous System",
+    "Supporting cells PNS 7"
+  ],
+  "descricao_original": "A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-darker.jpg",
+      "arquivo": "imagens/base/T.N.SuppPNS-7-darker.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Schwann cells', no setor Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 7. Descricao original da pagina: A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axon",
+      "explicacao_original": "A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-7-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-7-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-7-darker.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myelin sheath",
+      "explicacao_original": "A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-7-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-7-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-7-darker.jpg'. Destaca a estrutura ou conceito 'Myelin sheath' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Microtubules",
+      "explicacao_original": "Neurons are large, intricate cells and possess an extensive cytoskeleton. Particularly evident in axons are microtubules and neurofilaments. Microtubules of neurons, similar to those in other cells, function to provide an intracellular pathway for transport of materials. Neurofilaments are the unique intermediate filament of neurons and primarily serve a supporting, structural role.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-7-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-7-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-7-darker.jpg'. Destaca a estrutura ou conceito 'Microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neurons are large, intricate cells and possess an extensive cytoskeleton. Particularly evident in axons are microtubules and neurofilaments. Microtubules of neurons, similar to those in other cells, function to provide an intracellular pathway for transport of materials. Neurofilaments are the unique intermediate filament of neurons and primarily serve a supporting, structural role.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Neurofilaments",
+      "explicacao_original": "Neurons are large, intricate cells and possess an extensive cytoskeleton. Particularly evident in axons are microtubules and neurofilaments. Microtubules of neurons, similar to those in other cells, function to provide an intracellular pathway for transport of materials. Neurofilaments are the unique intermediate filament of neurons and primarily serve a supporting, structural role.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-7-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-7-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-7-darker.jpg'. Destaca a estrutura ou conceito 'Neurofilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neurons are large, intricate cells and possess an extensive cytoskeleton. Particularly evident in axons are microtubules and neurofilaments. Microtubules of neurons, similar to those in other cells, function to provide an intracellular pathway for transport of materials. Neurofilaments are the unique intermediate filament of neurons and primarily serve a supporting, structural role.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "External lamina",
+      "explicacao_original": "A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-7-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-7-darker.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-7-darker.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-7-darker.jpg'. Destaca a estrutura ou conceito 'External lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A myelinated axon is shown in cross section in this electron micrograph. Especially prominent in axons are microtubules and neurofilaments. Schwann cell cytoplasm and the external lamina of the Schwann cell surround the myelin. 40,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-7/, acesso em 2026-08-07."
+    }
+  ]
+}

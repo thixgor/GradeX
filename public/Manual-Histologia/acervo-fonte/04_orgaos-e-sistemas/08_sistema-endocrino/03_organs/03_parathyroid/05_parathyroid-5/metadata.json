@@ -1,0 +1,54 @@
+{
+  "id": 4838,
+  "titulo": "Parathyroid gland",
+  "titulo_wordpress": "Parathyroid 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Parathyroid",
+    "Parathyroid 5"
+  ],
+  "descricao_original": "The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/parathyroid/parathyroid-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5A.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Para-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Parathyroid gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Parathyroid > Parathyroid 5. Descricao original da pagina: The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/parathyroid/parathyroid-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Principal cells",
+      "explicacao_original": "The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Para-5-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Para-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parathyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Para-5A.jpg'. Destaca a estrutura ou conceito 'Principal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Parathyroid > Parathyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/parathyroid/parathyroid-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Oxyphil cells",
+      "explicacao_original": "The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Para-5-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Para-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parathyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Para-5A.jpg'. Destaca a estrutura ou conceito 'Oxyphil cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Parathyroid > Parathyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/parathyroid/parathyroid-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Para-5-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Para-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Endo_.Para-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parathyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Para-5A.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The special stain used in these images clearly reveals the distribution of oxyphil cells among the more numerous principal cells. Principal cells have sparse amounts of cytoplasm and heterochromatic nuclei. Oxyphil cells have more abundant cytoplasm, which stains reddish due to presence of large numbers of mitochondria. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Parathyroid > Parathyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/parathyroid/parathyroid-5/, acesso em 2026-08-07."
+    }
+  ]
+}

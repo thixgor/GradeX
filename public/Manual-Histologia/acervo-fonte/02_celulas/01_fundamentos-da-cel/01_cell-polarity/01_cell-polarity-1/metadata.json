@@ -1,0 +1,73 @@
+{
+  "id": 143,
+  "titulo": "Polarity",
+  "titulo_wordpress": "Cell Polarity 1",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Cell Polarity",
+    "Cell Polarity 1"
+  ],
+  "descricao_original": "Polarity is a feature of cells in which their organelles are distributed asymmetrically in the cytoplasm. These triangular-shaped gland cells secrete digestive enzymes contained within secretory granules that are restricted to the apical (upper) regions of the cell. The blue-staining rough endoplasmic reticulum (RER) is the site of synthesis for these proteins and is present mostly in the basal regions. This segregation reflects the functional properties of the cells. Pancreas 1000x",
+  "url_origem": "https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-1.jpg",
+      "arquivo": "imagens/base/C.B.CP-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Polarity', no setor Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 1. Descricao original da pagina: Polarity is a feature of cells in which their organelles are distributed asymmetrically in the cytoplasm. These triangular-shaped gland cells secrete digestive enzymes contained within secretory granules that are restricted to the apical (upper) regions of the cell. The blue-staining rough endoplasmic reticulum (RER) is the site of synthesis for these proteins and is present mostly in the basal regions. This segregation reflects the functional properties of the cells. Pancreas 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gland cells",
+      "explicacao_original": "Each pyramidal-shaped gland cell assembles with other similar cells into a spherical cluster. Each cell releases its product into a central space (lumen) at the apices of the cells. The lumen is continuous with a tubular duct that drains the cluster.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-1-1.png",
+      "arquivo": "imagens/marcadores/C.B.CP-1-1.png",
+      "imagem_base": "imagens/base/C.B.CP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-1.jpg'. Destaca a estrutura ou conceito 'Gland cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each pyramidal-shaped gland cell assembles with other similar cells into a spherical cluster. Each cell releases its product into a central space (lumen) at the apices of the cells. The lumen is continuous with a tubular duct that drains the cluster.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Gland cell nuclei",
+      "explicacao_original": "Each pyramidal-shaped gland cell assembles with other similar cells into a spherical cluster. Each cell releases its product into a central space (lumen) at the apices of the cells. The lumen is continuous with a tubular duct that drains the cluster.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-1-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-1-2-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-1.jpg'. Destaca a estrutura ou conceito 'Gland cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each pyramidal-shaped gland cell assembles with other similar cells into a spherical cluster. Each cell releases its product into a central space (lumen) at the apices of the cells. The lumen is continuous with a tubular duct that drains the cluster.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lumen",
+      "explicacao_original": "Each pyramidal-shaped gland cell assembles with other similar cells into a spherical cluster. Each cell releases its product into a central space (lumen) at the apices of the cells. The lumen is continuous with a tubular duct that drains the cluster.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-1-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-1-3-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-1.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each pyramidal-shaped gland cell assembles with other similar cells into a spherical cluster. Each cell releases its product into a central space (lumen) at the apices of the cells. The lumen is continuous with a tubular duct that drains the cluster.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "RER",
+      "explicacao_original": "Rough endoplasmic reticulum is mostly restricted to the basal region of the cell where it synthesizes the enzyme secretory products. Ribosomes located on the endoplasmic reticulum possess a negative charge and, therefore, stain with the blue dye, hematoxylin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-1-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-1-4-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-1.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Rough endoplasmic reticulum is mostly restricted to the basal region of the cell where it synthesizes the enzyme secretory products. Ribosomes located on the endoplasmic reticulum possess a negative charge and, therefore, stain with the blue dye, hematoxylin.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The secretory product is synthesized by the RER and packaged into secretory granules. These granules accumulate in the apical region of each cell, adjacent to the lumen into which they will be released. These secretory granules stain with eosin, however, in other cells, they may stain with hematoxylin, depending on their contents.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/C.B.CP-1-5-ping.png",
+      "arquivo": "imagens/marcadores/C.B.CP-1-5-ping.png",
+      "imagem_base": "imagens/base/C.B.CP-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.CP-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Polarity'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.CP-1.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secretory product is synthesized by the RER and packaged into secretory granules. These granules accumulate in the apical region of each cell, adjacent to the lumen into which they will be released. These secretory granules stain with eosin, however, in other cells, they may stain with hematoxylin, depending on their contents.. Contexto setorial: Células > Fundamentos da Célula > Cell Polarity > Cell Polarity 1. Origem: Digital Histology, https://digitalhistology.org/cells/basics/cell-polarity/cell-polarity-1/, acesso em 2026-08-07."
+    }
+  ]
+}

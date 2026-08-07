@@ -1,0 +1,76 @@
+{
+  "id": 6737,
+  "titulo": "Lip: Vermilion zone",
+  "titulo_wordpress": "Lip 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Lip",
+    "Lip 2"
+  ],
+  "descricao_original": "The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Lip-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lip: Vermilion zone', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 2. Descricao original da pagina: The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Vermilion zone",
+      "explicacao_original": "The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Vermilion zone'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-2.jpg'. Destaca a estrutura ou conceito 'Vermilion zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dermal papillae",
+      "explicacao_original": "The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Vermilion zone'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-2.jpg'. Destaca a estrutura ou conceito 'Dermal papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Vermilion zone'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-2.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Orbicularis oris muscle",
+      "explicacao_original": "The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Vermilion zone'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-2.jpg'. Destaca a estrutura ou conceito 'Orbicularis oris muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermilion zone is lined by a thick keratinized, stratified squamous epithelium and hair follicles are lacking. The numerous, densely packed dermal papillae of the lamina propria allow blood vessels close access to the surface, imparting a red color to this zone. The image on the right shows these details at higher magnification 100x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Lip-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Lip-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip: Vermilion zone'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-2/, acesso em 2026-08-07."
+    }
+  ]
+}

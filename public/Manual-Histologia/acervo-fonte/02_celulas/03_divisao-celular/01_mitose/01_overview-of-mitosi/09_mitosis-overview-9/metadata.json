@@ -1,0 +1,64 @@
+{
+  "id": 2332,
+  "titulo": "Daughter cells",
+  "titulo_wordpress": "Mitosis overview 9",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 9"
+  ],
+  "descricao_original": "Cytokinesis completes mitosis and results in the formation of two identical daughter cells, each with one set of paired homologous chromosomes.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-8.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Daughter cells', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 9. Descricao original da pagina: Cytokinesis completes mitosis and results in the formation of two identical daughter cells, each with one set of paired homologous chromosomes.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Daughter cells",
+      "explicacao_original": "Cytokinesis completes mitosis and results in the formation of two identical daughter cells, each with one set of paired homologous chromosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-8-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-8-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Daughter cells'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-8.jpg'. Destaca a estrutura ou conceito 'Daughter cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cytokinesis completes mitosis and results in the formation of two identical daughter cells, each with one set of paired homologous chromosomes.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 9. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Chromosomes",
+      "explicacao_original": "Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. Note, in this diagram the chromosomes are shown in the condensed state for comparison with the other figures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-8-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-8-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Daughter cells'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-8.jpg'. Destaca a estrutura ou conceito 'Chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. Note, in this diagram the chromosomes are shown in the condensed state for comparison with the other figures.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 9. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. Note, in this diagram the chromosomes are shown in the condensed state for comparison with the other figures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-8-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-8-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Daughter cells'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-8.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. Note, in this diagram the chromosomes are shown in the condensed state for comparison with the other figures.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 9. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nucleoli",
+      "explicacao_original": "Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. Note, in this diagram the chromosomes are shown in the condensed state for comparison with the other figures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-8-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-8-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Daughter cells'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-8.jpg'. Destaca a estrutura ou conceito 'Nucleoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. Note, in this diagram the chromosomes are shown in the condensed state for comparison with the other figures.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 9. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-9/, acesso em 2026-08-07."
+    }
+  ]
+}

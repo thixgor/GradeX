@@ -1,0 +1,64 @@
+{
+  "id": 5284,
+  "titulo": "Small artery",
+  "titulo_wordpress": "Arteries 17",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 17"
+  ],
+  "descricao_original": "Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-17.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-17.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Small artery', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 17. Descricao original da pagina: Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endothelium",
+      "explicacao_original": "Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-17-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-17-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Small artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-17.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Internal elastic lamina",
+      "explicacao_original": "Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-17-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-17-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Small artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-17.jpg'. Destaca a estrutura ou conceito 'Internal elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica media",
+      "explicacao_original": "Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-17-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-17-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Small artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-17.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-17-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-17-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Small artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-17.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Small arteries are distinguished by having a prominent internal elastic lamina, three to eight layers of smooth muscle in the tunica media and a tunica adventitia. The external elastic lamina is highly reduced or may be absent entirely in small arteries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 17. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-17/, acesso em 2026-08-07."
+    }
+  ]
+}

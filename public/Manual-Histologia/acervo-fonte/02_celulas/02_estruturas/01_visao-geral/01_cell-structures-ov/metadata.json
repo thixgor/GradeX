@@ -1,0 +1,173 @@
+{
+  "id": 1106,
+  "titulo": "Overview of cell structures",
+  "titulo_wordpress": "Cell structures overview",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Visão Geral",
+    "Cell structures overview"
+  ],
+  "descricao_original": "The cell consists of two major compartments, cytoplasm and nucleus. Located throughout the cytoplasm are membranous organelles, e.g., endoplasmic reticulum, lysosomes and mitochondria, as well as non-membranous organelles, e.g., polysomes and centrioles. The nucleus is surrounded by two membranes which are continuous with the endoplasmic reticulum.",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "arquivo": "imagens/base/C.S.OV_.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview of cell structures', no setor Células > Estruturas > Visão Geral > Cell structures overview. Descricao original da pagina: The cell consists of two major compartments, cytoplasm and nucleus. Located throughout the cytoplasm are membranous organelles, e.g., endoplasmic reticulum, lysosomes and mitochondria, as well as non-membranous organelles, e.g., polysomes and centrioles. The nucleus is surrounded by two membranes which are continuous with the endoplasmic reticulum.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The nucleus is usually the most prominent structure in the cell and, in non-dividing cells, the nucleus is well demarcated from the cytoplasm by the nuclear envelope. The nucleus houses the genomic DNA, transcribes and processes messenger RNA and contains the nucleolus, the site of ribosomal RNA production and the initial assembly of ribosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P01.png",
+      "arquivo": "imagens/marcadores/C.S.O.P01.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nucleus is usually the most prominent structure in the cell and, in non-dividing cells, the nucleus is well demarcated from the cytoplasm by the nuclear envelope. The nucleus houses the genomic DNA, transcribes and processes messenger RNA and contains the nucleolus, the site of ribosomal RNA production and the initial assembly of ribosomes.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P02.png",
+      "arquivo": "imagens/marcadores/C.S.O.P02.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nucleolus is the site of ribosomal RNA transcription and the initial assembly of ribosomes. Nuclei generally have one nucleolus; however, multiple nucleoli are common in highly active cells, such as liver cells.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endoplasmic reticulum",
+      "explicacao_original": "The endoplasmic reticulum (ER) is an interconnected system of intracellular unit membranes. Regions of the endoplasmic reticulum with ribosomes are called rough endoplasmic reticulum (RER) and are arranged as flattened sacs. Regions lacking ribosomes are termed smooth endoplasmic reticulum (SER), appear more tubular.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P03-1.png",
+      "arquivo": "imagens/marcadores/C.S.O.P03-1.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoplasmic reticulum (ER) is an interconnected system of intracellular unit membranes. Regions of the endoplasmic reticulum with ribosomes are called rough endoplasmic reticulum (RER) and are arranged as flattened sacs. Regions lacking ribosomes are termed smooth endoplasmic reticulum (SER), appear more tubular.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Golgi apparatus",
+      "explicacao_original": "The Golgi apparatus, usually located near the nucleus, consists of flattened, membranous sacs. These sacs receive newly synthesized proteins from the RER via transport vesicles. The vesicles fuse with the forming face of the Golgi, and their proteins are post-translationally modified, e.g., glycosylated or phosphorylated, and packaged on the maturing face of the Golgi for transport throughout the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P04.png",
+      "arquivo": "imagens/marcadores/C.S.O.P04.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Golgi apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi apparatus, usually located near the nucleus, consists of flattened, membranous sacs. These sacs receive newly synthesized proteins from the RER via transport vesicles. The vesicles fuse with the forming face of the Golgi, and their proteins are post-translationally modified, e.g., glycosylated or phosphorylated, and packaged on the maturing face of the Golgi for transport throughout the cell.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Proteins for export are synthesized by the RER and transferred to the Golgi via transport vesicles. The Golgi modifies these proteins and packages them as secretory vesicles/granules for transport to the plasma membrane, where they are released from the cells by exocytosis. Secretory granules consist of a single unit membrane surrounding the contents of the the granule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P05-4.png",
+      "arquivo": "imagens/marcadores/C.S.O.P05-4.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proteins for export are synthesized by the RER and transferred to the Golgi via transport vesicles. The Golgi modifies these proteins and packages them as secretory vesicles/granules for transport to the plasma membrane, where they are released from the cells by exocytosis. Secretory granules consist of a single unit membrane surrounding the contents of the the granule.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lysosomes",
+      "explicacao_original": "Lysosomes, single-membrane organelles, are the major degradative organelle, containing acid hydrolase enzymes. Lysosomes form by the fusion of pre-lysosomal vesicles from the Golgi with endosomes, phagosomes, or autophagosomes. Lysosomal contents appear amorphous and highly variable, reflecting contents and stages of degradation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P06-1.png",
+      "arquivo": "imagens/marcadores/C.S.O.P06-1.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Lysosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes, single-membrane organelles, are the major degradative organelle, containing acid hydrolase enzymes. Lysosomes form by the fusion of pre-lysosomal vesicles from the Golgi with endosomes, phagosomes, or autophagosomes. Lysosomal contents appear amorphous and highly variable, reflecting contents and stages of degradation.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Mitochondrion",
+      "explicacao_original": "Mitochondria, the major site of ATP synthesis, contain enzymes of the citric acid (Krebs) cycle, oxidative phosphorylation and electron transport systems. A mitochondrion is formed by two unit membranes, the inner of which has folds, or cristae, that project into the mitochondrion. The number, shape and distribution of mitochondria vary with cellular activity and type of the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P07.png",
+      "arquivo": "imagens/marcadores/C.S.O.P07.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Mitochondrion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mitochondria, the major site of ATP synthesis, contain enzymes of the citric acid (Krebs) cycle, oxidative phosphorylation and electron transport systems. A mitochondrion is formed by two unit membranes, the inner of which has folds, or cristae, that project into the mitochondrion. The number, shape and distribution of mitochondria vary with cellular activity and type of the cell.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Lipid droplets are cellular inclusions that are not surrounded by a unit membrane. Lipid provides energy for cell metabolism and may be present as multiple droplets (shown here) or as a single, large droplet, such as seen in an adipocyte. Lipid is extracted during routine tissue processing techniques, so the location of the lipid often appears as an empty space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P08.png",
+      "arquivo": "imagens/marcadores/C.S.O.P08.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lipid droplets are cellular inclusions that are not surrounded by a unit membrane. Lipid provides energy for cell metabolism and may be present as multiple droplets (shown here) or as a single, large droplet, such as seen in an adipocyte. Lipid is extracted during routine tissue processing techniques, so the location of the lipid often appears as an empty space.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Centrioles",
+      "explicacao_original": "A centriole is composed of nine triplets of microtubules arranged as a cylinder. A pair of centrioles, oriented at right angles to each other and often located near the nucleus, form the diplosome. Centrioles are the site of origin of microtubules for the spindle apparatus during cell division. They also form basal bodies located at the bases of cilia and flagella, where they organize the microtubules of these structures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P09.png",
+      "arquivo": "imagens/marcadores/C.S.O.P09.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Centrioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A centriole is composed of nine triplets of microtubules arranged as a cylinder. A pair of centrioles, oriented at right angles to each other and often located near the nucleus, form the diplosome. Centrioles are the site of origin of microtubules for the spindle apparatus during cell division. They also form basal bodies located at the bases of cilia and flagella, where they organize the microtubules of these structures.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Polysomes",
+      "explicacao_original": "Polysomes or polyribosomes are groups of ribosomes in the cytoplasm attached to a single messenger RNA molecule. Polysomes synthesize protein mostly for internal use by the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P10.png",
+      "arquivo": "imagens/marcadores/C.S.O.P10.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Polysomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Polysomes or polyribosomes are groups of ribosomes in the cytoplasm attached to a single messenger RNA molecule. Polysomes synthesize protein mostly for internal use by the cell.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Glycogen",
+      "explicacao_original": "Cells store glucose in the form of glycogen granules, which can be present individually or in small clusters. In liver cells, which store large amounts of glycogen, these granules are abundant.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P11.png",
+      "arquivo": "imagens/marcadores/C.S.O.P11.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells store glucose in the form of glycogen granules, which can be present individually or in small clusters. In liver cells, which store large amounts of glycogen, these granules are abundant.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Junctional complexes",
+      "explicacao_original": "Junctional complexes are present in the apical regions of epithelia and consist of three components: (1) Zonula occludens, a band encircling each cell, sealing the lumen from the intercellular space; (2) Zonula adherens, forming a band that attaches adjacent cells to each other; and (3) Desmosomes (maculae adherens), disc-shaped attachment points that are also present in other regions of cell contact.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P12.png",
+      "arquivo": "imagens/marcadores/C.S.O.P12.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Junctional complexes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Junctional complexes are present in the apical regions of epithelia and consist of three components: (1) Zonula occludens, a band encircling each cell, sealing the lumen from the intercellular space; (2) Zonula adherens, forming a band that attaches adjacent cells to each other; and (3) Desmosomes (maculae adherens), disc-shaped attachment points that are also present in other regions of cell contact.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Hemidesmosomes",
+      "explicacao_original": "A hemidesmosome is a specialization of the basal plasma membrane of an epithelial cell and resembles one-half of a desmosome. Hemidesmosomes serve to attach the basal surface of the cell to the underlying basal lamina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P13.png",
+      "arquivo": "imagens/marcadores/C.S.O.P13.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Hemidesmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A hemidesmosome is a specialization of the basal plasma membrane of an epithelial cell and resembles one-half of a desmosome. Hemidesmosomes serve to attach the basal surface of the cell to the underlying basal lamina.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Microvilli",
+      "explicacao_original": "Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane. Microvilli greatly increase the absorptive surface area of a cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P14-4.png",
+      "arquivo": "imagens/marcadores/C.S.O.P14-4.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane. Microvilli greatly increase the absorptive surface area of a cell.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Cilia",
+      "explicacao_original": "Cilia are hair-like, highly motile extensions, greater than 1 micron in height, that project from the apical surface of some cells. A basal body is present at the base of cilium. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/C.S.O.P15-1.png",
+      "arquivo": "imagens/marcadores/C.S.O.P15-1.png",
+      "imagem_base": "imagens/base/C.S.OV_.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.OV_.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of cell structures'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.OV_.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cilia are hair-like, highly motile extensions, greater than 1 micron in height, that project from the apical surface of some cells. A basal body is present at the base of cilium. Each ciliated cell possesses numerous cilia, which beat in concert to propel materials along the epithelial surface.. Contexto setorial: Células > Estruturas > Visão Geral > Cell structures overview. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/overview/cell-structures-overview/, acesso em 2026-08-07."
+    }
+  ]
+}

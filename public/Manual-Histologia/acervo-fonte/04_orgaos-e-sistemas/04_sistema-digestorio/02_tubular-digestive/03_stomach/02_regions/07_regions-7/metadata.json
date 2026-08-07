@@ -1,0 +1,75 @@
+{
+  "id": 6874,
+  "titulo": "Stomach: fundus and body",
+  "titulo_wordpress": "Regions 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 7"
+  ],
+  "descricao_original": "This image of fundic glands demonstrates the cells of the glands, as well as the adjacent lamina propria and muscularis mucosae. 800x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: fundus and body', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 7. Descricao original da pagina: This image of fundic glands demonstrates the cells of the glands, as well as the adjacent lamina propria and muscularis mucosae. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen of gland",
+      "explicacao_original": "This image of fundic glands demonstrates the cells of the glands, as well as the adjacent lamina propria and muscularis mucosae. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-7.jpg'. Destaca a estrutura ou conceito 'Lumen of gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image of fundic glands demonstrates the cells of the glands, as well as the adjacent lamina propria and muscularis mucosae. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "This image of fundic glands demonstrates the cells of the glands, as well as the adjacent lamina propria and muscularis mucosae. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-7.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image of fundic glands demonstrates the cells of the glands, as well as the adjacent lamina propria and muscularis mucosae. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chief cells",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-7.jpg'. Destaca a estrutura ou conceito 'Chief cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Enteroendocrine",
+      "explicacao_original": "Enteroendocrine cells represent at least 12 different cell types, each secreting a specific hormone. These cells lie at the periphery of each gland, because they release their hormones into the lamina propria, where they enter blood vessels (endocrine) or influence adjacent exocrine cells (paracrine). Enteroendocrine cells are part of the diffuse neuroendocrine system (DNES).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-7.jpg'. Destaca a estrutura ou conceito 'Enteroendocrine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enteroendocrine cells represent at least 12 different cell types, each secreting a specific hormone. These cells lie at the periphery of each gland, because they release their hormones into the lamina propria, where they enter blood vessels (endocrine) or influence adjacent exocrine cells (paracrine). Enteroendocrine cells are part of the diffuse neuroendocrine system (DNES).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The lamina propria contains fibroblasts that maintain the connective tissue, as well as cells associated with the immune system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-7.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria contains fibroblasts that maintain the connective tissue, as well as cells associated with the immune system.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-7/, acesso em 2026-08-07."
+    }
+  ]
+}

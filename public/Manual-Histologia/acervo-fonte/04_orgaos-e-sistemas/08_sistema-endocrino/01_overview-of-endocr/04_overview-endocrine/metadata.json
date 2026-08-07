@@ -1,0 +1,63 @@
+{
+  "id": 4774,
+  "titulo": "Overview",
+  "titulo_wordpress": "Overview (endocrine) 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Overview of endocrine organs",
+    "Overview (endocrine) 4"
+  ],
+  "descricao_original": "Steroids are a second major type of hormone. Steroid-secreting cells are common in the adrenal gland, ovary and testis. Steroid hormones are derived from cholesterol, so these cells are filled with lipid droplets, giving the cells a frothy appearance. Adrenal cortex 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ov-4-new.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Ov-4-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 4. Descricao original da pagina: Steroids are a second major type of hormone. Steroid-secreting cells are common in the adrenal gland, ovary and testis. Steroid hormones are derived from cholesterol, so these cells are filled with lipid droplets, giving the cells a frothy appearance. Adrenal cortex 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Steroid-secreting cells",
+      "explicacao_original": "Steroid-secreting cells are usually spherical with a central nucleus. These cells are filled with lipid droplets, producing a frothy appearance to the cytoplasm. These cells are rich in SER and possess mitochondria with tubular cristae to aid in the production of the steroid hormones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ov-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-4-new.jpg'. Destaca a estrutura ou conceito 'Steroid-secreting cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Steroid-secreting cells are usually spherical with a central nucleus. These cells are filled with lipid droplets, producing a frothy appearance to the cytoplasm. These cells are rich in SER and possess mitochondria with tubular cristae to aid in the production of the steroid hormones.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Steroid-secreting cells are usually spherical with a central nucleus. These cells are filled with lipid droplets, producing a frothy appearance to the cytoplasm. These cells are rich in SER and possess mitochondria with tubular cristae to aid in the production of the steroid hormones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ov-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-4-new.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Steroid-secreting cells are usually spherical with a central nucleus. These cells are filled with lipid droplets, producing a frothy appearance to the cytoplasm. These cells are rich in SER and possess mitochondria with tubular cristae to aid in the production of the steroid hormones.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Fenestrated capillaries",
+      "explicacao_original": "Like peptide-secreting organs, steroid-secreting organs also possess fenestrated capillaries. In the adrenal gland, shown here, these capillaries have a wide diameter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ov-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-4-new.jpg'. Destaca a estrutura ou conceito 'Fenestrated capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Like peptide-secreting organs, steroid-secreting organs also possess fenestrated capillaries. In the adrenal gland, shown here, these capillaries have a wide diameter.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "Like peptide-secreting organs, steroid-secreting organs also possess fenestrated capillaries. In the adrenal gland, shown here, these capillaries have a wide diameter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-4-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Ov-4-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-4-new.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Like peptide-secreting organs, steroid-secreting organs also possess fenestrated capillaries. In the adrenal gland, shown here, these capillaries have a wide diameter.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-4/, acesso em 2026-08-07."
+    }
+  ]
+}

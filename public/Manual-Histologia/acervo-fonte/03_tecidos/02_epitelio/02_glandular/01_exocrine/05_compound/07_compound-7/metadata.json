@@ -1,0 +1,65 @@
+{
+  "id": 4551,
+  "titulo": "Compound acinar gland",
+  "titulo_wordpress": "Compound 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 7"
+  ],
+  "descricao_original": "This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound acinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 7. Descricao original da pagina: This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-6-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-6-fix.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 7. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acinar lumen",
+      "explicacao_original": "This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-6-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-6-fix.jpg'. Destaca a estrutura ou conceito 'Acinar lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 7. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-6-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-6-fix.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 7. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intralobular duct",
+      "explicacao_original": "This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-6-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-6-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-6-fix.jpg'. Destaca a estrutura ou conceito 'Intralobular duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a number of acini along with an intralobular duct in a compound acinar salivary gland. The acinar cells are filled with secretory granules that are better termed zymogen granules since they contain enzymes, mostly amylase to break down starch. Parotid gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 7. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-7/, acesso em 2026-08-07."
+    }
+  ]
+}

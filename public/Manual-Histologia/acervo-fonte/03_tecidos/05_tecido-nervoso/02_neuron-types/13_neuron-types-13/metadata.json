@@ -1,0 +1,63 @@
+{
+  "id": 2995,
+  "titulo": "Pseudounipolar neuron",
+  "titulo_wordpress": "Neuron types 13",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 13"
+  ],
+  "descricao_original": "Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "arquivo": "imagens/base/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pseudounipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 13. Descricao original da pagina: Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neuronal cell bodies",
+      "explicacao_original": "Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14-1a-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-1a-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14a-1.jpg'. Destaca a estrutura ou conceito 'Neuronal cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 13. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-2a-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14a-1.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 13. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-3a-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14a-1.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 13. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capsule",
+      "explicacao_original": "Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14-4a-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-4a-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14a-1.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several pseudounipolar neurons are seen in this image. Pseudounipolar neuron cell bodies vary in size, a feature that correlates with the type of sensory information each neuron conveys. Each cell body is surrounded by satellite Schwann cells which form a capsule. 750x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 13. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-13/, acesso em 2026-08-07."
+    }
+  ]
+}

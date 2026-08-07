@@ -1,0 +1,64 @@
+{
+  "id": 6964,
+  "titulo": "Pancreas",
+  "titulo_wordpress": "Pancreas 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Pancreas",
+    "Pancreas 3"
+  ],
+  "descricao_original": "Acini of the exocrine pancreas demonstrate the polarity of exocrine secretory cells. Rough endoplasmic reticulum is evident at the periphery of each acinar cell; secretory granules are located at the apex, adjacent to the lumen into which their contents will be released. Centroacinar cells, located in the center of each acinus, form the beginning of the intralobular duct system. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-3.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Pan-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pancreas', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 3. Descricao original da pagina: Acini of the exocrine pancreas demonstrate the polarity of exocrine secretory cells. Rough endoplasmic reticulum is evident at the periphery of each acinar cell; secretory granules are located at the apex, adjacent to the lumen into which their contents will be released. Centroacinar cells, located in the center of each acinus, form the beginning of the intralobular duct system. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "Acini of the exocrine pancreas demonstrate the polarity of exocrine secretory cells. Rough endoplasmic reticulum is evident at the periphery of each acinar cell; secretory granules are located at the apex, adjacent to the lumen into which their contents will be released. Centroacinar cells, located in the center of each acinus, form the beginning of the intralobular duct system. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-3.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Acini of the exocrine pancreas demonstrate the polarity of exocrine secretory cells. Rough endoplasmic reticulum is evident at the periphery of each acinar cell; secretory granules are located at the apex, adjacent to the lumen into which their contents will be released. Centroacinar cells, located in the center of each acinus, form the beginning of the intralobular duct system. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Basal rough endoplasmic reticulum",
+      "explicacao_original": "The acinar cells of the exocrine pancreas synthesize digestive enzymes in basally-located rough endoplasmic reticulum. The enzymes, in their inactive form, are packaged into secretory granules and then released into the duct system. The enzymes are not activated until they reach the lumen of the duodenum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-3.jpg'. Destaca a estrutura ou conceito 'Basal rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The acinar cells of the exocrine pancreas synthesize digestive enzymes in basally-located rough endoplasmic reticulum. The enzymes, in their inactive form, are packaged into secretory granules and then released into the duct system. The enzymes are not activated until they reach the lumen of the duodenum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The acinar cells of the exocrine pancreas synthesize digestive enzymes in basally-located rough endoplasmic reticulum. The enzymes, in their inactive form, are packaged into secretory granules and then released into the duct system. The enzymes are not activated until they reach the lumen of the duodenum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-3.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The acinar cells of the exocrine pancreas synthesize digestive enzymes in basally-located rough endoplasmic reticulum. The enzymes, in their inactive form, are packaged into secretory granules and then released into the duct system. The enzymes are not activated until they reach the lumen of the duodenum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Centroacinar cells",
+      "explicacao_original": "A unique feature of the exocrine pancreas is that the smallest duct (intralobular duct) begins with centroacinar cells located within the center of the acinus. Intercalated ducts transport bicarbonate and water into their lumens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-3.jpg'. Destaca a estrutura ou conceito 'Centroacinar cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A unique feature of the exocrine pancreas is that the smallest duct (intralobular duct) begins with centroacinar cells located within the center of the acinus. Intercalated ducts transport bicarbonate and water into their lumens.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-3/, acesso em 2026-08-07."
+    }
+  ]
+}

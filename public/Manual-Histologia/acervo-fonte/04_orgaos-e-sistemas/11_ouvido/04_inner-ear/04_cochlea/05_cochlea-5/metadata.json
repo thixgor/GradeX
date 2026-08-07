@@ -1,0 +1,134 @@
+{
+  "id": 14270,
+  "titulo": "Cochlear duct",
+  "titulo_wordpress": "Cochlea 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 5"
+  ],
+  "descricao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "arquivo": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cochlear duct', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Descricao original da pagina: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Scala vestibuli",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Scala vestibuli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Vestibular membrane",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Vestibular membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Scala tympani",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.05.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Scala tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basilar membrane",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.C.05.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Basilar membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cochlear duct",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Cochlear duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Organ of Corti",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Organ of Corti' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Hair cells",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Hair cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Tectorial membrane",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P08.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P08.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Tectorial membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Stria vascularis",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P09.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P09.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Stria vascularis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Osseous spiral lamina",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P10.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P10.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Osseous spiral lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Cranial nerve VIII",
+      "explicacao_original": "An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.05.P11.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.05.P11.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.05-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.05-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlear duct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.05-1A.jpg'. Destaca a estrutura ou conceito 'Cranial nerve VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An illustration and a histological section of a single turn of the osseous cochlea show the cochlear duct positioned between the scala vestibuli and scala tympani. The receptor for hearing, the organ of Corti, is located on the basilar membrane (floor) of the cochlear duct. 100x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-5/, acesso em 2026-08-07."
+    }
+  ]
+}

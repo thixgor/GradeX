@@ -1,0 +1,64 @@
+{
+  "id": 4798,
+  "titulo": "Pars distalis",
+  "titulo_wordpress": "Pituitary 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 5"
+  ],
+  "descricao_original": "Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pars distalis', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 5. Descricao original da pagina: Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Basophils",
+      "explicacao_original": "Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Basophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acidophils",
+      "explicacao_original": "Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Acidophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chromophobes",
+      "explicacao_original": "Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Chromophobes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-5-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-5-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars distalis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-5-light.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hematoxylin and eosin staining of the pars distalis reveals two general types of secretory cells, basophils and acidophils. Basophils contain purple-staining granules; acidophils contain pink-staining, eosinophilic granules. Cells without obvious granules are called chromophobes and may be either degranulated chromophils or reserve cells. All cells are arranged in plates or cords with numerous intervening fenestrated capillaries. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-5/, acesso em 2026-08-07."
+    }
+  ]
+}

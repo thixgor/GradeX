@@ -1,0 +1,44 @@
+{
+  "id": 3018,
+  "titulo": "Schwann cells",
+  "titulo_wordpress": "Supporting cells PNS 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Peripheral Nervous System",
+    "Supporting cells PNS 1"
+  ],
+  "descricao_original": "Neurons are maintained structurally and metabolically by a variety of support cells, termed glial cells. One variety of glial cells is the satellite Schwann cell, which surround neuronal cell bodies in ganglia in the peripheral nervous system. In this dorsal root ganglion, numerous satellite Schwann cells form a capsule-like enclosure around the cell bodies of individual pseudounipolar neurons, controlling the microenvironment of these cells. Satellite Schwann cells also surround multipolar neurons in autonomic ganglia. 750x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "arquivo": "imagens/base/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Schwann cells', no setor Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 1. Descricao original da pagina: Neurons are maintained structurally and metabolically by a variety of support cells, termed glial cells. One variety of glial cells is the satellite Schwann cell, which surround neuronal cell bodies in ganglia in the peripheral nervous system. In this dorsal root ganglion, numerous satellite Schwann cells form a capsule-like enclosure around the cell bodies of individual pseudounipolar neurons, controlling the microenvironment of these cells. Satellite Schwann cells also surround multipolar neurons in autonomic ganglia. 750x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Satellite Schwann cell nuclei",
+      "explicacao_original": "Neurons are maintained structurally and metabolically by a variety of support cells, termed glial cells. One variety of glial cells is the satellite Schwann cell, which surround neuronal cell bodies in ganglia in the peripheral nervous system. In this dorsal root ganglion, numerous satellite Schwann cells form a capsule-like enclosure around the cell bodies of individual pseudounipolar neurons, controlling the microenvironment of these cells. Satellite Schwann cells also surround multipolar neurons in autonomic ganglia. 750x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-1-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14a-1.jpg'. Destaca a estrutura ou conceito 'Satellite Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neurons are maintained structurally and metabolically by a variety of support cells, termed glial cells. One variety of glial cells is the satellite Schwann cell, which surround neuronal cell bodies in ganglia in the peripheral nervous system. In this dorsal root ganglion, numerous satellite Schwann cells form a capsule-like enclosure around the cell bodies of individual pseudounipolar neurons, controlling the microenvironment of these cells. Satellite Schwann cells also surround multipolar neurons in autonomic ganglia. 750x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pseudounipolar neurons",
+      "explicacao_original": "Neurons are maintained structurally and metabolically by a variety of support cells, termed glial cells. One variety of glial cells is the satellite Schwann cell, which surround neuronal cell bodies in ganglia in the peripheral nervous system. In this dorsal root ganglion, numerous satellite Schwann cells form a capsule-like enclosure around the cell bodies of individual pseudounipolar neurons, controlling the microenvironment of these cells. Satellite Schwann cells also surround multipolar neurons in autonomic ganglia. 750x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-1-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-14a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14a-1.jpg'. Destaca a estrutura ou conceito 'Pseudounipolar neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Neurons are maintained structurally and metabolically by a variety of support cells, termed glial cells. One variety of glial cells is the satellite Schwann cell, which surround neuronal cell bodies in ganglia in the peripheral nervous system. In this dorsal root ganglion, numerous satellite Schwann cells form a capsule-like enclosure around the cell bodies of individual pseudounipolar neurons, controlling the microenvironment of these cells. Satellite Schwann cells also surround multipolar neurons in autonomic ganglia. 750x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-1/, acesso em 2026-08-07."
+    }
+  ]
+}

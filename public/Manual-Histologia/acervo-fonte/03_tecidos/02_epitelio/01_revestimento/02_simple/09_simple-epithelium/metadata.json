@@ -1,0 +1,94 @@
+{
+  "id": 3679,
+  "titulo": "Simple columnar epithelium",
+  "titulo_wordpress": "Simple epithelium 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 9"
+  ],
+  "descricao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple columnar epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Descricao original da pagina: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple columnar epithelium",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-1-ping-1.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-1-ping-1.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Simple columnar epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-2-ping-1.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-2-ping-1.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Microvilli (brush border)",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-3-ping-1.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-3-ping-1.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Microvilli (brush border)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Unicellular glands (goblet cells)",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-4-ping-1.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-4-ping-1.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Unicellular glands (goblet cells)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-5-ping-1.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-5-ping-1.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Loose connective tissue",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Loose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Intestinal lumen",
+      "explicacao_original": "Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-9-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-9-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-9-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-9-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple columnar epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-9-2.jpg'. Destaca a estrutura ou conceito 'Intestinal lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple columnar epithelium lines the intestine, as seen here in the duodenum. Also visible is a brush border, composed of closely packed microvilli, which are commonly present on simple columnar epithelia. Interspersed between the cells are unicellular glands called goblet cells which secrete mucus. The mucus is released onto the epithelial surface. Small intestine, 300x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 9. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-9/, acesso em 2026-08-07."
+    }
+  ]
+}

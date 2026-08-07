@@ -1,0 +1,77 @@
+{
+  "id": 15819,
+  "titulo": "Prostate",
+  "titulo_wordpress": "Prostate 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Genital Glands",
+    "Prostate",
+    "Prostate 6"
+  ],
+  "descricao_original": "Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/",
+  "creditos_identificados": [
+    "Image source: The right image was taken of a slide from The University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.jpg",
+      "arquivo": "imagens/base/O.R.M.GG_.P.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Prostate', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 6. Descricao original da pagina: Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glands",
+      "explicacao_original": "Usually pseudostratified columnar epithelium lines the prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.06.P01.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.06.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Usually pseudostratified columnar epithelium lines the prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.06.P02.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.06.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Concretions",
+      "explicacao_original": "Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.06.P03.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.06.jpg'. Destaca a estrutura ou conceito 'Concretions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.06.P04.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.06.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Usually pseudostratified columnar epithelium lines prostate glands, although simple epithelia may also be present. The height of the epithelium will vary depending on the activity of the gland. A fibromuscular tissue surrounds each gland. Prostatic concretions accumulate with age in the prostate. 800x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "The right image was taken of a slide from The University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Michigan-source-ping-half-frame-rt.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-half-frame-rt.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.06.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The right image was taken of a slide from The University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-6/, acesso em 2026-08-07."
+    }
+  ]
+}

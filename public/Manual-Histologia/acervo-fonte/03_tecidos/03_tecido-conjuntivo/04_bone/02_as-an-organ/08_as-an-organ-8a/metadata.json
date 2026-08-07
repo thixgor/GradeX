@@ -1,0 +1,114 @@
+{
+  "id": 30235,
+  "titulo": "Bone: the organ - periosteum and endosteum",
+  "titulo_wordpress": "As an organ 8A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 8A"
+  ],
+  "descricao_original": "These images show the surface coverings of bone. The outer surface (top image) is covered by a periosteum, the inner surface (bottom image) is lined by endosteum. A low magnification, cross section of the diaphysis is shown in the inset. 10x, 800x, 800x.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "arquivo": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ - periosteum and endosteum', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Descricao original da pagina: These images show the surface coverings of bone. The outer surface (top image) is covered by a periosteum, the inner surface (bottom image) is lined by endosteum. A low magnification, cross section of the diaphysis is shown in the inset. 10x, 800x, 800x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Periosteum",
+      "explicacao_original": "Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Periosteum-1.png",
+      "arquivo": "imagens/marcadores/Periosteum-1.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibrous layer",
+      "explicacao_original": "Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Fibrous-1.png",
+      "arquivo": "imagens/marcadores/Fibrous-1.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteogenic layer",
+      "explicacao_original": "Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Osteogen.png",
+      "arquivo": "imagens/marcadores/Osteogen.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Osteogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Bone-lining-cells-1.png",
+      "arquivo": "imagens/marcadores/Bone-lining-cells-1.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Compact bone",
+      "explicacao_original": "Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Compact-bone.png",
+      "arquivo": "imagens/marcadores/Compact-bone.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum covers the outer surface of bones, except over articular cartilages. The periosteum consists of an outer fibrous layer of dense connective tissue and an inner osteogenic layer. Bone lining cells in the inner layer are squamous-shaped and include osteoprogenitor cells that are capable of differentiating into bone forming osteoblasts. The osteogenic layer varies considerably depending on its functional state, reflecting regions of relative inactivity, bone deposition, or bone resorption and remodeling. The periosteum is well vascularized and innervated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Endosteum",
+      "explicacao_original": "The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Endosteum.png",
+      "arquivo": "imagens/marcadores/Endosteum.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Bone-lining-cells-endo.png",
+      "arquivo": "imagens/marcadores/Bone-lining-cells-endo.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Compact bone",
+      "explicacao_original": "The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Compact-bone-endo.png",
+      "arquivo": "imagens/marcadores/Compact-bone-endo.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Marrow",
+      "explicacao_original": "The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Marrow.png",
+      "arquivo": "imagens/marcadores/Marrow.png",
+      "imagem_base": "imagens/base/Peri-Endo-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/Peri-Endo-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - periosteum and endosteum'. Deve ser sobreposta, sem redimensionamento independente, a 'Peri-Endo-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum consists of single layer of squamous-shaped bone lining cells and osteoprogenitor cells. Endosteum covers all internal bone surfaces (including spicules of spongy bone), and extends into Haversian and Volkmann’s canals. In areas of active bone deposition, cuboidal osteoblasts are present; areas of bone resorption are marked by the presence of osteoclasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 8A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-8a/, acesso em 2026-08-07."
+    }
+  ]
+}

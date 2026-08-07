@@ -1,0 +1,117 @@
+{
+  "id": 29545,
+  "titulo": "Root stage of tooth development - Apex",
+  "titulo_wordpress": "Tooth development 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 13"
+  ],
+  "descricao_original": "This image shows the apex of the tooth where blood vessels and nerves enter through the apical foramen and where the dental pulp tissue becomes continuous with the surrounding connective tissue. During this stage, the cervical loop elongates into the Hertwig’s epithelial root sheath, a two-cell layered diaphragm that determines the shape of the tooth root. 10x (l), 300x (r)",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide in the University of Michigan slide collection"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "arquivo": "imagens/base/Page-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Root stage of tooth development - Apex', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Descricao original da pagina: This image shows the apex of the tooth where blood vessels and nerves enter through the apical foramen and where the dental pulp tissue becomes continuous with the surrounding connective tissue. During this stage, the cervical loop elongates into the Hertwig’s epithelial root sheath, a two-cell layered diaphragm that determines the shape of the tooth root. 10x (l), 300x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dental pulp",
+      "explicacao_original": "This image shows the apex of the tooth where blood vessels and nerves enter through the apical foramen and where the dental pulp tissue becomes continuous with the surrounding connective tissue. During this stage, the cervical loop elongates into the Hertwig’s epithelial root sheath, a two-cell layered diaphragm that determines the shape of the tooth root. 10x (l), 300x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Pulp-organ-13.png",
+      "arquivo": "imagens/marcadores/Pulp-organ-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Dental pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the apex of the tooth where blood vessels and nerves enter through the apical foramen and where the dental pulp tissue becomes continuous with the surrounding connective tissue. During this stage, the cervical loop elongates into the Hertwig’s epithelial root sheath, a two-cell layered diaphragm that determines the shape of the tooth root. 10x (l), 300x (r). Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Odontoblasts",
+      "explicacao_original": "Odontoblasts deposit the organic matrix of dentin (predentin) which rapidly becomes mineralized by hydroxyapatite, forming dentin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Odontoblasts-13.png",
+      "arquivo": "imagens/marcadores/Odontoblasts-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Odontoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts deposit the organic matrix of dentin (predentin) which rapidly becomes mineralized by hydroxyapatite, forming dentin.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Predentin",
+      "explicacao_original": "Odontoblasts deposit the organic matrix of dentin (predentin) which rapidly becomes mineralized by hydroxyapatite, thereby forming dentin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Predentin-13.png",
+      "arquivo": "imagens/marcadores/Predentin-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Predentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts deposit the organic matrix of dentin (predentin) which rapidly becomes mineralized by hydroxyapatite, thereby forming dentin.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dentin",
+      "explicacao_original": "Odontoblasts deposit the organic matrix of dentin (predentin) which rapidly becomes mineralized by hydroxyapatite, thereby forming dentin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dentin-13.png",
+      "arquivo": "imagens/marcadores/Dentin-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts deposit the organic matrix of dentin (predentin) which rapidly becomes mineralized by hydroxyapatite, thereby forming dentin.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cementum",
+      "explicacao_original": "Cementum is produced by cementoblasts and forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket. Cementocytes, which maintain the cementum, are visible in this layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cementum-13.png",
+      "arquivo": "imagens/marcadores/Cementum-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum is produced by cementoblasts and forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket. Cementocytes, which maintain the cementum, are visible in this layer.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cementoblasts",
+      "explicacao_original": "Cementum is produced by cementoblasts and forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket. Cementocytes, which maintain the cementum, are visible in this layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cementoblasts-13.png",
+      "arquivo": "imagens/marcadores/Cementoblasts-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Cementoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum is produced by cementoblasts and forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket. Cementocytes, which maintain the cementum, are visible in this layer.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Hertwig’s epithelial root sheath",
+      "explicacao_original": "During the root stage, the cervical loop elongates into a two-cell layered Hertwig’s epithelial root sheath that determines the shape of the tooth root. The sheath develops from the inner and outer enamel epithelia but does not include the stratum intermedium. The absence of the stratum intermedium prevents the differentiation of the inner epithelium into ameloblasts, and thus they disintegrate. In this micrograph, the sheath has invaginated at the apex of the tooth root forming the epithelium diaphragm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Hertwigs-13.png",
+      "arquivo": "imagens/marcadores/Hertwigs-13.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Hertwig’s epithelial root sheath' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the root stage, the cervical loop elongates into a two-cell layered Hertwig’s epithelial root sheath that determines the shape of the tooth root. The sheath develops from the inner and outer enamel epithelia but does not include the stratum intermedium. The absence of the stratum intermedium prevents the differentiation of the inner epithelium into ameloblasts, and thus they disintegrate. In this micrograph, the sheath has invaginated at the apex of the tooth root forming the epithelium diaphragm.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Apical foramen",
+      "explicacao_original": "The apical foramen is the opening at the apex of the tooth root where the connective tissue of the pulp communicates with the connective tissue of the periodontal ligament.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Apical-foramen.png",
+      "arquivo": "imagens/marcadores/Apical-foramen.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Apical foramen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The apical foramen is the opening at the apex of the tooth root where the connective tissue of the pulp communicates with the connective tissue of the periodontal ligament.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide in the University of Michigan slide collection",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Michigan-source-ping-2-plural-1.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural-1.png",
+      "imagem_base": "imagens/base/Page-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Page-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Apex'. Deve ser sobreposta, sem redimensionamento independente, a 'Page-13.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide in the University of Michigan slide collection. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-13/, acesso em 2026-08-07."
+    }
+  ]
+}

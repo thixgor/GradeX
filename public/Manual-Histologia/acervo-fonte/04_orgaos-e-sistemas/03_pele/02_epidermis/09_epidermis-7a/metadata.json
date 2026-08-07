@@ -1,0 +1,105 @@
+{
+  "id": 27005,
+  "titulo": "Epidermis: light-dark skin",
+  "titulo_wordpress": "Epidermis 7A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 7A"
+  ],
+  "descricao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/",
+  "creditos_identificados": [
+    "Image credits: These images were taken of slides from the University of Iowa and University of Tasmania slide collections."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "arquivo": "imagens/base/Light-dark-skin.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Epidermis: light-dark skin', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Descricao original da pagina: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Stratum basale",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-1-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Stratum basale' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Melanocytes",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-2-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Melanocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Melanosomes",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-3-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Melanosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stratum spinosum",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-4-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Stratum spinosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stratum granulosum",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-5-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Stratum granulosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Stratum corneum",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-6-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Stratum corneum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Dermis (papillary layer)",
+      "explicacao_original": "These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-7-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Dermis (papillary layer)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare light (l) and dark (r) skin. In dark skin, the cells of the stratum basale contain much more melanin pigment than those in light skin. While the amount of melanin varies between skin types, the number of melanocytes is similar. 700x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image credits",
+      "explicacao_original": "These images were taken of slides from the University of Iowa and University of Tasmania slide collections.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-7A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-7A-8-ping.png",
+      "imagem_base": "imagens/base/Light-dark-skin.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Light-dark-skin.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epidermis: light-dark skin'. Deve ser sobreposta, sem redimensionamento independente, a 'Light-dark-skin.jpg'. Destaca a estrutura ou conceito 'Image credits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of slides from the University of Iowa and University of Tasmania slide collections.. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-7a/, acesso em 2026-08-07."
+    }
+  ]
+}

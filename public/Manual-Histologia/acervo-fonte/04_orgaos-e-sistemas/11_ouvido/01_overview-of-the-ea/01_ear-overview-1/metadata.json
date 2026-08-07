@@ -1,0 +1,153 @@
+{
+  "id": 12124,
+  "titulo": "Overview",
+  "titulo_wordpress": "Ear Overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Overview of the ear",
+    "Ear Overview 1"
+  ],
+  "descricao_original": "The ear, the organ of hearing and balance, is located in the temporal bone. The outer ear receives sound waves. The middle ear transmits these sound waves through bony ossicles to the inner ear. The inner ear is composed of three compartments. The cochlea possesses receptors for hearing; the semicircular canals and vestibule contain receptors for angular acceleration/deceleration and equilibrium. Cranial nerve VIII, the vestibulocochlear, conveys this information to the central nervous system. (Frontal view of left ear)",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "arquivo": "imagens/base/O.E.O.01.P12.png",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Descricao original da pagina: The ear, the organ of hearing and balance, is located in the temporal bone. The outer ear receives sound waves. The middle ear transmits these sound waves through bony ossicles to the inner ear. The inner ear is composed of three compartments. The cochlea possesses receptors for hearing; the semicircular canals and vestibule contain receptors for angular acceleration/deceleration and equilibrium. Cranial nerve VIII, the vestibulocochlear, conveys this information to the central nervous system. (Frontal view of left ear). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "External ear",
+      "explicacao_original": "The external ear consists of an auricle or pinna, an S-shaped external acoustic meatus and the tympanic membrane or eardrum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.E.O.01.P01.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P01.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'External ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external ear consists of an auricle or pinna, an S-shaped external acoustic meatus and the tympanic membrane or eardrum.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Auricle and",
+      "explicacao_original": "external meatus > The auricle, or pinna (oval), with its framework of elastic cartilage, aids in accumulating sound waves. The external auditory meatus (arrows) is an S-shaped canal that terminates in the tympanic membrane (eardrum), separating the outer from the middle ear. Vibration of the tympanic membrane transmits sound vibrations to the ear ossicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P02-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P02-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Auricle and' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: external meatus > The auricle, or pinna (oval), with its framework of elastic cartilage, aids in accumulating sound waves. The external auditory meatus (arrows) is an S-shaped canal that terminates in the tympanic membrane (eardrum), separating the outer from the middle ear. Vibration of the tympanic membrane transmits sound vibrations to the ear ossicles.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tympanic membrane",
+      "explicacao_original": "The auricle, or pinna (oval), with its framework of elastic cartilage, aids in accumulating sound waves. The external auditory meatus (arrows) is an S-shaped canal that terminates in the tympanic membrane (eardrum), separating the outer from the middle ear. Vibration of the tympanic membrane transmits sound vibrations to the ear ossicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P03-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P03-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Tympanic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The auricle, or pinna (oval), with its framework of elastic cartilage, aids in accumulating sound waves. The external auditory meatus (arrows) is an S-shaped canal that terminates in the tympanic membrane (eardrum), separating the outer from the middle ear. Vibration of the tympanic membrane transmits sound vibrations to the ear ossicles.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Middle ear",
+      "explicacao_original": "The middle ear, or tympanic cavity, is an air-filled space in the temporal bone. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.E.O.01.P04.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P04.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Middle ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, or tympanic cavity, is an air-filled space in the temporal bone. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ossicles",
+      "explicacao_original": "The auditory ossicles are three small bones spanning the tympanic cavity. The malleus (blue arrow) is attached to the tympanic membrane and articulates with the incus (red arrow). The incus is attached to the stapes (black arrow), whose foot plate fits into the oval window in the lateral wall of the inner ear. These ossicles transmit vibrations from the tympanic membrane to the inner ear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P05-1-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P05-1-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Ossicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The auditory ossicles are three small bones spanning the tympanic cavity. The malleus (blue arrow) is attached to the tympanic membrane and articulates with the incus (red arrow). The incus is attached to the stapes (black arrow), whose foot plate fits into the oval window in the lateral wall of the inner ear. These ossicles transmit vibrations from the tympanic membrane to the inner ear.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Mastoid air cells and Eustachian tube",
+      "explicacao_original": "The middle ear communicates with the mastoid air cells posteriorly (black arrows) and with the pharynx anteriorly through the auditory tube (Eustachian tube) (red arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P06-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P06-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Mastoid air cells and Eustachian tube' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear communicates with the mastoid air cells posteriorly (black arrows) and with the pharynx anteriorly through the auditory tube (Eustachian tube) (red arrows).. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Inner ear",
+      "explicacao_original": "The inner ear is housed in the petrous portion of the temporal bone. This chamber consists of a complex series of cavernous, fluid-filled spaces, the osseous labyrinth (purple fill), from which are suspended a series of fluid-filled tubes and sacs, the membranous labyrinth (orange fill). Receptors in the tubes and sacs respond either to changes in sound or equilibrium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.E.O.01.P06.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P06.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Inner ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner ear is housed in the petrous portion of the temporal bone. This chamber consists of a complex series of cavernous, fluid-filled spaces, the osseous labyrinth (purple fill), from which are suspended a series of fluid-filled tubes and sacs, the membranous labyrinth (orange fill). Receptors in the tubes and sacs respond either to changes in sound or equilibrium.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Osseous labyrinth",
+      "explicacao_original": "The osseous labyrinth consists of a vestibule, three semicircular canals, and a cochlea, each filled with the fluid perilymph (purple fill). The vestibule (black arrow) is located centrally. Semicircular canals (only one shown here, blue arrow) extend posteriorly from the vestibule. The cochlea (shown straight here, red arrow) is a spiraling canal continuing anteromedially from the vestibule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P08-2-NEW-1.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P08-2-NEW-1.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Osseous labyrinth' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The osseous labyrinth consists of a vestibule, three semicircular canals, and a cochlea, each filled with the fluid perilymph (purple fill). The vestibule (black arrow) is located centrally. Semicircular canals (only one shown here, blue arrow) extend posteriorly from the vestibule. The cochlea (shown straight here, red arrow) is a spiraling canal continuing anteromedially from the vestibule.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Membranous labyrinth",
+      "explicacao_original": "The membranous labyrinth is a series of ducts and sacs that are suspended in the osseous labyrinth and are filled with endolymph (orange fill). The utricle (black arrow) and saccule (green arrow) are suspended in the vestibule. A semicircular duct (red arrow) is suspended in each of the three semicircular canals. The cochlear duct (blue arrow) is suspended in the cochlea.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P09-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P09-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Membranous labyrinth' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The membranous labyrinth is a series of ducts and sacs that are suspended in the osseous labyrinth and are filled with endolymph (orange fill). The utricle (black arrow) and saccule (green arrow) are suspended in the vestibule. A semicircular duct (red arrow) is suspended in each of the three semicircular canals. The cochlear duct (blue arrow) is suspended in the cochlea.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Endolymphatic duct",
+      "explicacao_original": "The endolymphatic duct begins as two ducts from the utricle and saccule in the vestibule and terminates in a sac-like ending between the meninges of the brain. Cells lining the duct presumably absorb endolymph and dispose of cellular debris that may be present in endolymph.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P10-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P10-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Endolymphatic duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endolymphatic duct begins as two ducts from the utricle and saccule in the vestibule and terminates in a sac-like ending between the meninges of the brain. Cells lining the duct presumably absorb endolymph and dispose of cellular debris that may be present in endolymph.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "CN VIII",
+      "explicacao_original": "Cranial nerve VIII, the vestibulocochlear, innervates receptors located in each portion of the membranous labyrinth. These receptors respond to changes in either sound (receptors in cochlear duct) or position of the head (receptors in utricle, saccule and semicircular ducts).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P11-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P11-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cranial nerve VIII, the vestibulocochlear, innervates receptors located in each portion of the membranous labyrinth. These receptors respond to changes in either sound (receptors in cochlear duct) or position of the head (receptors in utricle, saccule and semicircular ducts).. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Windows",
+      "explicacao_original": "Two openings connect inner and middle ears. The oval window (green arrow), in the lateral wall of the vestibule, is occupied by the foot plate of the stapes, where sound vibrations are transmitted to the perilymph. The round window (red arrow), located in the cochlea, is covered by a membrane that bulges into the middle ear, cushioning pressure created in the perilymph by movement of the stapes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.01.P12-1-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P12-1-NEW.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Windows' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two openings connect inner and middle ears. The oval window (green arrow), in the lateral wall of the vestibule, is occupied by the foot plate of the stapes, where sound vibrations are transmitted to the perilymph. The round window (red arrow), located in the cochlea, is covered by a membrane that bulges into the middle ear, cushioning pressure created in the perilymph by movement of the stapes.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Begin again",
+      "explicacao_original": "The ear, the organ of hearing and balance, is located in the temporal bone. The outer ear receives sound waves. The middle ear transmits sound waves through bone to the inner ear. The inner ear transduces these vibrations to nervous impulses for interpretation by the brain; it also maintains equilibrium. (Frontal view of left ear)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.E.O.01.P13.png",
+      "arquivo": "imagens/marcadores/O.E.O.01.P13.png",
+      "imagem_base": "imagens/base/O.E.O.01.P12.png",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.01.P12.png",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.01.P12.png'. Destaca a estrutura ou conceito 'Begin again' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ear, the organ of hearing and balance, is located in the temporal bone. The outer ear receives sound waves. The middle ear transmits sound waves through bone to the inner ear. The inner ear transduces these vibrations to nervous impulses for interpretation by the brain; it also maintains equilibrium. (Frontal view of left ear). Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

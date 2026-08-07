@@ -1,0 +1,193 @@
+{
+  "id": 10777,
+  "titulo": "Kidney",
+  "titulo_wordpress": "Overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Overview of the urinary system",
+    "Overview 1"
+  ],
+  "descricao_original": "An illustration and a low-magnification image demonstrate the features of the kidney. The outer edge and capsule of the kidney are on the right side of each image. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "arquivo": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Kidney', no setor Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Descricao original da pagina: An illustration and a low-magnification image demonstrate the features of the kidney. The outer edge and capsule of the kidney are on the right side of each image. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Micrograph",
+      "explicacao_original": "The outline on the illustration demonstrates the location of the tissue in the micrograph on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Micrograph' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outline on the illustration demonstrates the location of the tissue in the micrograph on the right.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cortex",
+      "explicacao_original": "The cortex forms the outer rim of the kidney. Although not readily visible at this magnification, the cortex can be subdivided into alternating, radially oriented bands called the convoluted portions and the medullary rays.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cortex forms the outer rim of the kidney. Although not readily visible at this magnification, the cortex can be subdivided into alternating, radially oriented bands called the convoluted portions and the medullary rays.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Medulla",
+      "explicacao_original": "The medulla forms the inner portion of the kidney. It is composed of renal pyramids, whose bases abut the cortex, and renal columns, i.e., cortical tissue interposed between the pyramids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla forms the inner portion of the kidney. It is composed of renal pyramids, whose bases abut the cortex, and renal columns, i.e., cortical tissue interposed between the pyramids.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Renal pyramid",
+      "explicacao_original": "The medulla forms the inner portion of the kidney. It is composed of renal pyramids, whose bases abut the cortex, and renal columns, i.e., cortical tissue interposed between the pyramids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1-3B-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-3B-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Renal pyramid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla forms the inner portion of the kidney. It is composed of renal pyramids, whose bases abut the cortex, and renal columns, i.e., cortical tissue interposed between the pyramids.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Renal columns",
+      "explicacao_original": "The medulla forms the inner portion of the kidney. It is composed of renal pyramids, whose bases abut the cortex, and renal columns, i.e., cortical tissue interposed between the pyramids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1-3C-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-3C-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Renal columns' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla forms the inner portion of the kidney. It is composed of renal pyramids, whose bases abut the cortex, and renal columns, i.e., cortical tissue interposed between the pyramids.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lobe",
+      "explicacao_original": "A lobe of the kidney is a conical shaped structure, consisting of a renal pyramid, half of the renal column flanking the pyramid, and the overlying cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Lobe' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobe of the kidney is a conical shaped structure, consisting of a renal pyramid, half of the renal column flanking the pyramid, and the overlying cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Renal sinus",
+      "explicacao_original": "The renal sinus, located at the indented hilum of the kidney, is filled with loose connective tissue and adipose cells. The excretory passageways are located within the sinus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1-5A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-5A-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Renal sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The renal sinus, located at the indented hilum of the kidney, is filled with loose connective tissue and adipose cells. The excretory passageways are located within the sinus.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Excretory passages",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Excretory passages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Minor calyces",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Minor calyces' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Major calyces",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Major calyces' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Renal pelvis",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Renal pelvis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Ureter",
+      "explicacao_original": "Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-10-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Ureter' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several excretory passages are illustrated. Minor calyces surround the apices (papillae) of medullary pyramids. Major calyces are formed by the union of several minor calyces. Two to three major calyces unite to form the enlarged renal pelvis which continues as the ureter.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Arterial supply",
+      "explicacao_original": "The arterial supply to the kidney is substantial and complex. The renal artery, a branch of the abdominal aorta, enters at the hilum of the kidney. The renal artery supplies the interlobar, arcuate and interlobular arteries, in that order.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Arterial supply' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arterial supply to the kidney is substantial and complex. The renal artery, a branch of the abdominal aorta, enters at the hilum of the kidney. The renal artery supplies the interlobar, arcuate and interlobular arteries, in that order.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Renal artery",
+      "explicacao_original": "When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-12-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Renal artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Interlobar artery",
+      "explicacao_original": "When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-13-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Interlobar artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 16,
+      "rotulo": "Arcuate artery",
+      "explicacao_original": "When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-14-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Arcuate artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 17,
+      "rotulo": "Interlobular artery",
+      "explicacao_original": "When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-1-15-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-1-15-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-1A.jpg'. Destaca a estrutura ou conceito 'Interlobular artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the renal artery enters the kidney, it branches into interlobar arteries, which travel between the pyramids through the renal columns. These arteries branch laterally to form the arcuate vessels that mark the boundary between cortex and medulla. Interlobular arteries leave the arcuates to enter the convoluted portions of the cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}
