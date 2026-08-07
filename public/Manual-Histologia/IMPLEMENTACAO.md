@@ -5,13 +5,17 @@ com precisão suficiente para que outra pessoa continue de onde este trabalho
 parou. Ele é honesto sobre as lacunas de propósito: um relatório que declara
 tudo pronto obriga o próximo a redescobrir o que não está.
 
-## 1. Portão de licença — bloqueio ativo
+## 1. Portão de licença — decisão registrada
 
-**O módulo não pode ir a produção hoje.** O acervo é CC BY-NC-SA 4.0 e o GradeX
-tem fluxos pagos; a cláusula NãoComercial impede a combinação. Nenhuma decisão
-foi encontrada no repositório durante a auditoria.
+O acervo é CC BY-NC-SA 4.0 e o GradeX tem fluxos pagos; a cláusula NãoComercial
+impede a combinação. A decisão foi registrada em 2026-08-07 por
+throdrigf@gmail.com: **Rota A — o módulo é gratuito, sem paywall e sem CTA
+comercial contextual**.
 
-Estado: `AUTORIZACAO.decisao === 'pendente'` em `lib/histologia/licenca.ts`.
+Estado: `AUTORIZACAO.decisao === 'gratuito-sem-exploracao-comercial'` em
+`lib/histologia/licenca.ts`. Em produção o módulo ainda exige
+`HISTOLOGIA_HABILITADO=1` no ambiente — a segunda condição existe para que nada
+vá ao ar sem uma ação humana consciente.
 
 O bloqueio é aplicado em **duas camadas**:
 
@@ -27,82 +31,63 @@ O bloqueio é aplicado em **duas camadas**:
 Além disso, o sitemap devolve lista vazia e `podeIndexar()` força
 `noindex, nofollow` em toda a metadata do módulo.
 
-**Como liberar:** ver `docs/adr/0001-licenca-manual-histologia.md`. Exige editar
-`AUTORIZACAO` (decisão, responsável, data) **e** definir `HISTOLOGIA_HABILITADO=1`
-no ambiente. As duas condições, não uma.
+Ver `docs/adr/0001-licenca-manual-histologia.md` para o registro completo.
 
 Não existe código de cobrança no módulo. A gratuidade é estrutural — não há
 configuração para inverter por engano — e há teste que varre a superfície inteira
 atrás de `useAcessoTomografia`, `PLUS_LABEL`, checkout ou `account-tier`.
 
-## 2. Mídia — pendência operacional que bloqueia produção
+## 2. Mídia — servida da origem
 
-Os objetos **ainda não foram enviados ao Vercel Blob**.
-
-### Tentativa de 2026-08-07 e o que ela apurou
-
-O envio foi tentado e falhou por um motivo específico, que precisa ser resolvido
-antes de qualquer nova tentativa:
+As imagens são carregadas **diretamente do digitalhistology.org**, que já as
+publica sob CC BY-NC-SA 4.0. É o modo ativo hoje, e exige uma variável:
 
 ```
-Vercel Blob: Cannot use public access on a private store.
-The store is configured with private access.
+NEXT_PUBLIC_HISTOLOGIA_MIDIA_ORIGEM=1
 ```
 
-**O store de destino era privado.** Zero arquivos subiram — não há resíduo a
-limpar. E isso não se resolve trocando `access: 'public'` por `'private'` no
-script: um atlas de 9.156 imagens precisa de URLs públicas e cacheáveis pelo
-CDN. Num store privado, cada visualização exigiria uma URL assinada gerada no
-servidor, o que elimina o cache, multiplica a latência e transforma cada `<img>`
-numa chamada autenticada. **É preciso criar um Blob store com acesso público**
-(o acesso é definido na criação e não muda depois).
+Fora de produção o modo é automático; em produção o opt-in é explícito porque a
+decisão tem consequência — o tráfego passa a bater no servidor de terceiros, e
+uma mudança de URL do lado deles quebra o atlas. Os créditos informam ao aluno
+de onde a imagem vem (`NOTA_MIDIA_DA_ORIGEM`).
 
-Também se confirmou nessa tentativa:
+`urlOrigem` é preservada em cada objeto de mídia justamente para isto, além da
+obrigação de atribuição.
 
-- **`git lfs pull` funciona** e materializa 9.156 arquivos (2,10 GiB) sem falha;
-- **só é preciso baixar 2,10 GiB, não 2,56.** Use `git lfs pull --exclude="*.h5p"`:
-  os 19 pacotes H5P (0,46 GiB) são prova de origem dos quizzes e a interface
-  nunca os serve — as questões e imagens já foram extraídas deles na ingestão.
-  O script de envio pula esses pacotes pelo mesmo motivo;
-- **o ambiente de execução é efêmero.** Um contêiner reciclado perde o download,
-  e tudo recomeça do `git lfs pull`. Prefira rodar o envio numa máquina estável.
+### Migrar para CDN próprio, quando fizer sentido
 
-### O que já está pronto para o envio
+O resolver (`lib/histologia/midia.ts`) prefere sempre o CDN quando existe:
+defina `NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE` e ele passa a montar as URLs por
+`sha256` + extensão, ignorando a origem. Nada mais muda no código.
 
-- o resolver (`lib/histologia/midia.ts`) monta a URL a partir de `sha256` + `ext`,
-  no mesmo esquema de `scripts/enviar-assets-vercel-blob.mjs`;
-- há teste conferindo essa derivação nos 9.175 assets;
-- em produção sem `NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE`, a interface mostra aviso
-  explícito em vez de imagem quebrada;
-- fora de produção, a mídia é servida da URL de origem, para permitir revisão.
-
-**Passos para publicar a mídia:**
+Para produzir os arquivos:
 
 ```bash
-# 0. Na Vercel: Storage → Create Database → Blob, com acesso PÚBLICO.
-#    Store privado faz o envio falhar inteiro (ver acima).
-
-git lfs install
-git lfs pull --exclude="*.h5p"                  # 2,10 GiB; pula o que não é servido
-
-BLOB_READ_WRITE_TOKEN=... node public/Manual-Histologia/scripts/enviar-assets-vercel-blob.mjs
-
-# O script imprime, ao final, a linha exata a configurar no ambiente:
-NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE=https://<store>.public.blob.vercel-storage.com
+git lfs install && git lfs pull --exclude="*.h5p"   # 2,10 GiB
+npm install --no-save sharp
+node scripts/histologia/recomprimir-acervo.mjs      # -> 0,89 GiB em WebP
+node --experimental-strip-types scripts/histologia/construir-dados.mjs
 ```
 
-O envio é **retomável**: o progresso vai para `dados/mapa-assets-blob.json` a
-cada 25 arquivos (ignorado pelo git), e uma segunda execução continua de onde
-parou. O script também recusa ponteiros LFS antes de começar — sem essa
-checagem, um clone sem `git lfs pull` publicaria 9.156 arquivos de texto de
-130 bytes como se fossem imagens, e o erro só apareceria no navegador do aluno.
+A recompressão escalona a qualidade pelo papel de cada camada — base q87 (48%),
+quiz q75 (30%), overlay q90 (34%) — e preserva dimensões e canal alfa, dos quais
+depende o alinhamento base↔marcador. Para voltar aos originais, rode o pipeline
+com `HISTOLOGIA_FORMATO=original`.
 
-Como `NEXT_PUBLIC_*` é embutida em tempo de build, **é preciso um novo deploy**
-depois de configurar a variável — defini-la sem redeploy não tem efeito.
+### Histórico: por que não é o Vercel Blob
 
-Sem `git lfs`, o acervo ainda pode ser **validado** pelos ponteiros: o `oid
-sha256` do ponteiro é o hash do conteúdo real. `__tests__/histologia/acervo.test.ts`
-faz essa conferência nos 9.175 assets e ela passa hoje — zero divergências.
+Duas tentativas falharam, ambas por limite de plano:
+
+1. o primeiro store era **privado**, e um atlas precisa de URLs públicas e
+   cacheáveis (URL assinada por visualização mata o cache do CDN);
+2. o segundo era público, mas o plano **Hobby limita o Blob a 1 GiB**. O envio
+   dos 2,10 GiB encheu a cota, passou a falhar com `Storage quota exceeded`, e a
+   Vercel **suspendeu o store** — que ficou somente-leitura mesmo depois de
+   apagarmos os 4.376 objetos já enviados.
+
+A recompressão para 0,89 GiB caberia, mas a suspensão persistiu. Alternativas
+gratuitas com folga real, se um dia valer a pena: Cloudflare R2 (10 GB, sem
+custo de banda de saída) e Cloudinary (25 GB).
 
 ## 3. Conciliação com o acervo
 

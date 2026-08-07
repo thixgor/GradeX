@@ -23,18 +23,20 @@ export type EstrategiaDeMidia = 'blob' | 'origem' | 'indisponivel'
 /**
  * Estratégia ativa neste ambiente.
  *
- * - `blob`: há `NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE` configurado. É o único modo
- *   aceitável em produção.
- * - `origem`: sem Blob e fora de produção, servimos a partir da URL original do
- *   digitalhistology.org. Serve para desenvolver e revisar sem precisar dos
- *   2,56 GiB na máquina; **não** é aceitável em produção, porque transferiria
- *   nosso tráfego para o servidor de terceiros.
- * - `indisponivel`: produção sem Blob. A interface mostra um aviso honesto em
- *   vez de um quadrado quebrado.
+ * - `blob`: há `NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE` configurado — um CDN nosso,
+ *   endereçado por hash. É o modo mais robusto.
+ * - `origem`: as imagens vêm do próprio digitalhistology.org, que já as publica
+ *   sob CC BY-NC-SA. Sempre ativo fora de produção (permite desenvolver e
+ *   revisar sem baixar os 2,56 GiB); em produção exige o opt-in explícito
+ *   `NEXT_PUBLIC_HISTOLOGIA_MIDIA_ORIGEM=1`, porque a decisão tem consequência:
+ *   o tráfego dos nossos alunos passa a bater no servidor de terceiros, e uma
+ *   mudança de URL do lado deles quebra o atlas inteiro.
+ * - `indisponivel`: produção sem CDN e sem o opt-in. A interface mostra um
+ *   aviso honesto em vez de um quadrado quebrado.
  */
 export function estrategiaDeMidia(): EstrategiaDeMidia {
   if (baseDoBlob()) return 'blob'
-  if (process.env.NODE_ENV !== 'production') return 'origem'
+  if (servirDaOrigem()) return 'origem'
   return 'indisponivel'
 }
 
@@ -44,14 +46,22 @@ function baseDoBlob(): string | null {
   return base.replace(/\/+$/, '')
 }
 
+function servirDaOrigem(): boolean {
+  if (process.env.NODE_ENV !== 'production') return true
+  return process.env.NEXT_PUBLIC_HISTOLOGIA_MIDIA_ORIGEM === '1'
+}
+
 /**
  * URL pública de uma mídia. Devolve `null` quando não há como servir o arquivo
  * — a interface trata isso explicitamente em vez de renderizar `<img src="">`.
+ *
+ * A ordem importa: havendo CDN próprio, ele sempre vence. A origem é o plano B,
+ * nunca o preferido.
  */
 export function urlDaMidia(midia: Pick<Midia, 'sha256' | 'ext' | 'urlOrigem'>): string | null {
   const base = baseDoBlob()
   if (base) return `${base}/${caminhoNoBlob(midia.sha256, midia.ext)}`
-  if (process.env.NODE_ENV !== 'production') return midia.urlOrigem || null
+  if (servirDaOrigem()) return midia.urlOrigem || null
   return null
 }
 
@@ -86,5 +96,15 @@ export function atributosDeImagem(
  * em vez de fingir carregamento eterno.
  */
 export const AVISO_MIDIA_INDISPONIVEL =
-  'As imagens deste módulo ainda não foram publicadas no CDN. Envie o acervo com ' +
-  '`scripts/enviar-assets-vercel-blob.mjs` e configure NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE.'
+  'As imagens deste módulo ainda não foram publicadas. Configure ' +
+  'NEXT_PUBLIC_HISTOLOGIA_MIDIA_ORIGEM=1 para servi-las da fonte original, ou ' +
+  'publique o acervo num CDN e defina NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE.'
+
+/**
+ * Aviso exibido nos créditos quando as imagens vêm do servidor de origem.
+ * O aluno merece saber de onde o byte está vindo, e a atribuição fica mais
+ * forte — não mais fraca — quando dizemos que o arquivo é literalmente deles.
+ */
+export const NOTA_MIDIA_DA_ORIGEM =
+  'As imagens são carregadas diretamente dos servidores do Digital Histology ' +
+  '(Virginia Commonwealth University), que as publica sob CC BY-NC-SA 4.0.'

@@ -95,12 +95,16 @@ const [paginasBrutas, midiaBruta, quizzesBrutos, planoBruto] = await Promise.all
  * de fato é servido. Sem o manifesto, o pipeline usa os arquivos originais.
  */
 let derivadas = {}
-try {
-  derivadas = JSON.parse(
-    await readFile(path.join(dirAcervo, 'dados/manifesto-derivadas.json'), 'utf8'),
-  )
-} catch {
-  /* sem recompressão: serve o acervo original */
+// `HISTOLOGIA_FORMATO=original` desliga as derivadas de propósito — é o caminho
+// para voltar a servir os arquivos da origem depois de já ter gerado WebP.
+if (process.env.HISTOLOGIA_FORMATO !== 'original') {
+  try {
+    derivadas = JSON.parse(
+      await readFile(path.join(dirAcervo, 'dados/manifesto-derivadas.json'), 'utf8'),
+    )
+  } catch {
+    /* sem recompressão: serve o acervo original */
+  }
 }
 
 /**
@@ -112,7 +116,7 @@ try {
  * inteiro de imagens quebradas, sem nenhum erro em tempo de build. Falhar aqui
  * é a diferença entre um erro de 30 segundos e um site quebrado em produção.
  */
-if (Object.keys(derivadas).length === 0) {
+if (Object.keys(derivadas).length === 0 && process.env.HISTOLOGIA_FORMATO !== 'original') {
   const anterior = await readFile(
     path.join(dirSaida, 'relatorio.json'),
     'utf8',
@@ -826,8 +830,8 @@ console.log(
   `  ${'bytes originais'.padEnd(22)}${(bytesUnicos / 2 ** 30).toFixed(2).padStart(6)} GiB`,
 )
 console.log(
-  `  ${'bytes no CDN'.padEnd(22)}${(bytesServidos / 2 ** 30).toFixed(2).padStart(6)} GiB` +
-    `  (WebP, sem H5P)`,
+  `  ${'bytes servidos'.padEnd(22)}${(bytesServidos / 2 ** 30).toFixed(2).padStart(6)} GiB` +
+    `  (${Object.keys(derivadas).length > 0 ? 'WebP' : 'original'}, sem H5P)`,
 )
 console.log(
   `  ${'rótulos traduzidos'.padEnd(22)} ${String(traduzidos).padStart(6)}  de ${totalOverlays} (${((100 * traduzidos) / totalOverlays).toFixed(1)}%)`,
