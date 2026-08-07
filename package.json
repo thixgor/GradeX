@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:histologia": "next lint --dir components/histologia --dir lib/histologia --dir app/manual-clinico/histologia --dir app/api/manual-clinico/histologia --dir scripts/histologia --dir __tests__",
     "test": "vitest run",
     "test:watch": "vitest",
     "histologia:dados": "node --experimental-strip-types --no-warnings scripts/histologia/construir-dados.mjs",

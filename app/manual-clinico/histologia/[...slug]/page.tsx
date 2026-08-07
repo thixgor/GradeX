@@ -25,13 +25,23 @@ import { jsonLdDeLamina, jsonLdDeTrilha, metadadosDoModulo, rotaDaPagina } from 
  *
  * `dynamicParams` fica ligado (padrão) porque não há lista pré-declarada; rota
  * inexistente cai em `notFound()`, não em página vazia.
+ *
+ * A rota também **não** pode ser `force-static`: ela lê `?estrutura=` para abrir
+ * a lâmina já com a camada certa ligada, vindo da busca. Com `revalidate` o
+ * resultado ainda é cacheado por variante de URL.
  */
 
 export const revalidate = 86400
-export const dynamic = 'force-static'
 
 interface Props {
   params: { slug: string[] }
+  /**
+   * `?estrutura=<id>` vem da busca por estrutura: abre a lâmina com a camada
+   * correta já ligada e o dossiê aberto. Não prometemos centralizar o campo no
+   * marcador — o acervo não fornece a geometria dele, e fingir um enquadramento
+   * levaria o aluno ao lugar errado com ar de precisão.
+   */
+  searchParams: { estrutura?: string }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -52,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDoCurriculo({ params }: Props) {
+export default async function PaginaDoCurriculo({ params, searchParams }: Props) {
   const pagina = await obterPagina(params.slug)
   if (!pagina) notFound()
 
@@ -96,6 +106,13 @@ export default async function PaginaDoCurriculo({ params }: Props) {
           }}
           bandeja={bandeja}
           quizzes={quizzes.map((q) => ({ slug: q.slug, titulo: q.titulo, questoes: q.questoes }))}
+          estruturaInicial={
+            // Só aceitamos o parâmetro se ele nomear uma camada que existe nesta
+            // lâmina. Vindo da URL, é entrada não confiável.
+            pagina.overlays.some((o) => o.id === searchParams.estrutura)
+              ? searchParams.estrutura
+              : undefined
+          }
         />
         <DadosEstruturados dados={jsonLdDeLamina(pagina, imagem)} />
         <DadosEstruturados dados={jsonLdDeTrilha(pagina.trilha)} />

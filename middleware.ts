@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
+import { histologiaHabilitada } from '@/lib/histologia/licenca'
 import {
   ADMIN_GATE_COOKIE,
   ADMIN_GATE_ERROR_CODE,
@@ -226,6 +227,31 @@ export async function middleware(request: NextRequest) {
     pathname.endsWith('.wasm')
   ) {
     return response
+  }
+
+  // ══════════ Portão de licença do Manual da Histologia ══════════
+  //
+  // O bloqueio vive aqui, e não só no layout da rota, por uma razão concreta:
+  // as páginas do módulo são pré-renderizadas, e `notFound()` dentro de uma
+  // página estática faz o servidor devolver **200** com o corpo do not-found.
+  // Verificado em `next start`. Para um portão jurídico isso não serve — 200 é
+  // convite à indexação. O middleware roda antes do roteamento e devolve um 404
+  // de verdade.
+  //
+  // O layout mantém o `notFound()` como segunda barreira, para o caso de alguém
+  // acrescentar uma rota fora do padrão de caminho tratado aqui.
+  //
+  // Ver docs/adr/0001-licenca-manual-histologia.md.
+  if (
+    (pathname === '/manual-clinico/histologia' ||
+      pathname.startsWith('/manual-clinico/histologia/') ||
+      pathname.startsWith('/api/manual-clinico/histologia/')) &&
+    !histologiaHabilitada()
+  ) {
+    return new NextResponse(null, {
+      status: 404,
+      headers: { 'X-Robots-Tag': 'noindex, nofollow' },
+    })
   }
 
   // Checkout de item único do catálogo, visitante: /comprar é quem vende sem

@@ -652,7 +652,11 @@ function Relatorio({
                     }`}
                     aria-hidden
                   >
-                    {certo ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                    {certo ? (
+                      <Check className="h-3 w-3" aria-hidden />
+                    ) : (
+                      <X className="h-3 w-3" aria-hidden />
+                    )}
                   </span>
                   <span>
                     <span className="sr-only">{certo ? 'Acertou. ' : 'Errou. '}</span>

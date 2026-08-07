@@ -951,7 +951,7 @@ function PainelDeAtalhos({ onFechar }: { onFechar: () => void }) {
           ref={fecharRef}
           type="button"
           onClick={onFechar}
-          className="rounded px-2 py-1 text-[11px] text-muted-foreground hover:text-foreground"
+          className="-mr-1 inline-flex h-9 items-center rounded px-2 text-[11px] text-muted-foreground hover:text-foreground"
         >
           Fechar
         </button>

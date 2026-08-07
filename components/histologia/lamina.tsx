@@ -45,9 +45,11 @@ export interface LaminaProps {
   vizinhas: { anterior?: { titulo: string; caminho: string[] }; proxima?: { titulo: string; caminho: string[] } }
   bandeja: Array<{ rota: string; titulo: string; miniatura: Pagina['base'] }>
   quizzes: Array<{ slug: string; titulo: string; questoes: number }>
+  /** Camada a destacar na abertura, vinda de `?estrutura=` na busca. */
+  estruturaInicial?: string
 }
 
-export function Lamina({ pagina, vizinhas, bandeja, quizzes }: LaminaProps) {
+export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }: LaminaProps) {
   const rota = pagina.caminho.join('/')
   const cor = tema(setorDe(pagina.caminho).cor)
 
@@ -61,7 +63,9 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes }: LaminaProps) {
     salvarNota,
   } = useProgresso()
 
-  const [overlaySelecionado, setOverlaySelecionado] = useState<string | null>(null)
+  const [overlaySelecionado, setOverlaySelecionado] = useState<string | null>(
+    estruturaInicial ?? null,
+  )
   const [filtroDeEstrutura, setFiltroDeEstrutura] = useState('')
   const [nota, setNota] = useState('')
   const [notaCarregada, setNotaCarregada] = useState(false)
@@ -228,6 +232,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes }: LaminaProps) {
             overlays: pagina.overlays,
           }}
           bandeja={bandeja}
+          overlayInicial={estruturaInicial}
           onSelecionarOverlay={(id) => {
             setOverlaySelecionado(id)
             if (id) registrarEvento({ nome: 'overlay_usado', setor: pagina.caminho[0] })
