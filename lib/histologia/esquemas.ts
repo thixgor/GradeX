@@ -323,6 +323,12 @@ export const esquemaRelatorio = z.object({
   bytesUnicos: z.number().int(),
   entradasDeBusca: z.number().int(),
   fragmentos: z.number().int(),
+  /**
+   * Formato servido pelo CDN. `webp` significa que os dados foram gerados a
+   * partir das derivadas recomprimidas; regenerar sem o manifesto produziria
+   * URLs quebradas, e o pipeline recusa fazê-lo.
+   */
+  formatoServido: z.enum(['webp', 'original']).default('original'),
   /** Divergências encontradas na conciliação. Vazio é o único estado aceitável. */
   divergencias: z.array(z.string()),
 })

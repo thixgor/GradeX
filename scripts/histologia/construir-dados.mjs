@@ -103,6 +103,37 @@ try {
   /* sem recompressão: serve o acervo original */
 }
 
+/**
+ * Guarda contra a regeneração silenciosamente errada.
+ *
+ * O manifesto é artefato gerado e não é versionado. Sem esta checagem, quem
+ * clonasse o repositório e rodasse o pipeline produziria `ext: 'jpg'` para
+ * imagens que no CDN só existem como `.webp` — e o resultado seria um atlas
+ * inteiro de imagens quebradas, sem nenhum erro em tempo de build. Falhar aqui
+ * é a diferença entre um erro de 30 segundos e um site quebrado em produção.
+ */
+if (Object.keys(derivadas).length === 0) {
+  const anterior = await readFile(
+    path.join(dirSaida, 'relatorio.json'),
+    'utf8',
+  ).catch(() => null)
+  if (anterior && JSON.parse(anterior).formatoServido === 'webp') {
+    console.error(
+      '✘ Os dados versionados foram gerados a partir de derivadas WebP, mas\n' +
+        '  dados/manifesto-derivadas.json não existe nesta máquina.\n' +
+        '\n' +
+        '  Regenerar agora produziria URLs .jpg/.png contra um CDN que só tem\n' +
+        '  .webp — o atlas inteiro ficaria com imagens quebradas.\n' +
+        '\n' +
+        '  Rode antes:\n' +
+        '    git lfs pull --exclude="*.h5p"\n' +
+        '    npm install --no-save sharp\n' +
+        '    node scripts/histologia/recomprimir-acervo.mjs\n',
+    )
+    process.exit(1)
+  }
+}
+
 const assetsPorSha = new Map()
 for (const item of planoBruto) {
   const derivada = derivadas[item.sha256]
@@ -720,6 +751,8 @@ const relatorio = {
   bytesUnicos,
   entradasDeBusca: entradasDeBusca.length,
   fragmentos: fragmentos.size,
+  /** Formato efetivamente servido pelo CDN. Consultado pela guarda acima. */
+  formatoServido: Object.keys(derivadas).length > 0 ? 'webp' : 'original',
   divergencias,
   notas,
 }

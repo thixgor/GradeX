@@ -52,3 +52,9 @@ public/Manual-Histologia/dados/mapa-assets-blob.json
 # do acervo Git LFS por scripts/histologia/recomprimir-acervo.mjs. São
 # reproduzíveis a partir da origem e vão para o CDN, nunca para o repositório.
 public/Manual-Histologia/derivadas-webp/
+
+# Manifesto das derivadas WebP: artefato gerado por recomprimir-acervo.mjs.
+# Não é versionado porque muda inteiro a cada reconversão. O pipeline recusa
+# regenerar os dados sem ele quando o CDN está servindo WebP — ver a guarda em
+# scripts/histologia/construir-dados.mjs.
+public/Manual-Histologia/dados/manifesto-derivadas.json
