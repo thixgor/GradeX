@@ -17,8 +17,8 @@
  *
  * | camada           | papel                                          | alvo |
  * |------------------|------------------------------------------------|------|
- * | imagem-base      | as lâminas que o aluno amplia no microscópio    | q92  |
- * | imagem-de-quiz   | vistas para identificar, sem zoom profundo      | q80  |
+ * | imagem-base      | as lâminas que o aluno amplia no microscópio    | q87  |
+ * | imagem-de-quiz   | vistas para identificar, sem zoom profundo      | q75  |
  * | marcador-overlay | setas e contornos, sem textura fotográfica      | q90  |
  *
  * ## O que é preservado
@@ -52,10 +52,19 @@ const acervo = path.join(raiz, 'public/Manual-Histologia')
 const saida = path.join(acervo, 'derivadas-webp')
 const manifesto = path.join(acervo, 'dados/manifesto-derivadas.json')
 
-/** Qualidade por tipo de asset. Ver a tabela no cabeçalho. */
+/**
+ * Qualidade por tipo de asset. Ver a tabela no cabeçalho.
+ *
+ * Os valores foram **recalibrados sobre a conversão real**, não sobre a amostra
+ * inicial: medindo 332 imagens-base convertidas, q92 rendeu 61% do original e
+ * não os 52% que uma amostra de 20 arquivos sugeria. Com aquele erro, o acervo
+ * fecharia em ~0,97 GiB contra um limite de 1,00 GiB que já provou ser rígido —
+ * 3% de folga. Os overlays, medidos em 1.868 arquivos, deram 30% a q90 e ficam
+ * como estão.
+ */
 const QUALIDADE = {
-  'imagem-base': 92,
-  'imagem-de-quiz': 80,
+  'imagem-base': 87,
+  'imagem-de-quiz': 75,
   'marcador-overlay': 90,
 }
 
