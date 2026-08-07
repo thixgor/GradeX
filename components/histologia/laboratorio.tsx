@@ -309,7 +309,7 @@ export function DiagnosticoDeArtefatos({ moduloId }: { moduloId: string }) {
         Artefato {indice + 1} de {ARTEFATOS.length}
       </p>
 
-      <article className="rounded-xl border border-border bg-card p-4">
+      <article className="histologia-cartao p-4">
         <h3 className="font-heading text-lg font-semibold">{artefato.nome}</h3>
 
         <div className="mt-3 rounded-lg border border-border bg-muted/25 p-3">

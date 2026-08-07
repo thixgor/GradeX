@@ -46,7 +46,7 @@ export default function PaginaDeQuizzes() {
               <li key={quiz.slug}>
                 <Link
                   href={`${BASE}/quizzes/${quiz.slug}`}
-                  className="group flex min-h-[44px] items-center justify-between gap-3 rounded-lg border border-border bg-card p-4 transition-colors hover:border-rose-500/45"
+                  className="group flex min-h-[44px] items-center justify-between gap-3 histologia-cartao p-4 transition-colors hover:border-rose-500/45"
                 >
                   <span className="min-w-0">
                     <span className="block text-sm font-bold leading-snug">{quiz.titulo}</span>

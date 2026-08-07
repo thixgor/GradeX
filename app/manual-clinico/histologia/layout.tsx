@@ -32,5 +32,8 @@ export default function LayoutDaHistologia({ children }: { children: React.React
     console.warn(`[histologia] rota bloqueada — ${motivoDoBloqueio()}`)
     notFound()
   }
-  return children
+  // A superfície do módulo é aplicada aqui, num só lugar: luz transmitida e
+  // grão microscópico atrás de toda tela da Histologia, sem cada página ter de
+  // lembrar de vestir o material.
+  return <div className="histologia-superficie min-h-screen">{children}</div>
 }

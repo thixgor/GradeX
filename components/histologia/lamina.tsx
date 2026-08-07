@@ -212,7 +212,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
           <h2 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             O que esta lâmina mostra
           </h2>
-          <p className="text-sm leading-relaxed">{pagina.descricaoOriginal}</p>
+          <p className="histologia-prosa text-sm leading-relaxed">{pagina.descricaoOriginal}</p>
           <p className="mt-2 text-[10px] text-muted-foreground">
             Texto do acervo original, em inglês, ainda sem tradução revisada.
           </p>
@@ -243,7 +243,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
         />
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-6">
           {/* ── 6. Dossiê da estrutura selecionada ── */}
           {selecionada ? (
@@ -335,7 +335,13 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
         </div>
 
         {/* ── 5. Lista pesquisável de estruturas + caderno ── */}
-        <aside className="space-y-4">
+        {/*
+          A coluna lateral acompanha a rolagem no desktop: a lista de estruturas
+          e o caderno precisam ficar ao alcance enquanto se percorre a lâmina.
+          `top-4` respeita o cabeçalho e `max-h`+`overflow` impedem que uma
+          lista longa passe da tela e fique com o fim inalcançável.
+        */}
+        <aside className="space-y-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pb-4">
           {estruturas.length > 0 && (
             <section
               aria-labelledby="secao-estruturas"

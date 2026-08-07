@@ -42,7 +42,7 @@ function BlocoDeSetor({ setor }: { setor: NoCurriculo }) {
   const t = tema(cor)
 
   return (
-    <details open className="group overflow-hidden rounded-xl border border-border bg-card">
+    <details open className="group overflow-hidden histologia-cartao">
       <summary className="flex cursor-pointer list-none items-start gap-3 p-4 marker:hidden">
         <span className={`mt-0.5 shrink-0 rounded-lg border p-2 ${t.borda} ${t.fundo}`}>
           <Microscope className={`h-5 w-5 ${t.texto}`} aria-hidden />

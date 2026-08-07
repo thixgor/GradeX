@@ -89,7 +89,7 @@ export function SecaoDoCurriculo({
               <li key={filho.caminho.join('/')}>
                 <Link
                   href={rotaDaPagina(filho.caminho)}
-                  className={`group flex min-h-[44px] items-center justify-between gap-2 rounded-lg border border-border bg-card p-3 transition-colors ${cor.hover}`}
+                  className={`group flex min-h-[44px] items-center justify-between gap-2 histologia-cartao p-3 transition-colors ${cor.hover}`}
                 >
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold leading-snug">{filho.titulo}</span>
@@ -122,7 +122,7 @@ export function SecaoDoCurriculo({
                 <li key={rota}>
                   <Link
                     href={rotaDaPagina(filho.caminho)}
-                    className={`group block overflow-hidden rounded-lg border border-border bg-card transition-colors ${cor.hover}`}
+                    className={`group block overflow-hidden histologia-cartao transition-colors ${cor.hover}`}
                   >
                     <span className="block aspect-[4/3] overflow-hidden bg-[#0d1210]">
                       {miniatura ? (
