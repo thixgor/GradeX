@@ -47,3 +47,8 @@ next-env.d.ts
 # (o resolver deriva a URL de sha256 + extensão + NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE),
 # então versioná-lo só adicionaria 2 MB de ruído a cada reenvio.
 public/Manual-Histologia/dados/mapa-assets-blob.json
+
+# Derivadas WebP do acervo da Histologia: ~0,9 GiB de arquivos gerados a partir
+# do acervo Git LFS por scripts/histologia/recomprimir-acervo.mjs. São
+# reproduzíveis a partir da origem e vão para o CDN, nunca para o repositório.
+public/Manual-Histologia/derivadas-webp/

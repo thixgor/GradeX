@@ -28,6 +28,15 @@
  *
  * O envio é retomável: o progresso é gravado em `dados/mapa-assets-blob.json` a
  * cada 25 arquivos, e uma segunda execução continua de onde parou.
+ *
+ * ## Derivadas WebP
+ *
+ * Se existir `dados/manifesto-derivadas.json` (produzido por
+ * `scripts/histologia/recomprimir-acervo.mjs`), o envio usa os arquivos
+ * recomprimidos em `derivadas-webp/` no lugar dos originais. O SHA-256 da
+ * origem continua sendo a chave — muda só a extensão servida. A conferência de
+ * hash é pulada nesse caso: o conteúdo derivado tem outro hash por definição, e
+ * a integridade da origem já foi checada na conversão.
  */
 
 import { put } from '@vercel/blob'
@@ -55,11 +64,30 @@ const concorrencia = Math.max(1, Math.min(12, Number(process.env.HISTOLOGIA_UPLO
 
 /* ────────────────────────── plano ────────────────────────── */
 
+let derivadas = {}
+try {
+  derivadas = JSON.parse(await readFile(path.join(raiz, 'dados/manifesto-derivadas.json'), 'utf8'))
+} catch {
+  /* sem recompressão: envia os originais */
+}
+const usandoDerivadas = Object.keys(derivadas).length > 0
+
 const plano = (await readFile(path.join(raiz, 'dados/plano-assets-blob.jsonl'), 'utf8'))
   .split('\n')
   .filter((l) => l.trim())
   .map((l) => JSON.parse(l))
   .filter((item) => incluirH5p || item.tipo !== 'pacote-h5p')
+  .map((item) => {
+    const d = derivadas[item.sha256]
+    if (!d) return item
+    return {
+      ...item,
+      bytes: d.bytes,
+      mime: d.mime,
+      arquivoLocal: `derivadas-webp/${item.sha256.slice(0, 2)}/${item.sha256}.webp`,
+      blobPath: `manual-histologia/${item.sha256.slice(0, 2)}/${item.sha256}.webp`,
+    }
+  })
 
 const bytesTotais = plano.reduce((n, i) => n + i.bytes, 0)
 
@@ -75,6 +103,7 @@ const bytesPendentes = pendentes.reduce((n, i) => n + i.bytes, 0)
 
 console.log(`Acervo a publicar : ${plano.length.toLocaleString('pt-BR')} arquivos, ${gib(bytesTotais)}`)
 if (!incluirH5p) console.log('                    (19 pacotes H5P pulados — a interface não os serve)')
+if (usandoDerivadas) console.log(`                    (WebP recomprimido: ${Object.keys(derivadas).length.toLocaleString('pt-BR')} assets)`)
 console.log(`Já enviados       : ${(plano.length - pendentes.length).toLocaleString('pt-BR')}`)
 console.log(`Faltam            : ${pendentes.length.toLocaleString('pt-BR')} arquivos, ${gib(bytesPendentes)}`)
 console.log(`Concorrência      : ${concorrencia}`)
@@ -155,7 +184,7 @@ async function trabalhador() {
     const item = pendentes[i]
     const caminho = path.join(raiz, item.arquivoLocal)
 
-    if (!pularHash) {
+    if (!pularHash && !usandoDerivadas) {
       const hash = await sha256Do(caminho)
       if (hash !== item.sha256) {
         console.error(`✘ Hash divergente, pulando: ${item.arquivoLocal}`)

@@ -85,18 +85,40 @@ const [paginasBrutas, midiaBruta, quizzesBrutos, planoBruto] = await Promise.all
  * Índice de assets por SHA-256. É a tabela que o resolver de mídia consulta em
  * tempo de execução para montar a URL de CDN.
  */
+/**
+ * Manifesto de derivadas, quando existe.
+ *
+ * `scripts/histologia/recomprimir-acervo.mjs` converte o acervo para WebP com
+ * qualidade escalonada por camada, para caber no limite de armazenamento do
+ * plano. O **SHA-256 continua sendo o do arquivo original** — ele identifica a
+ * fonte e sustenta a proveniência; o que muda é a extensão e o tamanho do que
+ * de fato é servido. Sem o manifesto, o pipeline usa os arquivos originais.
+ */
+let derivadas = {}
+try {
+  derivadas = JSON.parse(
+    await readFile(path.join(dirAcervo, 'dados/manifesto-derivadas.json'), 'utf8'),
+  )
+} catch {
+  /* sem recompressão: serve o acervo original */
+}
+
 const assetsPorSha = new Map()
 for (const item of planoBruto) {
+  const derivada = derivadas[item.sha256]
   assetsPorSha.set(item.sha256, {
     sha256: item.sha256,
-    bytes: item.bytes,
-    mime: item.mime,
+    bytes: derivada?.bytes ?? item.bytes,
+    mime: derivada?.mime ?? item.mime,
     // A extensão vem do nome do arquivo, nunca do MIME: 2 imagens são `.jpeg`
     // (e não `.jpg`) e os 19 pacotes H5P chegam como `application/octet-stream`.
     // Derivar do MIME produziria 21 URLs de CDN quebradas.
-    ext: path.extname(item.arquivoLocal).slice(1).toLowerCase(),
+    ext: derivada?.ext ?? path.extname(item.arquivoLocal).slice(1).toLowerCase(),
     blobPath: item.blobPath,
   })
+}
+if (Object.keys(derivadas).length > 0) {
+  console.log(`Manifesto de derivadas: ${Object.keys(derivadas).length} assets servidos em WebP.`)
 }
 
 /**
