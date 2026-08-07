@@ -38,20 +38,28 @@ export interface RegistroDeAutorizacao {
 }
 
 /**
- * ESTADO ATUAL: pendente.
+ * ESTADO ATUAL: gratuito, sem exploração comercial.
  *
- * Nenhuma decisão foi encontrada no repositório durante a auditoria. Para
- * liberar, edite este registro (e só ele) e abra o ADR correspondente em
+ * Decisão registrada por throdrigf@gmail.com em 2026-08-07: o Manual da
+ * Histologia permanece integralmente gratuito, sem paywall, sem CTA comercial
+ * contextual e tecnicamente separado do Plus+/assinatura — não há hook de
+ * acesso pago em nenhum arquivo do módulo (ver o teste que varre por
+ * `useAcessoTomografia`, `PLUS_LABEL` e afins).
+ *
+ * Isso libera a *publicação*, mas não a *disponibilidade*: em produção o
+ * módulo ainda exige `HISTOLOGIA_HABILITADO=1` no ambiente. Ver
  * `docs/adr/0001-licenca-manual-histologia.md`.
  */
 export const AUTORIZACAO: RegistroDeAutorizacao = {
-  decisao: 'pendente',
-  registradoEm: '',
-  responsavel: '',
+  decisao: 'gratuito-sem-exploracao-comercial',
+  registradoEm: '2026-08-07',
+  responsavel: 'throdrigf@gmail.com',
   documento: null,
   observacao:
-    'Auditoria de 2026-08-07 não encontrou decisão registrada. Enquanto isso, o módulo fica ' +
-    'desligado em produção e é desenvolvido/revisado em ambiente privado.',
+    'O módulo é gratuito por construção: nenhum código de cobrança existe em lib/histologia, ' +
+    'components/histologia ou app/manual-clinico/histologia. Falta ainda: envio do acervo ao ' +
+    'Vercel Blob (ver public/Manual-Histologia/IMPLEMENTACAO.md) e revisão biomédica do ' +
+    'conteúdo, que continua marcado como pendente-de-revisao em toda página e quiz.',
 }
 
 /** A decisão registrada libera publicação em produção? */

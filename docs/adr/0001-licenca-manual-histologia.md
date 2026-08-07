@@ -1,8 +1,25 @@
 # ADR 0001 — Portão de licença do Manual da Histologia
 
-- **Estado:** aceito, com bloqueio de publicação ativo
-- **Data:** 2026-08-07
-- **Decisores:** engenharia (implementação); pendente de decisão do responsável pelo produto
+- **Estado:** aceito — Rota A (gratuito, sem exploração comercial) registrada
+- **Data da decisão:** 2026-08-07
+- **Decisores:** throdrigf@gmail.com (responsável pelo produto)
+
+## Decisão registrada
+
+Rota A: o Manual da Histologia permanece **integralmente gratuito**, sem
+paywall, sem CTA comercial contextual e tecnicamente separado do Plus+. Ver
+`AUTORIZACAO` em `lib/histologia/licenca.ts`.
+
+Isso libera a publicação em produção quanto ao aspecto jurídico. Duas
+pendências operacionais continuam abertas e independem desta decisão:
+
+1. **Mídia não publicada** — o acervo (2,56 GiB) ainda não foi enviado ao
+   Vercel Blob; sem `NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE`, a interface mostra
+   aviso em vez de imagem. Ver `public/Manual-Histologia/IMPLEMENTACAO.md`.
+2. **Revisão biomédica pendente** — todo conteúdo continua marcado
+   `pendente-de-revisao`; a tarja correspondente aparece em cada página.
+3. **Flag de ambiente** — em produção, além da decisão de licença, o módulo só
+   fica visível com `HISTOLOGIA_HABILITADO=1` definido no ambiente.
 
 ## Contexto
 
