@@ -745,5 +745,10 @@ async function renderWatermarkedSinglePagePdf(
   outputDoc.setProducer('DomineAqui Secure Page Service')
   outputDoc.setModificationDate(input.viewedAt)
 
-  return { bytes: await outputDoc.save({ useObjectStreams: true }), totalPages }
+  // useObjectStreams: false — mesmo motivo documentado em lib/pdf-watermark.ts:
+  // com compressed object streams (PDF 1.5+), o pdf-lib pode quebrar
+  // referências de XObject em PDFs com imagens em estruturas indiretas (comum
+  // em manuais escaneados/exportados com muitas figuras). O formato tradicional
+  // preserva melhor o conteúdo original e evita falha no copyPages/save.
+  return { bytes: await outputDoc.save({ useObjectStreams: false }), totalPages }
 }
