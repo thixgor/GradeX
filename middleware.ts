@@ -57,6 +57,11 @@ const publicRoutes = [
   // Manual do Eletrocardiograma: página pública que exibe o paywall a visitantes;
   // o acesso ao simulador é validado no handler /api/manual-clinico/eletrocardiograma.
   '/manual-clinico/eletrocardiograma',
+  // Manual da Histologia: público *por obrigação de licença*. O acervo é
+  // CC BY-NC-SA e a cláusula NãoComercial impede colocá-lo atrás de login ou
+  // assinatura. As subrotas entram pela regex em isPublicRoute; quem decide se
+  // o módulo existe é o portão em lib/histologia/licenca.ts, não o middleware.
+  '/manual-clinico/histologia',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
@@ -144,6 +149,11 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
   // Séries do Manual de Tomografia (/manual-clinico/tomografia/<slug>).
   if (/^\/manual-clinico\/tomografia\/[a-z0-9-]+$/.test(pathname)) return true
+
+  // Todo o Manual da Histologia — inclusive o currículo, que tem até seis
+  // segmentos de profundidade — e as rotas de dados que ele consome.
+  if (/^\/manual-clinico\/histologia(\/[a-z0-9-]+)*$/.test(pathname)) return true
+  if (/^\/api\/manual-clinico\/histologia\//.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||

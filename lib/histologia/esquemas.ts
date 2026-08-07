@@ -82,6 +82,21 @@ export const esquemaOverlay = z.object({
   rotulo: z.string().min(1),
   /** Rótulo original, preservado para busca e conferência. */
   rotuloOriginal: z.string(),
+  /**
+   * O rótulo veio do glossário editorial, ou continua no original?
+   *
+   * A interface marca visivelmente os que não vieram — 44% dos 7.775 ainda
+   * estão em inglês. Lacuna assumida é honesta; tradução automática silenciosa
+   * seria exatamente o que `LICENCA_E_PUBLICACAO.md` proíbe.
+   */
+  traduzido: z.boolean(),
+  /**
+   * Nem toda camada do acervo marca uma estrutura: 308 delas dizem "Image
+   * source", "Next image" ou "Area shown in next image". Separá-las importa —
+   * senão o modo prova sortearia "Next image" como estrutura a identificar e a
+   * lista de estruturas viraria lixo.
+   */
+  classe: z.enum(['estrutura', 'credito', 'navegacao']),
   explicacao: z.string().optional(),
   explicacaoOriginal: z.string().optional(),
   midia: esquemaMidia,

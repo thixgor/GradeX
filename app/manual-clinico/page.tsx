@@ -321,7 +321,7 @@ function RenewalBanner({
 // tela no momento em que o tour abre (ver startTour), então nada quebra quando
 // uma seção está oculta (ex.: botão de PDF desativado). Versão no localStorage
 // controla o disparo automático — subir o número reexibe para todos.
-const TOUR_STORAGE_KEY = 'manual-clinico-tour-v1'
+const TOUR_STORAGE_KEY = 'manual-clinico-tour-v2'
 const TOUR_STEPS: TourStep[] = [
   {
     title: 'Bem-vindo ao Manual Clínico',
@@ -361,6 +361,11 @@ const TOUR_STEPS: TourStep[] = [
     target: '[data-tour="anatomia"]',
     title: 'Anatomia 3D',
     body: 'Atlas 3D interativo: modelos rotacionáveis em 360° com explicação anatômica aprofundada.',
+  },
+  {
+    target: '[data-tour="histologia"]',
+    title: 'Manual da Histologia',
+    body: 'Atlas de histologia com microscópio virtual: percorra a lâmina com zoom e objetivos de 4× a 100×, acenda as estruturas sobre a imagem e teste-se nos quizzes. Gratuito e sem login.',
   },
   {
     target: '[data-tour="tomografia"]',
@@ -1077,6 +1082,42 @@ function ManualClinicoContent() {
                 </div>
               </div>
               <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </div>
+          </button>
+        )}
+
+        {/* ══════════ HISTOLOGIA ENTRY ══════════ */}
+        {/* Módulo gratuito, sem paywall: o acervo é CC BY-NC-SA e a cláusula
+            NãoComercial impede colocá-lo atrás de assinatura. Por isso não há
+            selo de plano aqui — ver docs/adr/0001-licenca-manual-histologia.md. */}
+        {!busca && (
+          <button
+            onClick={() => router.push('/manual-clinico/histologia')}
+            data-tour="histologia"
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-teal-600/20 bg-gradient-to-r from-teal-600/[0.06] to-card p-4 text-left transition-colors hover:border-teal-600/40"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <img
+                    src="/img/histologia/logo-manual-da-histologia.svg"
+                    alt="Manual da Histologia"
+                    width={650}
+                    height={566}
+                    className="block h-auto w-full max-w-[110px]"
+                  />
+                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+                    Gratuito
+                  </span>
+                </div>
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  Atlas de histologia com microscópio virtual: 1.320 lâminas reais, zoom e
+                  objetivos de 4× a 100×, e 7.775 estruturas que você acende sobre a imagem até
+                  aprender a achá-las sozinho. Laboratório de preparação e artefatos, atlas
+                  pesquisável e 388 questões de identificação. Sem login.
+                </p>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-teal-600" />
             </div>
           </button>
         )}

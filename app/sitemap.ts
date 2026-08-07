@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { CANONICAL_ORIGIN } from '@/lib/seo'
 import { TODAS_SUBSECOES } from '@/lib/tomografia'
+import { entradasDaHistologia } from '@/lib/histologia/sitemap'
 
 function canonical(path = '/') {
   return `${CANONICAL_ORIGIN}${path.startsWith('/') ? path : `/${path}`}`
@@ -71,5 +72,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ]
 
-  return [...staticRoutes, ...tomografia]
+  // O Manual da Histologia devolve lista vazia enquanto o portão de licença
+  // estiver pendente — um sitemap é convite explícito à indexação, e oferecê-lo
+  // para conteúdo bloqueado contornaria o próprio bloqueio.
+  return [...staticRoutes, ...tomografia, ...entradasDaHistologia(now)]
 }

@@ -74,16 +74,32 @@ export function histologiaHabilitada(): boolean {
 }
 
 /**
- * Motivo do bloqueio, para diagnóstico em log de servidor. Nunca exiba ao
- * usuário final: em produção bloqueada a rota deve responder 404 seco, sem
- * anunciar que existe conteúdo escondido ali.
+ * Pendência jurídica, independente do ambiente.
+ *
+ * Separada de `motivoDoBloqueio` de propósito: em desenvolvimento o módulo abre
+ * (é preciso revisar para sair da pendência), mas a pendência continua
+ * existindo. Confundir "está aberto aqui" com "está liberado" é exatamente como
+ * conteúdo NãoComercial acaba atrás de paywall.
+ */
+export function pendenciaDeLicenca(): string | null {
+  if (licencaPermitePublicar()) return null
+  return (
+    'Portão de licença pendente: nenhuma decisão registrada em AUTORIZACAO. ' +
+    'Veja lib/histologia/licenca.ts e docs/adr/0001-licenca-manual-histologia.md.'
+  )
+}
+
+/**
+ * Motivo pelo qual o módulo está fechado *neste ambiente*, para log de
+ * servidor. Nunca exiba ao usuário final: em produção bloqueada a rota deve
+ * responder 404 seco, sem anunciar que existe conteúdo escondido ali.
  */
 export function motivoDoBloqueio(): string | null {
   if (histologiaHabilitada()) return null
-  if (!licencaPermitePublicar()) {
-    return 'Portão de licença pendente: veja lib/histologia/licenca.ts e docs/adr/0001-licenca-manual-histologia.md.'
-  }
-  return 'Licença liberada, mas HISTOLOGIA_HABILITADO não está definido como "1" neste ambiente.'
+  return (
+    pendenciaDeLicenca() ??
+    'Licença liberada, mas HISTOLOGIA_HABILITADO não está definido como "1" neste ambiente.'
+  )
 }
 
 /** Este módulo pode ser indexado por buscadores? Só quando publicável. */

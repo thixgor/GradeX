@@ -201,6 +201,12 @@ const raizesDoCurriculo = [...nosPorChave.values()].filter((n) => n.caminho.leng
 
 const divergencias = []
 
+/** Corta uma chave já normalizada na última fronteira de palavra que couber. */
+function recortarChave(chave, maximo) {
+  if (chave.length <= maximo) return chave
+  return chave.slice(0, maximo).replace(/\s+\S*$/, '').trim()
+}
+
 function detectarColoracoes(texto) {
   const alvo = chaveDeBusca(texto)
   const achadas = []
@@ -341,9 +347,16 @@ for (const bruta of paginasBrutas) {
     u: url,
     n: bruta.titulo,
     b: trilhaLegivel,
-    k: chaveDeBusca(
-      [bruta.titulo, bruta.titulo_wordpress, trilhaLegivel, bruta.descricao_original].join(' '),
-    ).slice(0, 400),
+    // Cortamos a chave em 400 caracteres para o índice não inchar com
+    // descrições longas — mas cortando na fronteira de palavra e renormalizando
+    // depois, senão sobra um espaço à direita (ou meia palavra) e a chave deixa
+    // de ser idempotente sob `chaveDeBusca`.
+    k: recortarChave(
+      chaveDeBusca(
+        [bruta.titulo, bruta.titulo_wordpress, trilhaLegivel, bruta.descricao_original].join(' '),
+      ),
+      400,
+    ),
     ...(base ? { m: base.sha256 } : {}),
   })
   for (const ov of overlays) {
