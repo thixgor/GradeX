@@ -41,3 +41,9 @@ next-env.d.ts
 # WhatsApp worker (sessão/credenciais Baileys — NUNCA commitar)
 /.wa-session
 .wa-session/
+
+# Manual da Histologia: mapa de progresso do envio ao Vercel Blob.
+# São ~9.156 entradas de bookkeeping do upload — nenhum código lê este arquivo
+# (o resolver deriva a URL de sha256 + extensão + NEXT_PUBLIC_HISTOLOGIA_BLOB_BASE),
+# então versioná-lo só adicionaria 2 MB de ruído a cada reenvio.
+public/Manual-Histologia/dados/mapa-assets-blob.json
