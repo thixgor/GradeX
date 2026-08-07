@@ -64,3 +64,40 @@ describe('dossiês de estrutura', () => {
     expect(dossieDaEstrutura('inexistente')).toBeNull()
   })
 })
+
+describe('panoramas de setor', () => {
+  it('toda chave aponta para um setor real do currículo', async () => {
+    const { RESUMOS } = await import('@/lib/histologia/resumos')
+    const { readFileSync, readdirSync } = await import('node:fs')
+    const pathMod = await import('node:path')
+    const DIR = pathMod.resolve(__dirname, '../../data/histologia/paginas')
+
+    const rotas = new Set<string>()
+    for (const arquivo of readdirSync(DIR)) {
+      const conteudo = JSON.parse(readFileSync(pathMod.join(DIR, arquivo), 'utf8'))
+      Object.keys(conteudo).forEach((r) => rotas.add(r))
+    }
+    for (const chave of Object.keys(RESUMOS)) {
+      expect(rotas.has(chave), `setor inexistente: ${chave}`).toBe(true)
+    }
+  })
+
+  it('o panorama é denso o bastante para valer a leitura', async () => {
+    const { RESUMOS } = await import('@/lib/histologia/resumos')
+    for (const [chave, resumo] of Object.entries(RESUMOS)) {
+      // Um "panorama" de duas frases não prepara ninguém para dezenas de
+      // lâminas; o pedido era resumo detalhado, não legenda.
+      expect(resumo.panorama.split(/\s+/).length, chave).toBeGreaterThan(80)
+      expect(resumo.objetivos.length, chave).toBeGreaterThanOrEqual(2)
+      expect(resumo.chamada.length, chave).toBeGreaterThan(15)
+    }
+  })
+
+  it('a marcação de destaque está balanceada', async () => {
+    const { RESUMOS } = await import('@/lib/histologia/resumos')
+    for (const [chave, resumo] of Object.entries(RESUMOS)) {
+      const marcas = (resumo.panorama.match(/\*\*/g) ?? []).length
+      expect(marcas % 2, `destaque sem fechamento em ${chave}`).toBe(0)
+    }
+  })
+})

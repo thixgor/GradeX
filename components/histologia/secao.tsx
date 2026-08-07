@@ -3,6 +3,7 @@ import { ChevronRight, FolderTree, Microscope } from 'lucide-react'
 
 import type { NoCurriculo, Pagina } from '@/lib/histologia/esquemas'
 import { BASE, rotaDaPagina } from '@/lib/histologia/rotas'
+import { type ResumoDeSetor, resumoDoSetor } from '@/lib/histologia/resumos'
 import { setorDe, tema } from './tema'
 
 /**
@@ -26,6 +27,7 @@ export function SecaoDoCurriculo({
   miniaturas: Record<string, string>
 }) {
   const cor = tema(setorDe(pagina.caminho).cor)
+  const resumo = resumoDoSetor(pagina.caminho)
   const laminas = filhos.filter((f) => f.tipo === 'lamina')
   const subsecoes = filhos.filter((f) => f.tipo !== 'lamina')
 
@@ -78,6 +80,8 @@ export function SecaoDoCurriculo({
           )}
         </p>
       </header>
+
+      {resumo && <PanoramaDoSetor resumo={resumo} />}
 
       {subsecoes.length > 0 && (
         <section aria-labelledby="subsecoes" className="mb-8">
@@ -168,4 +172,82 @@ export function SecaoDoCurriculo({
 
 function contarLaminas(filhos: NoCurriculo[]): number {
   return filhos.reduce((n, f) => n + f.laminas, 0)
+}
+
+/**
+ * Panorama do setor: o "mapa antes do território".
+ *
+ * Denso em termos de propósito — cada palavra técnica aqui reaparece marcada
+ * nas lâminas do setor, e reconhecê-la antes de ver a imagem é o que separa
+ * olhar de identificar. Vem de `lib/histologia/resumos.ts`, é conteúdo próprio
+ * e, como todo o resto, ainda aguarda revisão biomédica.
+ */
+function PanoramaDoSetor({ resumo }: { resumo: ResumoDeSetor }) {
+  return (
+    <section className="histologia-cartao mb-8 overflow-hidden">
+      <div className="border-b border-border bg-muted/25 px-4 py-2.5">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          Panorama do setor
+        </p>
+        <p className="mt-0.5 text-sm font-semibold leading-snug">{resumo.chamada}</p>
+      </div>
+
+      <div className="space-y-4 p-4">
+        <p className="histologia-prosa text-sm leading-relaxed">
+          {destacarTermos(resumo.panorama)}
+        </p>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Ao fim deste setor você deve conseguir
+            </p>
+            <ul className="space-y-1">
+              {resumo.objetivos.map((objetivo) => (
+                <li key={objetivo} className="flex gap-1.5 text-xs leading-relaxed">
+                  <span aria-hidden className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-current opacity-50" />
+                  {objetivo}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {resumo.chavesDeIdentificacao && resumo.chavesDeIdentificacao.length > 0 && (
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Chaves rápidas de identificação
+              </p>
+              <dl className="space-y-1.5">
+                {resumo.chavesDeIdentificacao.map((chave) => (
+                  <div key={chave.estrutura} className="border-l-2 border-current/25 pl-2">
+                    <dt className="text-xs font-semibold">{chave.estrutura}</dt>
+                    <dd className="text-xs leading-relaxed text-muted-foreground">{chave.pista}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/**
+ * Converte a marcação `**termo**` do panorama em `<strong>`.
+ *
+ * Feito por fatiamento, e não por `dangerouslySetInnerHTML`: o texto é nosso,
+ * mas abrir esse caminho num componente que renderiza conteúdo de dados é
+ * exatamente como um XSS entra depois, quando alguém reaproveitar a função.
+ */
+function destacarTermos(texto: string): React.ReactNode[] {
+  return texto.split(/(\*\*[^*]+\*\*)/g).map((parte, i) =>
+    parte.startsWith('**') && parte.endsWith('**') ? (
+      <strong key={i} className="font-semibold">
+        {parte.slice(2, -2)}
+      </strong>
+    ) : (
+      parte
+    ),
+  )
 }
