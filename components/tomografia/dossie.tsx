@@ -137,8 +137,11 @@ export function Dossie({
       {/* min-h-0: item de flex em coluna nasce com `min-height: auto` e se
           recusa a encolher abaixo do conteúdo — sem isto o `overflow-y-auto`
           não tem o que rolar. `overscroll-contain` impede que o fim da rolagem
-          da ficha continue arrastando a página atrás dela. */}
-      <div ref={topoRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4">
+          da ficha continue arrastando a página atrás dela.
+          `flex-auto` e não `flex-1`: a base `auto` faz a ficha curta medir o
+          próprio conteúdo. Com base zero, um contêiner de altura automática não
+          tem espaço livre para distribuir e o Firefox devolve altura zero. */}
+      <div ref={topoRef} className="min-h-0 flex-auto space-y-4 overflow-y-auto overscroll-contain p-4">
         <p className="text-sm leading-relaxed text-foreground/90">{estrutura.resumo}</p>
 
         {cortes.length > 1 && onIrParaCorte && (

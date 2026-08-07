@@ -330,8 +330,15 @@ export function VisualizadorTC({
         onTouchEnd={() => { pinca.current = null }}
         onDoubleClick={() => setZoom((z) => (z > 1.02 ? 1 : 2))}
         onContextMenu={(e) => e.preventDefault()}
-        className={`relative flex-1 select-none overflow-hidden bg-black ${
-          telaCheia ? 'min-h-0' : 'aspect-[4/3] sm:aspect-[16/11]'
+        /* `flex-1` SÓ em tela cheia. Fora dela quem dá altura ao palco é o
+           aspect-ratio, e as duas coisas juntas se anulavam: `flex: 1 1 0%`
+           num contêiner em coluna de altura automática zera a base do item, e
+           não há espaço livre para distribuir. O Chrome resolve a proporção
+           antes disso e desenha a imagem; o Firefox segue a base zerada e o
+           palco inteiro colapsava — a TC simplesmente não aparecia, sobravam a
+           régua e os controles. */
+        className={`relative select-none overflow-hidden bg-black ${
+          telaCheia ? 'min-h-0 flex-1' : 'aspect-[4/3] sm:aspect-[16/11]'
         } ${arraste.current?.modo === 'pan' || modoArraste === 'pan' ? 'cursor-grab' : 'cursor-ns-resize'}`}
         style={{ touchAction: 'none' }}
         role="img"

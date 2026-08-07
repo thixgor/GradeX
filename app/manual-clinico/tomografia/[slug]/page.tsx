@@ -320,7 +320,16 @@ function SerieConteudo() {
               conteúdo mais largo (a régua do visor, a lista de estruturas)
               empurrava a coluna para 360 px e o corpo cortava a sobra em telas
               de 320–360 px, onde nada disso podia ser alcançado. */}
-          <div ref={visorRef} className="min-w-0 space-y-5 lg:sticky lg:top-4">
+          {/* Numa janela que não está maximizada esta coluna é mais alta que a
+              tela, e `sticky` puro prendia tudo no topo: o protocolo e a
+              introdução ficavam abaixo da dobra sem jeito de chegar até eles,
+              porque quem rolava era a página e não a coluna. A coluna passa a
+              caber na janela e se divide em duas partes — o visor fixo, que é o
+              motivo de a coluna grudar, e a leitura, que rola por dentro. */}
+          <div
+            ref={visorRef}
+            className="min-w-0 space-y-5 lg:sticky lg:top-4 lg:flex lg:max-h-[calc(100vh-2rem)] lg:flex-col lg:space-y-0"
+          >
             <VisualizadorTC
               urls={urls}
               corte={corte}
@@ -330,20 +339,26 @@ function SerieConteudo() {
               destaque={selecionada?.nome ?? null}
               orientacao={sub.orientacao}
               serie={sub.titulo}
+              className="lg:shrink-0"
             />
 
-            <details className="group rounded-xl border border-border bg-card p-4" open>
-              <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-bold">
-                <Syringe className="h-4 w-4 text-primary" />
-                Como este exame é feito
-                <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
-              </summary>
-              <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">{sub.protocolo}</p>
-            </details>
+            {/* `flex-auto` (base automática) e não `flex-1` (base zero): num
+                contêiner de altura limitada por max-height, a base zero deixa o
+                bloco sem altura no Firefox. */}
+            <div className="space-y-5 lg:mt-5 lg:min-h-0 lg:flex-auto lg:space-y-5 lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+              <details className="group rounded-xl border border-border bg-card p-4" open>
+                <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-bold">
+                  <Syringe className="h-4 w-4 text-primary" />
+                  Como este exame é feito
+                  <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
+                </summary>
+                <p className="mt-2.5 text-xs leading-relaxed text-muted-foreground">{sub.protocolo}</p>
+              </details>
 
-            <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-              <p className="editorial-mark mb-2">Por que esta série importa</p>
-              <p className="text-sm leading-relaxed text-foreground/85">{sub.introducao}</p>
+              <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+                <p className="editorial-mark mb-2">Por que esta série importa</p>
+                <p className="text-sm leading-relaxed text-foreground/85">{sub.introducao}</p>
+              </div>
             </div>
           </div>
 
