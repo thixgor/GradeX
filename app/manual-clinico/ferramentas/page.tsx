@@ -15,16 +15,19 @@ import {
   Sigma,
   Sparkles,
   AlertTriangle,
+  Star,
   X,
 } from 'lucide-react'
 import {
   CATEGORIAS,
+  CATEGORIA_POR_ID,
   TOTAL_FERRAMENTAS,
   buscar,
   carregarTodas,
   type Ferramenta,
 } from '@/lib/ferramentas-clinicas'
 import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
+import { useFavoritos } from '@/components/ferramentas-clinicas/use-favoritos'
 
 export default function FerramentasClinicasPage() {
   return (
@@ -39,6 +42,7 @@ function Conteudo() {
   const [busca, setBusca] = useState('')
   const [todas, setTodas] = useState<Ferramenta[] | null>(null)
   const [carregando, setCarregando] = useState(false)
+  const { favoritos, pronto: favoritosProntos } = useFavoritos()
 
   // O catálogo completo só é baixado quando a busca começa a valer a pena.
   // Antes disso, a página inicial não custa nenhum dos 15 chunks de conteúdo.
@@ -71,10 +75,13 @@ function Conteudo() {
           }}
         />
 
-        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
+        {/* `pt-16` no celular: os botões flutuantes do AppShell ocupam os 52px
+            do topo quando o cabeçalho da casca está oculto, e sem essa folga o
+            botão de voltar fica embaixo do botão de menu. */}
+        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-16 sm:pt-8">
           <button
             onClick={() => router.push('/manual-clinico')}
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="-m-2 mb-4 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
           </button>
@@ -104,6 +111,11 @@ function Conteudo() {
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
                 <BookOpen className="h-3.5 w-3.5 text-primary" /> Referenciadas
               </span>
+              {favoritosProntos && favoritos.length > 0 && (
+                <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
+                  <Star className="h-3.5 w-3.5 fill-current" /> {favoritos.length} favorita{favoritos.length !== 1 ? 's' : ''}
+                </span>
+              )}
             </div>
 
             <div className="mt-6 max-w-xl">
@@ -136,6 +148,7 @@ function Conteudo() {
           <ResultadosBusca termo={busca} resultados={resultados} carregando={carregando && !todas} />
         ) : (
           <>
+            <Favoritos />
             <Grade />
             <ComoFunciona />
             <Aviso />
@@ -143,6 +156,116 @@ function Conteudo() {
         )}
       </div>
     </div>
+  )
+}
+
+/* ────────────────────────── Favoritos ────────────────────────── */
+
+/**
+ * As ferramentas que a pessoa marcou com a estrela.
+ *
+ * Some por completo quando não há nenhuma: uma seção vazia com texto
+ * explicando o que ela seria só empurra o índice para baixo. A estrela nos
+ * painéis é descoberta no uso, que é onde ela faz sentido.
+ */
+function Favoritos() {
+  const { favoritos, pronto, remover, limpar } = useFavoritos()
+  const [confirmando, setConfirmando] = useState(false)
+
+  // A confirmação se desarma sozinha: um "Confirmar" pendurado na tela vira
+  // armadilha para o toque seguinte.
+  useEffect(() => {
+    if (!confirmando) return
+    const timer = setTimeout(() => setConfirmando(false), 4000)
+    return () => clearTimeout(timer)
+  }, [confirmando])
+
+  if (!pronto || favoritos.length === 0) return null
+
+  return (
+    <section className="mb-10">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+        <div className="min-w-0">
+          <p className="editorial-mark mb-2 flex items-center gap-1.5">
+            <Star className="h-3 w-3 fill-current text-amber-500" /> Favoritos
+          </p>
+          <h2 className="font-heading text-xl font-semibold tracking-tight">
+            {favoritos.length} ferramenta{favoritos.length !== 1 ? 's' : ''} à mão
+          </h2>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            Salvas neste aparelho, sem precisar de conta. Toque na estrela de qualquer ferramenta para tirar ou
+            colocar.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            if (!confirmando) return setConfirmando(true)
+            limpar()
+            setConfirmando(false)
+          }}
+          className={`inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors ${
+            confirmando
+              ? 'border-rose-500/40 bg-rose-500/10 text-rose-700 dark:text-rose-300'
+              : 'border-border bg-card text-muted-foreground hover:border-primary/35 hover:text-foreground'
+          }`}
+        >
+          {confirmando ? 'Confirmar e apagar' : 'Limpar favoritos'}
+        </button>
+      </div>
+
+      <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        {favoritos.map((fav, i) => {
+          const categoria = CATEGORIA_POR_ID[fav.categoria]
+          const t = tema(categoria?.cor ?? 'azul')
+          const Icone = ICONES[categoria?.icone ?? 'padrao'] || ICONE_PADRAO
+          return (
+            <div
+              key={fav.id}
+              style={{ animationDelay: `${Math.min(i, 9) * 25}ms` }}
+              className={`group relative animate-fade-in-up rounded-xl border border-border bg-card p-4 opacity-0 transition duration-200 hover:-translate-y-0.5 hover:shadow-md ${t.hoverBorder}`}
+            >
+              {/* O link cobre o cartão inteiro e o botão de remover fica acima
+                  dele. Um <button> dentro de um <a> seria HTML inválido. */}
+              <Link
+                href={`/manual-clinico/ferramentas/${fav.categoria}?f=${fav.id}`}
+                prefetch={false}
+                className="absolute inset-0 z-10 rounded-xl"
+                aria-label={`Abrir ${fav.nome}`}
+              />
+              <div className="flex items-start gap-3">
+                <div className={`shrink-0 rounded-lg border ${t.border} ${t.bg} p-2`}>
+                  <Icone className={`h-4 w-4 ${t.text}`} />
+                </div>
+                <div className="min-w-0 flex-1 pr-7">
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <h3 className="text-sm font-bold leading-snug">{fav.nome}</h3>
+                    {fav.sigla && (
+                      <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${t.bg} ${t.text}`}>
+                        {fav.sigla}
+                      </span>
+                    )}
+                  </div>
+                  {fav.resumo && (
+                    <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-muted-foreground">{fav.resumo}</p>
+                  )}
+                  <p className="mt-2 text-[11px] font-medium text-muted-foreground/60">{categoria?.nome ?? 'Ferramentas Clínicas'}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => remover(fav.id)}
+                aria-label={`Remover ${fav.nome} dos favoritos`}
+                title="Remover dos favoritos"
+                className="absolute right-1.5 top-1.5 z-20 inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
