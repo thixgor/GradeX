@@ -201,6 +201,8 @@ export const esquemaPagina = z.object({
   /** Breadcrumb legível, em português. */
   trilha: z.array(esquemaTrilha).min(1),
   titulo: z.string().min(1),
+  /** O título passou pelo glossário editorial? Falso mantém o original. */
+  tituloTraduzido: z.boolean().default(false),
   tituloOriginal: z.string(),
   /**
    * 'lamina' tem imagem e/ou marcadores e vira página didática;
@@ -254,6 +256,8 @@ export type Questao = z.infer<typeof esquemaQuestao>
 export const esquemaQuiz = z.object({
   slug: z.string().min(1),
   titulo: z.string().min(1),
+  // Sem `tituloTraduzido` aqui de propósito: os títulos de quiz já chegam em
+  // português no acervo de origem, então não há pendência de tradução a marcar.
   tituloOriginal: z.string(),
   idOrigem: z.number().int().nonnegative(),
   idH5p: z.string(),

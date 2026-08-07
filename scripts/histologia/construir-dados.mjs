@@ -44,6 +44,7 @@ import {
   classificarMarcador,
   traduzirTermo,
 } from '../../lib/histologia/glossario.ts'
+import { traduzirTitulo } from '../../lib/histologia/titulos.ts'
 
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const dirAcervo = path.join(raiz, 'public/Manual-Histologia')
@@ -389,6 +390,10 @@ for (const bruta of paginasBrutas) {
     ...bruta.marcadores.map((m) => m.explicacao_original ?? ''),
   ].join(' ')
 
+  // O título é o cabeçalho da página e o texto que aparece na busca e na
+  // trilha. Sem tradução, ele fica no original e a interface marca a pendência.
+  const tituloTraduzido = traduzirTitulo(bruta.titulo)
+
   const pagina = {
     slug: no.slug,
     caminho: no.caminho,
@@ -396,8 +401,9 @@ for (const bruta of paginasBrutas) {
       slug: no.caminho.slice(0, i + 1).join('/'),
       titulo: no.setorial[i],
     })),
-    titulo: bruta.titulo,
-    tituloOriginal: bruta.titulo_wordpress || bruta.titulo,
+    titulo: tituloTraduzido ?? bruta.titulo,
+    tituloTraduzido: tituloTraduzido !== null,
+    tituloOriginal: bruta.titulo,
     tipo: ehLamina ? 'lamina' : 'secao',
     setor: no.setorial[0],
     descricaoOriginal: bruta.descricao_original ?? '',
@@ -430,7 +436,7 @@ for (const bruta of paginasBrutas) {
   entradasDeBusca.push({
     t: ehLamina ? 'l' : 's',
     u: url,
-    n: bruta.titulo,
+    n: tituloTraduzido ?? bruta.titulo,
     b: trilhaLegivel,
     // Cortamos a chave em 400 caracteres para o índice não inchar com
     // descrições longas — mas cortando na fronteira de palavra e renormalizando
@@ -438,7 +444,7 @@ for (const bruta of paginasBrutas) {
     // de ser idempotente sob `chaveDeBusca`.
     k: recortarChave(
       chaveDeBusca(
-        [bruta.titulo, bruta.titulo_wordpress, trilhaLegivel, bruta.descricao_original].join(' '),
+        [tituloTraduzido ?? '', bruta.titulo, bruta.titulo_wordpress, trilhaLegivel, bruta.descricao_original].join(' '),
       ),
       400,
     ),
@@ -450,7 +456,7 @@ for (const bruta of paginasBrutas) {
       t: 'e',
       u: url,
       n: ov.rotulo,
-      b: `${bruta.titulo} · ${trilhaLegivel}`,
+      b: `${tituloTraduzido ?? bruta.titulo} · ${trilhaLegivel}`,
       k: chaveDeBusca(`${ov.rotulo} ${ov.rotuloOriginal}`),
       o: ov.id,
       ...(base ? { m: base.sha256 } : {}),
@@ -811,6 +817,7 @@ const relatorio = {
 }
 await escrever(path.join(dirSaida, 'relatorio.json'), relatorio)
 
+const titulosTraduzidos = paginasConvertidas.filter((p) => p.tituloTraduzido).length
 const traduzidos = paginasConvertidas.reduce(
   (n, p) => n + p.overlays.filter((o) => o.traduzido).length,
   0,
@@ -832,6 +839,9 @@ console.log(
 console.log(
   `  ${'bytes servidos'.padEnd(22)}${(bytesServidos / 2 ** 30).toFixed(2).padStart(6)} GiB` +
     `  (${Object.keys(derivadas).length > 0 ? 'WebP' : 'original'}, sem H5P)`,
+)
+console.log(
+  `  ${'títulos traduzidos'.padEnd(22)} ${String(titulosTraduzidos).padStart(5)}  de ${paginasConvertidas.length} (${((100 * titulosTraduzidos) / paginasConvertidas.length).toFixed(1)}%)`,
 )
 console.log(
   `  ${'rótulos traduzidos'.padEnd(22)} ${String(traduzidos).padStart(6)}  de ${totalOverlays} (${((100 * traduzidos) / totalOverlays).toFixed(1)}%)`,

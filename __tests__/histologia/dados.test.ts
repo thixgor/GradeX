@@ -321,3 +321,53 @@ describe('carregadores gerados', () => {
     }
   })
 })
+
+describe('tradução de títulos', () => {
+  it('a marca de tradução é coerente com o glossário de títulos', async () => {
+    const { traduzirTitulo } = await import('@/lib/histologia/titulos')
+    for (const arquivo of readdirSync(path.join(DADOS, 'paginas'))) {
+      const conteudo: Record<string, { titulo: string; tituloOriginal: string; tituloTraduzido: boolean }> =
+        JSON.parse(readFileSync(path.join(DADOS, 'paginas', arquivo), 'utf8'))
+      for (const pagina of Object.values(conteudo)) {
+        const esperado = traduzirTitulo(pagina.tituloOriginal)
+        if (esperado) {
+          expect(pagina.titulo).toBe(esperado)
+          expect(pagina.tituloTraduzido).toBe(true)
+        } else {
+          // Sem entrada no glossário, o título fica no original e a interface
+          // marca a pendência — nunca uma tradução inventada em silêncio.
+          expect(pagina.titulo).toBe(pagina.tituloOriginal)
+          expect(pagina.tituloTraduzido).toBe(false)
+        }
+      }
+    }
+  })
+
+  /**
+   * Alguns termos são idênticos nos dois idiomas — cognatos ou latim mantido na
+   * Terminologia Histologica. Eles precisam de autorização explícita: a lista
+   * abaixo é o que separa "traduzido e coincide" de "esqueceram de traduzir".
+   */
+  const COGNATOS = new Set([
+    'meninges',
+    'ureter',
+    'pars distalis',
+    'pars intermedia',
+    'pars nervosa',
+    'pleura',
+    'submucosa',
+    'serosa',
+    'vagina',
+    'retina',
+  ])
+
+  it('nenhuma tradução é vazia, e as idênticas ao original são cognatos declarados', async () => {
+    const { TITULOS } = await import('@/lib/histologia/titulos')
+    for (const [original, traduzido] of Object.entries(TITULOS)) {
+      expect(traduzido.trim().length, original).toBeGreaterThan(0)
+      if (traduzido.toLowerCase() === original) {
+        expect(COGNATOS.has(original), `cognato não declarado: "${original}"`).toBe(true)
+      }
+    }
+  })
+})
