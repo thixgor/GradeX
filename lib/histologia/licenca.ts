@@ -1,0 +1,130 @@
+/**
+ * PORTÃO JURÍDICO DO MANUAL DA HISTOLOGIA — leia antes de mexer.
+ *
+ * O acervo do Digital Histology (Virginia Commonwealth University) está sob
+ * CC BY-NC-SA 4.0. A cláusula NãoComercial é, por padrão, incompatível com
+ * paywall, assinatura, promoção de produto e CTA comercial contextual. O GradeX
+ * tem fluxo Plus+/assinatura. Logo, este módulo **não pode ir ao ar** enquanto
+ * uma destas duas rotas não estiver registrada em `AUTORIZACAO`:
+ *
+ *   1. o Manual da Histologia permanece integralmente gratuito, sem paywall,
+ *      sem CTA comercial contextual e tecnicamente separado de benefícios
+ *      pagos; ou
+ *   2. existe autorização escrita dos titulares, arquivada no projeto.
+ *
+ * Enquanto `AUTORIZACAO.decisao === 'pendente'`, a flag fica desligada em
+ * produção e as rotas devolvem 404. Desenvolvimento e revisão continuam
+ * liberados — é exatamente o que `LICENCA_E_PUBLICACAO.md` autoriza.
+ *
+ * NÃO aplique aqui `useAcessoTomografia`, `PLUS_LABEL`, checkout ou qualquer
+ * hook de acesso pago. A gratuidade deste módulo é estrutural: não existe
+ * código de cobrança para configurar errado.
+ */
+
+export type DecisaoDeLicenca =
+  | 'pendente'
+  | 'gratuito-sem-exploracao-comercial'
+  | 'autorizacao-escrita-arquivada'
+
+export interface RegistroDeAutorizacao {
+  decisao: DecisaoDeLicenca
+  /** Data ISO em que a decisão foi registrada. Vazio enquanto pendente. */
+  registradoEm: string
+  /** Quem registrou (pessoa responsável, não "o time"). */
+  responsavel: string
+  /** Caminho do documento arquivado, quando a rota for autorização escrita. */
+  documento: string | null
+  observacao: string
+}
+
+/**
+ * ESTADO ATUAL: pendente.
+ *
+ * Nenhuma decisão foi encontrada no repositório durante a auditoria. Para
+ * liberar, edite este registro (e só ele) e abra o ADR correspondente em
+ * `docs/adr/0001-licenca-manual-histologia.md`.
+ */
+export const AUTORIZACAO: RegistroDeAutorizacao = {
+  decisao: 'pendente',
+  registradoEm: '',
+  responsavel: '',
+  documento: null,
+  observacao:
+    'Auditoria de 2026-08-07 não encontrou decisão registrada. Enquanto isso, o módulo fica ' +
+    'desligado em produção e é desenvolvido/revisado em ambiente privado.',
+}
+
+/** A decisão registrada libera publicação em produção? */
+export function licencaPermitePublicar(): boolean {
+  return AUTORIZACAO.decisao !== 'pendente'
+}
+
+/**
+ * Flag de disponibilidade do módulo.
+ *
+ * Em produção exige *as duas* condições: decisão de licença registrada **e**
+ * `HISTOLOGIA_HABILITADO=1`. Fora de produção o módulo abre para que a revisão
+ * editorial e biomédica possa acontecer — que é o único jeito de sair do
+ * estado pendente.
+ */
+export function histologiaHabilitada(): boolean {
+  if (process.env.NODE_ENV !== 'production') return true
+  if (!licencaPermitePublicar()) return false
+  return process.env.HISTOLOGIA_HABILITADO === '1'
+}
+
+/**
+ * Motivo do bloqueio, para diagnóstico em log de servidor. Nunca exiba ao
+ * usuário final: em produção bloqueada a rota deve responder 404 seco, sem
+ * anunciar que existe conteúdo escondido ali.
+ */
+export function motivoDoBloqueio(): string | null {
+  if (histologiaHabilitada()) return null
+  if (!licencaPermitePublicar()) {
+    return 'Portão de licença pendente: veja lib/histologia/licenca.ts e docs/adr/0001-licenca-manual-histologia.md.'
+  }
+  return 'Licença liberada, mas HISTOLOGIA_HABILITADO não está definido como "1" neste ambiente.'
+}
+
+/** Este módulo pode ser indexado por buscadores? Só quando publicável. */
+export function podeIndexar(): boolean {
+  return histologiaHabilitada() && licencaPermitePublicar()
+}
+
+export const LICENCA = {
+  identificador: 'CC BY-NC-SA 4.0',
+  nome: 'Creative Commons Atribuição-NãoComercial-CompartilhaIgual 4.0 Internacional',
+  url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/deed.pt-BR',
+  urlCreditos: 'https://digitalhistology.org/credits/',
+  titulares: [
+    'Digital Histology',
+    'Virginia Commonwealth University School of Medicine',
+    'VCU ALT Lab',
+  ],
+} as const
+
+/**
+ * Crédito-base exigido por `LICENCA_E_PUBLICACAO.md`. Aparece no rodapé de toda
+ * lâmina e na gaveta de créditos; os créditos específicos de cada imagem vêm
+ * junto, do campo `creditos` da página.
+ */
+export const CREDITO_BASE =
+  'Conteúdo visual adaptado de Digital Histology (Virginia Commonwealth University), ' +
+  'CC BY-NC-SA 4.0; reorganização, interface e conteúdo complementar em português ' +
+  'pelo Manual Clínico.'
+
+/**
+ * Declaração de alterações — obrigação da cláusula BY. Precisa ser específica:
+ * "adaptamos" não cumpre a licença, listar o que foi feito cumpre.
+ */
+export const ALTERACOES_REALIZADAS = [
+  'Reorganização do catálogo em currículo navegável, com rotas e hierarquia próprias.',
+  'Tradução e revisão editorial para português brasileiro dos títulos, descrições e rótulos.',
+  'Criação de interface nativa (microscópio virtual, atlas, laboratório e quizzes) sem reuso do HTML de origem.',
+  'Acréscimo de metadados: identificadores estáveis, SHA-256, proveniência e estado editorial.',
+  'Conversão dos quizzes H5P em componentes próprios, preservando enunciado, alternativas, gabarito e devolutiva.',
+] as const
+
+export const AVISO_EDUCACIONAL =
+  'Material educacional de histologia. Não substitui laudo anatomopatológico, avaliação ' +
+  'clínica, protocolo institucional ou orientação profissional.'
