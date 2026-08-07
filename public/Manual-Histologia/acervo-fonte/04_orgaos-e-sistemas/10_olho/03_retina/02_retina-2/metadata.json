@@ -1,0 +1,115 @@
+{
+  "id": 9228,
+  "titulo": "Non-sensory retina",
+  "titulo_wordpress": "Retina 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 2"
+  ],
+  "descricao_original": "The non-visual, anterior portion of the cup-shaped retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris. The junction of the two portions of the retina is called the ora serrata.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Non-sensory retina', no setor Órgãos e Sistemas > Olho > Retina > Retina 2. Descricao original da pagina: The non-visual, anterior portion of the cup-shaped retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris. The junction of the two portions of the retina is called the ora serrata.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Area shown in right panel",
+      "explicacao_original": "The non-photosensitive, anterior portion of the retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-2-1a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-1a-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Area shown in right panel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The non-photosensitive, anterior portion of the retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Non-sensory retina",
+      "explicacao_original": "The non-photosensitive, anterior portion of the retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-2-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Non-sensory retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The non-photosensitive, anterior portion of the retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pigmented layer",
+      "explicacao_original": "The non-photosensitive, anterior portion of the retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-2-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-10-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Pigmented layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The non-photosensitive, anterior portion of the retina is reduced in thickness and number of layers from the photosensitive portion. This non-visual retina forms the posterior lining of both the ciliary body and the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ora serrata",
+      "explicacao_original": "The ora serrata marks the boundary between the the photosensitive retina and the lining portion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Ora serrata' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ora serrata marks the boundary between the the photosensitive retina and the lining portion.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ciliary body",
+      "explicacao_original": "The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2-9a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-9a-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Ciliary body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ciliary processes",
+      "explicacao_original": "The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Ciliary processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lens",
+      "explicacao_original": "The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-2-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Sclera",
+      "explicacao_original": "The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-2-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-2-8-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body consists of two regions, the pars plicata which supports the ciliary processes and the pars plana which is the flat region between the pars plicata and the ora serrata. The non-sensory retina covers both regions and extends to line the posterior surface of the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Mississippi-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/Or.Eye_.Retina-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Non-sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-2/, acesso em 2026-08-07."
+    }
+  ]
+}

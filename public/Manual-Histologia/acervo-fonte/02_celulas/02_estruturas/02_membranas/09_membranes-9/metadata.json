@@ -1,0 +1,113 @@
+{
+  "id": 1124,
+  "titulo": "Membranes",
+  "titulo_wordpress": "Membranes 9",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Membranas",
+    "Membranes 9"
+  ],
+  "descricao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/membranes/membranes-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "arquivo": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Membranes', no setor Células > Estruturas > Membranas > Membranes 9. Descricao original da pagina: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-9-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-1-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-9-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-2-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner nuclear membrane",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-9-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-3-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Inner nuclear membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer nuclear membrane",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-9-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-4-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Outer nuclear membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.M-9-5A-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-5A-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Outer membrane",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.M-9-5B-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-5B-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Outer membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Inner membrane",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.M-9-5C-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-5C-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'Inner membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "RER",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.M-9-6A-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-6A-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "SER",
+      "explicacao_original": "This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.M-9-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.M-9-7-ping.png",
+      "imagem_base": "imagens/base/9-Nuclear-envelope-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/9-Nuclear-envelope-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a '9-Nuclear-envelope-fix.jpg'. Destaca a estrutura ou conceito 'SER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph illustrates intracellular membranes, such as SER, RER and the two membranes of the nuclear envelope. The two membranes of mitochondria are also visible; the inner membrane folding inward to form cristae. 30,000x. Contexto setorial: Células > Estruturas > Membranas > Membranes 9. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/membranes/membranes-9/, acesso em 2026-08-07."
+    }
+  ]
+}

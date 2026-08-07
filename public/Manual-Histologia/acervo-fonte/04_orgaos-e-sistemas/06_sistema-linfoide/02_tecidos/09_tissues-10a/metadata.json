@@ -1,0 +1,63 @@
+{
+  "id": 30515,
+  "titulo": "Germinal center",
+  "titulo_wordpress": "Tissues 10A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 10A"
+  ],
+  "descricao_original": "In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-10a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-10A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-10A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Germinal center', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 10A. Descricao original da pagina: In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-10a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Germinal center",
+      "explicacao_original": "In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-1-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-1-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Germinal center'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-10A.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 10A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-10a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Immunoblasts",
+      "explicacao_original": "In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Germinal center'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-10A.jpg'. Destaca a estrutura ou conceito 'Immunoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 10A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-10a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tingible body macrophages",
+      "explicacao_original": "In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-3-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-3-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Germinal center'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-10A.jpg'. Destaca a estrutura ou conceito 'Tingible body macrophages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 10A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-10a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Phagocytosed remnants",
+      "explicacao_original": "In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-8A-4-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-8A-4-ping-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Germinal center'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-10A.jpg'. Destaca a estrutura ou conceito 'Phagocytosed remnants' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the germinal center, B cells proliferate, altering their antibody-producing genes to diversify the humoral immune response. The cells then undergo a selection process whereby only those with the highest affinity antibodies survive to form immunoblasts. The remaining cells are eliminated through apoptosis and subsequent phagocytosis by macrophages. These macrophages are termed tingible body macrophages because the phagocytosed remnants of the B cells in their cytoplasm are readily stainable. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 10A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-10a/, acesso em 2026-08-07."
+    }
+  ]
+}

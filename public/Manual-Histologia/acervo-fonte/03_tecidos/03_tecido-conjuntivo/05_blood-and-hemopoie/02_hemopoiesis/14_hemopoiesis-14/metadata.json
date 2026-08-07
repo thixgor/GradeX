@@ -1,0 +1,44 @@
+{
+  "id": 9686,
+  "titulo": "Eosinophilic metamyelocytes and segmented eosinophils",
+  "titulo_wordpress": "Hemopoiesis 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 14"
+  ],
+  "descricao_original": "Like that of a neutrophilic metamyelocyte, the nucleus of an eosinophilic metamyelocyte develops an indentation and its cytoplasm is filled with intensely-stained eosinophilic secondary granules. The nucleus becomes more elongated and displays constrictions, at which point the cells are called segmented eosinophils. Eosinophilic band cells are rarely observed. 1000x all",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-14.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Eosinophilic metamyelocytes and segmented eosinophils', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 14. Descricao original da pagina: Like that of a neutrophilic metamyelocyte, the nucleus of an eosinophilic metamyelocyte develops an indentation and its cytoplasm is filled with intensely-stained eosinophilic secondary granules. The nucleus becomes more elongated and displays constrictions, at which point the cells are called segmented eosinophils. Eosinophilic band cells are rarely observed. 1000x all. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Eosinophilic metamyelocytes",
+      "explicacao_original": "Like that of a neutrophilic metamyelocyte, the nucleus of an eosinophilic metamyelocyte develops an indentation and its cytoplasm is filled with intensely-stained eosinophilic secondary granules. The nucleus becomes more elongated and displays constrictions, at which point the cells are called segmented eosinophils. Eosinophilic band cells are rarely observed. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophilic metamyelocytes and segmented eosinophils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-14.jpg'. Destaca a estrutura ou conceito 'Eosinophilic metamyelocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Like that of a neutrophilic metamyelocyte, the nucleus of an eosinophilic metamyelocyte develops an indentation and its cytoplasm is filled with intensely-stained eosinophilic secondary granules. The nucleus becomes more elongated and displays constrictions, at which point the cells are called segmented eosinophils. Eosinophilic band cells are rarely observed. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Segmented eosinophils",
+      "explicacao_original": "Like that of a neutrophilic metamyelocyte, the nucleus of an eosinophilic metamyelocyte develops an indentation and its cytoplasm is filled with intensely-stained eosinophilic secondary granules. The nucleus becomes more elongated and displays constrictions, at which point the cells are called segmented eosinophils. Eosinophilic band cells are rarely observed. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eosinophilic metamyelocytes and segmented eosinophils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-14.jpg'. Destaca a estrutura ou conceito 'Segmented eosinophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Like that of a neutrophilic metamyelocyte, the nucleus of an eosinophilic metamyelocyte develops an indentation and its cytoplasm is filled with intensely-stained eosinophilic secondary granules. The nucleus becomes more elongated and displays constrictions, at which point the cells are called segmented eosinophils. Eosinophilic band cells are rarely observed. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-14/, acesso em 2026-08-07."
+    }
+  ]
+}

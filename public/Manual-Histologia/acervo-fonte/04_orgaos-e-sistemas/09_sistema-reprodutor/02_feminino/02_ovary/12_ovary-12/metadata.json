@@ -1,0 +1,74 @@
+{
+  "id": 12340,
+  "titulo": "Ovary: corpus luteum",
+  "titulo_wordpress": "Ovary 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 12"
+  ],
+  "descricao_original": "The corpus luteum is present and actively secreting progesterone and estrogen from days 15-26 of the menstrual cycle. A portion of a corpus luteum extends across the bottom of this image of the ovary. This portion of the corpus luteum represents approximately 25-30% of its total volume. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A.jpg",
+      "arquivo": "imagens/base/O.R.F.OD_.012A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: corpus luteum', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 12. Descricao original da pagina: The corpus luteum is present and actively secreting progesterone and estrogen from days 15-26 of the menstrual cycle. A portion of a corpus luteum extends across the bottom of this image of the ovary. This portion of the corpus luteum represents approximately 25-30% of its total volume. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Corpus luteum",
+      "explicacao_original": "The corpus luteum is present and actively secreting progesterone and estrogen from days 15-26 of the menstrual cycle. A portion of a corpus luteum extends across the bottom of this image of the ovary. This portion of the corpus luteum represents approximately 25-30% of its total volume. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.012A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.012A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.012A.jpg'. Destaca a estrutura ou conceito 'Corpus luteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum is present and actively secreting progesterone and estrogen from days 15-26 of the menstrual cycle. A portion of a corpus luteum extends across the bottom of this image of the ovary. This portion of the corpus luteum represents approximately 25-30% of its total volume. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Granulosa lutein cells",
+      "explicacao_original": "Granulosa lutein cells differentiate from the stratum granulosum of the follicle and comprise the main mass of the corpus luteum. Each cell resembles a typical steroid-producing cell with frothy cytoplasm and an euchromatic nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.012A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.012A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.012A.jpg'. Destaca a estrutura ou conceito 'Granulosa lutein cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Granulosa lutein cells differentiate from the stratum granulosum of the follicle and comprise the main mass of the corpus luteum. Each cell resembles a typical steroid-producing cell with frothy cytoplasm and an euchromatic nucleus.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Theca lutein cells",
+      "explicacao_original": "Theca lutein cells arise from the theca interna of the follicle. These cells stain more intensely and are smaller than the granulosa lutein cells. Theca lutein cells are located more peripherally around the corpus luteum and form the infoldings into the structure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.012A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.012A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.012A.jpg'. Destaca a estrutura ou conceito 'Theca lutein cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Theca lutein cells arise from the theca interna of the follicle. These cells stain more intensely and are smaller than the granulosa lutein cells. Theca lutein cells are located more peripherally around the corpus luteum and form the infoldings into the structure.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Atretic follicles",
+      "explicacao_original": "A number of atretic (secondary) follicles occupy a large portion of the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.012A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.012A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.012A.jpg'. Destaca a estrutura ou conceito 'Atretic follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A number of atretic (secondary) follicles occupy a large portion of the image.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Next Image",
+      "explicacao_original": "The next image is similar to that outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.012A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.012A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.012A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: corpus luteum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.012A.jpg'. Destaca a estrutura ou conceito 'Next Image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-12/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,3652 @@
+{
+  "id_pagina": 21563,
+  "id_h5p": "11",
+  "titulo": "Sistema Linfoide",
+  "titulo_original": "Lymphoid system quiz",
+  "url_origem": "https://digitalhistology.org/quizzes/lymphoid-system/",
+  "licenca_metadado_h5p": "U",
+  "questoes": [
+    {
+      "numero": 1,
+      "enunciado": "Identify the structure indicated by the double arrows.",
+      "imagem": "imagens/file-5b2d67198f316.jpg",
+      "caminho_h5p_imagem": "images/file-5b2d67198f316.jpg",
+      "alternativas": [
+        {
+          "texto": "Diffuse lymphoid tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Primary lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Secondary lymphoid nodule",
+          "correta": true,
+          "feedback": "Correct. This image shows a two well defined lymphoid nodules located in the lamina propria of a tonsil. The presence of the lighter-staining germinal center indicates that this a secondary nodule."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again"
+        },
+        {
+          "texto": "Tonsil",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "enunciado": "Identify the region outlined in this image.",
+      "imagem": "imagens/file-5b2d694433498.jpg",
+      "caminho_h5p_imagem": "images/file-5b2d694433498.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again"
+        },
+        {
+          "texto": "Germinal center",
+          "correta": true,
+          "feedback": "Correct. The presence of a germinal center in this solitary lymphoid nodule indicates that this is a secondary nodule."
+        },
+        {
+          "texto": "Diffuse lymphatic tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again"
+        },
+        {
+          "texto": "Medulla",
+          "correta": false,
+          "feedback": "Incorrect, try again"
+        },
+        {
+          "texto": "Cortex",
+          "correta": false,
+          "feedback": "Incorrect, try again"
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "enunciado": "Identify the tissue outlined in these images.",
+      "imagem": "imagens/file-5b2d6a24d9a97.jpg",
+      "caminho_h5p_imagem": "images/file-5b2d6a24d9a97.jpg",
+      "alternativas": [
+        {
+          "texto": "Diffuse lymphoid tissue",
+          "correta": true,
+          "feedback": "Correct. Diffuse lymphoid tissue, composed of lymphocytes, is present within the lamina propria or submucosa (as seen here) of many organs, where it filters tissue fluid. During an immune response, recruitment of additional lymphocytes leads to the formation of lymphoid nodules."
+        },
+        {
+          "texto": "Primary lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Secondary lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again"
+        },
+        {
+          "texto": "Germinal center",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "enunciado": "Identify the structure outlined in this image.",
+      "imagem": "imagens/file-5b32a27065020.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a27065020.jpg",
+      "alternativas": [
+        {
+          "texto": "Red pulp",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "White pulp",
+          "correta": true,
+          "feedback": "CORRECT. The white pulp of the spleen consists of diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues that surround arterioles after they leave trabeculae. The diffuse tissue forms a sleeve around each arteriole. The lymphoid nodules are suspended within the diffuse areas. The surrounding red pulp consists of splenic cords and sinuses."
+        },
+        {
+          "texto": "Hassall's corpuscle",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Secondary lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Germinal center",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "enunciado": "Identify the cell indicated by the arrows.",
+      "imagem": "imagens/file-5b32a57b2f81b.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a57b2f81b.jpg",
+      "alternativas": [
+        {
+          "texto": "Macrophage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Monocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Immunoblast",
+          "correta": true,
+          "feedback": "CORRECT. Immunoblasts, which are present within the germinal center, are large lymphocytes with a euchromatic nucleus. Cell division of these cells produces additional lymphocytes, which accumulate around the darker staining periphery of the nodule."
+        },
+        {
+          "texto": "Reticular cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "enunciado": "Identify the aggregate of lymphoid tissue that fills the field.",
+      "imagem": "imagens/file-5b32a6e2c1986.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a6e2c1986.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tonsil",
+          "correta": true,
+          "feedback": "CORRECT. Tonsils, located in the lamina propria, consist of numerous lymphoid nodules embedded in diffuse lymphoid tissue. The tonsil is surrounded by an incomplete capsule of connective tissue; crypts extend into the tonsil."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Spleen",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Thymus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "enunciado": "Identify the structure indicated by the double arrow.",
+      "imagem": "imagens/file-5b32a75318569.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a75318569.jpg",
+      "alternativas": [
+        {
+          "texto": "Diffuse lymphoid tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Primary lymphoid nodule",
+          "correta": true,
+          "feedback": "CORRECT. Primary lymphoid nodules are clusters of lymphoid cells located as solitary nodules in the lamina propria of tubular organs (as here) and as aggregates in tonsils and Peyer’s patches. A primary lymphoid nodule consist mostly of small lymphocytes aggregated in the lamina propria and filter tissue fluid. The absence of a pale, germinal center distinguishes this primary nodule from a secondary nodule."
+        },
+        {
+          "texto": "Secondary lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Germinal center",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "enunciado": "Identify the organ that fills the field.",
+      "imagem": "imagens/file-5b32a8298d5ad.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a8298d5ad.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tonsil",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": true,
+          "feedback": "CORRECT. The lymph node is entirely encapsulated and has lymphoid nodules located only in the cortical region of the organ. Medullary cords and sinuses identify the medullary region."
+        },
+        {
+          "texto": "Spleen",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Thymus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b32a89156ac5.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a89156ac5.jpg",
+      "alternativas": [
+        {
+          "texto": "Efferent lymphatic vessel",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Afferent lymphatic vessel",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Capsule",
+          "correta": true,
+          "feedback": "CORRECT. The lymph node is a fully encapsulated organ; the capsule is composed of dense irregular connective tissue."
+        },
+        {
+          "texto": "Cortical sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "enunciado": "Identify the region indicated by the double arrow.",
+      "imagem": "imagens/file-5b32a92ca8466.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a92ca8466.jpg",
+      "alternativas": [
+        {
+          "texto": "Cortex",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cortical sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Paracortex",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Hilum",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Medulla",
+          "correta": true,
+          "feedback": "CORRECT. The central region of a lymph node is termed the medulla and contains medullary cords and medullary sinuses. These sinuses receive lymph which has percolated through the cortex."
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "enunciado": "Identify the structure indicated by the rectangle.",
+      "imagem": "imagens/file-5b32a9b0736ae.jpg",
+      "caminho_h5p_imagem": "images/file-5b32a9b0736ae.jpg",
+      "alternativas": [
+        {
+          "texto": "Medullary cord",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Medullary sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "High endothelial venule",
+          "correta": true,
+          "feedback": "CORRECT. High endothelial venules are unique blood vessels because their endothelium is a simple cuboidal epithelium rather than the typical simple squamous. This shape allows ready passage of lymphocytes through their walls."
+        },
+        {
+          "texto": "Afferent lymphatic vessel",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cortical sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 12,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b32aa5866941.jpg",
+      "caminho_h5p_imagem": "images/file-5b32aa5866941.jpg",
+      "alternativas": [
+        {
+          "texto": "Subcapsular sinus",
+          "correta": true,
+          "feedback": "CORRECT. Beneath the capsule of the lymph node is the subcapsular sinus, which receives and filters the lymph entering via the afferent lymphatic vessels."
+        },
+        {
+          "texto": "Medullary sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cortical sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Trabecular sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Splenic sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 13,
+      "enunciado": "Identify the cell indicated the arrows.",
+      "imagem": "imagens/file-5b33a06a4e5d6.jpg",
+      "caminho_h5p_imagem": "images/file-5b33a06a4e5d6.jpg",
+      "alternativas": [
+        {
+          "texto": "Plasma cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophage",
+          "correta": true,
+          "feedback": "CORRECT. Macrophages are present among the numerous lymphocytes in the subcapsular sinus of the lymph node. Macrophages can be distinguished by their larger nuclei, the presence of phagocytosed material in their cytoplasm and ruffled cell borders."
+        },
+        {
+          "texto": "Lymphocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Immunoblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 14,
+      "enunciado": "Identify the organ that fills the field.",
+      "imagem": "imagens/file-5b32abc02495d.jpg",
+      "caminho_h5p_imagem": "images/file-5b32abc02495d.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tonsil",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Spleen",
+          "correta": true,
+          "feedback": "CORRECT. Like the lymph node, the spleen is entirely encapsulated; however, in the spleen, connective tissue trabeculae extend farther into the organ than do those of the lymph node. In lymph nodes, lymphoid nodules are confined to the cortex; lymphoid nodules in the spleen are present throughout the organ, forming part of the white pulp."
+        },
+        {
+          "texto": "Thymus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 15,
+      "enunciado": "Identify the structure indicated by the arrow.",
+      "imagem": "imagens/file-5b32ac575e5ff.jpg",
+      "caminho_h5p_imagem": "images/file-5b32ac575e5ff.jpg",
+      "alternativas": [
+        {
+          "texto": "Capsule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Trabeculum",
+          "correta": true,
+          "feedback": "CORRECT. The spleen is covered by a thick capsule of dense irregular connective tissue from which long trabeculae penetrate into the parenchyma."
+        },
+        {
+          "texto": "Medullary sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "White pulp",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Red pulp",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 16,
+      "enunciado": "Identify the organ that fills the field.",
+      "imagem": "imagens/file-5b32ace5f24a9.jpg",
+      "caminho_h5p_imagem": "images/file-5b32ace5f24a9.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tonsil",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Spleen",
+          "correta": true,
+          "feedback": "CORRECT. Spleen is differentiated from lymph node and thymus because it lacks the cortex and medulla these organs possess. Lymphoid nodules, part of white pulp, are scattered throughout the spleen; their distinguishing feature is their central arteriole, which is displaced toward the margin when a nodule develops within the PALS surrounding the arteriole."
+        },
+        {
+          "texto": "Thymus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 17,
+      "enunciado": "Identify the region that fills the field.",
+      "imagem": "imagens/file-5b32af3639f54.jpg",
+      "caminho_h5p_imagem": "images/file-5b32af3639f54.jpg",
+      "alternativas": [
+        {
+          "texto": "Cortex",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Medulla",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Red pulp",
+          "correta": true,
+          "feedback": "CORRECT. The red pulp of the spleen is intermixed with the white pulp but appears less compact. The red pulp consists of splenic cords and splenic sinuses, which are filled with blood that has been filtered through the white pulp and the intervening splenic cords."
+        },
+        {
+          "texto": "White pulp",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "PALS",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 18,
+      "enunciado": "Identify the organ that fills the field.",
+      "imagem": "imagens/file-5b32afbd51666.jpg",
+      "caminho_h5p_imagem": "images/file-5b32afbd51666.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoid nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tonsil",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymph node",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Spleen",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Thymus",
+          "correta": true,
+          "feedback": "CORRECT. The thymus is an encapsulated organ that lacks lymphoid nodules. The organ has lobules, each of which has a distinct cortex, composed of densely-packed lymphocytes, and a palely stained medulla, containing the distinctive Hassall's corpuscles."
+        }
+      ]
+    },
+    {
+      "numero": 19,
+      "enunciado": "Identify the structure indicated by the double arrow.",
+      "imagem": "imagens/file-5b32b0459bde8.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b0459bde8.jpg",
+      "alternativas": [
+        {
+          "texto": "Germinal center",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphoblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Medullary sinus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Hassall's corpuscle",
+          "correta": true,
+          "feedback": "CORRECT. Hassall's corpuscles are located in the medullary regions of the thymus and are composed of deteriorating reticular epithelial cells that form the framework of this organ."
+        },
+        {
+          "texto": "Trabeculum",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 20,
+      "enunciado": "Identify the region outlined in this image.",
+      "imagem": "imagens/file-5b32b0d523cbd.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b0d523cbd.jpg",
+      "alternativas": [
+        {
+          "texto": "Medullary sinuses",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Germinal centers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Medulla",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Paracortex",
+          "correta": true,
+          "feedback": "CORRECT. The inner region of the lymph node cortex, the paracortex, is a T-dependent area. It lies just beneath the superficial cortex where the lymphoid nodules are located. Beneath the paracortex is the medulla. Under antigenic stimulation, T cells in this region become activated, replicate and leave the lymph node via the efferent lymphatic vessels. These T cells are then returned to the blood and carried to peripheral sites throughout the body."
+        },
+        {
+          "texto": "Medullary cords",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 21,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b32b1804f65b.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b1804f65b.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphoblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Thymocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Epithelial reticular cells",
+          "correta": true,
+          "feedback": "CORRECT. The stromal meshwork supporting the thymus is formed by cells of epithelial, rather than connective tissue, origin and, therefore, are called epithelial reticular cells. The nuclei of these cells are large, spherical and euchromatic."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Immunoblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 22,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b32b20468e9b.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b20468e9b.jpg",
+      "alternativas": [
+        {
+          "texto": "Macrophages",
+          "correta": true,
+          "feedback": "CORRECT. In this germinal center, macrophages (tingible body macrophages) with phagosomes in their cytoplasm, indicate the phagocytic activity occurring in this region. These macrophages are phagocytosing apoptotic cells in various stages of degradation that occurs during immune selection. The term “tangible” refers to the fact that the phagocytosed material is stainable, mostly condensed chromatin fragments."
+        },
+        {
+          "texto": "Immunoblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Small lymphocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mitotic cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 23,
+      "enunciado": "Identify the structure indicated by arrows.",
+      "imagem": "imagens/file-5b32b2a9c1a5e.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b2a9c1a5e.jpg",
+      "alternativas": [
+        {
+          "texto": "Capsule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Trabeculum",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Crypts",
+          "correta": true,
+          "feedback": "CORRECT. This palatine tonsil is covered by the stratified squamous epithelium of the oropharynx that invaginates into the tonsil, forming multiple crypts. A partial capsule of dense connective tissue separates the tonsil from underlying connective tissue. Tonsils form a ring of lymphoid tissue in the lamina propria around oral and nasal pharynges."
+        },
+        {
+          "texto": "Fissures",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Medulla",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 24,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b32b33498238.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b33498238.jpg",
+      "alternativas": [
+        {
+          "texto": "Large lymphocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Red blood cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Endothelial cells",
+          "correta": true,
+          "feedback": "CORRECT. The splenic sinuses are venous sinuses and hence are lined by endothelial cells. However, these cells are unique, having large nuclei that bulge into the lumen of the sinusoid. Additionally, these cells are extremely long, with their longitudinal axes oriented parallel to the flow of blood in the sinus."
+        },
+        {
+          "texto": "Reticular epithelial cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 25,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b32b3bda2ecb.jpg",
+      "caminho_h5p_imagem": "images/file-5b32b3bda2ecb.jpg",
+      "alternativas": [
+        {
+          "texto": "Mantle",
+          "correta": true,
+          "feedback": "CORRECT. The darkly staining perimeter of a secondary nodule is the mantle (corona), composed mainly of tightly packed B lymphocytes formed in the germinal center. After antigenic stimulation, large immunoblasts in the germinal center divide to form B lymphocytes that accumulate in the peripheral mantle."
+        },
+        {
+          "texto": "Germinal center",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Diffuse lymphatic tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Primary nodule",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Peyer’s patch",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    }
+  ],
+  "json_h5p_original": {
+    "introPage": {
+      "showIntroPage": false,
+      "startButtonText": "Start Quiz",
+      "introduction": ""
+    },
+    "progressType": "textual",
+    "passPercentage": 50,
+    "questions": [
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b2d67198f316.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "d21cbb7b-c946-4ebf-883d-384d1ce45d41"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Diffuse lymphoid tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Primary lymphoid nodule</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCorrect.&nbsp; This image shows a two well defined lymphoid nodules located in the lamina propria of a tonsil.&nbsp; The presence of the lighter-staining germinal center indicates that this a secondary nodule.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Secondary lymphoid nodule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymph node</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Tonsil</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the double arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "3ef2509e-86f3-42ee-91bf-3b327b125340"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b2d694433498.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "fcb2e158-077b-4c2a-a9e5-49b93aa74781"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphoid nodule</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Correct.&nbsp; The presence of a germinal center in this solitary lymphoid nodule indicates that this is a secondary nodule.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Germinal center</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Diffuse lymphatic tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Medulla</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cortex</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the region outlined in this image.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "4724f194-ae30-4d89-8bcf-fcf60e16d344"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b2d6a24d9a97.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "6decff70-441b-45b3-b9cd-f6a20b1bfae9"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCorrect.&nbsp; Diffuse lymphoid tissue, composed of lymphocytes, is present within the lamina propria or submucosa (as seen here) of many organs, where it filters tissue fluid.&nbsp; During an immune response, recruitment of additional lymphocytes leads to the formation of lymphoid nodules.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Diffuse lymphoid tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Primary lymphoid nodule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Secondary lymphoid nodule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymph node</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Germinal center</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the tissue outlined in these images.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "55619851-3b78-46ed-80f6-dee208fb17c6"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a27065020.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "80ec8e48-085c-4095-8bb2-d978b6264e98"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nRed pulp\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The white pulp of the spleen consists of diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues that surround arterioles after they leave trabeculae.&nbsp; The diffuse tissue forms a sleeve around each arteriole.&nbsp; The lymphoid nodules are suspended within the diffuse areas.&nbsp; The surrounding red pulp consists of splenic cords and sinuses.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>White pulp</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Hassall's corpuscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Secondary lymphoid nodule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGerminal center\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure outlined in this image.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "ffe95c13-2755-49a1-8df3-6d0741b0b25c"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a57b2f81b.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "0d8ecb0f-f246-495d-8a61-c1ea84d82e39"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Monocyte</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocyte</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;Immunoblasts, which are present within the germinal center, are large lymphocytes with a euchromatic nucleus.&nbsp; Cell division of these cells produces additional lymphocytes, which accumulate around the darker staining periphery of the nodule.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Immunoblast</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular cell\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cell indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "f9f33d2b-8833-42fe-a571-a2b9fb310513"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a6e2c1986.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "781cf685-da9b-4cca-9765-4fa02a73fe53"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymphoid nodule\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; Tonsils, located in the lamina propria, consist of numerous lymphoid nodules embedded in diffuse lymphoid tissue.&nbsp; The tonsil is surrounded by an incomplete capsule of connective tissue; crypts extend into the tonsil.&nbsp;</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Tonsil</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymph node\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSpleen\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nThymus\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the aggregate of lymphoid tissue that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "f1b6aed1-e152-4ab3-8aa3-726f1f5cf0f8"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a75318569.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "52459832-f495-4b02-bcf6-38a06850b580"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDiffuse lymphoid tissue\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;Primary lymphoid nodules are clusters of lymphoid cells located as solitary nodules in the lamina propria of tubular organs (as here) and as aggregates in tonsils and Peyer’s patches.&nbsp; A primary lymphoid nodule consist mostly of small lymphocytes aggregated in the lamina propria and filter tissue fluid.&nbsp; The absence of a pale, germinal center distinguishes this primary nodule from a secondary nodule.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Primary lymphoid nodule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSecondary lymphoid nodule\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymph node\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGerminal center\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "9fda8a8b-55ad-43cd-bd20-7cec80a8d734"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a8298d5ad.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "feda482c-96c0-4fcf-ab23-60a323bbad3e"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymphoid nodule\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTonsil\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The lymph node is entirely encapsulated and has lymphoid nodules located only in the cortical region of the organ.&nbsp; Medullary cords and sinuses identify the medullary region.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymph node</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Spleen</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nThymus\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the organ that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "e56e97de-dfcf-42dc-b340-596dbef0c8f1"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a89156ac5.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "f2122856-a6da-4a0b-8e85-1227b9ff8cc9"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nEfferent lymphatic vessel\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Afferent lymphatic vessel</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The lymph node is a fully encapsulated organ; the capsule is composed of dense irregular connective tissue.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Capsule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCortical sinus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymph\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "98c098fd-574d-42aa-891c-91160d2a06f6"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a92ca8466.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "1cf90f05-7b97-49aa-8da5-09da7906f63c"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCortex\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCortical sinus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nParacortex\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nHilum\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The central region of a lymph node is termed the medulla and contains medullary cords and medullary sinuses.&nbsp; These sinuses receive lymph which has percolated through the cortex.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Medulla</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the region indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "2e2f09b5-f7aa-42ac-9902-b2877512bcc8"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32a9b0736ae.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "7470e26a-f435-4cc7-8ae7-826e892cadd2"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary cord\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary sinus\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;High endothelial venules are unique blood vessels because their endothelium is  a simple cuboidal epithelium rather than the typical simple squamous.&nbsp;&nbsp; This shape allows ready passage of lymphocytes through their walls.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>High endothelial venule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nAfferent lymphatic vessel\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCortical sinus\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the rectangle.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "574af383-12c0-4c0f-827a-48a351628de9"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32aa5866941.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "7a416e09-e100-4948-af1c-6e95379d93b2"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;Beneath the capsule of the lymph node is the subcapsular sinus, which receives and filters the lymph entering via the afferent lymphatic vessels.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Subcapsular sinus</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary sinus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCortical sinus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTrabecular sinus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSplenic sinus\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "5d371c8d-c58d-4a2f-b670-7c0b93e4fe32"
+      },
+      {
+        "params": {
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPlasma cell\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;Macrophages are present among the numerous lymphocytes in the subcapsular sinus of the lymph node.&nbsp; Macrophages can be distinguished by their larger nuclei, the presence of phagocytosed material in their cytoplasm and ruffled cell borders.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocyte</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nImmunoblast\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular cell\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cell indicated the arrows.</p>\n",
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b33a06a4e5d6.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "08df6e1b-03bc-480e-8309-d9a10089bca6"
+          }
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "0f800eec-dac4-4b62-be9b-a497306a7d34"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32abc02495d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "757af4cc-0426-4931-93a5-420a9c89bba9"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymphoid nodule\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTonsil\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymph node\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;Like the lymph node, the spleen is entirely encapsulated; however, in the spleen, connective tissue trabeculae extend farther into the organ than do those of the lymph node.&nbsp; In lymph nodes, lymphoid nodules are confined to the cortex; lymphoid nodules in the spleen are present throughout the organ, forming part of the white pulp.&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Spleen</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Thymus</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the organ that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "f4fdd6c6-a6f3-442d-9e2d-97ba6946a39c"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32ac575e5ff.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "a12dca6d-b521-4b81-8caf-1188914a25f7"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Capsule</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The spleen is covered by a thick capsule of dense irregular connective tissue from which long trabeculae penetrate into the parenchyma.&nbsp;&nbsp;&nbsp;&nbsp;</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Trabeculum</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary sinus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nWhite pulp\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nRed pulp\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "61633079-636c-44df-b607-512399ae2c84"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32ace5f24a9.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "e4c9a07e-f4fa-4c8b-baa8-f43bfa2832c1"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymphoid nodule\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTonsil\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymph node\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; &nbsp;Spleen is differentiated from lymph node and thymus because it lacks the cortex and medulla these organs possess.&nbsp; Lymphoid nodules, part of white pulp, are scattered throughout the spleen; their distinguishing feature is their central arteriole, which is displaced toward the margin when a nodule develops within the PALS surrounding the arteriole.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Spleen</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Thymus</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the organ that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "32f687f6-d371-46f9-8ef2-57cadad44eda"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32af3639f54.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "1f0c6de4-f84f-4b06-9eb7-91591d33f8c8"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCortex\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedulla\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The red pulp of the spleen is intermixed with the white pulp but appears less compact.&nbsp; The red pulp consists of splenic cords and splenic sinuses, which are filled with blood that has been filtered through the white pulp and the intervening splenic cords.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Red pulp</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nWhite pulp\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPALS\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the region that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "f0518deb-5b3f-4663-bc25-e8cd8a581f8c"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32afbd51666.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c3c9d19b-9203-418b-90f8-5be1b4e1d5e8"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymphoid nodule\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTonsil\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymph node\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSpleen\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The thymus is an encapsulated organ that lacks lymphoid nodules.&nbsp; The organ has lobules, each of which has a distinct cortex, composed of densely-packed lymphocytes, and a palely stained medulla, containing the distinctive Hassall's corpuscles.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Thymus</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the organ that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "1f498e1c-4794-444c-8974-aa41a315d9e5"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b0459bde8.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "33bd8238-6c5f-4a84-a971-d776149aae7c"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGerminal center\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLymphoblast\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary sinus\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;Hassall's corpuscles are located in the medullary regions of the thymus and are composed of deteriorating reticular epithelial cells that form the framework of this organ.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Hassall's corpuscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTrabeculum\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "90a45fa1-9998-4042-bb64-fecd25a4da04"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b0d523cbd.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "07925ce2-62c1-4303-ab90-d152164900d6"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary sinuses\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGerminal centers \n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedulla \n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The inner region of the lymph node cortex, the paracortex, is a T-dependent area.&nbsp; It lies just beneath the superficial cortex where the lymphoid nodules are located.&nbsp; Beneath the paracortex is the medulla.&nbsp; Under antigenic stimulation, T cells in this region become activated, replicate and leave the lymph node via the efferent lymphatic vessels.&nbsp; These T cells are then returned to the blood and carried to peripheral sites throughout the body.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Paracortex </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMedullary cords\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the region outlined in this image.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "d90c531a-36ac-4b4c-a2bb-b3f0f9ebcb40"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b1804f65b.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "2d3c60bf-9ce4-41ef-9d9d-fa1c8348b2a7"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphoblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nThymocytes\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The stromal meshwork supporting the thymus is formed by cells of epithelial, rather than connective tissue, origin and, therefore, are called epithelial reticular cells.&nbsp; The nuclei of these cells are large, spherical and euchromatic. </div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nEpithelial reticular cells\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Immunoblasts</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "30fefceb-d929-4d03-9363-d2a6df1c0e29"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b20468e9b.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "43bf37d4-41d5-4f13-9c26-5b269b61058f"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp; &nbsp; In this germinal center, macrophages (tingible body macrophages) with phagosomes in their cytoplasm, indicate the phagocytic activity occurring in this region.&nbsp; These macrophages are phagocytosing apoptotic cells in various stages of degradation that occurs during immune selection.&nbsp; The term “tangible” refers to the fact that the phagocytosed material is stainable, mostly condensed chromatin fragments.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMacrophages\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Immunoblasts </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSmall lymphocytes \n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMitotic cells\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular cells \n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "3308eae4-1ca7-4acd-a1f0-940613e0de40"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b2a9c1a5e.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "99f2b37c-9cd4-4faa-859b-48314a65b2e4"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Capsule</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTrabeculum\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;This palatine tonsil is covered by the stratified squamous epithelium of the oropharynx that invaginates into the tonsil, forming multiple crypts.&nbsp; A partial capsule of dense connective tissue separates the tonsil from underlying connective tissue.&nbsp; Tonsils form a ring of lymphoid tissue in the lamina propria around oral and nasal pharynges.&nbsp; </div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Crypts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fissures</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Medulla</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "1b0d32b3-f7f7-4cd2-a9e9-df59ecdaa089"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b33498238.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "65b50fff-af2d-4901-8f5b-e841c5cee5bc"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLarge lymphocytes\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMacrophages\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nRed blood cells\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The splenic sinuses are venous sinuses and hence are lined by endothelial cells.&nbsp; However, these cells are unique, having large nuclei that bulge into the lumen of the sinusoid.&nbsp; Additionally, these cells are extremely long, with their longitudinal axes oriented parallel to the flow of blood in the sinus.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nEndothelial cells\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular epithelial cells\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "0eaa0fb2-3836-467f-9cda-0a585f454fa0"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b32b3bda2ecb.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "dc3553d6-7f8d-4466-97de-6b0ad52cab3d"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;The darkly staining perimeter of a secondary nodule is the mantle (corona), composed mainly of tightly packed B lymphocytes formed in the germinal center.&nbsp; After antigenic stimulation, large immunoblasts in the germinal center divide to form B lymphocytes that accumulate in the peripheral mantle.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mantle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGerminal center\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDiffuse lymphatic tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPrimary nodule\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPeyer’s patch\n</div>\n"
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "correctText": "Correct!",
+            "almostText": "Almost!",
+            "wrongText": "Wrong",
+            "scoreBarLabel": "Score",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.8",
+        "subContentId": "4ea49676-08d3-43c0-aa3c-91b4b4766289"
+      }
+    ],
+    "texts": {
+      "prevButton": "Previous question",
+      "nextButton": "Next question",
+      "finishButton": "Finish",
+      "textualProgress": "Question: @current of @total questions",
+      "jumpToQuestion": "Question %d of %total",
+      "questionLabel": "Question",
+      "readSpeakerProgress": "Question @current of @total",
+      "unansweredText": "Unanswered",
+      "answeredText": "Answered",
+      "currentQuestionText": "Current question"
+    },
+    "endGame": {
+      "showResultPage": true,
+      "noResultMessage": "Finished",
+      "message": "Your result:",
+      "scoreString": "You got @score of @total points",
+      "successComment": "",
+      "failComment": "",
+      "solutionButtonText": "Show solution",
+      "retryButtonText": "Retry",
+      "finishButtonText": "Finish",
+      "showAnimations": false,
+      "skippable": false,
+      "skipButtonText": "Skip video",
+      "successGreeting": "Congratulations!",
+      "failGreeting": "You did not pass this time."
+    },
+    "override": {
+      "showSolutionButton": "off"
+    }
+  }
+}

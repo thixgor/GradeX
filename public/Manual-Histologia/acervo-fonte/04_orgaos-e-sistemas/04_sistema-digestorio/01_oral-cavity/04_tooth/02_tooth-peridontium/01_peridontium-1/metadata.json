@@ -1,0 +1,215 @@
+{
+  "id": 29084,
+  "titulo": "Tooth and dental alveolus",
+  "titulo_wordpress": "Peridontium 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth peridontium",
+    "Peridontium 1"
+  ],
+  "descricao_original": "An incisor in its dental alveolus (socket) is shown in this demineralized section. The enamel is not retained as a result of the decalcification process used during tissue preparation. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth and dental alveolus', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Descricao original da pagina: An incisor in its dental alveolus (socket) is shown in this demineralized section. The enamel is not retained as a result of the decalcification process used during tissue preparation. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dental alveolus",
+      "explicacao_original": "The dental alveolus is a bony socket that holds the tooth. Dental alveoli are located in the maxilla and mandible. All alveolar bone is differentiated from ectomesenchymal stem cells of the dental follicle. This image was created by digitally removing all the tooth tissues.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-socket3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-socket3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Dental alveolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dental alveolus is a bony socket that holds the tooth. Dental alveoli are located in the maxilla and mandible. All alveolar bone is differentiated from ectomesenchymal stem cells of the dental follicle. This image was created by digitally removing all the tooth tissues.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Alveolar bone proper",
+      "explicacao_original": "Alveolar bone proper forms a thin lining of the alveolus and is located adjacent to the tooth. Periodontal ligaments anchor the tooth in the alveolus by inserting into the alveolar bone proper.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-proper-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-proper-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Alveolar bone proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar bone proper forms a thin lining of the alveolus and is located adjacent to the tooth. Periodontal ligaments anchor the tooth in the alveolus by inserting into the alveolar bone proper.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spongy supporting alveolar bone",
+      "explicacao_original": "The majority of the tooth socket is composed of spongy supporting alveolar bone. This bone can be missing in regions where the tooth is leaning to one side, as seen on the right side of in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-spongy-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-spongy-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Spongy supporting alveolar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The majority of the tooth socket is composed of spongy supporting alveolar bone. This bone can be missing in regions where the tooth is leaning to one side, as seen on the right side of in this image.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cortical plate alveolar bone",
+      "explicacao_original": "The lingual and buccal surfaces of the alveolus are covered by cortical plate alveolar bone, a layer of compact bone that is thicker than alveolar bone proper.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-cortical-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-cortical-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Cortical plate alveolar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lingual and buccal surfaces of the alveolus are covered by cortical plate alveolar bone, a layer of compact bone that is thicker than alveolar bone proper.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Alveolar crest bone",
+      "explicacao_original": "The region of compact bone where alveolar bone proper and cortical plate bone meet is alveolar crest bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-crest-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-crest-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Alveolar crest bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The region of compact bone where alveolar bone proper and cortical plate bone meet is alveolar crest bone.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tooth",
+      "explicacao_original": "Teeth are located in bony dental alveoli as illustrated by this incisor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-tooth-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-tooth-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Tooth' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Teeth are located in bony dental alveoli as illustrated by this incisor.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Anatomical crown",
+      "explicacao_original": "The anatomical crown of the tooth is the part of the tooth covered by enamel. Enamel is not retained in this section as a result of the decalcification process used during tissue preparation. The position of the enamel in indicated by the blue shaded region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-crown-17-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-crown-17-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Anatomical crown' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anatomical crown of the tooth is the part of the tooth covered by enamel. Enamel is not retained in this section as a result of the decalcification process used during tissue preparation. The position of the enamel in indicated by the blue shaded region.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Neck (cervix)",
+      "explicacao_original": "The neck of the tooth is a narrow region where the enamel of the crown meets the cememtum. It includes the dentino-enamel-cementum junction.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-neck-18-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-neck-18-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Neck (cervix)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neck of the tooth is a narrow region where the enamel of the crown meets the cememtum. It includes the dentino-enamel-cementum junction.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Root",
+      "explicacao_original": "The root of the tooth occupies the dental alveolus to which it is attached by the periodontal ligament.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-root-19-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-root-19-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Root' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The root of the tooth occupies the dental alveolus to which it is attached by the periodontal ligament.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Enamel",
+      "explicacao_original": "Enamel, consisting of about 96% calcium phosphate (hydroxyapatite), is the most mineralized tissue in the human body. It is not retained in this section as a result of the decalcification process used during tissue preparation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-enamel-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-enamel-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel, consisting of about 96% calcium phosphate (hydroxyapatite), is the most mineralized tissue in the human body. It is not retained in this section as a result of the decalcification process used during tissue preparation.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin is the first hard tissue deposited during tooth development. It makes up the bulk of the hard tissue of the tooth and is 70% mineralized. Dentin is deposited by odontoblasts that reside in the pulp cavity throughout life.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-dentin-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-dentin-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin is the first hard tissue deposited during tooth development. It makes up the bulk of the hard tissue of the tooth and is 70% mineralized. Dentin is deposited by odontoblasts that reside in the pulp cavity throughout life.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Pulp cavity",
+      "explicacao_original": "The pulp cavity is the space within the tooth and contains dental pulp. The cavity conforms to the general shape of the tooth and reduces with size with age.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-cavity-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-cavity-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Pulp cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pulp cavity is the space within the tooth and contains dental pulp. The cavity conforms to the general shape of the tooth and reduces with size with age.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Pulp",
+      "explicacao_original": "Pulp fills the pulp cavity and consists of loose connective tissue containing a variety of cell types, including ectomesenchymal stem cells, odontoblasts, and immune cells. The pulp also contains blood vessels and nerves that enter at the apical foramen of each root. The pulp is continuous with the connective tissue of the periodontal ligament at the apical foramen (blue arrow). Pulp is the only nonmineralized tissue in the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-pulp-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-pulp-10-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pulp fills the pulp cavity and consists of loose connective tissue containing a variety of cell types, including ectomesenchymal stem cells, odontoblasts, and immune cells. The pulp also contains blood vessels and nerves that enter at the apical foramen of each root. The pulp is continuous with the connective tissue of the periodontal ligament at the apical foramen (blue arrow). Pulp is the only nonmineralized tissue in the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Cementum",
+      "explicacao_original": "Cementum is the calcified tissue layer on the surface of the root. It is less mineralized than dentin, roughly 50% organic matrix (cementoid) and 50% hydroxyapatite; similar to bone. Cementum functions to attach the tooth to the tooth socket by anchoring the periodontal ligament. Cementum also seals the ends of the dentin tubules and allows for repair at the tooth root.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-cementum-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-cementum-11-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum is the calcified tissue layer on the surface of the root. It is less mineralized than dentin, roughly 50% organic matrix (cementoid) and 50% hydroxyapatite; similar to bone. Cementum functions to attach the tooth to the tooth socket by anchoring the periodontal ligament. Cementum also seals the ends of the dentin tubules and allows for repair at the tooth root.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Acellular cementum",
+      "explicacao_original": "Acellular cementum is a thin layer of mineralized tissue on the surface of the cervical two-thirds of the root. It is the first cementum and does not contain cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-cell-cem-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-cell-cem-12-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Acellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Acellular cementum is a thin layer of mineralized tissue on the surface of the cervical two-thirds of the root. It is the first cementum and does not contain cells.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 16,
+      "rotulo": "Cellular cementum",
+      "explicacao_original": "Cellular cementum contains cells (cementocytes) and is present on the apical one-third of the root. It is thicker than acellular cementum and produced throughout life in response to force or trauma.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-acellcem-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-acellcem-13-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Cellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cellular cementum contains cells (cementocytes) and is present on the apical one-third of the root. It is thicker than acellular cementum and produced throughout life in response to force or trauma.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 17,
+      "rotulo": "Periodontal Ligament",
+      "explicacao_original": "The periodontal ligament anchors the tooth in the socket, protects the tooth by providing a shock absorber, and provides vascular supply and nutrients to the tooth. It also contains inflammatory cells, macrophages and lymphocytes, to defend the tooth against infections that result in periodontal disease. The periodontal ligament develops from the ectomesenchymal stem cells of the dental follicle during root formation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-PLig-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-PLig-14-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Periodontal Ligament' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periodontal ligament anchors the tooth in the socket, protects the tooth by providing a shock absorber, and provides vascular supply and nutrients to the tooth. It also contains inflammatory cells, macrophages and lymphocytes, to defend the tooth against infections that result in periodontal disease. The periodontal ligament develops from the ectomesenchymal stem cells of the dental follicle during root formation.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 18,
+      "rotulo": "Gingiva",
+      "explicacao_original": "The gingiva (commonly called the gums) is composed of the epithelia and connective tissue that surround and support the tooth. The outer portion of the gingiva is formed by the masticatory mucosa, composed of stratified squamous moist orthokeratinized or parakeratinized epithelia and an underlying lamina propria. The highly interdigitated epithelial ridges and long connective tissue papillae firmly attach the epithelium to the lamina propria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-mast-15-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-mast-15-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Gingiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingiva (commonly called the gums) is composed of the epithelia and connective tissue that surround and support the tooth. The outer portion of the gingiva is formed by the masticatory mucosa, composed of stratified squamous moist orthokeratinized or parakeratinized epithelia and an underlying lamina propria. The highly interdigitated epithelial ridges and long connective tissue papillae firmly attach the epithelium to the lamina propria.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 19,
+      "rotulo": "Lining mucosa",
+      "explicacao_original": "Lining mucosa (rectangles) consists of a stratified squamous non-keratinized (moist) epithelium along with its lamina propria. It covers alveolar regions adjacent to the gingiva as well as the remainder of the oral cavity except for the hard palate and the dorsal surface of the tongue. The papillae of the lamina propria are shorter and less numerous than those of the masticatory mucosa of the gingiva. A submucosa (arrows) is present beneath the lining mucosa and contains loose connective tissue, blood vessels, nerves, and minor salivary glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP-A-lining-16A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-lining-16A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/11/Or.Dig_.OC_.T.TP_.-1A-Mich.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth and dental alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP_.-1A-Mich.jpg'. Destaca a estrutura ou conceito 'Lining mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa (rectangles) consists of a stratified squamous non-keratinized (moist) epithelium along with its lamina propria. It covers alveolar regions adjacent to the gingiva as well as the remainder of the oral cavity except for the hard palate and the dorsal surface of the tongue. The papillae of the lamina propria are shorter and less numerous than those of the masticatory mucosa of the gingiva. A submucosa (arrows) is present beneath the lining mucosa and contains loose connective tissue, blood vessels, nerves, and minor salivary glands.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Peridontium 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test/, acesso em 2026-08-07."
+    }
+  ]
+}

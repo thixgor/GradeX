@@ -1,0 +1,105 @@
+{
+  "id": 18764,
+  "titulo": "Type II (septal) cell",
+  "titulo_wordpress": "Alveoli 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveoli",
+    "Alveoli 7"
+  ],
+  "descricao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "arquivo": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Type II (septal) cell', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Descricao original da pagina: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar lumens",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Alveolar lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interalveolar septum",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Interalveolar septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Type II cell",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Type II cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Capillaries",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Endothelial cell nuclei",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Fibroblasts",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-7-ping-fibros.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-7-ping-fibros.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Air-blood barrier",
+      "explicacao_original": "By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.06-NEW-8-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.06-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.06-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Type II (septal) cell'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.06-NEW.jpg'. Destaca a estrutura ou conceito 'Air-blood barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: By electron microscopy, the details of the interalveolar septum are more evident, particularly the cytology of a type II (septal) cell. Septal cells secrete surfactant, a mixture of phospholipids and protein. The secretory granules (vesicles) are often referred to as lamellar bodies, due to their lipid content. One granule in the process of exocytosis is visible. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-7/, acesso em 2026-08-07."
+    }
+  ]
+}

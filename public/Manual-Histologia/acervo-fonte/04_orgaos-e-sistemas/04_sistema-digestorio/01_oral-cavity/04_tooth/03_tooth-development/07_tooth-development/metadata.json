@@ -1,0 +1,135 @@
+{
+  "id": 29344,
+  "titulo": "Bell stage of tooth development",
+  "titulo_wordpress": "Tooth development 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 7"
+  ],
+  "descricao_original": "During the bell stage, stem cells differentiate into their fully functional forms (cytodifferentiation). The morphology of the tooth is also determined at this time (morphodifferentiation). The dental lamina degenerates while extending a successional lamina, that will produce permanent (successional) teeth. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "arquivo": "imagens/base/Image-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bell stage of tooth development', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Descricao original da pagina: During the bell stage, stem cells differentiate into their fully functional forms (cytodifferentiation). The morphology of the tooth is also determined at this time (morphodifferentiation). The dental lamina degenerates while extending a successional lamina, that will produce permanent (successional) teeth. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tooth germ",
+      "explicacao_original": "The tooth germ, first visible at the cap stage, is identifiable throughout the remainder of tooth development. It consists of all the ectoderm and ectomesenchymal tissues that develop into the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Tooth-germ-8.png",
+      "arquivo": "imagens/marcadores/Tooth-germ-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Tooth germ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tooth germ, first visible at the cap stage, is identifiable throughout the remainder of tooth development. It consists of all the ectoderm and ectomesenchymal tissues that develop into the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enamel organ",
+      "explicacao_original": "The enamel organ is formed from ectoderm and contains the inner and outer enamel epithelia, the stellate reticulum, and the stratum intermedium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Enamel-organ-8.png",
+      "arquivo": "imagens/marcadores/Enamel-organ-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Enamel organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The enamel organ is formed from ectoderm and contains the inner and outer enamel epithelia, the stellate reticulum, and the stratum intermedium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner enamel epithelium",
+      "explicacao_original": "Late in the bell stage, the cells of the inner enamel epithelium differentiate into columnar pre-ameloblasts, that later fully differentiate into ameloblasts that deposit enamel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Inner-enamel-epi-8.png",
+      "arquivo": "imagens/marcadores/Inner-enamel-epi-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Inner enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Late in the bell stage, the cells of the inner enamel epithelium differentiate into columnar pre-ameloblasts, that later fully differentiate into ameloblasts that deposit enamel.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer enamel epithelium",
+      "explicacao_original": "The cuboidal ectodermal cells on the outer aspect of the enamel organ form the outer enamel epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Outer-enamel-epi-8.png",
+      "arquivo": "imagens/marcadores/Outer-enamel-epi-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Outer enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cuboidal ectodermal cells on the outer aspect of the enamel organ form the outer enamel epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cervical loop",
+      "explicacao_original": "The location where the inner enamel epithelium/pre-ameloblasts and the outer enamel epithelium meet is called the cervical loop. This structure will elongate during root phase of tooth development to form the Hertwig’s epithelium root sheath.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cervical-loop-8.png",
+      "arquivo": "imagens/marcadores/Cervical-loop-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Cervical loop' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The location where the inner enamel epithelium/pre-ameloblasts and the outer enamel epithelium meet is called the cervical loop. This structure will elongate during root phase of tooth development to form the Hertwig’s epithelium root sheath.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Stellate reticulum",
+      "explicacao_original": "The ectodermal cells within the enamel organ secrete glycosaminoglycans that draw water into the tissue, causing the cells in the stellate reticulum to look star-shaped. The large stellate reticulum allows for the morphodifferentiation of the crown of the tooth. At the cusp to this tooth the stellate reticulum is condensed with the other layers of the enamel organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Stellate-reticulum-8.png",
+      "arquivo": "imagens/marcadores/Stellate-reticulum-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Stellate reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectodermal cells within the enamel organ secrete glycosaminoglycans that draw water into the tissue, causing the cells in the stellate reticulum to look star-shaped. The large stellate reticulum allows for the morphodifferentiation of the crown of the tooth. At the cusp to this tooth the stellate reticulum is condensed with the other layers of the enamel organ.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Dental papillae",
+      "explicacao_original": "The majority of the ectomesenchymal tissue that differentiates into dental pulp forms the dental papillae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Papilla-8.png",
+      "arquivo": "imagens/marcadores/Papilla-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Dental papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The majority of the ectomesenchymal tissue that differentiates into dental pulp forms the dental papillae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Dental follicle",
+      "explicacao_original": "The enamel organ is surrounded by the dental follicle (dental sac). The follicle is formed by ectomesenchymal stem cells, eventually differentiating into cementoblasts that deposit cementum, fibroblasts that deposit collagen fibers of the periodontal ligament, and osteoblasts that deposit the alveolar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Follicle-8.png",
+      "arquivo": "imagens/marcadores/Follicle-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Dental follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The enamel organ is surrounded by the dental follicle (dental sac). The follicle is formed by ectomesenchymal stem cells, eventually differentiating into cementoblasts that deposit cementum, fibroblasts that deposit collagen fibers of the periodontal ligament, and osteoblasts that deposit the alveolar bone.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Dental lamina",
+      "explicacao_original": "During the bell stage, the dental lamina extends a successional lamina that forms the permanent (successional) teeth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dental-lamina-8.png",
+      "arquivo": "imagens/marcadores/Dental-lamina-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Dental lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the bell stage, the dental lamina extends a successional lamina that forms the permanent (successional) teeth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Successional lamina",
+      "explicacao_original": "During the bell stage, the dental lamina extends a successional lamina that forms the permanent (successional) teeth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Successional-lamina-8.png",
+      "arquivo": "imagens/marcadores/Successional-lamina-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Successional lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the bell stage, the dental lamina extends a successional lamina that forms the permanent (successional) teeth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Next image",
+      "explicacao_original": "The area within the rectangle is shown at higher magnification in the next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Next-image-8.png",
+      "arquivo": "imagens/marcadores/Next-image-8.png",
+      "imagem_base": "imagens/base/Image-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The area within the rectangle is shown at higher magnification in the next image.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-8/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "id": 9212,
+  "titulo": "Globe: Ciliary body",
+  "titulo_wordpress": "Globe 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 11"
+  ],
+  "descricao_original": "The ciliary body, its ciliary processes, and the iris belong to the middle tunic. These structures lie adjacent to the limbus, the corneo-scleral junction of the outer tunic. The double-layered epithelium covering the ciliary body produces aqueous humor. Grooves between the ciliary processes serve as attachment points for zonular fibers that extend from the ciliary processes to suspend the lens. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-11/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Ciliary body', no setor Órgãos e Sistemas > Olho > Globe > Globe 11. Descricao original da pagina: The ciliary body, its ciliary processes, and the iris belong to the middle tunic. These structures lie adjacent to the limbus, the corneo-scleral junction of the outer tunic. The double-layered epithelium covering the ciliary body produces aqueous humor. Grooves between the ciliary processes serve as attachment points for zonular fibers that extend from the ciliary processes to suspend the lens. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ciliary body",
+      "explicacao_original": "The ciliary body is a ring-shaped, triangular wedge of the uvea covered by a two-layered epithelium. Beneath the epithelium is a stroma of loose connective tissue rich in elastic fibers, blood vessels and melanocytes. Enclosed within the ciliary body is the ciliary muscle, bundles of smooth muscle oriented in three planes, contraction of which decreases tension on the lens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Ciliary body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body is a ring-shaped, triangular wedge of the uvea covered by a two-layered epithelium. Beneath the epithelium is a stroma of loose connective tissue rich in elastic fibers, blood vessels and melanocytes. Enclosed within the ciliary body is the ciliary muscle, bundles of smooth muscle oriented in three planes, contraction of which decreases tension on the lens.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ciliary muscle",
+      "explicacao_original": "The ciliary body is a ring-shaped, triangular wedge of the uvea covered by a two-layered epithelium. Beneath the epithelium is a stroma of loose connective tissue rich in elastic fibers, blood vessels and melanocytes. Enclosed within the ciliary body is the ciliary muscle, bundles of smooth muscle oriented in three planes, contraction of which decreases tension on the lens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Ciliary muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body is a ring-shaped, triangular wedge of the uvea covered by a two-layered epithelium. Beneath the epithelium is a stroma of loose connective tissue rich in elastic fibers, blood vessels and melanocytes. Enclosed within the ciliary body is the ciliary muscle, bundles of smooth muscle oriented in three planes, contraction of which decreases tension on the lens.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ciliary epithelium",
+      "explicacao_original": "The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. Aqueous humor is produced by the ciliary epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Ciliary epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary epithelium is a portion of the non-sensory retinal layer of the inner tunic. This layer lines the posterior surface of the ciliary body and its processes, before continuing over the posterior surface of the iris. Ciliary epithelium consists of two epithelial layers, with the one adjacent to the stroma being heavily pigmented. Aqueous humor is produced by the ciliary epithelium.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Ciliary processes",
+      "explicacao_original": "The ciliary processes are ridge-like extensions of the ciliary body and are also covered by ciliary epithelium. Zonular fibers attach to the grooves separating the ciliary processes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Globe-11-6A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-6A-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Ciliary processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary processes are ridge-like extensions of the ciliary body and are also covered by ciliary epithelium. Zonular fibers attach to the grooves separating the ciliary processes.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Zonular fibers",
+      "explicacao_original": "Zonular fibers are delicate microfibrils, which arise from the basal lamina of the ciliary epithelium and attach to the lens capsule. Contraction of the ciliary body muscle alters the tension on these fibers and, thus, affects the shape of the lens.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Zonular fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Zonular fibers are delicate microfibrils, which arise from the basal lamina of the ciliary epithelium and attach to the lens capsule. Contraction of the ciliary body muscle alters the tension on these fibers and, thus, affects the shape of the lens.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Iris",
+      "explicacao_original": "The iris is a portion of the middle, or vascular, tunic and is attached to the anterior portion of the ciliary body. The iris is involved in regulating the amount of light that enters the eye.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-8-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Iris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The iris is a portion of the middle, or vascular, tunic and is attached to the anterior portion of the ciliary body. The iris is involved in regulating the amount of light that enters the eye.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Corneo-scleral junction",
+      "explicacao_original": "The corneo-scleral junction, or limbus, lies just anterior to the ciliary body. The limbus is the transitional zone where the clear subdivision of the outer tunic, the cornea (to the left), meets the opaque portion, the sclera.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-9-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Corneo-scleral junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corneo-scleral junction, or limbus, lies just anterior to the ciliary body. The limbus is the transitional zone where the clear subdivision of the outer tunic, the cornea (to the left), meets the opaque portion, the sclera.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Sclera",
+      "explicacao_original": "The corneo-scleral junction, or limbus, lies just anterior to the ciliary body. The limbus is the transitional zone where the clear subdivision of the outer tunic, the cornea (to the left), meets the opaque portion, the sclera.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-10-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corneo-scleral junction, or limbus, lies just anterior to the ciliary body. The limbus is the transitional zone where the clear subdivision of the outer tunic, the cornea (to the left), meets the opaque portion, the sclera.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "This area is shown at higher magnification in the next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-11-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-11-11-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This area is shown at higher magnification in the next image.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Vet-Lab-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Vet-Lab-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Ciliary body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-11.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-11/, acesso em 2026-08-07."
+    }
+  ]
+}

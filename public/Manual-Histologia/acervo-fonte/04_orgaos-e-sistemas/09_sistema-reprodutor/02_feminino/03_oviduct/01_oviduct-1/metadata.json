@@ -1,0 +1,106 @@
+{
+  "id": 12643,
+  "titulo": "Oviduct",
+  "titulo_wordpress": "Oviduct 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Oviduct",
+    "Oviduct 1"
+  ],
+  "descricao_original": "The oviduct (Fallopian tube) is a tubular organ, interconnecting the ovary with the uterus. The oviduct has four segments: infundibulum with fimbria, ampulla (site of fertilization), isthmus and intramural. The oviduct transports the secondary oocyte and sperm to the site of fertilization and the embryo toward the uterus. The oviductal epithelium possess secretory and ciliated cells. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Cincinnati collection"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "arquivo": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oviduct', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Descricao original da pagina: The oviduct (Fallopian tube) is a tubular organ, interconnecting the ovary with the uterus. The oviduct has four segments: infundibulum with fimbria, ampulla (site of fertilization), isthmus and intramural. The oviduct transports the secondary oocyte and sperm to the site of fertilization and the embryo toward the uterus. The oviductal epithelium possess secretory and ciliated cells. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa has highly branched folds in the infundibulum and ampulla, dividing the lumen into channels. These folds diminish in the isthmus and intramural portions. Ciliated cells are most numerous in the infundibulum, whereas secretory cells predominate nearer the uterus. A muscularis mucosa is lacking, so the lamina propria and submucosa form a continuous connective tissue layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa has highly branched folds in the infundibulum and ampulla, dividing the lumen into channels. These folds diminish in the isthmus and intramural portions. Ciliated cells are most numerous in the infundibulum, whereas secretory cells predominate nearer the uterus. A muscularis mucosa is lacking, so the lamina propria and submucosa form a continuous connective tissue layer.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lumen",
+      "explicacao_original": "The mucosa has highly branched folds in the infundibulum and ampulla, dividing the lumen into channels. These folds diminish in the isthmus and intramural portions. Ciliated cells are most numerous in the infundibulum, whereas secretory cells predominate nearer the uterus. A muscularis mucosa is lacking, so the lamina propria and submucosa form a continuous connective tissue layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa has highly branched folds in the infundibulum and ampulla, dividing the lumen into channels. These folds diminish in the isthmus and intramural portions. Ciliated cells are most numerous in the infundibulum, whereas secretory cells predominate nearer the uterus. A muscularis mucosa is lacking, so the lamina propria and submucosa form a continuous connective tissue layer.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The muscularis exerna of the ampulla is described as having inner circular and outer longitudinal muscle layers, but these layers are not as well defined as they are in the digestive system. The larger blood vessels supplying the oviduct are seen surrounding this smooth muscle layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis exerna of the ampulla is described as having inner circular and outer longitudinal muscle layers, but these layers are not as well defined as they are in the digestive system. The larger blood vessels supplying the oviduct are seen surrounding this smooth muscle layer.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mesosalpinx",
+      "explicacao_original": "The oviduct is supported by the mesosalpinx, a portion of the broad ligament which is double-layered fold of peritoneum that also supports the uterus and ovary. It conveys blood vessels to these structures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Mesosalpinx' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The oviduct is supported by the mesosalpinx, a portion of the broad ligament which is double-layered fold of peritoneum that also supports the uterus and ovary. It conveys blood vessels to these structures.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The oviduct is supported by the mesosalpinx, a portion of the broad ligament which is double-layered fold of peritoneum that also supports the uterus and ovary. It conveys blood vessels to these structures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The oviduct is supported by the mesosalpinx, a portion of the broad ligament which is double-layered fold of peritoneum that also supports the uterus and ovary. It conveys blood vessels to these structures.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Oviduct function",
+      "explicacao_original": "Oviduct — Because one of the functions of the oviduct is to transport oocytes to the site of fertilization, the oviduct must be at peak functional activity at the time of ovulation. Therefore, stimulated by estrogen secreted by the follicles from days 1-14 of the ovarian cycle, the ciliated and secretory cells of the oviductal epithelium are most active at ovulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.01.P05-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01.P05-1.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Oviduct function' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Oviduct — Because one of the functions of the oviduct is to transport oocytes to the site of fertilization, the oviduct must be at peak functional activity at the time of ovulation. Therefore, stimulated by estrogen secreted by the follicles from days 1-14 of the ovarian cycle, the ciliated and secretory cells of the oviductal epithelium are most active at ovulation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.01A-7-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Cincinnati collection",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/Cincinnati-center.png",
+      "arquivo": "imagens/marcadores/Cincinnati-center.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OD_.01A-Cincinnati-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.01A-Cincinnati-fix.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Cincinnati collection. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-1/, acesso em 2026-08-07."
+    }
+  ]
+}

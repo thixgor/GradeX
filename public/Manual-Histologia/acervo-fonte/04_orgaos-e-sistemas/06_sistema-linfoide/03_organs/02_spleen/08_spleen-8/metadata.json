@@ -1,0 +1,74 @@
+{
+  "id": 8577,
+  "titulo": "Spleen: red pulp",
+  "titulo_wordpress": "Spleen 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Spleen",
+    "Spleen 8"
+  ],
+  "descricao_original": "The red pulp consists of wide, irregularly shaped venous sinuses called splenic sinuses that contain a variety of blood-borne cells. Sinuses are separated by cords or plates of reticular tissue, called splenic cords or the cords of Billroth. Splenic cords consist of a highly cellular, loose meshwork of reticular tissue with numerous blood vessels, immune cells and large numbers of red blood cells. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-8.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Or_.Spleen-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Spleen: red pulp', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 8. Descricao original da pagina: The red pulp consists of wide, irregularly shaped venous sinuses called splenic sinuses that contain a variety of blood-borne cells. Sinuses are separated by cords or plates of reticular tissue, called splenic cords or the cords of Billroth. Splenic cords consist of a highly cellular, loose meshwork of reticular tissue with numerous blood vessels, immune cells and large numbers of red blood cells. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Splenic sinuses",
+      "explicacao_original": "Splenic sinuses are unique sinusoidal vessels lined by highly elongated endothelial cells with large nuclei that bulge into the sinus lumen. The cells are oriented longitudinally with spaces between them, much like slats in a barrel. These spaces facilitate movement of blood cells in and out of the sinus. Processes of macrophages span the lumen, providing surveillance for antigens in the blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-8.jpg'. Destaca a estrutura ou conceito 'Splenic sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Splenic sinuses are unique sinusoidal vessels lined by highly elongated endothelial cells with large nuclei that bulge into the sinus lumen. The cells are oriented longitudinally with spaces between them, much like slats in a barrel. These spaces facilitate movement of blood cells in and out of the sinus. Processes of macrophages span the lumen, providing surveillance for antigens in the blood.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "Splenic sinuses are unique sinusoidal vessels lined by highly elongated endothelial cells with large nuclei that bulge into the sinus lumen. The cells are oriented longitudinally with spaces between them, much like slats in a barrel. These spaces facilitate movement of blood cells in and out of the sinus. Processes of macrophages span the lumen, providing surveillance for antigens in the blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-8.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Splenic sinuses are unique sinusoidal vessels lined by highly elongated endothelial cells with large nuclei that bulge into the sinus lumen. The cells are oriented longitudinally with spaces between them, much like slats in a barrel. These spaces facilitate movement of blood cells in and out of the sinus. Processes of macrophages span the lumen, providing surveillance for antigens in the blood.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Splenic cords (cords of Billroth)",
+      "explicacao_original": "Splenic cords consist of a loose meshwork of reticular cells and fibers that support large numbers of erythrocytes, lymphocytes, macrophages, plasma cells, and granulocytes. Damaged red blood cells are phagocytosed and destroyed by splenic macrophages and the iron from hemoglobin is reclaimed for new red blood cell formation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-8.jpg'. Destaca a estrutura ou conceito 'Splenic cords (cords of Billroth)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Splenic cords consist of a loose meshwork of reticular cells and fibers that support large numbers of erythrocytes, lymphocytes, macrophages, plasma cells, and granulocytes. Damaged red blood cells are phagocytosed and destroyed by splenic macrophages and the iron from hemoglobin is reclaimed for new red blood cell formation.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "Splenic cords consist of a loose meshwork of reticular cells and fibers that support large numbers of erythrocytes, lymphocytes, macrophages, plasma cells, and granulocytes. Damaged red blood cells are phagocytosed and destroyed by splenic macrophages and the iron from hemoglobin is reclaimed for new red blood cell formation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-8.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Splenic cords consist of a loose meshwork of reticular cells and fibers that support large numbers of erythrocytes, lymphocytes, macrophages, plasma cells, and granulocytes. Damaged red blood cells are phagocytosed and destroyed by splenic macrophages and the iron from hemoglobin is reclaimed for new red blood cell formation.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Macrophages",
+      "explicacao_original": "Splenic cords consist of a loose meshwork of reticular cells and fibers that support large numbers of erythrocytes, lymphocytes, macrophages, plasma cells, and granulocytes. Damaged red blood cells are phagocytosed and destroyed by splenic macrophages and the iron from hemoglobin is reclaimed for new red blood cell formation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen: red pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-8.jpg'. Destaca a estrutura ou conceito 'Macrophages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Splenic cords consist of a loose meshwork of reticular cells and fibers that support large numbers of erythrocytes, lymphocytes, macrophages, plasma cells, and granulocytes. Damaged red blood cells are phagocytosed and destroyed by splenic macrophages and the iron from hemoglobin is reclaimed for new red blood cell formation.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-8/, acesso em 2026-08-07."
+    }
+  ]
+}

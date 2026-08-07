@@ -1,0 +1,86 @@
+{
+  "id": 6747,
+  "titulo": "Oral mucosa: Lining",
+  "titulo_wordpress": "Oral mucosa 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Oral Mucosa",
+    "Oral mucosa 3"
+  ],
+  "descricao_original": "Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oral mucosa: Lining', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Descricao original da pagina: Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-3.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-3.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Submucosa",
+      "explicacao_original": "Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-3.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Minor salivary glands",
+      "explicacao_original": "Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-3.jpg'. Destaca a estrutura ou conceito 'Minor salivary glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ducts of glands",
+      "explicacao_original": "Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-3.jpg'. Destaca a estrutura ou conceito 'Ducts of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa lines all of the oral cavity except the gingiva, hard palate, and the dorsum of the tongue. It is composed of stratified squamous moist epithelium and its underlying lamina propria; a muscularis mucosae is lacking. A submucosa lies beneath the mucosa and usually contains the minor salivary glands (mixed glands). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-3.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-3/, acesso em 2026-08-07."
+    }
+  ]
+}

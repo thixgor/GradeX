@@ -1,0 +1,113 @@
+{
+  "id": 12126,
+  "titulo": "Overview: outer and middle ear",
+  "titulo_wordpress": "Ear Overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Overview of the ear",
+    "Ear Overview 2"
+  ],
+  "descricao_original": "A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "arquivo": "imagens/base/O.E.EE_.01B.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: outer and middle ear', no setor Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Descricao original da pagina: A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "External ear",
+      "explicacao_original": "A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.02.P01.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P01.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'External ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Auricle",
+      "explicacao_original": "A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.E.O.02.P02.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P02.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Auricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "External meatus",
+      "explicacao_original": "A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.02.P03-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P03-NEW.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'External meatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tympanic membrane",
+      "explicacao_original": "A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.02.P04-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P04-NEW.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Tympanic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is embedded in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Middle ear",
+      "explicacao_original": "The middle ear, or tympanic cavity, is an air-filled space in the temporal bone. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the pharynx anteriorly through the auditory, or Eustachian, tube.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/O.E.O.02.P05.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P05.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Middle ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, or tympanic cavity, is an air-filled space in the temporal bone. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the pharynx anteriorly through the auditory, or Eustachian, tube.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ossicles",
+      "explicacao_original": "The auditory ossicles span the tympanic cavity. The malleus (blue arrow), attached to the tympanic membrane, articulates with the incus (red arrow). The incus is attached to the head of the stapes (black arrow), whose foot plate (not visible here) fits into the oval window in the lateral wall of the inner ear. These ossicles transmit vibrations from the tympanic membrane to the inner ear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.02.P06-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P06-NEW.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Ossicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The auditory ossicles span the tympanic cavity. The malleus (blue arrow), attached to the tympanic membrane, articulates with the incus (red arrow). The incus is attached to the head of the stapes (black arrow), whose foot plate (not visible here) fits into the oval window in the lateral wall of the inner ear. These ossicles transmit vibrations from the tympanic membrane to the inner ear.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Eustachian tube",
+      "explicacao_original": "The middle ear, or tympanic cavity, is an air-filled space in the temporal bone. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the pharynx anteriorly through the auditory, or Eustachian, tube.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.02.P07-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P07-NEW.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Eustachian tube' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, or tympanic cavity, is an air-filled space in the temporal bone. Three auditory ossicles span the cavity between the tympanic membrane and an opening in the wall of the inner ear, the oval window. The middle ear communicates with the pharynx anteriorly through the auditory, or Eustachian, tube.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Petrous portion",
+      "explicacao_original": "The petrous portion of the temporal bone houses the inner ear and forms a portion of the floor of the cranial cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.02.P08-NEW.png",
+      "arquivo": "imagens/marcadores/O.E.O.02.P08-NEW.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Petrous portion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The petrous portion of the temporal bone houses the inner ear and forms a portion of the floor of the cranial cavity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Begin again",
+      "explicacao_original": "A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is hidden in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Blank-ping.png",
+      "arquivo": "imagens/marcadores/Blank-ping.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: outer and middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Begin again' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A frontal view of the left ear demonstrates components of the outer ear and middle ear. The inner ear is hidden in the petrous portion of the temporal bone, that forms part of the floor of the cranial cavity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-2-2/, acesso em 2026-08-07."
+    }
+  ]
+}

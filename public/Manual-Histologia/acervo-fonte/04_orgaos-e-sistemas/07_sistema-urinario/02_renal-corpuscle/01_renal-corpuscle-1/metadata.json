@@ -1,0 +1,143 @@
+{
+  "id": 10789,
+  "titulo": "Renal corpuscle",
+  "titulo_wordpress": "Renal corpuscle 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Renal Corpuscle",
+    "Renal corpuscle 1"
+  ],
+  "descricao_original": "Renal corpuscles are composed of a capillary tuft, the glomerulus, which is surrounded by a double-walled capsule, Bowman’s capsule. The space between the capsular walls, Bowman’s space, receives the fluid passing through the filtration barrier.",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Renal corpuscle', no setor Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Descricao original da pagina: Renal corpuscles are composed of a capillary tuft, the glomerulus, which is surrounded by a double-walled capsule, Bowman’s capsule. The space between the capsular walls, Bowman’s space, receives the fluid passing through the filtration barrier.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Afferent arteriole",
+      "explicacao_original": "The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Afferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Glomerulus",
+      "explicacao_original": "The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Glomerulus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Efferent arteriole",
+      "explicacao_original": "The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Efferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Vascular pole",
+      "explicacao_original": "The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Vascular pole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The afferent arteriole supplies a capillary tuft called the glomerulus, which continues as the efferent arteriole to exit the renal corpuscle. The junctions of the glomerulus with the afferent and efferent arterioles is termed the vascular pole of the renal corpuscle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Bowman's capsule",
+      "explicacao_original": "Bowman’s capsule is a double-walled structure enclosing the glomerulus. An inner layer of cells, podocytes (visceral layer, blue arrows), surrounds the glomerular capillary and serves as part of the filtration barrier. The outer, parietal layer of the capsule (black arrows) is a simple squamous epithelium, which is continuous with the proximal convoluted tubule. Separating the layers is Bowman’s space, where the filtrate accumulates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Bowman's capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bowman’s capsule is a double-walled structure enclosing the glomerulus. An inner layer of cells, podocytes (visceral layer, blue arrows), surrounds the glomerular capillary and serves as part of the filtration barrier. The outer, parietal layer of the capsule (black arrows) is a simple squamous epithelium, which is continuous with the proximal convoluted tubule. Separating the layers is Bowman’s space, where the filtrate accumulates.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Podocytes",
+      "explicacao_original": "Bowman’s capsule is a double-walled structure enclosing the glomerulus. An inner layer of cells, podocytes (visceral layer, blue arrows), surrounds the glomerular capillary and serves as part of the filtration barrier. The outer, parietal layer of the capsule (black arrows) is a simple squamous epithelium, which is continuous with the proximal convoluted tubule. Separating the layers is Bowman’s space, where the filtrate accumulates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Podocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bowman’s capsule is a double-walled structure enclosing the glomerulus. An inner layer of cells, podocytes (visceral layer, blue arrows), surrounds the glomerular capillary and serves as part of the filtration barrier. The outer, parietal layer of the capsule (black arrows) is a simple squamous epithelium, which is continuous with the proximal convoluted tubule. Separating the layers is Bowman’s space, where the filtrate accumulates.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bowman's space",
+      "explicacao_original": "Bowman’s capsule is a double-walled structure enclosing the glomerulus. An inner layer of cells, podocytes (visceral layer, blue arrows), surrounds the glomerular capillary and serves as part of the filtration barrier. The outer, parietal layer of the capsule (black arrows) is a simple squamous epithelium, which is continuous with the proximal convoluted tubule. Separating the layers is Bowman’s space, where the filtrate accumulates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Bowman's space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bowman’s capsule is a double-walled structure enclosing the glomerulus. An inner layer of cells, podocytes (visceral layer, blue arrows), surrounds the glomerular capillary and serves as part of the filtration barrier. The outer, parietal layer of the capsule (black arrows) is a simple squamous epithelium, which is continuous with the proximal convoluted tubule. Separating the layers is Bowman’s space, where the filtrate accumulates.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Urinary pole",
+      "explicacao_original": "The urinary pole is the continuation of the simple squamous epithelium of the parietal layer of Bowman’s capsule with the epithelium forming the proximal convoluted tubule. At the urinary pole, the filtrate accumulating in Bowman’s space enters the first tubular part of the nephron, the proximal convoluted tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Urinary pole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urinary pole is the continuation of the simple squamous epithelium of the parietal layer of Bowman’s capsule with the epithelium forming the proximal convoluted tubule. At the urinary pole, the filtrate accumulating in Bowman’s space enters the first tubular part of the nephron, the proximal convoluted tubule.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Proximal convoluted tubule",
+      "explicacao_original": "The urinary pole is the continuation of the simple squamous epithelium of the parietal layer of Bowman’s capsule with the epithelium forming the proximal convoluted tubule. At the urinary pole, the filtrate accumulating in Bowman’s space enters the first tubular part of the nephron, the proximal convoluted tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Proximal convoluted tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urinary pole is the continuation of the simple squamous epithelium of the parietal layer of Bowman’s capsule with the epithelium forming the proximal convoluted tubule. At the urinary pole, the filtrate accumulating in Bowman’s space enters the first tubular part of the nephron, the proximal convoluted tubule.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Ascending thick limb",
+      "explicacao_original": "The ascending thick limb (black arrow) associated with this renal corpuscle loops back to its own vascular pole, where it lies adjacent to the afferent arteriole. Modified cells in the wall of the tubule, the macula densa, and cells in the wall of the afferent arteriole, juxtaglomerular cells, comprise the juxtaglomerular apparatus, which regulates blood pressure and blood volume. The tubule continues as the distal convoluted tubule (blue arrow).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.RC-1-10-NEW-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-10-NEW-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Ascending thick limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ascending thick limb (black arrow) associated with this renal corpuscle loops back to its own vascular pole, where it lies adjacent to the afferent arteriole. Modified cells in the wall of the tubule, the macula densa, and cells in the wall of the afferent arteriole, juxtaglomerular cells, comprise the juxtaglomerular apparatus, which regulates blood pressure and blood volume. The tubule continues as the distal convoluted tubule (blue arrow).. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Macula densa",
+      "explicacao_original": "The ascending thick limb associated with this renal corpuscle loops back to its own vascular pole, where it lies adjacent to the afferent arteriole. Modified cells in the wall of the tubule, the macula densa, and cells in the wall of the afferent arteriole, juxtaglomerular cells, comprise the juxtaglomerular apparatus, which regulates blood pressure and blood volume.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-11-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Macula densa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ascending thick limb associated with this renal corpuscle loops back to its own vascular pole, where it lies adjacent to the afferent arteriole. Modified cells in the wall of the tubule, the macula densa, and cells in the wall of the afferent arteriole, juxtaglomerular cells, comprise the juxtaglomerular apparatus, which regulates blood pressure and blood volume.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Juxtaglomerular cells",
+      "explicacao_original": "The ascending thick limb associated with this renal corpuscle loops back to its own vascular pole, where it lies adjacent to the afferent arteriole. Modified cells in the wall of the tubule, the macula densa, and cells in the wall of the afferent arteriole, juxtaglomerular cells, comprise the juxtaglomerular apparatus, which regulates blood pressure and blood volume.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-1-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-1-12-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Corp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-1.jpg'. Destaca a estrutura ou conceito 'Juxtaglomerular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ascending thick limb associated with this renal corpuscle loops back to its own vascular pole, where it lies adjacent to the afferent arteriole. Modified cells in the wall of the tubule, the macula densa, and cells in the wall of the afferent arteriole, juxtaglomerular cells, comprise the juxtaglomerular apparatus, which regulates blood pressure and blood volume.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-1/, acesso em 2026-08-07."
+    }
+  ]
+}

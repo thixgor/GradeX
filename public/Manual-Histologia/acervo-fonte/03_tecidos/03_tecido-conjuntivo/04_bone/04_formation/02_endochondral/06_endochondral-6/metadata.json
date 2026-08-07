@@ -1,0 +1,75 @@
+{
+  "id": 10625,
+  "titulo": "Endochondral ossification",
+  "titulo_wordpress": "Endochondral 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Endochondral",
+    "Endochondral 6"
+  ],
+  "descricao_original": "This longitudinal section of a developing long bone shows an epiphyseal plate and its surrounding tissues. The epiphyseal plate, is composed of a series of zones reflecting regressive stages of the chondrocytes. Endochondral ossification in epiphyseal plates results in growth in length of long bones. 40x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6.jpg",
+      "arquivo": "imagens/base/Endo-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Endochondral ossification', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 6. Descricao original da pagina: This longitudinal section of a developing long bone shows an epiphyseal plate and its surrounding tissues. The epiphyseal plate, is composed of a series of zones reflecting regressive stages of the chondrocytes. Endochondral ossification in epiphyseal plates results in growth in length of long bones. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hyaline cartilage",
+      "explicacao_original": "Typical hyaline cartilage fills the epiphysis at the upper portion of the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6-Hyaline.png",
+      "arquivo": "imagens/marcadores/Endo-6-Hyaline.png",
+      "imagem_base": "imagens/base/Endo-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-6.jpg'. Destaca a estrutura ou conceito 'Hyaline cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Typical hyaline cartilage fills the epiphysis at the upper portion of the image.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epiphyseal plate",
+      "explicacao_original": "The epiphyseal plate is composed of a series of zones reflecting regressive stages of the chondrocytes. These cells first proliferate, then mature and hypertrophy, which results in the calcification of the cartilage matrix and death of the cartilage cells. Spicules of calcified cartilage, the only remnant of this process, serve as a framework on which bone is deposited.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6-Plate.png",
+      "arquivo": "imagens/marcadores/Endo-6-Plate.png",
+      "imagem_base": "imagens/base/Endo-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-6.jpg'. Destaca a estrutura ou conceito 'Epiphyseal plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epiphyseal plate is composed of a series of zones reflecting regressive stages of the chondrocytes. These cells first proliferate, then mature and hypertrophy, which results in the calcification of the cartilage matrix and death of the cartilage cells. Spicules of calcified cartilage, the only remnant of this process, serve as a framework on which bone is deposited.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cartilage spicules",
+      "explicacao_original": "Blue/purple spicules of calcified cartilage project toward the marrow space and serve as a scaffolding on which bone can be deposited. These spicules retain the blue/purple staining characteristics of hyaline cartilage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6-Spicules.png",
+      "arquivo": "imagens/marcadores/Endo-6-Spicules.png",
+      "imagem_base": "imagens/base/Endo-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-6.jpg'. Destaca a estrutura ou conceito 'Cartilage spicules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blue/purple spicules of calcified cartilage project toward the marrow space and serve as a scaffolding on which bone can be deposited. These spicules retain the blue/purple staining characteristics of hyaline cartilage.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bone",
+      "explicacao_original": "Bony matrix is deposited on the calcified cartilage spicules by the endosteum lining the interior of the developing bone. Because it stains pink/red, bone is easy to differentiate from the blue, calcified cartilage spicules on which it is deposited.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6-Bone.png",
+      "arquivo": "imagens/marcadores/Endo-6-Bone.png",
+      "imagem_base": "imagens/base/Endo-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-6.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bony matrix is deposited on the calcified cartilage spicules by the endosteum lining the interior of the developing bone. Because it stains pink/red, bone is easy to differentiate from the blue, calcified cartilage spicules on which it is deposited.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Periosteal collar",
+      "explicacao_original": "The periosteal collar is a cylinder of bone, initially formed by intramembranous ossification by the periosteum. Addition of bone to the ends of the cylinder by endochondral ossification results in growth of the bone in length.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6-Band.png",
+      "arquivo": "imagens/marcadores/Endo-6-Band.png",
+      "imagem_base": "imagens/base/Endo-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-6.jpg'. Destaca a estrutura ou conceito 'Periosteal collar' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteal collar is a cylinder of bone, initially formed by intramembranous ossification by the periosteum. Addition of bone to the ends of the cylinder by endochondral ossification results in growth of the bone in length.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-5/, acesso em 2026-08-07."
+    }
+  ]
+}

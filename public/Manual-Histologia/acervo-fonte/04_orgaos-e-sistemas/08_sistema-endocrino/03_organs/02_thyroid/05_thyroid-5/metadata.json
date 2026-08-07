@@ -1,0 +1,64 @@
+{
+  "id": 4828,
+  "titulo": "Thyroid gland",
+  "titulo_wordpress": "Thyroid 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Thyroid",
+    "Thyroid 5"
+  ],
+  "descricao_original": "Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-5.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Thy-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thyroid gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 5. Descricao original da pagina: Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Parafollicular cells",
+      "explicacao_original": "Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-5.jpg'. Destaca a estrutura ou conceito 'Parafollicular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-5.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Active follicle cells",
+      "explicacao_original": "Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-5.jpg'. Destaca a estrutura ou conceito 'Active follicle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillary",
+      "explicacao_original": "Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-5.jpg'. Destaca a estrutura ou conceito 'Capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parafollicular cells or C cells are located both in the interfollicular connective tissue and within the basal lamina of the follicular epithelium (seen here). These cells are separated from the thyroglobulin by processes from adjacent follicle cells extending over the parafollicular cells. Parafollicular cells have a pale cytoplasm with secretory granules containing calcitonin. Calcitonin secretion lowers, and is regulated by, blood calcium levels. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-5/, acesso em 2026-08-07."
+    }
+  ]
+}

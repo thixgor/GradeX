@@ -1,0 +1,134 @@
+{
+  "id": 30032,
+  "titulo": "Bone: the organ - components of long bones",
+  "titulo_wordpress": "As an organ 2A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 2A"
+  ],
+  "descricao_original": "The dried femur preparation above and the drawing of the humerus below illustrate the structure of long bones. The organ “bone” is composed of bone tissue, internal and external coverings (endosteum and periosteum, respectively), blood and nerve supplies, bone marrow and articular cartilage(s). No organic tissue remains in a dried specimen, like this femur. Long bones have a number of functional regions, including a diaphysis (shaft), epiphyses and metaphyses.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "arquivo": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ - components of long bones', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Descricao original da pagina: The dried femur preparation above and the drawing of the humerus below illustrate the structure of long bones. The organ “bone” is composed of bone tissue, internal and external coverings (endosteum and periosteum, respectively), blood and nerve supplies, bone marrow and articular cartilage(s). No organic tissue remains in a dried specimen, like this femur. Long bones have a number of functional regions, including a diaphysis (shaft), epiphyses and metaphyses.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Diaphysis",
+      "explicacao_original": "The diaphysis consists of a cylinder of compact bone surrounding a central hollow core. This core, the marrow cavity, is filled with bone marrow.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-1-DiphysisA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-1-DiphysisA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Diaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diaphysis consists of a cylinder of compact bone surrounding a central hollow core. This core, the marrow cavity, is filled with bone marrow.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epiphysis",
+      "explicacao_original": "The epiphyses (singular: epiphysis) are expanded regions at each end of a long bone. Epiphyses provide sites for muscle attachment and articulation with other bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-2-EpiphysisA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-2-EpiphysisA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Epiphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epiphyses (singular: epiphysis) are expanded regions at each end of a long bone. Epiphyses provide sites for muscle attachment and articulation with other bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Metaphysis",
+      "explicacao_original": "The metaphysis is a wedge-shaped region between the epiphysis and the diaphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-5-MetaphysisA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-5-MetaphysisA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Metaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The metaphysis is a wedge-shaped region between the epiphysis and the diaphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Compact bone",
+      "explicacao_original": "Compact (cortical) bone covers all exterior surfaces of bones, except for the articular cartilages, and forms the majority of the thick wall of the diaphysis in long bones. Compact bone appears solid to the naked eye.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-8-CompactA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-8-CompactA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact (cortical) bone covers all exterior surfaces of bones, except for the articular cartilages, and forms the majority of the thick wall of the diaphysis in long bones. Compact bone appears solid to the naked eye.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Spongy bone",
+      "explicacao_original": "Spongy (cancellous) bone lines the interior of a bone, fills the epiphyseal and metaphyseal regions of long bones, and lines the marrow cavity in the diaphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-7-Spongy-boneA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-7-Spongy-boneA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Spongy bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spongy (cancellous) bone lines the interior of a bone, fills the epiphyseal and metaphyseal regions of long bones, and lines the marrow cavity in the diaphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Marrow cavity/spaces",
+      "explicacao_original": "The core of the diaphysis of a long bone is a hollow space (marrow cavity, blue arrows) filled with bone marrow. Spongy bone in the epiphyses and metaphases contains numerous small spaces (black arrows). At birth all these bony spaces are filled with red marrow, consisting of myeloid (hemopoietic tissue), that produces red and white blood cells. By age 25, red marrow in the diaphysis is replaced by yellow marrow, consisting of adipose connective tissue with limited myeloid tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.2-NEW-13-Spaces.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-13-Spaces.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Marrow cavity/spaces' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The core of the diaphysis of a long bone is a hollow space (marrow cavity, blue arrows) filled with bone marrow. Spongy bone in the epiphyses and metaphases contains numerous small spaces (black arrows). At birth all these bony spaces are filled with red marrow, consisting of myeloid (hemopoietic tissue), that produces red and white blood cells. By age 25, red marrow in the diaphysis is replaced by yellow marrow, consisting of adipose connective tissue with limited myeloid tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Periosteum",
+      "explicacao_original": "The periosteum covers all external surfaces of a bone except where articular cartilages are present. The periosteum was not preserved in this specimen of the femur; its position is indicated by the arrows.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-11-PeriosteumA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-11-PeriosteumA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periosteum covers all external surfaces of a bone except where articular cartilages are present. The periosteum was not preserved in this specimen of the femur; its position is indicated by the arrows.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Endosteum",
+      "explicacao_original": "The endosteum consists of a single layer of cells that line all interior bony surfaces except lacunae and canaliculi. The endosteum, like the periosteum, was not preserved in this preparation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-12-EndosteumA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-12-EndosteumA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum consists of a single layer of cells that line all interior bony surfaces except lacunae and canaliculi. The endosteum, like the periosteum, was not preserved in this preparation.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Epiphyseal plates",
+      "explicacao_original": "Long bones grow in length from a plate of hyaline cartilage, called the epiphyseal plate, located between the epiphysis and the metaphysis. Growth had not stopped in this femur so the visible narrow gaps represents the original locations of the epiphyseal plates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.2-NEW-9-Epi-plate-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-9-Epi-plate-1.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Epiphyseal plates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Long bones grow in length from a plate of hyaline cartilage, called the epiphyseal plate, located between the epiphysis and the metaphysis. Growth had not stopped in this femur so the visible narrow gaps represents the original locations of the epiphyseal plates.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Epiphyseal lines",
+      "explicacao_original": "Growth of bone in length ceases when the epiphyseal plate stops functioning and is replaced by bone (epiphyseal plate closure), leaving an epiphyseal line in its place.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.2-NEW-10-Epi-lineA.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-10-Epi-lineA.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Epiphyseal lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Growth of bone in length ceases when the epiphyseal plate stops functioning and is replaced by bone (epiphyseal plate closure), leaving an epiphyseal line in its place.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Articular cartilages",
+      "explicacao_original": "Articular cartilage is hyaline cartilage that covers the articulating surfaces of bone. The smooth, glassy surface of this cartilage allows the ends of the bones to move easily on each other. A periosteum is not present on articular cartilage. Arrows indicate the positions of articular cartilages, which are not present in these images.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.2-NEW-14-Artic-cart.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.2-NEW-14-Artic-cart.png",
+      "imagem_base": "imagens/base/T.C.B.O.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components of long bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.02-NEW.jpg'. Destaca a estrutura ou conceito 'Articular cartilages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Articular cartilage is hyaline cartilage that covers the articulating surfaces of bone. The smooth, glassy surface of this cartilage allows the ends of the bones to move easily on each other. A periosteum is not present on articular cartilage. Arrows indicate the positions of articular cartilages, which are not present in these images.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 2A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-2a/, acesso em 2026-08-07."
+    }
+  ]
+}

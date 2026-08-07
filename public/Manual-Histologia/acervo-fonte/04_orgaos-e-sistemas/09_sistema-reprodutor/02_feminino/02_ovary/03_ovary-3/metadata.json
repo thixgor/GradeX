@@ -1,0 +1,64 @@
+{
+  "id": 12322,
+  "titulo": "Ovary",
+  "titulo_wordpress": "Ovary 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 3"
+  ],
+  "descricao_original": "The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.jpg",
+      "arquivo": "imagens/base/O.R.F.O.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 3. Descricao original da pagina: The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serosa",
+      "explicacao_original": "The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.O.03.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.O.03.P01.png",
+      "imagem_base": "imagens/base/O.R.F.O.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.O.03.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Germinal epithelium",
+      "explicacao_original": "The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.O.03.P01-2.png",
+      "imagem_base": "imagens/base/O.R.F.O.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.O.03.jpg'. Destaca a estrutura ou conceito 'Germinal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.O.03.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.O.03.P03.png",
+      "imagem_base": "imagens/base/O.R.F.O.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.O.03.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Follicles",
+      "explicacao_original": "The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.O.03.P03-2.png",
+      "imagem_base": "imagens/base/O.R.F.O.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.O.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.O.03.jpg'. Destaca a estrutura ou conceito 'Follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ovary is covered by a serosa of epithelium overlying a thin connective tissue layer. However, rather than the expected simple squamous epithelium, the epithelium of this serosa is simple cuboidal and is called by the misnomer “germinal epithelium.” A dense connective tissue layer, tunica albuginea, lies beneath the serosa. Small follicles are located in the cortex beneath the tunica albuginea. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-3/, acesso em 2026-08-07."
+    }
+  ]
+}

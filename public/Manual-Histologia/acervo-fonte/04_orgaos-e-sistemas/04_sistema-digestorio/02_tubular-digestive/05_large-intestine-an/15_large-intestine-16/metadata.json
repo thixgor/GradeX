@@ -1,0 +1,136 @@
+{
+  "id": 25132,
+  "titulo": "Recto-anal junction",
+  "titulo_wordpress": "Large intestine 16",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Large Intestine and Anus",
+    "Large intestine 16"
+  ],
+  "descricao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/",
+  "creditos_identificados": [
+    "Image source: This images was taken of a slide on the Virtual Microscopy Laboratory website (www.histologyguide.com)."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Recto-anal junction', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Descricao original da pagina: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Rectum",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Rectum.png",
+      "arquivo": "imagens/marcadores/Rectum.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Rectum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Recto-anal junction",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/R-A-junction.png",
+      "arquivo": "imagens/marcadores/R-A-junction.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Recto-anal junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Anal canal",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Anal-canal.png",
+      "arquivo": "imagens/marcadores/Anal-canal.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Anal canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Anus",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Anus-new.png",
+      "arquivo": "imagens/marcadores/Anus-new.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Anus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Apocrine sweat glands",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Apocrine-sweat-glands.png",
+      "arquivo": "imagens/marcadores/Apocrine-sweat-glands.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Apocrine sweat glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Hair follicles",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Hair-folllicles.png",
+      "arquivo": "imagens/marcadores/Hair-folllicles.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Hair follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Sebaceous glands",
+      "explicacao_original": "The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Sebaceous-gland.png",
+      "arquivo": "imagens/marcadores/Sebaceous-gland.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Sebaceous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anus is seen in the right half of this image. It is lined by a stratified squamous, keratinized epithelium and possesses apocrine sweat glands, eccrine sweat glands, sebaceous glands and hair follicles. Apocrine sweat glands are characterized by their large size, tubular structure and wide lumens. Also visible are the internal and external anal sphincters. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Internal anal sphincter",
+      "explicacao_original": "The inner circular layer of the muscularis externa thickens terminally forming the internal anal sphincter (oval). The outer longitudinal layer of the muscularis externa (arrows) decreases and blends with the adventitia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Int.-sphincter.png",
+      "arquivo": "imagens/marcadores/Int.-sphincter.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Internal anal sphincter' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner circular layer of the muscularis externa thickens terminally forming the internal anal sphincter (oval). The outer longitudinal layer of the muscularis externa (arrows) decreases and blends with the adventitia.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "External anal sphincter",
+      "explicacao_original": "The external anal sphincter is composed of skeletal muscle and consists of deep, superficial and subcutaneous regions. The superficial division (yellow arrows) and the subcutaneous division (blue arrows) are visible in this section.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Ext-sphincter-new.png",
+      "arquivo": "imagens/marcadores/Ext-sphincter-new.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'External anal sphincter' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external anal sphincter is composed of skeletal muscle and consists of deep, superficial and subcutaneous regions. The superficial division (yellow arrows) and the subcutaneous division (blue arrows) are visible in this section.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Next image",
+      "explicacao_original": "This region is shown in the next image at higher magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Next-image.png",
+      "arquivo": "imagens/marcadores/Next-image.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This region is shown in the next image at higher magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Image source",
+      "explicacao_original": "This images was taken of a slide on the Virtual Microscopy Laboratory website (www.histologyguide.com).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Virtual-histology-laboratory-sing-png.png",
+      "arquivo": "imagens/marcadores/Virtual-histology-laboratory-sing-png.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.LgI-14A-adj.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Recto-anal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-14A-adj.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This images was taken of a slide on the Virtual Microscopy Laboratory website (www.histologyguide.com).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-16/, acesso em 2026-08-07."
+    }
+  ]
+}

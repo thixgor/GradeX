@@ -1,0 +1,72 @@
+{
+  "id": 20936,
+  "titulo": "Overview of the cardiovascular system",
+  "titulo_wordpress": "Overview of the cardiovascular system 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Overview of the cardiovascular system 1"
+  ],
+  "descricao_original": "The major subdivisions of the cardiovascular system include blood (a specialized CT), the heart (left image) which pumps the blood, and blood vessels (right images) that transport the blood. The heart and blood vessels are both composed of three tunics, each of which is similar in composition to, and continuous with, its counterpart in the other subdivision. 10X, 100X",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov_.-1.jpg",
+      "arquivo": "imagens/base/Or.CV_.Ov_.-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview of the cardiovascular system', no setor Órgãos e Sistemas > Sistema Cardiovascular > Overview of the cardiovascular system 1. Descricao original da pagina: The major subdivisions of the cardiovascular system include blood (a specialized CT), the heart (left image) which pumps the blood, and blood vessels (right images) that transport the blood. The heart and blood vessels are both composed of three tunics, each of which is similar in composition to, and continuous with, its counterpart in the other subdivision. 10X, 100X. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Heart components",
+      "explicacao_original": "This section of the heart was taken from an area similar to that outlined by the blue rectangle in the illustration. The left atrium (green X) is the upper chamber; the left ventricle (blue X) is the lower chamber; a flap of the atrioventricular valve (arrow) separates the two chambers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov-1-1a-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Ov-1-1a-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Ov_.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov_.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of the cardiovascular system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Ov_.-1.jpg'. Destaca a estrutura ou conceito 'Heart components' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section of the heart was taken from an area similar to that outlined by the blue rectangle in the illustration. The left atrium (green X) is the upper chamber; the left ventricle (blue X) is the lower chamber; a flap of the atrioventricular valve (arrow) separates the two chambers.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Overview of the cardiovascular system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Inner tunic",
+      "explicacao_original": "The innermost tunic of either subdivision faces the blood and is called the endocardium in the heart and the tunica intima in blood vessels. In both subdivisions the innermost tunic is composed of a specialized simple squamous epithelium, called endothelium, and its underlying connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Ov_.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov_.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of the cardiovascular system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Ov_.-1.jpg'. Destaca a estrutura ou conceito 'Inner tunic' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The innermost tunic of either subdivision faces the blood and is called the endocardium in the heart and the tunica intima in blood vessels. In both subdivisions the innermost tunic is composed of a specialized simple squamous epithelium, called endothelium, and its underlying connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Overview of the cardiovascular system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Middle tunic",
+      "explicacao_original": "The middle tunic of the heart is called the myocardium and is composed of cardiac muscle. In blood vessels the middle tunic is the tunica media and is composed of smooth muscle or smooth muscle plus connective tissue components.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Ov_.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov_.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of the cardiovascular system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Ov_.-1.jpg'. Destaca a estrutura ou conceito 'Middle tunic' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle tunic of the heart is called the myocardium and is composed of cardiac muscle. In blood vessels the middle tunic is the tunica media and is composed of smooth muscle or smooth muscle plus connective tissue components.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Overview of the cardiovascular system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer tunic",
+      "explicacao_original": "The heart is suspended in an internal body cavity (pericardium), so its outer tunic is a serous membrane (epicardium). Like all serous membranes, epicardium is composed of a CT layer covered by a simple squamous epithelium (mesothelium). In blood vessels the outermost tunic is tunica adventitia, a CT layer, although smooth muscle is present in this tunic in large veins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Ov_.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov_.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of the cardiovascular system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Ov_.-1.jpg'. Destaca a estrutura ou conceito 'Outer tunic' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The heart is suspended in an internal body cavity (pericardium), so its outer tunic is a serous membrane (epicardium). Like all serous membranes, epicardium is composed of a CT layer covered by a simple squamous epithelium (mesothelium). In blood vessels the outermost tunic is tunica adventitia, a CT layer, although smooth muscle is present in this tunic in large veins.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Overview of the cardiovascular system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Blood supply",
+      "explicacao_original": "The heart and larger blood vessels are so large that they require their own blood supply, which is located in the outermost tunic of both subdivisions. Coronary vessels supply oxygen and nutrients to the heart while vasa vasorum (\\”vessels of the vessels\\”) are the equivalent blood supply to the larger vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Ov_.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.CV_.Ov_.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview of the cardiovascular system'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Ov_.-1.jpg'. Destaca a estrutura ou conceito 'Blood supply' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The heart and larger blood vessels are so large that they require their own blood supply, which is located in the outermost tunic of both subdivisions. Coronary vessels supply oxygen and nutrients to the heart while vasa vasorum (\\”vessels of the vessels\\”) are the equivalent blood supply to the larger vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Overview of the cardiovascular system 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/overview-of-the-cardiovascular-system-1/, acesso em 2026-08-07."
+    }
+  ]
+}

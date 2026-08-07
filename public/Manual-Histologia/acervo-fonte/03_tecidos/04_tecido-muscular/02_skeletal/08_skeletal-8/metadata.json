@@ -1,0 +1,83 @@
+{
+  "id": 2562,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 8"
+  ],
+  "descricao_original": "At high magnification, myofibrils in muscle fibers are clearly visible. Myofibrils are composed of myofilaments, consisting mostly of the proteins actin and myosin. Myofilaments cannot be resolved individually with the light microscope. The dark, wavy line around each fiber represents both the sarcolemma and endomysium. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "arquivo": "imagens/base/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Descricao original da pagina: At high magnification, myofibrils in muscle fibers are clearly visible. Myofibrils are composed of myofilaments, consisting mostly of the proteins actin and myosin. Myofilaments cannot be resolved individually with the light microscope. The dark, wavy line around each fiber represents both the sarcolemma and endomysium. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "Skeletal muscle fibers constitute the largest muscle fiber type. They are long, uniform cylinders with multiple, peripheral nuclei. Developmentally, these fibers form by the fusion of many myoblasts, producing a very large, single cell with multiple nuclei. Such a cell is referred to as a syncytium. Myofibrils containing the contractile myofilaments fill the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk9-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk9-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-9a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-9a-1.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers constitute the largest muscle fiber type. They are long, uniform cylinders with multiple, peripheral nuclei. Developmentally, these fibers form by the fusion of many myoblasts, producing a very large, single cell with multiple nuclei. Such a cell is referred to as a syncytium. Myofibrils containing the contractile myofilaments fill the cytoplasm.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Myofibrils run parallel to the longitudinal axis of the fiber and, therefore, are cut in cross section here. Myofibrils occupy most of the cytoplasm of the cell while other organelles, like mitochondria and ER, are located between them. Multiple nuclei are located peripherally, directly beneath the sarcolemma.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk9-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk9-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-9a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-9a-1.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Myofibrils run parallel to the longitudinal axis of the fiber and, therefore, are cut in cross section here. Myofibrils occupy most of the cytoplasm of the cell while other organelles, like mitochondria and ER, are located between them. Multiple nuclei are located peripherally, directly beneath the sarcolemma.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Multiple nuclei are located at the periphery of each muscle fiber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk9-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk9-4-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-9a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-9a-1.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multiple nuclei are located at the periphery of each muscle fiber.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Due to its high metabolic demand, skeletal muscle is well vascularized.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk9-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk9-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-9a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-9a-1.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Due to its high metabolic demand, skeletal muscle is well vascularized.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endomysium",
+      "explicacao_original": "The endomysium consists of a meshwork of reticular fibers that surround individual muscle fibers like a sleeve.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk9-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk9-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-9a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-9a-1.jpg'. Destaca a estrutura ou conceito 'Endomysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endomysium consists of a meshwork of reticular fibers that surround individual muscle fibers like a sleeve.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Artifactual space",
+      "explicacao_original": "Clear spaces in the image are the result of shrinkage during tissue processing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sk9-6-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk9-6-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-9a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-9a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-9a-1.jpg'. Destaca a estrutura ou conceito 'Artifactual space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Clear spaces in the image are the result of shrinkage during tissue processing.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 8. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-8/, acesso em 2026-08-07."
+    }
+  ]
+}

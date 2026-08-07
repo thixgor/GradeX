@@ -1,0 +1,83 @@
+{
+  "id": 10809,
+  "titulo": "Cortex: Convoluted portion",
+  "titulo_wordpress": "Tubules and collecting system 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 2"
+  ],
+  "descricao_original": "The convoluted portion of the cortex contains the renal corpuscles, the convoluted portions of the proximal and distal tubules and the connecting tubules. 10x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cortex: Convoluted portion', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Descricao original da pagina: The convoluted portion of the cortex contains the renal corpuscles, the convoluted portions of the proximal and distal tubules and the connecting tubules. 10x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Renal corpuscles",
+      "explicacao_original": "Renal corpuscles consist of the glomerular capillaries and Bowman’s capsule. Bowman’s capsule is composed of two epithelial layers separated by Bowman’s space. The epithelium of the visceral layer is modified to form podocytes, whose foot processes surround the capillaries forming the glomerulus.The parietal layer of the capsule is a simple squamous epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-2.jpg'. Destaca a estrutura ou conceito 'Renal corpuscles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Renal corpuscles consist of the glomerular capillaries and Bowman’s capsule. Bowman’s capsule is composed of two epithelial layers separated by Bowman’s space. The epithelium of the visceral layer is modified to form podocytes, whose foot processes surround the capillaries forming the glomerulus.The parietal layer of the capsule is a simple squamous epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Proximal tubules",
+      "explicacao_original": "Proximal tubules are lined by a tall, simple cuboidal epithelium with a brush border. Because they are longer than distal tubules, more cross sections of proximal tubules will be seen in an image. In this preparation, mitochondria did not fix well and, therefore, the cytoplasm of the cells, appears vacuolated. Also, a precipitate frequently fills the lumens of these tubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-2.jpg'. Destaca a estrutura ou conceito 'Proximal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal tubules are lined by a tall, simple cuboidal epithelium with a brush border. Because they are longer than distal tubules, more cross sections of proximal tubules will be seen in an image. In this preparation, mitochondria did not fix well and, therefore, the cytoplasm of the cells, appears vacuolated. Also, a precipitate frequently fills the lumens of these tubules.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Urinary pole",
+      "explicacao_original": "The proximal convoluted tubule begins at the urinary pole. The urinary pole is the continuation of the simple squamous epithelium of the parietal layer of Bowman’s capsule with the epithelium forming the proximal convoluted tubule. At the urinary pole, the filtrate accumulating in Bowman’s space enters the first tubular part of the nephron.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-2.jpg'. Destaca a estrutura ou conceito 'Urinary pole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The proximal convoluted tubule begins at the urinary pole. The urinary pole is the continuation of the simple squamous epithelium of the parietal layer of Bowman’s capsule with the epithelium forming the proximal convoluted tubule. At the urinary pole, the filtrate accumulating in Bowman’s space enters the first tubular part of the nephron.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Distal tubules",
+      "explicacao_original": "Distal tubules are lined by a simple cuboidal epithelium that is shorter than that in proximal tubules. The epithelium also lacks a brush border, and the nuclei often appear irregularly spaced around the lumen. Each lumen of a distal tubule is wider than that of a proximal tubule, even though its overall diameter is less.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-2.jpg'. Destaca a estrutura ou conceito 'Distal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Distal tubules are lined by a simple cuboidal epithelium that is shorter than that in proximal tubules. The epithelium also lacks a brush border, and the nuclei often appear irregularly spaced around the lumen. Each lumen of a distal tubule is wider than that of a proximal tubule, even though its overall diameter is less.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Connecting tubules",
+      "explicacao_original": "Connecting tubules are lined by a simple cuboidal epithelium whose nuclei are evenly spaced around the tubule. Connecting tubules connect the distal convoluted tubule with the collecting duct in the medullary ray.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-2.jpg'. Destaca a estrutura ou conceito 'Connecting tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connecting tubules are lined by a simple cuboidal epithelium whose nuclei are evenly spaced around the tubule. Connecting tubules connect the distal convoluted tubule with the collecting duct in the medullary ray.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Interlobular artery",
+      "explicacao_original": "Interlobular arteries are branches of arcuate arteries and travel through the convoluted portions of the cortex where they give off afferent arterioles supplying the glomerular capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-2.jpg'. Destaca a estrutura ou conceito 'Interlobular artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interlobular arteries are branches of arcuate arteries and travel through the convoluted portions of the cortex where they give off afferent arterioles supplying the glomerular capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-2/, acesso em 2026-08-07."
+    }
+  ]
+}

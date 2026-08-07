@@ -1,0 +1,54 @@
+{
+  "id": 11957,
+  "titulo": "Fibrocartilage",
+  "titulo_wordpress": "Fibrocartilage 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Fibrocartilage",
+    "Fibrocartilage 1"
+  ],
+  "descricao_original": "Fibrocartilage is the strongest of the cartilage types and blends the strength of dense connective tissue (left) with the non-compressible ground substance of cartilage (right). Fibrocartilage exists in isolated regions where extra strength is needed. It does not exist as an independent cartilage mass and therefore has no perichondrium. 400x, 400x, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-final.jpg",
+      "arquivo": "imagens/base/T.C.C.F.01-New-final.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Fibrocartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 1. Descricao original da pagina: Fibrocartilage is the strongest of the cartilage types and blends the strength of dense connective tissue (left) with the non-compressible ground substance of cartilage (right). Fibrocartilage exists in isolated regions where extra strength is needed. It does not exist as an independent cartilage mass and therefore has no perichondrium. 400x, 400x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dense connective tissue",
+      "explicacao_original": "The left image is of dense irregular connective tissue. Collagen fiber bundles (black arrows) provide its strength and a few, scattered, flattened fibroblast nuclei (green arrows) are visible. The space between the fibers is filled with a thin, gelatinous ground substance (blue arrows), that provides minimal resistance to compression forces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.01-New-1-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.01-New-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.01-New-final.jpg'. Destaca a estrutura ou conceito 'Dense connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The left image is of dense irregular connective tissue. Collagen fiber bundles (black arrows) provide its strength and a few, scattered, flattened fibroblast nuclei (green arrows) are visible. The space between the fibers is filled with a thin, gelatinous ground substance (blue arrows), that provides minimal resistance to compression forces.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hyaline cartilage",
+      "explicacao_original": "The matrix of hyaline cartilage (X’s) is extensive and consists of a semi-rigid ground substance with numerous, fine collagen fibers (not visible). This composition allows hyaline cartilage to resist compression while remaining flexible. The matrix is produced by chondrocytes (arrows) which are present singly and in clusters.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.01-New-2-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.01-New-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.01-New-final.jpg'. Destaca a estrutura ou conceito 'Hyaline cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The matrix of hyaline cartilage (X’s) is extensive and consists of a semi-rigid ground substance with numerous, fine collagen fibers (not visible). This composition allows hyaline cartilage to resist compression while remaining flexible. The matrix is produced by chondrocytes (arrows) which are present singly and in clusters.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Fibrocartilage",
+      "explicacao_original": "Fibrocartilage is a hybrid between dense connective tissue and hyaline cartilage. Its abundant collagen bundles (black arrows) provide strength. The scattered hyaline cartilage cells (green arrows) produce matrix between the collagen fibers to resist compressional forces.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.01-New-3-ping.png",
+      "imagem_base": "imagens/base/T.C.C.F.01-New-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.F.01-New-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.01-New-final.jpg'. Destaca a estrutura ou conceito 'Fibrocartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fibrocartilage is a hybrid between dense connective tissue and hyaline cartilage. Its abundant collagen bundles (black arrows) provide strength. The scattered hyaline cartilage cells (green arrows) produce matrix between the collagen fibers to resist compressional forces.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-1/, acesso em 2026-08-07."
+    }
+  ]
+}

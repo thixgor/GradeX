@@ -1,0 +1,115 @@
+{
+  "id": 2721,
+  "titulo": "Purkinje fibers",
+  "titulo_wordpress": "Cardiac 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Cardiac",
+    "Cardiac 9"
+  ],
+  "descricao_original": "Purkinje fibers are highly specialized cardiac muscle fibers that serve as the impulse conduction system within the heart, insuring that the impulse arrives almost simultaneously to the entire right and left ventricles. Purkinje fibers are located in the connective tissue just beneath the inner layer of the heart chambers (endocardium). Purkinje fibers are larger than cardiac muscle fibers, they have clear cytoplasm and sparse myofibrils that are mostly confined to the periphery of the cell. They often have two, centrally-located nuclei. 200x (top), 800x (bottom)",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/",
+  "creditos_identificados": [
+    "Image source: Image from the University of Mississippi slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "arquivo": "imagens/base/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Purkinje fibers', no setor Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Descricao original da pagina: Purkinje fibers are highly specialized cardiac muscle fibers that serve as the impulse conduction system within the heart, insuring that the impulse arrives almost simultaneously to the entire right and left ventricles. Purkinje fibers are located in the connective tissue just beneath the inner layer of the heart chambers (endocardium). Purkinje fibers are larger than cardiac muscle fibers, they have clear cytoplasm and sparse myofibrils that are mostly confined to the periphery of the cell. They often have two, centrally-located nuclei. 200x (top), 800x (bottom). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endocardium",
+      "explicacao_original": "The endocardium forms the inner lining of the heart chambers. The space within the chamber is located at the top of the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/T.M.C-9-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-7-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Endocardium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endocardium forms the inner lining of the heart chambers. The space within the chamber is located at the top of the image.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelium",
+      "explicacao_original": "The endocardium forms the inner lining of the heart chambers. The space within the chamber is located at the top of the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/T.M.C-9-NEW-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-1A-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endocardium forms the inner lining of the heart chambers. The space within the chamber is located at the top of the image.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Purkinje fibers",
+      "explicacao_original": "These images show Purkinje fibers at low and high magnifications. They are larger than cardiac muscle fibers and align in fascicles to conduct action potentials along their length.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-2-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Purkinje fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show Purkinje fibers at low and high magnifications. They are larger than cardiac muscle fibers and align in fascicles to conduct action potentials along their length.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Purkinje fibers often have two nuclei which are larger than regular cardiac muscle fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-3-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Purkinje fibers often have two nuclei which are larger than regular cardiac muscle fibers.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "The cytoplasm of Purkinje fibers is very pale staining due to the presence of large amounts of glycogen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoplasm of Purkinje fibers is very pale staining due to the presence of large amounts of glycogen.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Purkinje fibers have fewer myofibrils and they are mostly confined to the periphery of the cell. This distribution is apparent in the cross-sectioned fiber (blue arrow). Myofilaments are present and the banding pattern of the myofibrils is similar to that in cardiac fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-5A-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Purkinje fibers have fewer myofibrils and they are mostly confined to the periphery of the cell. This distribution is apparent in the cross-sectioned fiber (blue arrow). Myofilaments are present and the banding pattern of the myofibrils is similar to that in cardiac fibers.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Intercalated discs",
+      "explicacao_original": "Purkinje fibers are attached to each by intercalated discs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-6-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Intercalated discs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Purkinje fibers are attached to each by intercalated discs.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Cardiac muscle fibers of the myocardium",
+      "explicacao_original": "Cardiac muscle fibers, comprising the myocardium, are present beneath the endocardium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/T.M.C-9-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-9-NEW-6-ping-2.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Cardiac muscle fibers of the myocardium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers, comprising the myocardium, are present beneath the endocardium.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "Image from the University of Mississippi slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/Mississippi-source-ping.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping.png",
+      "imagem_base": "imagens/base/T.M.C-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.C-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Purkinje fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C-9-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image from the University of Mississippi slide collection.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 9. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-9/, acesso em 2026-08-07."
+    }
+  ]
+}

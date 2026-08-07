@@ -1,0 +1,83 @@
+{
+  "id": 13640,
+  "titulo": "Middle ear",
+  "titulo_wordpress": "Middle ear 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Middle Ear",
+    "Middle ear 2"
+  ],
+  "descricao_original": "The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "arquivo": "imagens/base/O.E.ME_.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Middle ear', no setor Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Descricao original da pagina: The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Middle ear",
+      "explicacao_original": "The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.P01.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.02.P01.png",
+      "imagem_base": "imagens/base/O.E.ME_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.02.jpg'. Destaca a estrutura ou conceito 'Middle ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.02.P02.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.02.P02.png",
+      "imagem_base": "imagens/base/O.E.ME_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.02.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ear ossicles",
+      "explicacao_original": "The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.02.P03.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.02.P03.png",
+      "imagem_base": "imagens/base/O.E.ME_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.02.jpg'. Destaca a estrutura ou conceito 'Ear ossicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tensor tympani",
+      "explicacao_original": "The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.02.P05.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.02.P05.png",
+      "imagem_base": "imagens/base/O.E.ME_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.02.jpg'. Destaca a estrutura ou conceito 'Tensor tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Eustachian tube",
+      "explicacao_original": "The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.ME_.02.P04.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.02.P04.png",
+      "imagem_base": "imagens/base/O.E.ME_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.02.jpg'. Destaca a estrutura ou conceito 'Eustachian tube' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The middle ear, a cavity in the temporal bone, is lined by a mucosa whose epithelium is primarily simple squamous. The middle ear is bounded by the tympanic membrane laterally and the bony wall of the inner ear medially. It communicates with the mastoid air cells posteriorly and with the nasopharynx, via the Eustachian tube, anteriorly. 10x. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The image shown in the right panel is from a non-human species, as evidenced by the protrusion of the cochlea into the middle ear cavity and by the greater number of turns of the cochlea compared with the human.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.P06.png",
+      "arquivo": "imagens/marcadores/O.E.ME_.02.P06.png",
+      "imagem_base": "imagens/base/O.E.ME_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.ME_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Middle ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.ME_.02.jpg'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image shown in the right panel is from a non-human species, as evidenced by the protrusion of the cochlea into the middle ear cavity and by the greater number of turns of the cochlea compared with the human.. Contexto setorial: Órgãos e Sistemas > Ouvido > Middle Ear > Middle ear 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/middle-ear/middle-ear-2/, acesso em 2026-08-07."
+    }
+  ]
+}

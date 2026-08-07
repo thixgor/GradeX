@@ -1,0 +1,3378 @@
+{
+  "id_pagina": 21567,
+  "id_h5p": "18",
+  "titulo": "Tecido Conjuntivo Propriamente Dito",
+  "titulo_original": "Connective tissue proper quiz",
+  "url_origem": "https://digitalhistology.org/quizzes/connective-tissue-proper/",
+  "licenca_metadado_h5p": "U",
+  "questoes": [
+    {
+      "numero": 1,
+      "enunciado": "Classify the tissue that fills the field.",
+      "imagem": "imagens/file-5b3bbd5e20c20.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bbd5e20c20.jpg",
+      "alternativas": [
+        {
+          "texto": "Adipose connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Tissue is classified as adipose connective tissue when the majority of the cells that compose the tissue are adipocytes. Adipocytes can also occur singly or in small clusters in other tissues."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mucous connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "enunciado": "Classify the tissue that fills the field.",
+      "imagem": "imagens/file-5b3bbe03053b9.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bbe03053b9.jpg",
+      "alternativas": [
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Dense irregular connective tissue has relatively few cells; those that are present are nearly all fibroblasts, many of which are inactive. In addition, the tissue has large-caliber collagen bundles, which have no organized arrangement."
+        },
+        {
+          "texto": "Dense regular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b3bc12bd9d99.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc12bd9d99.jpg",
+      "alternativas": [
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Adipocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inactive fibroblasts",
+          "correta": true,
+          "feedback": "CORRECT. The majority of the chromatin in the nucleus of these fibroblasts is highly condensed and, thus, the cells are metabolically inactive. The condensed chromatin stains intensely with hematoxylin. Inactive fibroblasts have minimal cytoplasm and thin processes."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b3bc24d56a4a.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc24d56a4a.jpg",
+      "alternativas": [
+        {
+          "texto": "Reticular fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Collagen bundles",
+          "correta": true,
+          "feedback": "CORRECT. Collagen bundles are large, greater than five microns, and are composed of many collagen fibrils. Collagen fibers are eosinophilic and inelastic."
+        },
+        {
+          "texto": "Glycosaminoglycans",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Collagen fibrils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b3bc2f3538ac.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc2f3538ac.jpg",
+      "alternativas": [
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cells",
+          "correta": true,
+          "feedback": "CORRECT. Mast cells have large numbers of uniformly sized granules in their cytoplasm, which can stain with either hematoxylin or eosin depending on the contents of the granule. The nucleus is spherical and can either be located in the center of the cell or toward the periphery."
+        },
+        {
+          "texto": "Eosinophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "enunciado": "Classify the tissue that fills the field",
+      "imagem": "imagens/file-5b3bc3bb519da.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc3bb519da.jpg",
+      "alternativas": [
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense regular connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Dense regular connective tissue is exclusively found in tendons and ligaments and displays a parallel arrangement of collagen bundles. Inactive fibroblasts are arranged in rows between the bundles of collagen."
+        },
+        {
+          "texto": "Elastic connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b3bc431e2d90.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc431e2d90.jpg",
+      "alternativas": [
+        {
+          "texto": "Active fibroblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Adipocyte",
+          "correta": true,
+          "feedback": "CORRECT. This tissue is classified as adipose connective tissue and is composed of adipocytes. Distinctive features of adipocytes are an empty-appearing cytoplasm, due to the loss of the large lipid droplet during tissue processing, and the \"signet ring\" appearance of the cytoplasm and nucleus, which are displaced by the lipid droplet."
+        },
+        {
+          "texto": "Macrophage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Monocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "enunciado": "Classify the tissue that fills the field.",
+      "imagem": "imagens/file-5b3bc5963f8b3.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc5963f8b3.jpg",
+      "alternativas": [
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense regular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Loose connective tissue generally contains large numbers of cells of varying types. Furthermore, the collagen fibers are of much smaller caliber than the collagen bundles present in the dense connective tissues."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "enunciado": "Identify the cells indicated by the arrows in these images .",
+      "imagem": "imagens/file-5b3bc626dc481.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc626dc481.jpg",
+      "alternativas": [
+        {
+          "texto": "Macrophages",
+          "correta": true,
+          "feedback": "CORRECT. Macrophages are the next most common cell present in connective tissue, after fibroblasts. Macrophages have an oval nucleus, which is smaller than that of an active fibroblast, prominent heterochromatin located adjacent to the nuclear envelope, and an indentation in the nuclear envelope, reflecting its origin from a monocyte."
+        },
+        {
+          "texto": "Active fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Eosinophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "enunciado": "Identify the cells whose nuclei are indicated by the arrows.",
+      "imagem": "imagens/file-5b3bc97f2d821.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bc97f2d821.jpg",
+      "alternativas": [
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mesenchymal cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inactive fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblasts",
+          "correta": true,
+          "feedback": "CORRECT. The chromatin in the nucleus of these fibroblasts is highly dispersed and, thus, the cell is metabolically active. The dispersed chromatin binds hematoxylin at low density, resulting in the pale staining of the nucleus. In general, the nucleus of an active fibroblast is the largest nucleus seen in connective tissues."
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "enunciado": "Identify the structures indicated by the arrows.",
+      "imagem": "imagens/file-5b3bca2bb715c.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bca2bb715c.jpg",
+      "alternativas": [
+        {
+          "texto": "Reticular fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Collagen bundles",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Glycosaminoglycans",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Collagen fibrils",
+          "correta": true,
+          "feedback": "CORRECT. At the electron microscopic level, collagen fibrils can be resolved with their characteristic banding pattern. These fibrils can assemble into larger fibers and collagen bundles in the dense connective tissues."
+        }
+      ]
+    },
+    {
+      "numero": 12,
+      "enunciado": "Identify the cell indicated by the double arrow.",
+      "imagem": "imagens/file-5b3bcafa2624d.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bcafa2624d.jpg",
+      "alternativas": [
+        {
+          "texto": "Macrophage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cell",
+          "correta": true,
+          "feedback": "CORRECT. Mast cells have large numbers of granules in their cytoplasm, which are clearly seen in this electron micrograph. The nucleus is spherical and can be located in the center or the periphery of the cell."
+        },
+        {
+          "texto": "Eosinophil",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 13,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b3bcb72e879f.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bcb72e879f.jpg",
+      "alternativas": [
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Plasma cells",
+          "correta": true,
+          "feedback": "CORRECT. Plasma cells are distinguished by a 'clock-face' arrangement of heterochromatin around the nuclear envelope and a prominent 'negative Golgi' image near the nucleus. The well-developed Golgi membranes do not stain and, therefore, this region appears pale. The peripheral cytoplasm of plasma cells is highly basophilic, due to the large amount of rough endoplasmic reticulum."
+        },
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Basophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 14,
+      "enunciado": "Identify the structures indicated by the arrows.",
+      "imagem": "imagens/file-5b3bcbffd66db.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bcbffd66db.jpg",
+      "alternativas": [
+        {
+          "texto": "Reticular fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic fibers",
+          "correta": true,
+          "feedback": "CORRECT. Elastic fibers are present in both loose and dense connective tissues, where they can be distinguished from collagen fibers by their higher electron density and amorphous appearance. The majority of the fiber is composed of elastin protein and the entire fiber is surrounded by microfibrils composed of fibrillin protein."
+        },
+        {
+          "texto": "Collagen bundles",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Glycosaminoglycans",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Collagen fibrils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 15,
+      "enunciado": "Identify the cells shown in these images.",
+      "imagem": "imagens/file-5b3bcdbca7d83.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bcdbca7d83.jpg",
+      "alternativas": [
+        {
+          "texto": "Neutrophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Eosinophils",
+          "correta": true,
+          "feedback": "CORRECT. Eosinophils are granular white blood cells that migrate into connective tissues from the blood stream. They are phagocytic and function in parasitic infections. An eosinophil has intensely eosinophilic granules in its cytoplasm and a bilobed nucleus."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 16,
+      "enunciado": "Identify the cells shown in these images",
+      "imagem": "imagens/file-5b3bce35b57ee.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bce35b57ee.jpg",
+      "alternativas": [
+        {
+          "texto": "Neutrophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Eosinophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocytes",
+          "correta": true,
+          "feedback": "CORRECT. Lymphocytes, small, spherical cells with minimal cytoplasm, have rounded, very heterochromatic nuclei. Lymphocytes are agranular white blood cells transported via the blood, but are active only after entering connective tissue. Lymphocytes function in the immune response; some differentiate into plasma cells and produce antibodies."
+        },
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 17,
+      "enunciado": "Identify the cells shown in these images",
+      "imagem": "imagens/file-5b3bcf505122d.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bcf505122d.jpg",
+      "alternativas": [
+        {
+          "texto": "Neutrophils",
+          "correta": true,
+          "feedback": "CORRECT. Neutrophils, or polymorphonuclear (PMN) leucocytes, are highly motile, phagocytic white blood cells that migrate from the blood to sites of tissue damage and infection. Each cell has a distinctive, 3-5 lobed nucleus. Its numerous granules are not visible with hematoxylin and eosin staining."
+        },
+        {
+          "texto": "Eosinophils",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cells",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 18,
+      "enunciado": "Classify the tissue shown in these images",
+      "imagem": "imagens/file-5b3bd74fdb87b.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bd74fdb87b.jpg",
+      "alternativas": [
+        {
+          "texto": "Adipose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mucous connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Mucous connective tissue is composed of fibroblast-like cells, which can be spindle or stellate shaped. They produce the surrounding, abundant, gelatinous ground substance (Wharton's jelly) and delicate collagen and reticular fibers."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 19,
+      "enunciado": "Classify the tissue indicated by the double arrow.",
+      "imagem": "imagens/file-5b3bd7e2d8207.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bd7e2d8207.jpg",
+      "alternativas": [
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Dense irregular connective tissue has relatively few cells, mostly inactive fibroblasts. In addition, the tissue has large-caliber collagen bundles in an irregular arrangement. A layer of loose connective lies just above this tissue beneath the epithelium."
+        },
+        {
+          "texto": "Dense regular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 20,
+      "enunciado": "Classify the tissue that fills the field.",
+      "imagem": "imagens/file-5b3bd89999fb4.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bd89999fb4.jpg",
+      "alternativas": [
+        {
+          "texto": "Adipose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular connective tissue",
+          "correta": true,
+          "feedback": "CORRECT. Reticular connective tissue is composed of a meshwork of reticular fibers that forms the stroma for hemopoietic tissues and lymphoid structures and organs, except the thymus. Reticular fibers are composed of collagen type III and are unique from Type I collagen fibers in that they branch and require special stains to be identified; silver (seen here) or periodic acid Schiff (PAS)."
+        },
+        {
+          "texto": "Mucous connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Loose connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense irregular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 21,
+      "enunciado": "Identify the cell whose nucleus is indicated by the double arrow.",
+      "imagem": "imagens/file-5b3bd9388aa04.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bd9388aa04.jpg",
+      "alternativas": [
+        {
+          "texto": "Lymphocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Mast cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inactive fibroblast",
+          "correta": true,
+          "feedback": "CORRECT. The chromatin in the nucleus of this inactive fibroblast is highly condensed and, thus, the cell is metabolically inactive. The condensed chromatin binds a high density of the heavy metals used for electron microscopy staining which which results in the high electron density of heterochromatin."
+        },
+        {
+          "texto": "Macrophage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 22,
+      "enunciado": "Identify the cell indicated by double arrow.",
+      "imagem": "imagens/file-5b3bda547d0c2.jpg",
+      "caminho_h5p_imagem": "images/file-5b3bda547d0c2.jpg",
+      "alternativas": [
+        {
+          "texto": "Mast cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lymphocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inactive fibroblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophage",
+          "correta": true,
+          "feedback": "CORRECT. Macrophages are the major phagocytic cell in connective tissue. The macrophage nucleus has a prominent indentation, reflective of its origin as a monocyte, and accumulations of heterochromatin beneath the nuclear envelope. Macrophages process, folds and plasma membrane ruffling are prominent. Numerous heterogeneous lysosomes are also visible."
+        },
+        {
+          "texto": "Active fibroblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    }
+  ],
+  "json_h5p_original": {
+    "introPage": {
+      "showIntroPage": false,
+      "startButtonText": "Start Quiz",
+      "introduction": ""
+    },
+    "progressType": "textual",
+    "passPercentage": 50,
+    "texts": {
+      "prevButton": "Previous question",
+      "nextButton": "Next question",
+      "finishButton": "Finish",
+      "textualProgress": "Question: @current of @total questions",
+      "jumpToQuestion": "Question %d of %total",
+      "questionLabel": "Question",
+      "readSpeakerProgress": "Question @current of @total",
+      "unansweredText": "Unanswered",
+      "answeredText": "Answered",
+      "currentQuestionText": "Current question"
+    },
+    "disableBackwardsNavigation": false,
+    "randomQuestions": true,
+    "endGame": {
+      "showResultPage": true,
+      "showSolutionButton": true,
+      "noResultMessage": "Finished",
+      "message": "Your result:",
+      "overallFeedback": [
+        {
+          "from": 0,
+          "to": 100
+        }
+      ],
+      "solutionButtonText": "Show solution",
+      "retryButtonText": "Retry",
+      "finishButtonText": "Finish",
+      "showAnimations": false,
+      "skippable": false,
+      "skipButtonText": "Skip video"
+    },
+    "override": {
+      "checkButton": true
+    },
+    "questions": [
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bbd5e20c20.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "2fb24526-4f08-4e3b-bae4-0444bca2162e"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Tissue is classified as adipose connective tissue when the majority of the cells that compose the tissue are adipocytes.&nbsp; Adipocytes can also occur singly or in small clusters in other tissues.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Adipose connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Loose connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mucous connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense irregular connective tissue</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "7123dce6-a8b1-4c23-b610-70b4c0dd13f2"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bbe03053b9.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "a39bb6ac-765a-4d30-bd29-2cb7ae040425"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Dense irregular connective tissue has relatively few cells; those that are present are nearly all fibroblasts, many of which are inactive.&nbsp; In addition, the tissue has large-caliber collagen bundles, which have no organized arrangement.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense irregular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense regular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Loose connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular connective tissue</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "b907f2ca-073f-4e47-b8d1-884058b2cf98"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc12bd9d99.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "eaa21ff9-3ee7-4b99-b9ed-8f90a7ed6414"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cells</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Adipocytes</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; The majority of the chromatin in the nucleus of these fibroblasts is highly condensed and, thus, the cells are metabolically inactive.&nbsp; The condensed chromatin stains intensely with hematoxylin.&nbsp; Inactive fibroblasts have minimal cytoplasm and thin processes.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inactive fibroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblasts</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "0d2e1b4d-dc15-491e-8f36-af16a98d14d1"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc24d56a4a.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1200
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "f3e82d8a-17e2-44f2-adfd-a3bd78357c6b"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular fibers</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic fibers</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; Collagen bundles are large, greater than five microns, and are composed of many collagen fibrils.&nbsp; Collagen fibers are eosinophilic and inelastic.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen bundles</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Glycosaminoglycans</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen fibrils</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "84f12b50-1848-40f7-b5ac-f0ef8426db01"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc2f3538ac.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "3af4f023-c3c7-4380-8fed-2a9f524e0a2e"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocytes</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; Mast cells have large numbers of uniformly sized granules in their cytoplasm, which can stain with either hematoxylin or eosin depending on the contents of the granule.&nbsp; The nucleus is spherical and can either be located in the center of the cell or toward the periphery.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cells</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Eosinophils</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "8d1a6a9a-f524-4f7f-93c1-66c576ced39d"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc3bb519da.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "2e228050-89a4-407b-b1e5-0e86bc00155d"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense irregular connective tissue</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Dense regular connective tissue is exclusively found in tendons and ligaments and displays a parallel arrangement of collagen bundles.&nbsp; Inactive fibroblasts are arranged in rows between the bundles of collagen.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense regular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Loose connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular connective tissue</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue that fills the field</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "1800da74-0972-4b7a-980a-5f86d96ae849"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc431e2d90.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "186649e7-a7e7-44d7-990f-4fcec10f1b9a"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblast</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cell</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This tissue is classified as adipose connective tissue and is composed of adipocytes.&nbsp; Distinctive features of adipocytes are an empty-appearing cytoplasm, due to the loss of the large lipid droplet during tissue processing, and the \"signet ring\" appearance of the cytoplasm and nucleus, which are displaced by the lipid droplet.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Adipocyte</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Monocyte</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "90c49e5c-3bc9-4728-acc3-9242fe2351a3"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc5963f8b3.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "a6885733-5002-4209-a27f-2c921e598cd7"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense irregular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense regular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic connective tissue</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Loose connective tissue generally contains large numbers of cells of varying types.&nbsp; Furthermore, the collagen fibers are of much smaller caliber than the collagen bundles present in the dense connective tissues.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Loose connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular connective tissue</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "7b2b194e-86c3-481d-b262-3bf97ece4265"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc626dc481.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "3ee2d084-bb6c-4aad-a60c-f3b81da9b996"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Macrophages are the next most common cell present in connective tissue, after fibroblasts.&nbsp; Macrophages have an oval nucleus, which is smaller than that of an active fibroblast, prominent heterochromatin located adjacent to the nuclear envelope, and an indentation in the nuclear envelope, reflecting its origin from a monocyte.&nbsp; \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nActive fibroblasts\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocytes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cells</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Eosinophils</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows in these images .</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "2eb31775-9657-4eb4-80d3-7cd30d9efbcb"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bc97f2d821.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "3938b698-e446-47d8-9e08-0373bec54ae9"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cells</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMesenchymal cells\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inactive fibroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The chromatin in the nucleus of these fibroblasts is highly dispersed and, thus, the cell is metabolically active.&nbsp; The dispersed chromatin binds hematoxylin at low density, resulting in the pale staining of the nucleus.&nbsp; In general, the nucleus of an active fibroblast is the largest nucleus seen in connective tissues.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblasts</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells whose nuclei are indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "fe35b49b-421a-4cb4-8210-a52892a23472"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bca2bb715c.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "5005ea3d-08d9-4b6f-9ac9-7001933b9bc8"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular fibers</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nElastic fibers\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen bundles</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Glycosaminoglycans</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT. &nbsp;At the electron microscopic level, collagen fibrils can be resolved with their characteristic banding pattern.&nbsp; These fibrils can assemble into larger fibers and collagen bundles in the dense connective tissues.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen fibrils</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "63c37da8-da17-44ab-8c5f-387b6a58a450"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bcafa2624d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "737e0c17-b2ad-4653-9545-77133efe53bc"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblast</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocyte</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Mast cells have large numbers of granules in their cytoplasm, which are clearly seen in this electron micrograph.&nbsp; The nucleus is spherical and can be located in the center or the periphery of the cell.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cell</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nEosinophil\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cell indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "fadfdafe-1cb0-4afa-af16-d3c0d30ea287"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bcb72e879f.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "24dd6841-c5cc-40fc-8730-bd3d2f88cd25"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblasts</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Plasma cells are distinguished by a 'clock-face' arrangement of heterochromatin around the nuclear envelope and a prominent 'negative Golgi' image near the nucleus.&nbsp; The well-developed Golgi membranes do not stain and, therefore, this region appears pale.&nbsp; The peripheral cytoplasm of plasma cells is highly basophilic, due to the large amount of rough endoplasmic reticulum.&nbsp; \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Plasma cells</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cells</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Basophils</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "862039e4-794f-4463-847b-e11946f9ae92"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bcbffd66db.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "a681228b-b44f-49d8-a19b-c1ab2bfbfc2c"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular fibers</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Elastic fibers are present in both loose and dense connective tissues, where they can be distinguished from collagen fibers by their higher electron density and amorphous appearance.&nbsp; The majority of the fiber is composed of elastin protein and the entire fiber is surrounded by microfibrils composed of fibrillin protein. \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic fibers</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen bundles</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Glycosaminoglycans</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen fibrils</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "6402a31b-7b51-4873-a4e8-392ae835379a"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bcdbca7d83.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "55ba1fdd-05af-4dae-91f4-14ba5dfa6893"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nNeutrophils\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Eosinophils are granular white blood cells that migrate into connective tissues from the blood stream.&nbsp; They are phagocytic and function in parasitic infections.&nbsp; An eosinophil has intensely eosinophilic granules in its cytoplasm and a bilobed nucleus.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Eosinophils </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocytes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMast cells\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells shown in these images.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "da0c429a-9474-4821-9a66-a11576a800df"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bce35b57ee.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c365288b-7efc-4311-a852-1c518b1ebca1"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Neutrophils</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Eosinophils</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Lymphocytes, small, spherical cells with minimal cytoplasm, have rounded, very heterochromatic nuclei.&nbsp; Lymphocytes are agranular white blood cells transported via the blood, but are active only after entering connective tissue.&nbsp; Lymphocytes function in the immune response; some differentiate into plasma cells and produce antibodies.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocytes </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMast cells\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells shown in these images </p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "78630597-6e4f-4d49-a266-d29c62f5da08"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bcf505122d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "3204c584-fe4f-4c2b-8996-632c29f467a5"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; Neutrophils, or polymorphonuclear (PMN) leucocytes, are highly motile, phagocytic white blood cells that migrate from the blood to sites of tissue damage and infection.&nbsp; Each cell has a distinctive, 3-5 lobed nucleus.&nbsp; Its numerous granules are not visible with hematoxylin and eosin staining.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Neutrophils </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Eosinophils</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocytes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMast cells\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells shown in these images </p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "64a588f2-854e-47c1-be5d-9ba32cec2b3e"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bd74fdb87b.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "efe8fb51-13d4-4a19-a445-cf35ad384d1d"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nAdipose connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular connective tissue\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Mucous connective tissue is composed of fibroblast-like cells, which can be spindle or stellate shaped.&nbsp; They produce the surrounding, abundant, gelatinous ground substance (Wharton's jelly) and delicate collagen and reticular fibers.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMucous connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLoose connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDense irregular connective tissue\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue shown in these images </p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "7f77d71f-c8f5-41a1-9943-402d96107747"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bd7e2d8207.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "5258273d-a949-43c7-9a22-c474b9847b07"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Dense irregular connective tissue has relatively few cells, mostly inactive fibroblasts.&nbsp; In addition, the tissue has large-caliber collagen bundles in an irregular arrangement.&nbsp; A layer of loose connective lies just above this tissue beneath the epithelium.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense irregular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense regular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Reticular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLoose connective tissue\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "45e2a097-7a4c-4760-8e68-d6b6f1595ae8"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bd89999fb4.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "b11ff26a-5d53-480c-a362-fc37559bb2ad"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nAdipose connective tissue\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Reticular connective tissue is composed of a meshwork of reticular fibers that forms the stroma for hemopoietic tissues and lymphoid structures and organs, except the thymus.&nbsp; Reticular fibers are composed of collagen type III and are unique from Type I collagen fibers in that they branch and require special stains to be identified; silver (seen here) or periodic acid Schiff (PAS).\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMucous connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLoose connective tissue\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDense irregular connective tissue\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "a1914ce1-571b-4fba-a438-c2393f734350"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bd9388aa04.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "8f9b389d-d3e5-4442-a9da-a737965f6da9"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocyte</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Mast cell</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The chromatin in the nucleus of this inactive fibroblast is highly condensed and, thus, the cell is metabolically inactive.&nbsp; The condensed chromatin binds a high density of the heavy metals used for electron microscopy staining which which results in the high electron density of heterochromatin.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inactive fibroblast</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblast</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cell whose nucleus is indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "96d152f0-f4d6-420c-b430-0830d76f4f6e"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3bda547d0c2.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c9d0c59b-1fbc-43f3-a272-52960985455f"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "notChosenFeedback": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": ""
+              },
+              "text": "<div>Mast cell</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lymphocyte</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inactive fibroblast</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; Macrophages are the major phagocytic cell in connective tissue.&nbsp; The macrophage nucleus has a prominent indentation, reflective of its origin as a monocyte, and accumulations of heterochromatin beneath the nuclear envelope.&nbsp; Macrophages process, folds and plasma membrane ruffling are prominent.&nbsp; Numerous heterogeneous lysosomes are also visible.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblast</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cell indicated by double arrow. </p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "83bf62fd-7916-4bfa-ad8b-a298a8c043aa"
+      }
+    ]
+  }
+}

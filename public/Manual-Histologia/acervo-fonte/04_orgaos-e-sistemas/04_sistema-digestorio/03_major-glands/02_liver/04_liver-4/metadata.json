@@ -1,0 +1,94 @@
+{
+  "id": 6996,
+  "titulo": "Liver: portal canals",
+  "titulo_wordpress": "Liver 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Liver",
+    "Liver 4"
+  ],
+  "descricao_original": "Portal canals, located in the interlobular connective tissue surrounding classic lobules, contain the portal triad (branches of the hepatic portal vein, hepatic artery and bile duct) and lymphatic vessels. The left image (pig liver) has been stained with a trichrome stain to differentiate connective tissue from liver parenchyma. 800x, 800x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Liver: portal canals', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Descricao original da pagina: Portal canals, located in the interlobular connective tissue surrounding classic lobules, contain the portal triad (branches of the hepatic portal vein, hepatic artery and bile duct) and lymphatic vessels. The left image (pig liver) has been stained with a trichrome stain to differentiate connective tissue from liver parenchyma. 800x, 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Portal canals",
+      "explicacao_original": "Portal canals, located in the interlobular connective tissue surrounding classic lobules, contain the portal triad (branches of the hepatic portal vein, hepatic artery and bile duct) and lymphatic vessels. The left image (pig liver) has been stained with a trichrome stain to differentiate connective tissue from liver parenchyma. 800x, 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Portal canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Portal canals, located in the interlobular connective tissue surrounding classic lobules, contain the portal triad (branches of the hepatic portal vein, hepatic artery and bile duct) and lymphatic vessels. The left image (pig liver) has been stained with a trichrome stain to differentiate connective tissue from liver parenchyma. 800x, 800x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hepatic arteries",
+      "explicacao_original": "The liver has a dual blood supply. The hepatic artery carries oxygenated blood. The larger hepatic portal vein supplies a much greater volume of blood that is low in oxygen but high in nutrients; this blood comes directly from capillary beds located primarily in digestive organs. Blood flows from branches of these two vessels in the portal canal into liver sinusoids and then to the central vein.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Hepatic arteries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver has a dual blood supply. The hepatic artery carries oxygenated blood. The larger hepatic portal vein supplies a much greater volume of blood that is low in oxygen but high in nutrients; this blood comes directly from capillary beds located primarily in digestive organs. Blood flows from branches of these two vessels in the portal canal into liver sinusoids and then to the central vein.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hepatic portal veins",
+      "explicacao_original": "The liver has a dual blood supply. The hepatic artery carries oxygenated blood. The larger hepatic portal vein supplies a much greater volume of blood that is low in oxygen but high in nutrients; this blood comes directly from capillary beds located primarily in digestive organs. Blood flows from branches of these two vessels in the portal canal into liver sinusoids and then to the central vein.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Hepatic portal veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver has a dual blood supply. The hepatic artery carries oxygenated blood. The larger hepatic portal vein supplies a much greater volume of blood that is low in oxygen but high in nutrients; this blood comes directly from capillary beds located primarily in digestive organs. Blood flows from branches of these two vessels in the portal canal into liver sinusoids and then to the central vein.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bile ducts",
+      "explicacao_original": "Bile ducts carry bile, the exocrine product of the liver, away from the lobule to the gall bladder and duodenum. Bile is produced by hepatocytes and released into minute channels, bile canaliculi, located between hepatocytes. Bile canaliculi anastomose and enter the portal canals as bile ducts, formed by simple cuboidal epithelium. Bile flow, therefore, is toward the periphery of the liver lobule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Bile ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bile ducts carry bile, the exocrine product of the liver, away from the lobule to the gall bladder and duodenum. Bile is produced by hepatocytes and released into minute channels, bile canaliculi, located between hepatocytes. Bile canaliculi anastomose and enter the portal canals as bile ducts, formed by simple cuboidal epithelium. Bile flow, therefore, is toward the periphery of the liver lobule.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lymphatic vessels",
+      "explicacao_original": "Lymphatic vessels are also located in portal canals.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Lymphatic vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphatic vessels are also located in portal canals.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Hepatocytes",
+      "explicacao_original": "Hepatocytes, the liver cells, are both endocrine- and exocrine-secreting cells. Their exocrine function is the production of bile, that aids in the digestion of lipids. Their endocrine function is the release of plasma proteins into the blood stream. Hepatocytes are also involved in a myriad of other functions, including storing and mobilizing glucose, and degrading toxic substances.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Hepatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hepatocytes, the liver cells, are both endocrine- and exocrine-secreting cells. Their exocrine function is the production of bile, that aids in the digestion of lipids. Their endocrine function is the release of plasma proteins into the blood stream. Hepatocytes are also involved in a myriad of other functions, including storing and mobilizing glucose, and degrading toxic substances.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Liver sinusoids",
+      "explicacao_original": "Sinusoids, discontinuous capillaries, are located between cords of hepatocytes. Bidirectional exchange between the blood and the hepatocytes occurs as sinusoids transport blood from the hepatic portal vein and portal artery toward the central vein. A sinusoid is visible exiting from the portal canal in the lower right portion of the left image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-4-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-4-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: portal canals'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-4.jpg'. Destaca a estrutura ou conceito 'Liver sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids, discontinuous capillaries, are located between cords of hepatocytes. Bidirectional exchange between the blood and the hepatocytes occurs as sinusoids transport blood from the hepatic portal vein and portal artery toward the central vein. A sinusoid is visible exiting from the portal canal in the lower right portion of the left image.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-4/, acesso em 2026-08-07."
+    }
+  ]
+}

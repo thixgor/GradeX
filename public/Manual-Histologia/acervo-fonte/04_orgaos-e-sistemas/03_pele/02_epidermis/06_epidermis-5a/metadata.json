@@ -1,0 +1,73 @@
+{
+  "id": 26988,
+  "titulo": "Stratum basale",
+  "titulo_wordpress": "Epidermis 5A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 5A"
+  ],
+  "descricao_original": "These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum basale', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 5A. Descricao original da pagina: These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Stratum basale",
+      "explicacao_original": "These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-5A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-5A.jpg'. Destaca a estrutura ou conceito 'Stratum basale' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tonofilaments",
+      "explicacao_original": "These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-5A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-5A.jpg'. Destaca a estrutura ou conceito 'Tonofilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Melanosomes",
+      "explicacao_original": "These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-5A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-5A.jpg'. Destaca a estrutura ou conceito 'Melanosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stratum spinosum",
+      "explicacao_original": "These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-5A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-5A.jpg'. Destaca a estrutura ou conceito 'Stratum spinosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dermis (papillary layer)",
+      "explicacao_original": "These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-5A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Sk_.Epi-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum basale'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-5A.jpg'. Destaca a estrutura ou conceito 'Dermis (papillary layer)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the light and electron microscopic appearance of cells in the stratum basale. The large bundles of keratin filaments (tonofilaments) are clearly visible at the light and electron microscopic level. The keratin filaments insert into desmosomes on the lateral and apical surfaces of the cell. They also insert into hemidesmosomes along the basal surface, adjacent to the basal lamina. 1000x, 4000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

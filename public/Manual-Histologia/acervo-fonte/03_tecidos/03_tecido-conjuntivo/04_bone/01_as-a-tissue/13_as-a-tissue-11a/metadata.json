@@ -1,0 +1,76 @@
+{
+  "id": 30759,
+  "titulo": "Bone matrix",
+  "titulo_wordpress": "As a tissue 11A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 11A"
+  ],
+  "descricao_original": "A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/",
+  "creditos_identificados": [
+    "Image credit: This image was taken of slide in the Nova Southeastern University collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW.jpg",
+      "arquivo": "imagens/base/T.C.B.T.11A-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone matrix', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 11A. Descricao original da pagina: A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.11A-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.11A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.11A-NEW.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Volkmann's canal",
+      "explicacao_original": "A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.11A-NEW-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.11A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.11A-NEW.jpg'. Destaca a estrutura ou conceito 'Volkmann's canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endosteal cells",
+      "explicacao_original": "A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.11A-NEW-3-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.11A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.11A-NEW.jpg'. Destaca a estrutura ou conceito 'Endosteal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.11A-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.11A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.11A-NEW.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A Volkmann’s canal is visible in this longitudinal section of decalcified cortical bone. Volkmann’s and Haversian canals convey blood vessels and both are lined by endosteum. Some cells visible in the lumens may also be those of endothelial cells lining blood vessels. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image credit",
+      "explicacao_original": "This image was taken of slide in the Nova Southeastern University collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Nova-credit.png",
+      "arquivo": "imagens/marcadores/Nova-credit.png",
+      "imagem_base": "imagens/base/T.C.B.T.11A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/T.C.B.T.11A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.11A-NEW.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide in the Nova Southeastern University collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 11A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-11a/, acesso em 2026-08-07."
+    }
+  ]
+}

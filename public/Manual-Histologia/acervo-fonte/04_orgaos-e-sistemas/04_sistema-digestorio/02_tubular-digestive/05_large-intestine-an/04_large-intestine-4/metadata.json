@@ -1,0 +1,94 @@
+{
+  "id": 6936,
+  "titulo": "Large intestine",
+  "titulo_wordpress": "Large intestine 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Large Intestine and Anus",
+    "Large intestine 4"
+  ],
+  "descricao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Large intestine', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Descricao original da pagina: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-3-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-3-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-3.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the large intestine is lined by absorptive and goblet cells forming a simple columnar epithelium with microvilli. Goblet cells increase in number from the beginning to the termination of the large intestine, providing lubrication. A reduced number of enteroendocrine cells is present. Straight intestinal glands are typical of the large intestine. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-4/, acesso em 2026-08-07."
+    }
+  ]
+}

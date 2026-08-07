@@ -1,0 +1,76 @@
+{
+  "id": 6982,
+  "titulo": "Pancreas",
+  "titulo_wordpress": "Pancreas 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Pancreas",
+    "Pancreas 12"
+  ],
+  "descricao_original": "For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-12.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Pan-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pancreas', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 12. Descricao original da pagina: For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Islet of Langerhans",
+      "explicacao_original": "For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-12.jpg'. Destaca a estrutura ou conceito 'Islet of Langerhans' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Capillaries",
+      "explicacao_original": "For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-12.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endocrine cells",
+      "explicacao_original": "For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-12-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-12-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-12.jpg'. Destaca a estrutura ou conceito 'Endocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For this tissue preparation, the vascular supply was injected with a red dye to highlight the large number of capillaries present in the islets of Langerhans. The capillaries receive the islet hormones for distribution throughout the body, as well as deliver metabolic and hormonal signals to the islet cells to regulate their secretion. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Acini",
+      "explicacao_original": "Acinar cells secrete their digestive enzymes through a duct system that eventually opens into the lumen of the duodenum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-12-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-12-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-12.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Acinar cells secrete their digestive enzymes through a duct system that eventually opens into the lumen of the duodenum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Michigan-source-ping-2-1.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-12.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-12/, acesso em 2026-08-07."
+    }
+  ]
+}

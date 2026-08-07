@@ -1,0 +1,166 @@
+{
+  "id": 30868,
+  "titulo": "Nasal cavities: Mucosae",
+  "titulo_wordpress": "Nasal cavity 2A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Nasal Cavity",
+    "Nasal cavity 2A"
+  ],
+  "descricao_original": "A nasal septum separates the nasal cavities. Most of the septum and the nasal cavities are lined by respiratory and its underlying lamina propria. However, the posterior-superior border of the septum and walls of the adjacent superior conchae are lined by a thick olfactory epithelium where detection of odorants occurs for the perception of smell. Both epithelia are classified as pseudostratified. 400x, 10x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/",
+  "creditos_identificados": [
+    "Image source: The left and right images were taken of a slide in the University of Colorado collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "arquivo": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nasal cavities: Mucosae', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Descricao original da pagina: A nasal septum separates the nasal cavities. Most of the septum and the nasal cavities are lined by respiratory and its underlying lamina propria. However, the posterior-superior border of the septum and walls of the adjacent superior conchae are lined by a thick olfactory epithelium where detection of odorants occurs for the perception of smell. Both epithelia are classified as pseudostratified. 400x, 10x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nasal septum",
+      "explicacao_original": "The nasal septum separates the two nasal cavities (X) and is supported by hyaline cartilage anteriorly (seen here) and bone posteriorly. It is lined by a respiratory mucosa on its lower surface (blue arrows); the upper regions are lined by an olfactory mucosa (red arrows). Note that the olfactory epithelium and underlying lamina propria are much thicker than the corresponding layers in the respiratory region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-1-ping-1.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-1-ping-1.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Nasal septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nasal septum separates the two nasal cavities (X) and is supported by hyaline cartilage anteriorly (seen here) and bone posteriorly. It is lined by a respiratory mucosa on its lower surface (blue arrows); the upper regions are lined by an olfactory mucosa (red arrows). Note that the olfactory epithelium and underlying lamina propria are much thicker than the corresponding layers in the respiratory region.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Respiratory mucosa",
+      "explicacao_original": "Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Respiratory mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Respiratory epithelium",
+      "explicacao_original": "Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Respiratory epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muco-serous gland",
+      "explicacao_original": "Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Muco-serous gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bone",
+      "explicacao_original": "Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-7-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory mucosa consists of a pseudostratified respiratory epithelium with cilia and goblet cells. The underlying lamina propria contains numerous blood vessels that moderate the air temperature and muco-serous glands that moisten the surface. The mucosa, which lacks a smooth muscle layer and an elastic lamina, is supported either by cartilage or bone depending on the region.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Olfactory mucosa",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-8-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Olfactory mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Olfactory epithelium",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-9-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-9-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Olfactory epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-10-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-10-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Bowman’s glands",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-11-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-11-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Bowman’s glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Nerve",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-13-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-13-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-12-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-12-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Bone",
+      "explicacao_original": "Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW-14-ping.png",
+      "arquivo": "imagens/marcadores/O.R.E.N.02-NEW-14-ping.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Olfactory mucosa lines the upper portions of the nasal cavity. Both the epithelium and lamina propria are much thicker than in respiratory mucosa. The epithelium consists of the highly specialized pseudostratified olfactory epithelium with olfactory neurons for detecting odorants. The underlying lamina propria contains purely serous glands, called Bowman’s glands or olfactory glands, along with blood vessels and nerves. Like respiratory mucosa, olfactory mucosa lacks a smooth muscle layer and an elastic lamina; it is mostly supported by bone.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Image source",
+      "explicacao_original": "The left and right images were taken of a slide in the University of Colorado collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/Colorado-2.png",
+      "arquivo": "imagens/marcadores/Colorado-2.png",
+      "imagem_base": "imagens/base/O.R.E.N.02-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.N.02-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nasal cavities: Mucosae'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.N.02-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The left and right images were taken of a slide in the University of Colorado collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Nasal Cavity > Nasal cavity 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/nasal-cavity/nasal-cavity-2a/, acesso em 2026-08-07."
+    }
+  ]
+}

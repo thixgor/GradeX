@@ -1,0 +1,146 @@
+{
+  "id": 6751,
+  "titulo": "Oral mucosa: Gingiva",
+  "titulo_wordpress": "Oral mucosa 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Oral Mucosa",
+    "Oral mucosa 5"
+  ],
+  "descricao_original": "The gingiva (commonly called the gums) is composed of the epithelia and connective tissue that surround and support the tooth. Subdivisions of the gingiva include masticatory mucosa covering its external surface, sulcular epithelium facing the gingival sulcus, and attachment epithelium that attaches to the tooth. Fibers in the gingival lamina propria anchor the gingiva to the tooth and to the alveolar bone. 10x, 50x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oral mucosa: Gingiva', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Descricao original da pagina: The gingiva (commonly called the gums) is composed of the epithelia and connective tissue that surround and support the tooth. Subdivisions of the gingiva include masticatory mucosa covering its external surface, sulcular epithelium facing the gingival sulcus, and attachment epithelium that attaches to the tooth. Fibers in the gingival lamina propria anchor the gingiva to the tooth and to the alveolar bone. 10x, 50x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lining mucosa",
+      "explicacao_original": "Lining mucosa is similar to that found in other regions of the oral cavity, possessing a stratified squamous moist epithelium overlying a connective tissue layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Lining mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lining mucosa is similar to that found in other regions of the oral cavity, possessing a stratified squamous moist epithelium overlying a connective tissue layer.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Muco-gingival junction",
+      "explicacao_original": "At the junction of the lining mucosa with the masticatory mucosa, the moist stratified squamous epithelium of the lining mucosa changes to keratinized, either para- or orthokeratinized, that resists abrasion during chewing. In addition, the rete ridges and dermal papilla become more numerous and closely spaced to provide greater anchorage for the epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Muco-gingival junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the junction of the lining mucosa with the masticatory mucosa, the moist stratified squamous epithelium of the lining mucosa changes to keratinized, either para- or orthokeratinized, that resists abrasion during chewing. In addition, the rete ridges and dermal papilla become more numerous and closely spaced to provide greater anchorage for the epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Masticatory mucosa",
+      "explicacao_original": "Masticatory mucosa covers the attached and free gingiva. It possesses a stratified squamous epithelium, either para- or orthokeratinized. The highly interdigitated rete ridges and connective tissue papillae firmly attach the epithelium to the lamina propria, which in turn is anchored to the tooth and the underlying alveolar bone by collagen fibers (blue arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Masticatory mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Masticatory mucosa covers the attached and free gingiva. It possesses a stratified squamous epithelium, either para- or orthokeratinized. The highly interdigitated rete ridges and connective tissue papillae firmly attach the epithelium to the lamina propria, which in turn is anchored to the tooth and the underlying alveolar bone by collagen fibers (blue arrows).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Free gingiva",
+      "explicacao_original": "The free gingiva (rectangles) surrounds the tooth and creates a cuff or collar of gingival tissue. The free gingival groove (arrow) marks the boundary between free and attached gingiva.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Free gingiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The free gingiva (rectangles) surrounds the tooth and creates a cuff or collar of gingival tissue. The free gingival groove (arrow) marks the boundary between free and attached gingiva.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sulcular epithelium",
+      "explicacao_original": "The masticatory mucosa extends to the free gingival margin where it becomes continuous with that of the sulcular epithelium. The sulcular epithelium faces the sulcular groove and is composed of a stratified squamous moist epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Sulcular epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The masticatory mucosa extends to the free gingival margin where it becomes continuous with that of the sulcular epithelium. The sulcular epithelium faces the sulcular groove and is composed of a stratified squamous moist epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Gingival sulcus",
+      "explicacao_original": "The gingival sulcus is a circular moat around the tooth and is located between the sulcular epithelium and the enamel of the tooth. The approximate location of the enamel is illustrated in blue. Because of its calcium content, the enamel is lost during the preparation of this decalcified tooth preparation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Gingival sulcus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingival sulcus is a circular moat around the tooth and is located between the sulcular epithelium and the enamel of the tooth. The approximate location of the enamel is illustrated in blue. Because of its calcium content, the enamel is lost during the preparation of this decalcified tooth preparation.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Attachment epithelium",
+      "explicacao_original": "The attachment or junctional epithelium attaches to the tooth enamel. In older individuals with gingival regression, the junctional epithelium may also contact the cementum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Attachment epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The attachment or junctional epithelium attaches to the tooth enamel. In older individuals with gingival regression, the junctional epithelium may also contact the cementum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Periodontal ligament",
+      "explicacao_original": "The periodontal ligament is the fibrous connective tissue that attaches the cementum of the tooth to the surrounding alveolar bone. The periodontal ligament is richly vascularized and contains many nerve endings for pain and pressure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Periodontal ligament' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periodontal ligament is the fibrous connective tissue that attaches the cementum of the tooth to the surrounding alveolar bone. The periodontal ligament is richly vascularized and contains many nerve endings for pain and pressure.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Alveolar bone",
+      "explicacao_original": "The periodontal ligament is the fibrous connective tissue that attaches the cementum of the tooth to the surrounding alveolar bone. The periodontal ligament is richly vascularized along nerve endings for pain and pressure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Alveolar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periodontal ligament is the fibrous connective tissue that attaches the cementum of the tooth to the surrounding alveolar bone. The periodontal ligament is richly vascularized along nerve endings for pain and pressure.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Cementum and dentin",
+      "explicacao_original": "Cementum (black arrows) is a mineralized tissue that forms a thin layer that surrounds the dentin of the tooth root. Dentin (blue arrows), another mineralized tissue, provides the bulk and general form of the tooth. Both cementum and dentin are continuously formed throughout life.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-10-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Cementum and dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum (black arrows) is a mineralized tissue that forms a thin layer that surrounds the dentin of the tooth root. Dentin (blue arrows), another mineralized tissue, provides the bulk and general form of the tooth. Both cementum and dentin are continuously formed throughout life.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Dental pulp",
+      "explicacao_original": "Dental pulp consists of loose connective tissue that is richly vascularized and innervated. Only small portion of the pulp cavity is visible in this section.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-5A-11-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Dental pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dental pulp consists of loose connective tissue that is richly vascularized and innervated. Only small portion of the pulp cavity is visible in this section.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.Dig_.OC_.OM-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Gingiva'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-5A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-5/, acesso em 2026-08-07."
+    }
+  ]
+}

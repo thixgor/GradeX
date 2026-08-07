@@ -1,0 +1,104 @@
+{
+  "id": 3955,
+  "titulo": "Cilia",
+  "titulo_wordpress": "Associated structures 12",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 12"
+  ],
+  "descricao_original": "This electron micrograph of the trachea shows the apical surface of ciliated cell in the respiratory epithelium (left). Each cilium is enclosed by the plasma membrane and contains a core of microtubules called the axoneme. The axoneme microtubules are anchored by, and emanate from, the basal body, which also consists of microtubules. Also present are shorter, non-motile microvilli. Monkey trachea 1500x, 10,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cilia', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Descricao original da pagina: This electron micrograph of the trachea shows the apical surface of ciliated cell in the respiratory epithelium (left). Each cilium is enclosed by the plasma membrane and contains a core of microtubules called the axoneme. The axoneme microtubules are anchored by, and emanate from, the basal body, which also consists of microtubules. Also present are shorter, non-motile microvilli. Monkey trachea 1500x, 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelial cell",
+      "explicacao_original": "This electron micrograph of the trachea shows the apical surface of ciliated cell in the respiratory epithelium (left). Each cilium is enclosed by the plasma membrane and contains a core of microtubules called the axoneme. The axoneme microtubules are anchored by, and emanate from, the basal body, which also consists of microtubules. Also present are shorter, non-motile microvilli. Monkey trachea 1500x, 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Epithelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of the trachea shows the apical surface of ciliated cell in the respiratory epithelium (left). Each cilium is enclosed by the plasma membrane and contains a core of microtubules called the axoneme. The axoneme microtubules are anchored by, and emanate from, the basal body, which also consists of microtubules. Also present are shorter, non-motile microvilli. Monkey trachea 1500x, 10,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cilia",
+      "explicacao_original": "Each cilium is associated with a basal body, from which microtubules originate to form the axoneme. The axoneme, forming the core of a cilium or a flagellum, consists of nine pairs of microtubules surrounding two central, individual microtubules. The axoneme extends the length of the cilium. A similar axoneme is present in flagella.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each cilium is associated with a basal body, from which microtubules originate to form the axoneme. The axoneme, forming the core of a cilium or a flagellum, consists of nine pairs of microtubules surrounding two central, individual microtubules. The axoneme extends the length of the cilium. A similar axoneme is present in flagella.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axoneme",
+      "explicacao_original": "Each cilium is associated with a basal body, from which microtubules originate to form the axoneme. The axoneme, forming the core of a cilium or a flagellum, consists of nine pairs of microtubules surrounding two central, individual microtubules. The axoneme extends the length of the cilium. A similar axoneme is present in flagella.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Lin_.AS-12-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-2A-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Axoneme' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each cilium is associated with a basal body, from which microtubules originate to form the axoneme. The axoneme, forming the core of a cilium or a flagellum, consists of nine pairs of microtubules surrounding two central, individual microtubules. The axoneme extends the length of the cilium. A similar axoneme is present in flagella.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "The arrangement of microtubules in the basal body differs from that in the axoneme. The basal body consists of nine triplets of microtubules but lacks the two central microtubules. The basal body has the same structures as a centriole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arrangement of microtubules in the basal body differs from that in the axoneme. The basal body consists of nine triplets of microtubules but lacks the two central microtubules. The basal body has the same structures as a centriole.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Microvilli",
+      "explicacao_original": "Microvilli are much shorter than cilia and are non-motile. They contain a core of microfilaments rather than microtubules seen in cilia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microvilli are much shorter than cilia and are non-motile. They contain a core of microfilaments rather than microtubules seen in cilia.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "The plasma membrane encloses the entire cilia structure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membrane encloses the entire cilia structure.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "A number of organelles are visible in the cytoplasm of the epithelial cell, including mitochondria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A number of organelles are visible in the cytoplasm of the epithelial cell, including mitochondria.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Junctional complexes",
+      "explicacao_original": "A junctional complex is present in the apical region of epithelial cells and consists of a complex of intercellular attachments between the plasma membranes of adjacent cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-12-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-12-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-12a-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-12a-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-12a-USE.jpg'. Destaca a estrutura ou conceito 'Junctional complexes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A junctional complex is present in the apical region of epithelial cells and consists of a complex of intercellular attachments between the plasma membranes of adjacent cells.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 12. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-12/, acesso em 2026-08-07."
+    }
+  ]
+}

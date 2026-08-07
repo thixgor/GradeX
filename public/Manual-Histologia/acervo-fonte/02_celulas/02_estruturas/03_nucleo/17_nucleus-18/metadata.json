@@ -1,0 +1,93 @@
+{
+  "id": 1263,
+  "titulo": "Nucleolus",
+  "titulo_wordpress": "Nucleus 18",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Núcleo",
+    "Nucleus 18"
+  ],
+  "descricao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "arquivo": "imagens/base/C.S.N.-18.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nucleolus', no setor Células > Estruturas > Núcleo > Nucleus 18. Descricao original da pagina: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-18-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-6-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-18-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-1-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleolar organizing centers",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-18-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-2-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Nucleolar organizing centers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pars fibrosa",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-18-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-3-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Pars fibrosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Pars granulosa",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-18-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-4-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Pars granulosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.S.N-18-env-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-env-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Polysomes",
+      "explicacao_original": "Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-18-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-18-5-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nucleolus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-18.jpg'. Destaca a estrutura ou conceito 'Polysomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three regions of the nucleolus are visible in this electron micrograph. The pale areas are the nucleolar organizing centers. The most dense areas are the pars fibrosa, which contain newly synthesized primary transcripts of RNA genes. The pars granulosa has a granular appearance and contains maturing ribosomal particles. 30,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 18. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-18/, acesso em 2026-08-07."
+    }
+  ]
+}

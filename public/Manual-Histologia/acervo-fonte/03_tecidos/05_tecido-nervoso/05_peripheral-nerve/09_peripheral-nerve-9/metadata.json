@@ -1,0 +1,63 @@
+{
+  "id": 3066,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 9"
+  ],
+  "descricao_original": "A longitudinal section of a nerve fascicle, shows several myelinated axons. Two nodes of Ranvier are visible between adjacent internodes of the myelin sheath. The axon can be seen passing through the nodal region; Schwann cell nuclei are visible between vacuolated-appearing myelin sheaths. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-8.jpg",
+      "arquivo": "imagens/base/T.N.PN-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 9. Descricao original da pagina: A longitudinal section of a nerve fascicle, shows several myelinated axons. Two nodes of Ranvier are visible between adjacent internodes of the myelin sheath. The axon can be seen passing through the nodal region; Schwann cell nuclei are visible between vacuolated-appearing myelin sheaths. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axons",
+      "explicacao_original": "A longitudinal section of a nerve fascicle, shows several myelinated axons. Two nodes of Ranvier are visible between adjacent internodes of the myelin sheath. The axon can be seen passing through the nodal region; Schwann cell nuclei are visible between vacuolated-appearing myelin sheaths. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-8-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-8.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A longitudinal section of a nerve fascicle, shows several myelinated axons. Two nodes of Ranvier are visible between adjacent internodes of the myelin sheath. The axon can be seen passing through the nodal region; Schwann cell nuclei are visible between vacuolated-appearing myelin sheaths. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myelin sheaths",
+      "explicacao_original": "The myelin sheath is composed of a series of segments called internodes. Each internode consists of multiple, concentric wrappings of the plasma membrane of a single Schwann cell. The myelin membrane is uniquely high in lipid, which provides insulation for the axon and results in increased conduction velocity of the action potential.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-8-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-8.jpg'. Destaca a estrutura ou conceito 'Myelin sheaths' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The myelin sheath is composed of a series of segments called internodes. Each internode consists of multiple, concentric wrappings of the plasma membrane of a single Schwann cell. The myelin membrane is uniquely high in lipid, which provides insulation for the axon and results in increased conduction velocity of the action potential.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nodes of Ranvier",
+      "explicacao_original": "The node of Ranvier is a specialized region of the axonal plasma membrane located in the gap between adjacent myelin internodes. The node of Ranvier possesses a high concentration of sodium channels, which propagate the action potential.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-8-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-8-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-8.jpg'. Destaca a estrutura ou conceito 'Nodes of Ranvier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The node of Ranvier is a specialized region of the axonal plasma membrane located in the gap between adjacent myelin internodes. The node of Ranvier possesses a high concentration of sodium channels, which propagate the action potential.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "A longitudinal section of a nerve fascicle, shows several myelinated axons. Two nodes of Ranvier are visible between adjacent internodes of the myelin sheath. The axon can be seen passing through the nodal region; Schwann cell nuclei are visible between vacuolated-appearing myelin sheaths. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-8-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-8-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.PN-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-8.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A longitudinal section of a nerve fascicle, shows several myelinated axons. Two nodes of Ranvier are visible between adjacent internodes of the myelin sheath. The axon can be seen passing through the nodal region; Schwann cell nuclei are visible between vacuolated-appearing myelin sheaths. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-9/, acesso em 2026-08-07."
+    }
+  ]
+}

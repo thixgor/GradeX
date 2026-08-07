@@ -1,0 +1,73 @@
+{
+  "id": 3003,
+  "titulo": "Bipolar neuron",
+  "titulo_wordpress": "Neuron types 17",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 17"
+  ],
+  "descricao_original": "A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-16-flip.jpg",
+      "arquivo": "imagens/base/T.N.Type-16-flip.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 17. Descricao original da pagina: A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dendrites",
+      "explicacao_original": "A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-16-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-16-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-16-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-16-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-16-flip.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 17. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Neuronal cell bodies",
+      "explicacao_original": "A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-16-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-16-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-16-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-16-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-16-flip.jpg'. Destaca a estrutura ou conceito 'Neuronal cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 17. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axons",
+      "explicacao_original": "A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-16-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-16-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-16-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-16-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-16-flip.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 17. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Schwann cells",
+      "explicacao_original": "A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-16-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-16-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-16-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-16-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-16-flip.jpg'. Destaca a estrutura ou conceito 'Schwann cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 17. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Bone",
+      "explicacao_original": "A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Type-16-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-16-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-16-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.Type-16-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-16-flip.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A dendrite originates in the organ of Corti and extends to a bipolar, neuronal cell body located in this spiral ganglion. From the opposite pole of the cell body, an axon emerges which will join other axons to form the cochlear division of cranial nerve VIII. Ensheathing Schwann cells can also be seen accompanying both processes. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 17. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-17/, acesso em 2026-08-07."
+    }
+  ]
+}

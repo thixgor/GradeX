@@ -1,0 +1,2609 @@
+{
+  "id_pagina": 21542,
+  "id_h5p": "22",
+  "titulo": "Revestimento",
+  "titulo_original": "Epithelial tissues - Lining and covering quiz",
+  "url_origem": "https://digitalhistology.org/quizzes/lining-and-covering/",
+  "licenca_metadado_h5p": "U",
+  "questoes": [
+    {
+      "numero": 1,
+      "enunciado": "Identify the structures indicated by the arrows.",
+      "imagem": "imagens/file-5b3e3c007016d.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e3c007016d.jpg",
+      "alternativas": [
+        {
+          "texto": "Desmosomes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Hemidesmosomes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Basal bodies",
+          "correta": true,
+          "feedback": "CORRECT. This light micrograph shows a ciliated epithelium. Cilia can be distinguished from microvilli based on their height; 5-10 microns for cilia, ~1 micron for microvilli. In addition, each cilium has a dark-staining basal body that serves as the source of the microtubules that form the core of the cilium. Collectively, the basal bodies form a dark band just beneath the apical plasma membrane."
+        },
+        {
+          "texto": "Junctional complexes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Gap junctions",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "enunciado": "Classify the epithelium indicated by the double arrow.",
+      "imagem": "imagens/file-5b3e3cc69ecd6.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e3cc69ecd6.jpg",
+      "alternativas": [
+        {
+          "texto": "Simple columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified squamous, moist",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": true,
+          "feedback": "CORRECT. In a pseudostratified epithelium all cells rest on the basement membrane, however they are of differing heights with some that reach the free surface and others that do not. It appears stratified, hence the classification “pseudostratified”, because nuclei appear at different heights. This epithelium displays the surface specialization, stereocilia."
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "enunciado": "Identify the specific structure indicated by the arrows.",
+      "imagem": "imagens/file-5b3e3d8441a30.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e3d8441a30.jpg",
+      "alternativas": [
+        {
+          "texto": "Basement membrane",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Basal lamina",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lamina densa",
+          "correta": true,
+          "feedback": "CORRECT. The lamina densa is a component of the basal lamina. It appears dark and \"fuzzy\" due to the Type IV collagen it contains. The lamina lucida lies just above the lamina densa and the reticular lamina just below."
+        },
+        {
+          "texto": "Lamina lucida",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Reticular lamina",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "enunciado": "Classify the epithelium indicated by the arrow.",
+      "imagem": "imagens/file-5b3e3e3cb0682.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e3e3cb0682.jpg",
+      "alternativas": [
+        {
+          "texto": "Simple squamous",
+          "correta": true,
+          "feedback": "CORRECT. This epithelium consists of a single row of cells which are extremely flattened. Therefore, this is an example of a simple squamous epithelium."
+        },
+        {
+          "texto": "Simple cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Endothelium",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "enunciado": "Classify the epithelium indicated by the double arrow.",
+      "imagem": "imagens/file-5b3e3eb665a63.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e3eb665a63.jpg",
+      "alternativas": [
+        {
+          "texto": "Stratified cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified squamous, moist",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified squamous, dry",
+          "correta": true,
+          "feedback": "CORRECT. This epithelium consists of many layers of cells, and the uppermost cells are squamous-shaped. No nuclei are visible in these uppermost cells, indicating that they are not living. Therefore, this is a stratified squamous, dry (or keratinized) epithelium."
+        },
+        {
+          "texto": "Stratified columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "enunciado": "Identify the structures indicated by the arrows.",
+      "imagem": "imagens/file-5b3e3f579c9a4.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e3f579c9a4.jpg",
+      "alternativas": [
+        {
+          "texto": "Microtubules",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Microvilli",
+          "correta": true,
+          "feedback": "CORRECT. Microvilli are extensions of the plasma membrane, that are approximately 1.0 micron in height. They contain a core of actin microfilaments and serve to increase surface area. When microvilli occur across the entire free surface of a cell (as seen here), they form a brush, or striated, border."
+        },
+        {
+          "texto": "Stereocilia",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Villi",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cilia",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "enunciado": "Identify the structure indicated by the rectangle.",
+      "imagem": "imagens/file-5b3e40d61fdd1.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e40d61fdd1.jpg",
+      "alternativas": [
+        {
+          "texto": "Desmosome",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Zonula occludens",
+          "correta": true,
+          "feedback": "CORRECT. The zonula occludens is the portion of the junctional complex which is closest to the free surface of the epithelium. The zonula occludens is a tight junction in which adjacent plasma membranes are held in close apposition by membrane proteins. This apposition forms a physical barrier that restricts the movement of soluble molecules into the intercellular space between cells."
+        },
+        {
+          "texto": "Gap junction",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Hemidesmosome",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Zonula adherens",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "enunciado": "Classify the epithelium indicated by the double arrows.",
+      "imagem": "imagens/file-5b3e41c8f3314.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e41c8f3314.jpg",
+      "alternativas": [
+        {
+          "texto": "Simple squamous",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple columnar",
+          "correta": true,
+          "feedback": "CORRECT. This epithelium consists of a single role of tall columnar cells. In this image, this epithelium is lining the small intestine and the free surface is modified to form a brush border composed of closely packed microvilli. The increased surface area provided by the microvilli improves absorption of nutrients. Also present in this epithelium are unicellular, mucus-secreting goblet cells."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "enunciado": "Identify the structures indicated by the ovals.",
+      "imagem": "imagens/file-5b3e425f357d6.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e425f357d6.jpg",
+      "alternativas": [
+        {
+          "texto": "Plasma membrane",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Desmosome",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Gap junction",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Hemidesmosome",
+          "correta": true,
+          "feedback": "CORRECT. An epithelial cell is anchored to its underlying basal lamina by hemidesmosomes. As the name indicates, these structures consist of one half of a desmosome. These adherent junctions are prominent in electron micrographs due to the large number of intermediate filaments and attachment proteins on the cytoplasmic surface of the membrane."
+        },
+        {
+          "texto": "Zonula adherens",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "enunciado": "Classify the epithelium indicated by the double arrow.",
+      "imagem": "imagens/file-5b3e43194362a.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e43194362a.jpg",
+      "alternativas": [
+        {
+          "texto": "Stratified cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified squamous, moist",
+          "correta": true,
+          "feedback": "CORRECT. This is a stratified epithelium as judged by the multiple layers of cells which become progressively more flattened (squamous) as they reach the free surface. This epithelium is classified as moist because the cells at the surface are living and retain their nuclei and cytoplasm."
+        },
+        {
+          "texto": "Stratified squamous, dry",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "enunciado": "Identify the structures indicated by arrows.",
+      "imagem": "imagens/file-5b3e43957bdab.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e43957bdab.jpg",
+      "alternativas": [
+        {
+          "texto": "Microtubules",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Microvilli",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stereocilia",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Brush border",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cilia",
+          "correta": true,
+          "feedback": "CORRECT. Cilia appear as densely packed, hair-like, motile extensions from the apical cell surface, 5-10 microns in length. Each cilium has a basal body from which microtubules emanate, forming the core of the cilium, called the axoneme."
+        }
+      ]
+    },
+    {
+      "numero": 12,
+      "enunciado": "Classify the epithelium indicated by the double arrows.",
+      "imagem": "imagens/file-5b3e450f3e382.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e450f3e382.jpg",
+      "alternativas": [
+        {
+          "texto": "Stratified squamous, moist",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified squamous, dry",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple columnar",
+          "correta": true,
+          "feedback": "CORRECT. These cells all contact the basement membrane, and all are columnar in shape. Therefore, this is a simple columnar epithelium. This epithelium is distinguished from a stratified or pseudostratified epithelium, because the nuclei are all at the same height relative to the basal surface of the epithelium."
+        }
+      ]
+    },
+    {
+      "numero": 13,
+      "enunciado": "Identify the structures indicated by the rectangles.",
+      "imagem": "imagens/file-5b3e45a699070.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e45a699070.jpg",
+      "alternativas": [
+        {
+          "texto": "Desmosomes",
+          "correta": true,
+          "feedback": "CORRECT. Desmosomes are a type of adherent junction that serve to attach cell to one another. Desmosomes are a symmetrical junctions with mirror-image protein complexes in adjacent cells. Membrane proteins extend from these complexes to overlap with similar proteins from neighboring cells to provide the attachment."
+        },
+        {
+          "texto": "Zonula occludens",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Gap junctions",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Hemidesmosomes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Zonula adherens",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 14,
+      "enunciado": "Classify the epithelium indicated by the arrows.",
+      "imagem": "imagens/file-5b3e464ab104d.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e464ab104d.jpg",
+      "alternativas": [
+        {
+          "texto": "Simple squamous",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple cuboidal",
+          "correta": true,
+          "feedback": "CORRECT. These tubules consist of a single row of cells which are of nearly equal height and width. Therefore, this is a simple cuboidal epithelium. While the cell membranes are not discernable, the overall shape of the cell can be inferred from the shape of the nucleus. In this case, the spherical nucleus indicates that the cell is box-shaped rather than flat or column-shaped."
+        },
+        {
+          "texto": "Simple columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 15,
+      "enunciado": "Identify the structures indicated by the arrows.",
+      "imagem": "imagens/file-5b3e46de2f665.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e46de2f665.jpg",
+      "alternativas": [
+        {
+          "texto": "Microtubules",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cilia",
+          "correta": true,
+          "feedback": "CORRECT. Cilia appear as densely packed, hair-like, motile extensions from the apical cell surface, 5-10 microns in length. Each cilium has a basal body from which microtubules emanate forming the core of the cilium, called the axoneme. Seen in this light microscopic image, the basal bodies collectively appear as a dark band along the apical surface of the cell."
+        },
+        {
+          "texto": "Microvilli",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Brush border",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stereocilia",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 16,
+      "enunciado": "Classify the epithelium indicated by the double arrow.",
+      "imagem": "imagens/file-5b3e4762e46d5.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e4762e46d5.jpg",
+      "alternativas": [
+        {
+          "texto": "Stratified squamous moist >",
+          "correta": true,
+          "feedback": "CORRECT. This is a stratified epithelium as judged by the multiple layers of cells which become progressively more flattened (squamous) as they reach the free surface. This epithelium is classified as moist because the cells at the surface are living and retain their nuclei and cytoplasm. A nucleated squamous cell being sloughed from the surface is visible in this image."
+        },
+        {
+          "texto": "Stratified cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stratified squamous dry",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 17,
+      "enunciado": "Classify the epithelium indicated by the arrows.",
+      "imagem": "imagens/file-5b3e47ec01fe8.jpg",
+      "caminho_h5p_imagem": "images/file-5b3e47ec01fe8.jpg",
+      "alternativas": [
+        {
+          "texto": "Simple squamous",
+          "correta": true,
+          "feedback": "CORRECT. This epithelium consists of a single row of cells which are extremely flattened. Therefore, this is an example of a simple squamous epithelium. Endothelium is a specific name that denotes the unique simple squamous epithelium that lines blood vessels. The epithelium indicated here lines a specific segment of the kidney tubules (nephrons)."
+        },
+        {
+          "texto": "Simple cuboidal",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Simple columnar",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Pseudostratified",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Endothelium",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    }
+  ],
+  "json_h5p_original": {
+    "introPage": {
+      "showIntroPage": false,
+      "startButtonText": "Start Quiz",
+      "introduction": ""
+    },
+    "progressType": "textual",
+    "passPercentage": 50,
+    "texts": {
+      "prevButton": "Previous question",
+      "nextButton": "Next question",
+      "finishButton": "Finish",
+      "textualProgress": "Question: @current of @total questions",
+      "jumpToQuestion": "Question %d of %total",
+      "questionLabel": "Question",
+      "readSpeakerProgress": "Question @current of @total",
+      "unansweredText": "Unanswered",
+      "answeredText": "Answered",
+      "currentQuestionText": "Current question"
+    },
+    "disableBackwardsNavigation": false,
+    "randomQuestions": true,
+    "endGame": {
+      "showResultPage": true,
+      "showSolutionButton": true,
+      "noResultMessage": "Finished",
+      "message": "Your result:",
+      "overallFeedback": [
+        {
+          "from": 0,
+          "to": 100
+        }
+      ],
+      "solutionButtonText": "Show solution",
+      "retryButtonText": "Retry",
+      "finishButtonText": "Finish",
+      "showAnimations": false,
+      "skippable": false,
+      "skipButtonText": "Skip video"
+    },
+    "override": {
+      "checkButton": true
+    },
+    "questions": [
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e3c007016d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "f6f20aa6-635b-4c4b-a786-0821e76092a5"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDesmosomes\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nHemidesmosomes\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This light micrograph shows a ciliated epithelium.&nbsp; Cilia can be distinguished from microvilli based on their height; 5-10 microns for cilia, ~1 micron for microvilli.&nbsp; In addition, each cilium has a dark-staining basal body that serves as the source of the microtubules that form the core of the cilium. &nbsp;Collectively, the basal bodies form a dark band just beneath the apical plasma membrane.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nBasal bodies\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nJunctional complexes\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGap junctions\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "f5a5a477-c83b-4bbc-b881-717408093035"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e3cc69ecd6.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "ecb1e23e-728d-447b-91da-ae712fea0cbc"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, moist\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple cuboidal\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified columnar\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; In a pseudostratified epithelium all cells rest on the basement membrane, however they are of differing heights with some that reach the free surface and others that do not.&nbsp; It appears stratified, hence the classification “pseudostratified”, because nuclei appear at different heights.&nbsp; This epithelium displays the surface specialization, stereocilia. \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Pseudostratified </div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "a6a7ce22-6975-493d-9f57-c3060776704c"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e3d8441a30.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "403e6b84-ce92-48fa-bc6b-0d6b35a97635"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nBasement membrane\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nBasal lamina\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; The lamina densa is a component of the basal lamina.&nbsp; It appears dark and \"fuzzy\" due to the Type IV collagen it contains.&nbsp; The lamina lucida lies just above the lamina densa and the reticular lamina just below.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLamina densa\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nLamina lucida\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nReticular lamina\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the specific structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "181f2453-693e-46c2-8e50-ca9942d3adfe"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e3e3cb0682.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c0bed152-7388-4664-852f-caabec6986b4"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This epithelium consists of a single row of cells which are extremely flattened.&nbsp; Therefore, this is an example of a simple squamous epithelium.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Simple squamous </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple cuboidal\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nEndothelium\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "399a3c97-0cbe-4d61-a832-8bc23c258a5c"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e3eb665a63.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "ee9f3fa0-1137-4148-a2a2-3d898ebb3fb6"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified cuboidal\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, moist\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This epithelium consists of many layers of cells, and the uppermost cells are squamous-shaped.&nbsp; No nuclei are visible in these uppermost cells, indicating that they are not living.&nbsp; Therefore, this is a stratified squamous, dry (or keratinized) epithelium.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, dry\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "ad5c099c-ebba-491a-9992-92a4ee9b7b5e"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e3f579c9a4.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c4e464e5-a0a6-4002-9ad9-778766dd1d47"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMicrotubules\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Microvilli are extensions of the plasma membrane, that are approximately 1.0 micron in height.&nbsp; They contain a core of actin microfilaments and serve to increase surface area.&nbsp; When microvilli occur across the entire free surface of a cell (as seen here), they form a brush, or striated, border.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Microvilli </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Stereocilia</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Villi</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cilia</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "bdb314f9-2870-490e-8720-d441a21b80e9"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e40d61fdd1.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "14c8dcfc-3c8f-4cdc-baee-500126355e89"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDesmosome\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The zonula occludens is the portion of the junctional complex which is closest to the free surface of the epithelium.&nbsp; The zonula occludens is a tight junction in which adjacent plasma membranes are held in close apposition by membrane proteins.&nbsp; This apposition forms a physical barrier that restricts the movement of soluble molecules into the intercellular space between cells.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nZonula occludens\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGap junction\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nHemidesmosome\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nZonula adherens\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the rectangle.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "8df9aec6-43bc-475d-9ed4-105c42cf1a0b"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e41c8f3314.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "4b563869-4c37-40a1-8006-946f188a6407"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple squamous\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple cuboidal\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This epithelium consists of a single role of tall columnar cells.&nbsp; In this image, this epithelium is lining the small intestine and the free surface is modified to form a brush border composed of closely packed microvilli.&nbsp; The increased surface area provided by the microvilli improves absorption of nutrients.&nbsp; Also present in this epithelium are unicellular, mucus-secreting goblet cells.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified columnar\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the double arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "56839fba-8d0e-4967-a17c-2a005bfd0072"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e425f357d6.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "f7f87c64-1edc-46ea-95f3-6d2521dbffac"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPlasma membrane\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDesmosome\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGap junction\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; An epithelial cell is anchored to its underlying basal lamina by hemidesmosomes.&nbsp; As the name indicates, these structures consist of one half of a desmosome.&nbsp; These adherent junctions are prominent in electron micrographs due to the large number of intermediate filaments and attachment proteins on the cytoplasmic surface of the membrane.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nHemidesmosome\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nZonula adherens\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the ovals.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "bbdcde63-6721-4643-94b1-6ca58562228f"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e43194362a.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "9a623327-3176-4a27-95d4-e5b276a88fdb"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified cuboidal\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This is a stratified epithelium as judged by the multiple layers of cells which become progressively more flattened (squamous) as they reach the free surface.&nbsp; This epithelium is classified as moist because the cells at the surface are living and retain their nuclei and cytoplasm.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, moist\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, dry\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "741cc7d7-701e-44e6-9b31-eacbce2fb371"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e43957bdab.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "2a2d4978-20d7-4760-a00c-0eeef857e6fa"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMicrotubules\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMicrovilli\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStereocilia\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nBrush border\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Cilia appear as densely packed, hair-like, motile extensions from the apical cell surface, 5-10 microns in length.&nbsp; Each cilium has a basal body from which microtubules emanate, forming the core of the cilium, called the axoneme.&nbsp; \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cilia </div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "9414a0f7-615e-4208-8d14-670f3e4bf89b"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e450f3e382.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "8c50c289-e792-4451-8cb1-1e2236b614c5"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, moist\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous, dry\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; These cells all contact the basement membrane, and all are columnar in shape.&nbsp; Therefore, this is a simple columnar epithelium.&nbsp; This epithelium is distinguished from a stratified or pseudostratified epithelium, because the nuclei are all at the same height relative to the basal surface of the epithelium.&nbsp;&nbsp;&nbsp; \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple columnar\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the double arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "279c432e-0193-4ca1-8998-f7b8afbfbfff"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e45a699070.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "0263f65a-bef0-4bde-bf9d-a877e26227e3"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Desmosomes are a type of adherent junction that serve to attach cell to one another.&nbsp; Desmosomes are a symmetrical junctions with mirror-image protein complexes in adjacent cells.&nbsp; Membrane proteins extend from these complexes to overlap with similar proteins from neighboring cells to provide the attachment.&nbsp; \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Desmosomes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nZonula occludens\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGap junctions\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nHemidesmosomes\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nZonula adherens\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the rectangles.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "154cd3c0-df7f-4aad-8dbc-786771886cc9"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e464ab104d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "7ab948fe-9924-4360-ab5e-90a4c2aaf041"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple squamous\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; These tubules consist of a single row of cells which are of nearly equal height and width.&nbsp; Therefore, this is a simple cuboidal epithelium.&nbsp; While the cell membranes are not discernable, the overall shape of the cell can be inferred from the shape of the nucleus.&nbsp; In this case, the spherical nucleus indicates that the cell is box-shaped rather than flat or column-shaped.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple cuboidal\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified columnar\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "8e37f86a-7f76-4810-ac28-034ce68636e0"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e46de2f665.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "a295812c-90fd-415a-b238-285f047ba071"
+          },
+          "answers": [
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMicrotubules\n</div>\n"
+            },
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp; Cilia appear as densely packed, hair-like, motile extensions from the apical cell surface, 5-10 microns in length.&nbsp; Each cilium has a basal body from which microtubules emanate forming the core of the cilium, called the axoneme.&nbsp; Seen in this light microscopic image, the basal bodies collectively appear as a dark band along the apical surface of the cell.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cilia </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Microvilli</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nBrush border\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStereocilia\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "cb01a5e3-05e2-4b20-85f7-4648f326ed05"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e4762e46d5.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "f4f4f814-dc7d-4ad3-99e5-96d4b0c691f4"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This is a stratified epithelium as judged by the multiple layers of cells which become progressively more flattened (squamous) as they reach the free surface.&nbsp; This epithelium is classified as moist because the cells at the surface are living and retain their nuclei and cytoplasm.&nbsp; A nucleated squamous cell being sloughed from the surface is visible in this image.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous moist &gt;\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified cuboidal\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStratified squamous dry\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "08cd1be7-ca0f-460c-92ed-bbcbd88b21f4"
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b3e47ec01fe8.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "d048d762-6ca9-45dd-a536-35b009758bab"
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; This epithelium consists of a single row of cells which are extremely flattened.&nbsp; Therefore, this is an example of a simple squamous epithelium.&nbsp; Endothelium is a specific name that denotes the unique simple squamous epithelium that lines blood vessels. &nbsp;The epithelium indicated here lines a specific segment of the kidney tubules (nephrons). \n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple squamous\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple cuboidal\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nSimple columnar\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nPseudostratified\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Endothelium</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the epithelium indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "9c87f155-b650-424f-8052-6de966200534"
+      }
+    ]
+  }
+}

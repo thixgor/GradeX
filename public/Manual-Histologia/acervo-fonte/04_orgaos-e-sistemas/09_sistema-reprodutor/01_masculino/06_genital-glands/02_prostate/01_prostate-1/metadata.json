@@ -1,0 +1,127 @@
+{
+  "id": 15809,
+  "titulo": "Prostate",
+  "titulo_wordpress": "Prostate 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Genital Glands",
+    "Prostate",
+    "Prostate 1"
+  ],
+  "descricao_original": "The single prostate gland, lying beneath the urinary bladder, is composed of 30-50 individual glands whose secretions empty into the prostatic urethra. The prostate is surrounded by a fibromuscular capsule; the connective tissue around individual glands is also rich in smooth muscle. Noncancerous enlargement of the prostate (benign prostatic hypertrophy) commonly occurs in older men, producing urinary symptoms due to its proximity to the urethra and bladder. Cancers of the prostate (adenocarcinomas) originate from the gland cells. 5x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from The University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "arquivo": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Prostate', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Descricao original da pagina: The single prostate gland, lying beneath the urinary bladder, is composed of 30-50 individual glands whose secretions empty into the prostatic urethra. The prostate is surrounded by a fibromuscular capsule; the connective tissue around individual glands is also rich in smooth muscle. Noncancerous enlargement of the prostate (benign prostatic hypertrophy) commonly occurs in older men, producing urinary symptoms due to its proximity to the urethra and bladder. Cancers of the prostate (adenocarcinomas) originate from the gland cells. 5x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Prostatic urethra",
+      "explicacao_original": "The prostatic urethra receives the secretions of the prostate gland. It passes out of the prostate as the membranous urethra and becomes the penile (spongy) urethra that runs the length of the penis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/O.R.M.GG_.P.01A-UrethraA.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-UrethraA.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Prostatic urethra' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The prostatic urethra receives the secretions of the prostate gland. It passes out of the prostate as the membranous urethra and becomes the penile (spongy) urethra that runs the length of the penis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Prostatic glands",
+      "explicacao_original": "Prostatic glands secrete a milky, slightly alkaline fluid containing citric acid, zinc, prostate-specific antigen (PSA) and fibrinolysin. The latter two are serine hydrolases that act to liquify the ejaculate in the vagina. The level of PSA in blood is used as a screening tool for prostate cancer. Prostatic glands are arranged in three roughly concentric zones around the prostatic urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A-9-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-9-ping.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Prostatic glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Prostatic glands secrete a milky, slightly alkaline fluid containing citric acid, zinc, prostate-specific antigen (PSA) and fibrinolysin. The latter two are serine hydrolases that act to liquify the ejaculate in the vagina. The level of PSA in blood is used as a screening tool for prostate cancer. Prostatic glands are arranged in three roughly concentric zones around the prostatic urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner zone",
+      "explicacao_original": "The inner zone occupies about 5% of the prostate volume and contains periurethral glands. Hyperplasia of these glands produces nodules that compress the urethra causing difficulties in urination. This condition, benign prostatic hyperplasia (BPH), is common in older men.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Inner zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner zone occupies about 5% of the prostate volume and contains periurethral glands. Hyperplasia of these glands produces nodules that compress the urethra causing difficulties in urination. This condition, benign prostatic hyperplasia (BPH), is common in older men.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Central zone",
+      "explicacao_original": "The central zone occupies about 25% of the prostate gland volume and contains submucosal glands with longer ducts than the periurethral glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Central zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The central zone occupies about 25% of the prostate gland volume and contains submucosal glands with longer ducts than the periurethral glands.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Peripheral zone",
+      "explicacao_original": "The peripheral zone occupies about 70% of the prostate volume and contains the main glands of the prostate and possess long ducts. The glands of the peripheral zone give rise to malignant tumors (adenocarcinomas) of the prostate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Peripheral zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The peripheral zone occupies about 70% of the prostate volume and contains the main glands of the prostate and possess long ducts. The glands of the peripheral zone give rise to malignant tumors (adenocarcinomas) of the prostate.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ejaculatory ducts",
+      "explicacao_original": "Ejaculatory ducts are paired structures, each formed by the union of the ductus deferens with the duct of the seminal vesicle. Ejaculatory ducts traverse the prostate gland and empty into the prostatic urethra at the seminal colliculus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/O.R.M.GG_.P.01A-Ejac-ductsA.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-Ejac-ductsA.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Ejaculatory ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ejaculatory ducts are paired structures, each formed by the union of the ductus deferens with the duct of the seminal vesicle. Ejaculatory ducts traverse the prostate gland and empty into the prostatic urethra at the seminal colliculus.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Seminal colliculus",
+      "explicacao_original": "The seminal colliculus is a longitudinally-oriented ridge along the posterior wall of the prostatic urethra and is the site of opening for the ejaculatory ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/O.R.M.GG_.P.01A-Sem-collA.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-Sem-collA.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Seminal colliculus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The seminal colliculus is a longitudinally-oriented ridge along the posterior wall of the prostatic urethra and is the site of opening for the ejaculatory ducts.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Prostatic utricle",
+      "explicacao_original": "The prostatic utricle is a small, epithelium-lined diverticulum of the prostatic urethra. It is located between the ejaculatory ducts where these ducts enter the urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-7-ping.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Prostatic utricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The prostatic utricle is a small, epithelium-lined diverticulum of the prostatic urethra. It is located between the ejaculatory ducts where these ducts enter the urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image shows an area similar to that in the rectangle at higher magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A-10-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.01A-10-ping.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image shows an area similar to that in the rectangle at higher magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from The University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Michigan-source-ping-2-3.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-3.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.GG_.P.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.01A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from The University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-1/, acesso em 2026-08-07."
+    }
+  ]
+}

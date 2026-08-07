@@ -1,0 +1,54 @@
+{
+  "id": 16919,
+  "titulo": "White adipose connective tissue",
+  "titulo_wordpress": "Adipose 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Special",
+    "Adipose",
+    "Adipose 2"
+  ],
+  "descricao_original": "This adipose connective tissue is white adipose tissue, made up of adipocytes with a single lipid droplet (unilocular adipocytes). White adipose tissue predominates in the adult and functions to store lipid. A second type of adipose tissue, brown adipose tissue, contains cells with multiple lipid droplets (multilocular adipocytes) and is found in infants and hibernating animals. Hypodermis 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/special/adipose/adipose-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2.jpg",
+      "arquivo": "imagens/base/T.CT_.Special.Adipose-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'White adipose connective tissue', no setor Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 2. Descricao original da pagina: This adipose connective tissue is white adipose tissue, made up of adipocytes with a single lipid droplet (unilocular adipocytes). White adipose tissue predominates in the adult and functions to store lipid. A second type of adipose tissue, brown adipose tissue, contains cells with multiple lipid droplets (multilocular adipocytes) and is found in infants and hibernating animals. Hypodermis 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "This adipose connective tissue is white adipose tissue, made up of adipocytes with a single lipid droplet (unilocular adipocytes). White adipose tissue predominates in the adult and functions to store lipid. A second type of adipose tissue, brown adipose tissue, contains cells with multiple lipid droplets (multilocular adipocytes) and is found in infants and hibernating animals. Hypodermis 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Adipose-2-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'White adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-2.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This adipose connective tissue is white adipose tissue, made up of adipocytes with a single lipid droplet (unilocular adipocytes). White adipose tissue predominates in the adult and functions to store lipid. A second type of adipose tissue, brown adipose tissue, contains cells with multiple lipid droplets (multilocular adipocytes) and is found in infants and hibernating animals. Hypodermis 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Adipocyte nuclei",
+      "explicacao_original": "This adipose connective tissue is white adipose tissue, made up of adipocytes with a single lipid droplet (unilocular adipocytes). White adipose tissue predominates in the adult and functions to store lipid. A second type of adipose tissue, brown adipose tissue, contains cells with multiple lipid droplets (multilocular adipocytes) and is found in infants and hibernating animals. Hypodermis 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Adipose-2-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'White adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-2.jpg'. Destaca a estrutura ou conceito 'Adipocyte nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This adipose connective tissue is white adipose tissue, made up of adipocytes with a single lipid droplet (unilocular adipocytes). White adipose tissue predominates in the adult and functions to store lipid. A second type of adipose tissue, brown adipose tissue, contains cells with multiple lipid droplets (multilocular adipocytes) and is found in infants and hibernating animals. Hypodermis 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lipid",
+      "explicacao_original": "In routinely prepared tissues, the alcohol dehydration step dissolves the lipid, thus leaving a large empty space. Lipid fixatives, such as osmium tetroxide, are necessary to retain the lipid.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Adipose-2-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Adipose-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Adipose-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'White adipose connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Adipose-2.jpg'. Destaca a estrutura ou conceito 'Lipid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In routinely prepared tissues, the alcohol dehydration step dissolves the lipid, thus leaving a large empty space. Lipid fixatives, such as osmium tetroxide, are necessary to retain the lipid.. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Adipose > Adipose 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/adipose/adipose-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "id": 17837,
+  "titulo": "Component composition",
+  "titulo_wordpress": "Overview 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Overview of the respiratory system",
+    "Overview 3"
+  ],
+  "descricao_original": "Except in the most terminal regions, the walls of respiratory passageways have a consistent, layered pattern. These layers are specialized, however, for each passageway and thin as passageways approach the alveoli. The layers include an epithelium, a lamina propria, an elastic fibers and/or smooth muscle layer; a supporting layer to maintain patency, and an outer connective tissue layer. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "arquivo": "imagens/base/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Component composition', no setor Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Descricao original da pagina: Except in the most terminal regions, the walls of respiratory passageways have a consistent, layered pattern. These layers are specialized, however, for each passageway and thin as passageways approach the alveoli. The layers include an epithelium, a lamina propria, an elastic fibers and/or smooth muscle layer; a supporting layer to maintain patency, and an outer connective tissue layer. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P01.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P01.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cilia",
+      "explicacao_original": "The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P02.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P02.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P03.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P03.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P04.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P04.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium lining respiratory passageways begins as pseudostratified columnar with cilia and goblet cells, commonly referred to as respiratory epithelium. A prominent basement membrane is also a common feature. The epithelium gradually decreases in height, with reduced cilia and goblet cells, transitioning through simple cuboidal to finally simple squamous in alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "A lamina propria, located beneath the epithelium, consists of loose connective tissue with many blood vessels that aid in temperature regulation of the air.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03.P05A-1.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P05A-1.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lamina propria, located beneath the epithelium, consists of loose connective tissue with many blood vessels that aid in temperature regulation of the air.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Smooth muscle/elastic lamina",
+      "explicacao_original": "In a respiratory passageway, the lamina propria may possess an interlacing meshwork of smooth muscle or an elastic lamina of longitudinally arranged elastic fibers. This layer is lacking, however, in the nasal cavities, pharynx and larynx.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P06.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P06.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Smooth muscle/elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In a respiratory passageway, the lamina propria may possess an interlacing meshwork of smooth muscle or an elastic lamina of longitudinally arranged elastic fibers. This layer is lacking, however, in the nasal cavities, pharynx and larynx.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Seromucous glands",
+      "explicacao_original": "The connective tissue layer beneath the smooth muscle and/or elastic lamina frequently contains mixed glands. Their secretions moisten the epithelium and, with cilia, form a mucociliary escalator to remove particulate matter and pollutants from inhaled air and transport them upward. These glands decrease in number and eventually disappear as the diameter of the passageways decreases.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P07.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P07.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Seromucous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The connective tissue layer beneath the smooth muscle and/or elastic lamina frequently contains mixed glands. Their secretions moisten the epithelium and, with cilia, form a mucociliary escalator to remove particulate matter and pollutants from inhaled air and transport them upward. These glands decrease in number and eventually disappear as the diameter of the passageways decreases.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Supporting layer",
+      "explicacao_original": "Cartilage or bone supports the walls of the larger passageways, keeping the lumen open (patent). This supporting layer diminishes and eventually disappears as passageways become smaller in diameter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03.P08A.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P08A.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Supporting layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cartilage or bone supports the walls of the larger passageways, keeping the lumen open (patent). This supporting layer diminishes and eventually disappears as passageways become smaller in diameter.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Another layer of loose connective tissue surrounds the outer surface of the cartilage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03.P09A.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P09A.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another layer of loose connective tissue surrounds the outer surface of the cartilage.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Marcador 10",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P03.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P03-2.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Marcador 10' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Marcador 11",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P04.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P04-2.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Marcador 11' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Marcador 12",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P06.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P06-2.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Marcador 12' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Marcador 13",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/O.R.O.03.P07.png",
+      "arquivo": "imagens/marcadores/O.R.O.03.P07-2.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Marcador 13' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Marcador 14",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/",
+      "arquivo": "imagens/marcadores/marcador-14.png",
+      "imagem_base": "imagens/base/O.R.O.03-1-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.03-1-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Component composition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.03-1-fix.jpg'. Destaca a estrutura ou conceito 'Marcador 14' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

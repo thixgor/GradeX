@@ -1,0 +1,63 @@
+{
+  "id": 5380,
+  "titulo": "Annulus fibrosus",
+  "titulo_wordpress": "Heart 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Heart",
+    "Heart 11"
+  ],
+  "descricao_original": "An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11.jpg",
+      "arquivo": "imagens/base/Or.CV_.H-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Annulus fibrosus', no setor Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 11. Descricao original da pagina: An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Annulus fibrosus",
+      "explicacao_original": "An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Annulus fibrosus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-11.jpg'. Destaca a estrutura ou conceito 'Annulus fibrosus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Right atrioventricular valve",
+      "explicacao_original": "An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Annulus fibrosus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-11.jpg'. Destaca a estrutura ou conceito 'Right atrioventricular valve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interventricular septum membranous portion",
+      "explicacao_original": "An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Annulus fibrosus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-11.jpg'. Destaca a estrutura ou conceito 'Interventricular septum membranous portion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Annulus fibrosus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-11.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An annulus fibrosus is a ring-shaped, local thickening of connecting tissue that encircles the base of each cardiac valve. The annulus is a component of the cardiac skeleton and is continuous with the connective tissue core of each valve leaflet, providing support for the valve as well anchorage for the insertion of cardiac muscle fibers. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-11/, acesso em 2026-08-07."
+    }
+  ]
+}

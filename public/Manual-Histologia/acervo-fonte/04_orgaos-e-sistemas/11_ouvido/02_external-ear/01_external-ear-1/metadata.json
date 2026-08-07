@@ -1,0 +1,83 @@
+{
+  "id": 13572,
+  "titulo": "External ear",
+  "titulo_wordpress": "external ear 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "External Ear",
+    "external ear 1"
+  ],
+  "descricao_original": "The external ear consists of an auricle, or pinna, the external auditory meatus and the tympanic membrane. The auricle helps focus sound waves into the external auditory meatus and, thus, to the tympanic membrane.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "arquivo": "imagens/base/O.E.EE_.01B.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'External ear', no setor Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Descricao original da pagina: The external ear consists of an auricle, or pinna, the external auditory meatus and the tympanic membrane. The auricle helps focus sound waves into the external auditory meatus and, thus, to the tympanic membrane.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Auricle",
+      "explicacao_original": "The auricle, or pinna, consists of an inner skeleton of elastic cartilage covered by a layer of thin skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Auricle.png",
+      "arquivo": "imagens/marcadores/Auricle.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Auricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The auricle, or pinna, consists of an inner skeleton of elastic cartilage covered by a layer of thin skin.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Elastic cartilage",
+      "explicacao_original": "The auricle, or pinna, consists of an inner skeleton of elastic cartilage covered by a layer of thin skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Elastic-cartilage.png",
+      "arquivo": "imagens/marcadores/Elastic-cartilage.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Elastic cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The auricle, or pinna, consists of an inner skeleton of elastic cartilage covered by a layer of thin skin.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "External meatus",
+      "explicacao_original": "The external auditory meatus is an S-shaped tube terminating in the tympanic membrane. Elastic cartilage forms the framework for the outer one-third of the meatus, while the temporal bone supports the inner portion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ext-meatus-1.png",
+      "arquivo": "imagens/marcadores/Ext-meatus-1.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'External meatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external auditory meatus is an S-shaped tube terminating in the tympanic membrane. Elastic cartilage forms the framework for the outer one-third of the meatus, while the temporal bone supports the inner portion.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Elastic cartilage",
+      "explicacao_original": "The external auditory meatus is an S-shaped tube terminating in the tympanic membrane. Elastic cartilage forms the framework for the outer one-third of the meatus, while the temporal bone supports the inner portion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Elastic-cartilage-2.png",
+      "arquivo": "imagens/marcadores/Elastic-cartilage-2.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Elastic cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external auditory meatus is an S-shaped tube terminating in the tympanic membrane. Elastic cartilage forms the framework for the outer one-third of the meatus, while the temporal bone supports the inner portion.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Temporal bone",
+      "explicacao_original": "The external auditory meatus is an S-shaped tube terminating in the tympanic membrane. Elastic cartilage forms the framework for the outer one-third of the meatus, while the temporal bone supports the inner portion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Temporal-bone-1.png",
+      "arquivo": "imagens/marcadores/Temporal-bone-1.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Temporal bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external auditory meatus is an S-shaped tube terminating in the tympanic membrane. Elastic cartilage forms the framework for the outer one-third of the meatus, while the temporal bone supports the inner portion.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tympanic membrane",
+      "explicacao_original": "The tympanic membrane is composed of a thin layer of thin skin on its exterior surface, a middle layer of collagen and elastic fibers arranged in circular and radial configurations, and a thin mucosa on its middle ear surface. The flattened-cone shape of the tympanic membrane is formed by the pull of the malleus on its inner aspect.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Tympanic-membrane.png",
+      "arquivo": "imagens/marcadores/Tympanic-membrane.png",
+      "imagem_base": "imagens/base/O.E.EE_.01B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.01B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.01B.jpg'. Destaca a estrutura ou conceito 'Tympanic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tympanic membrane is composed of a thin layer of thin skin on its exterior surface, a middle layer of collagen and elastic fibers arranged in circular and radial configurations, and a thin mucosa on its middle ear surface. The flattened-cone shape of the tympanic membrane is formed by the pull of the malleus on its inner aspect.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > external ear 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": 11596,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 4"
+  ],
+  "descricao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "arquivo": "imagens/base/T.C.C.H.04A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Descricao original da pagina: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Perichondrium: fibrous layer",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-1-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Perichondrium: fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Perichondrium: chondrogenic layer",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-2-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Perichondrium: chondrogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chondroblasts",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-3-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Chondroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Hyaline cartilage",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-4-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Hyaline cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A-5-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-5-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Isogenous groups",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A-6-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-6-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Isogenous groups' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Matrix",
+      "explicacao_original": "Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.04A-7-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.04A-7-NEW-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.C.H.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.04A.jpg'. Destaca a estrutura ou conceito 'Matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer. When a chondroblast has surrounded itself with cartilage, it is then called a chondrocyte. A cluster of chondrocytes cloned from a single chondrocyte is an isogenous group, representing interstitial growth of this tissue. Cartilage is avascular and thus chondrocytes are nourished by diffusion. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-4/, acesso em 2026-08-07."
+    }
+  ]
+}

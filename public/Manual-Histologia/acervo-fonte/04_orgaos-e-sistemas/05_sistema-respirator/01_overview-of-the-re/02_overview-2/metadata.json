@@ -1,0 +1,123 @@
+{
+  "id": 17835,
+  "titulo": "Respiratory: components",
+  "titulo_wordpress": "Overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Overview of the respiratory system",
+    "Overview 2"
+  ],
+  "descricao_original": "The trachea and initial portions of the primary bronchi are extrapulmonary conducting passageways. After passing into the lung, the primary bronchi, their branches and continuing bronchioles constitute the intrapulmonary conducting passageways. These passageways serve to convey air, no gas exchange occurs. Bronchioles lead into respiratory passageways that are distinguished by the presence of alveoli in their walls where gas exchange occurs. Respiratory passageways are all intrapulmonary.",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "arquivo": "imagens/base/O.R.O.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Respiratory: components', no setor Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Descricao original da pagina: The trachea and initial portions of the primary bronchi are extrapulmonary conducting passageways. After passing into the lung, the primary bronchi, their branches and continuing bronchioles constitute the intrapulmonary conducting passageways. These passageways serve to convey air, no gas exchange occurs. Bronchioles lead into respiratory passageways that are distinguished by the presence of alveoli in their walls where gas exchange occurs. Respiratory passageways are all intrapulmonary.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Trachea",
+      "explicacao_original": "The trachea and initial portions of the primary bronchi are extrapulmonary conducting passageways. After passing into the lung, the primary bronchi, their branches and continuing bronchioles constitute the intrapulmonary conducting passageways. These passageways serve to convey air, no gas exchange occurs. Bronchioles lead into respiratory passageways that are distinguished by the presence of alveoli in their walls where gas exchange occurs. Respiratory passageways are all intrapulmonary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P01.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P01.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Trachea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trachea and initial portions of the primary bronchi are extrapulmonary conducting passageways. After passing into the lung, the primary bronchi, their branches and continuing bronchioles constitute the intrapulmonary conducting passageways. These passageways serve to convey air, no gas exchange occurs. Bronchioles lead into respiratory passageways that are distinguished by the presence of alveoli in their walls where gas exchange occurs. Respiratory passageways are all intrapulmonary.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intrapulmonary, conducting",
+      "explicacao_original": "The distal portions of the primary bronchi, their branches and continuing bronchioles comprise the intrapulmonary conducting passageways.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P03A.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P03A.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Intrapulmonary, conducting' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The distal portions of the primary bronchi, their branches and continuing bronchioles comprise the intrapulmonary conducting passageways.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Primary bronchi",
+      "explicacao_original": "The diagram illustrates both extra- and intrapulmonary regions of the primary bronchi.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P02.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Primary bronchi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The diagram illustrates both extra- and intrapulmonary regions of the primary bronchi.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Secondary bronchi",
+      "explicacao_original": "Primary bronchi branch into secondary (lobar) and tertiary (segmental) bronchi before transitioning to bronchioles, which constitute the last segments of the intrapulmonary, conducting pathways.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.P04.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P04.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Secondary bronchi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary bronchi branch into secondary (lobar) and tertiary (segmental) bronchi before transitioning to bronchioles, which constitute the last segments of the intrapulmonary, conducting pathways.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Bronchioles",
+      "explicacao_original": "Primary bronchi branch into secondary (lobar) and tertiary (segmental) bronchi before transitioning to bronchioles, which constitute the last segments of the intrapulmonary, conducting pathways.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.P05.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P05.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Bronchioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary bronchi branch into secondary (lobar) and tertiary (segmental) bronchi before transitioning to bronchioles, which constitute the last segments of the intrapulmonary, conducting pathways.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Intrapulmonary, respiratory",
+      "explicacao_original": "Intrapulmonary respiratory passageways contain alveoli for gas exchange.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.O.02.P06.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P06.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Intrapulmonary, respiratory' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intrapulmonary respiratory passageways contain alveoli for gas exchange.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Respiratory bronchioles",
+      "explicacao_original": "Respiratory bronchioles possess scattered alveoli in their walls and constitute the first site where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P07AA.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P07AA.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Respiratory bronchioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles possess scattered alveoli in their walls and constitute the first site where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Alveolar duct",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, in which the wall consist entirely of alveoli. Alveolar ducts end in alveolar sacs, chambers lined by alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.02.P08A.png",
+      "arquivo": "imagens/marcadores/O.R.O.02.P08A.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Alveolar duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, in which the wall consist entirely of alveoli. Alveolar ducts end in alveolar sacs, chambers lined by alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Alveolar sac",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, in which the wall consist entirely of alveoli. Alveolar ducts end in alveolar sacs, chambers lined by alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/Alveolar-sacs.png",
+      "arquivo": "imagens/marcadores/Alveolar-sacs.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Alveolar sac' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, in which the wall consist entirely of alveoli. Alveolar ducts end in alveolar sacs, chambers lined by alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Alveoli",
+      "explicacao_original": "Alveoli first appear in respiratory bronchioles and are sites where gas exchange occurs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/Alveoli.png",
+      "arquivo": "imagens/marcadores/Alveoli.png",
+      "imagem_base": "imagens/base/O.R.O.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: components'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.02.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveoli first appear in respiratory bronchioles and are sites where gas exchange occurs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

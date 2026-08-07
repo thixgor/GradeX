@@ -1,0 +1,74 @@
+{
+  "id": 5312,
+  "titulo": "Continuous capillary",
+  "titulo_wordpress": "Capillaries and Sinusoids 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 8"
+  ],
+  "descricao_original": "This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-7.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Continuous capillary', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 8. Descricao original da pagina: This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Junction 1",
+      "explicacao_original": "This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-7.jpg'. Destaca a estrutura ou conceito 'Junction 1' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Junction 2",
+      "explicacao_original": "This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-7.jpg'. Destaca a estrutura ou conceito 'Junction 2' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Junction 3",
+      "explicacao_original": "This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-7.jpg'. Destaca a estrutura ou conceito 'Junction 3' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Junction 4",
+      "explicacao_original": "This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-7.jpg'. Destaca a estrutura ou conceito 'Junction 4' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-7.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This slightly tangential section of a capillary reveals a wall formed by four endothelial cells that form a mosaic as they compose the wall. None of their nuclei are visible here. The margins of adjacent endothelial cells demonstrate junctional complexes, including tight junctions to reduce leakage from the lumen. The plasma membranes often interdigitate at these junctional sites. A higher magnification view of each these junctions is shown in the lower panels. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-8/, acesso em 2026-08-07."
+    }
+  ]
+}

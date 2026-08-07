@@ -1,0 +1,85 @@
+{
+  "id": 10647,
+  "titulo": "Bone development in the fetus",
+  "titulo_wordpress": "Endochondral 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Endochondral",
+    "Endochondral 16"
+  ],
+  "descricao_original": "This image demonstrates ossification in the fetus. Developing bone, regardless of whether it was formed by intramembranous or endochondral ossification, can readily be identified in this preparation by its brown/red staining.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "arquivo": "imagens/base/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone development in the fetus', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Descricao original da pagina: This image demonstrates ossification in the fetus. Developing bone, regardless of whether it was formed by intramembranous or endochondral ossification, can readily be identified in this preparation by its brown/red staining.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intramembranously-formed bones",
+      "explicacao_original": "Bones formed by intramembranous ossification include those of the cranial vault (e.g., frontal and occipital bones), bones of the face (maxilla and mandible) and clavicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-16-Intra-bones.png",
+      "arquivo": "imagens/marcadores/Endo-16-Intra-bones.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone development in the fetus'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.15.jpg'. Destaca a estrutura ou conceito 'Intramembranously-formed bones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bones formed by intramembranous ossification include those of the cranial vault (e.g., frontal and occipital bones), bones of the face (maxilla and mandible) and clavicle.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endochondrally-formed bones",
+      "explicacao_original": "Bones formed by endochondral ossification include bones of the skull base, long and short bones of the arms and legs, vertebrae, pelvis and ribs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-16-Endo-bones.png",
+      "arquivo": "imagens/marcadores/Endo-16-Endo-bones.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone development in the fetus'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.15.jpg'. Destaca a estrutura ou conceito 'Endochondrally-formed bones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bones formed by endochondral ossification include bones of the skull base, long and short bones of the arms and legs, vertebrae, pelvis and ribs.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endochondral bone formation events",
+      "explicacao_original": "The process of endochondral bone formation requires both intramembranous and endochondral processes. Endochondral ossification begins with a hyaline-cartilage template that is gradually replaced by an encircling cylinder of bone (periosteal collar) between the epiphyses. This bone is laid down by intramembranous ossification and represents the primary center of ossification. Thereafter, the bone grows in length by addition of bone to the ends of the collar by endochondral ossification at the epiphyseal plate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-16-Endochondral.png",
+      "arquivo": "imagens/marcadores/Endo-16-Endochondral.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone development in the fetus'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.15.jpg'. Destaca a estrutura ou conceito 'Endochondral bone formation events' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The process of endochondral bone formation requires both intramembranous and endochondral processes. Endochondral ossification begins with a hyaline-cartilage template that is gradually replaced by an encircling cylinder of bone (periosteal collar) between the epiphyses. This bone is laid down by intramembranous ossification and represents the primary center of ossification. Thereafter, the bone grows in length by addition of bone to the ends of the collar by endochondral ossification at the epiphyseal plate.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Periosteal collar (primary center of ossification)",
+      "explicacao_original": "The process of endochondral bone formation requires both intramembranous and endochondral processes. Endochondral ossification begins with a hyaline-cartilage template that is gradually replaced by an encircling cylinder of bone (periosteal collar) between the epiphyses. This bone is laid down by intramembranous ossification and represents the primary center of ossification. Thereafter, the bone grows in length by addition of bone to the ends of the collar by endochondral ossification at the epiphyseal plate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-16-Collar.png",
+      "arquivo": "imagens/marcadores/Endo-16-Collar.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone development in the fetus'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.15.jpg'. Destaca a estrutura ou conceito 'Periosteal collar (primary center of ossification)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The process of endochondral bone formation requires both intramembranous and endochondral processes. Endochondral ossification begins with a hyaline-cartilage template that is gradually replaced by an encircling cylinder of bone (periosteal collar) between the epiphyses. This bone is laid down by intramembranous ossification and represents the primary center of ossification. Thereafter, the bone grows in length by addition of bone to the ends of the collar by endochondral ossification at the epiphyseal plate.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epiphyses",
+      "explicacao_original": "Portions of the of the original cartilage model are retained as epiphyses. Secondary centers of ossification develop in the epiphyses leaving only a cap of hyaline cartilage, forming the articular cartilages. The epiphyseal plates are located at the junction of the periosteal collar and the epiphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-16-Epiphyses.png",
+      "arquivo": "imagens/marcadores/Endo-16-Epiphyses.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone development in the fetus'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.15.jpg'. Destaca a estrutura ou conceito 'Epiphyses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Portions of the of the original cartilage model are retained as epiphyses. Secondary centers of ossification develop in the epiphyses leaving only a cap of hyaline cartilage, forming the articular cartilages. The epiphyseal plates are located at the junction of the periosteal collar and the epiphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Epiphyseal plates",
+      "explicacao_original": "Portions of the of the original cartilage model are retained as epiphyses. Secondary centers of ossification develop in the epiphyses leaving only a cap of hyaline cartilage, forming the articular cartilages. The epiphyseal plates are located at the junction of the periosteal collar and the epiphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-16-Plates.png",
+      "arquivo": "imagens/marcadores/Endo-16-Plates.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.F.E.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone development in the fetus'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.15.jpg'. Destaca a estrutura ou conceito 'Epiphyseal plates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Portions of the of the original cartilage model are retained as epiphyses. Secondary centers of ossification develop in the epiphyses leaving only a cap of hyaline cartilage, forming the articular cartilages. The epiphyseal plates are located at the junction of the periosteal collar and the epiphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 16. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-15/, acesso em 2026-08-07."
+    }
+  ]
+}

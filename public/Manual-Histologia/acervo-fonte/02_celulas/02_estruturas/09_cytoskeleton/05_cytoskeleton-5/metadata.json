@@ -1,0 +1,53 @@
+{
+  "id": 1906,
+  "titulo": "Intermediate filaments",
+  "titulo_wordpress": "Cytoskeleton 5",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Cytoskeleton",
+    "Cytoskeleton 5"
+  ],
+  "descricao_original": "In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cyto-5.jpg",
+      "arquivo": "imagens/base/C.S.Cyto-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Intermediate filaments', no setor Células > Estruturas > Cytoskeleton > Cytoskeleton 5. Descricao original da pagina: In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intermediate filaments",
+      "explicacao_original": "In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-5-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-5-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cyto-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-5.jpg'. Destaca a estrutura ou conceito 'Intermediate filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hemidesmosomes",
+      "explicacao_original": "In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-5-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-5-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cyto-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-5.jpg'. Destaca a estrutura ou conceito 'Hemidesmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Desmosomes",
+      "explicacao_original": "In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-5-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-5-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cyto-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-5.jpg'. Destaca a estrutura ou conceito 'Desmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In addition to providing intracellular support, intermediate filaments also stabilize adherent junctions between cells and attachment junctions between cells and the extracellular matrix. The cell-to-matrix attachments are called hemidesmosomes (left); the cell-to-cell attachments are called desmosomes (right). 30,000x, 70,000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 5. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-5/, acesso em 2026-08-07."
+    }
+  ]
+}

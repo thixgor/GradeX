@@ -1,0 +1,74 @@
+{
+  "id": 31003,
+  "titulo": "Trachea and primary bronchus",
+  "titulo_wordpress": "Trachea 7A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Extrapulmonary Passages",
+    "Trachea and Primary Bronchus",
+    "Trachea 7A"
+  ],
+  "descricao_original": "Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW.jpg",
+      "arquivo": "imagens/base/O.R.E.T.07-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Trachea and primary bronchus', no setor Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 7A. Descricao original da pagina: Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW-1.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.07-NEW-1.png",
+      "imagem_base": "imagens/base/O.R.E.T.07-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.07-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW-2.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.07-NEW-2.png",
+      "imagem_base": "imagens/base/O.R.E.T.07-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.07-NEW.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW-3.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.07-NEW-3.png",
+      "imagem_base": "imagens/base/O.R.E.T.07-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.07-NEW.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Elastic lamina",
+      "explicacao_original": "Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW-4.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.07-NEW-4.png",
+      "imagem_base": "imagens/base/O.R.E.T.07-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.07-NEW.jpg'. Destaca a estrutura ou conceito 'Elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Submucosa",
+      "explicacao_original": "Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW-5.png",
+      "arquivo": "imagens/marcadores/O.R.E.T.07-NEW-5.png",
+      "imagem_base": "imagens/base/O.R.E.T.07-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.E.T.07-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Trachea and primary bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.E.T.07-NEW.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beneath the lamina propria, elastic fibers become more numerous forming a distinct elastic lamina, separating the lamina propria and submucosa. The elastic lamina provides structural support to maintain patency and also allows for expansion and passive recoil during the inhalation-exhalation cycle. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Extrapulmonary Passages > Trachea and Primary Bronchus > Trachea 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/extrapulmonary-passages/trachea-and-primary-bronchus/trachea-7a/, acesso em 2026-08-07."
+    }
+  ]
+}

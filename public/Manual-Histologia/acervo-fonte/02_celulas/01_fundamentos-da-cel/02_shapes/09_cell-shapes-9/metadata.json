@@ -1,0 +1,43 @@
+{
+  "id": 1035,
+  "titulo": "Cell shapes: spindle",
+  "titulo_wordpress": "Cell shapes 9",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 9"
+  ],
+  "descricao_original": "This composite image shows the morphology of spindle-shaped smooth muscle cells. As shown in the top panel, these cells are long, thin and taper at their ends. The nucleus is located midway along their length. This structure allows the cells to assemble into a tissue that forms compact sheets or layers, often forming the wall of hollow organs. The middle panel shows smooth muscle tissue in the wall of the digestive tract, the bottom panel is an illustration of that region. Top and middle panels 400x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-9-NEW.jpg",
+      "arquivo": "imagens/base/C.B.Sh-9-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: spindle', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 9. Descricao original da pagina: This composite image shows the morphology of spindle-shaped smooth muscle cells. As shown in the top panel, these cells are long, thin and taper at their ends. The nucleus is located midway along their length. This structure allows the cells to assemble into a tissue that forms compact sheets or layers, often forming the wall of hollow organs. The middle panel shows smooth muscle tissue in the wall of the digestive tract, the bottom panel is an illustration of that region. Top and middle panels 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spindle shape",
+      "explicacao_original": "This composite image shows the morphology of spindle-shaped smooth muscle cells. As shown in the top panel, these cells are long, thin and taper at their ends. The nucleus is located midway along their length. This structure allows the cells to assemble into a tissue that forms compact sheets or layers, often forming the wall of hollow organs. The middle panel shows smooth muscle tissue in the wall of the digestive tract, the bottom panel is an illustration of that region. Top and middle panels 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-9-1A-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-9-1A-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-9-NEW.jpg'. Destaca a estrutura ou conceito 'Spindle shape' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This composite image shows the morphology of spindle-shaped smooth muscle cells. As shown in the top panel, these cells are long, thin and taper at their ends. The nucleus is located midway along their length. This structure allows the cells to assemble into a tissue that forms compact sheets or layers, often forming the wall of hollow organs. The middle panel shows smooth muscle tissue in the wall of the digestive tract, the bottom panel is an illustration of that region. Top and middle panels 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 9. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "This composite image shows the morphology of spindle-shaped smooth muscle cells. As shown in the top panel, these cells are long, thin and taper at their ends. The nucleus is located midway along their length. This structure allows the cells to assemble into a tissue that forms compact sheets or layers, often forming the wall of hollow organs. The middle panel shows smooth muscle tissue in the wall of the digestive tract, the bottom panel is an illustration of that region. Top and middle panels 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-9-2A-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-9-2A-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-9-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-9-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-9-NEW.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This composite image shows the morphology of spindle-shaped smooth muscle cells. As shown in the top panel, these cells are long, thin and taper at their ends. The nucleus is located midway along their length. This structure allows the cells to assemble into a tissue that forms compact sheets or layers, often forming the wall of hollow organs. The middle panel shows smooth muscle tissue in the wall of the digestive tract, the bottom panel is an illustration of that region. Top and middle panels 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 9. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-9/, acesso em 2026-08-07."
+    }
+  ]
+}

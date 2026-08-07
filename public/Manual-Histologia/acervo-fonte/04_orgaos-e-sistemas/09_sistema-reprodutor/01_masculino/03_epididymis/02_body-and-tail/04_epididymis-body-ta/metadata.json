@@ -1,0 +1,95 @@
+{
+  "id": 15779,
+  "titulo": "Epididymis: body and tail",
+  "titulo_wordpress": "Epididymis body tail 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Epididymis",
+    "Body and Tail",
+    "Epididymis body tail 5"
+  ],
+  "descricao_original": "The duct of the epididymis is lined by pseudostratified columnar epithelium with stereocilia. Junctional complexes, visible in the apical regions of these cells, provide a tight seal from the luminal contents. As the duct progresses from the head to the tail region, the epithelium decreases in height and the layer of smooth increases in thickness, gaining additional layers from head to tail. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "arquivo": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Epididymis: body and tail', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Descricao original da pagina: The duct of the epididymis is lined by pseudostratified columnar epithelium with stereocilia. Junctional complexes, visible in the apical regions of these cells, provide a tight seal from the luminal contents. As the duct progresses from the head to the tail region, the epithelium decreases in height and the layer of smooth increases in thickness, gaining additional layers from head to tail. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pseudostratified epithelium",
+      "explicacao_original": "The duct of the epididymis is lined by pseudostratified columnar epithelium with stereocilia. Junctional complexes, visible in the apical regions of these cells, provide a tight seal from the luminal contents. As the duct progresses from the head to the tail region, the epithelium decreases in height and the layer of smooth increases in thickness, gaining additional layers from head to tail. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-2-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Pseudostratified epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The duct of the epididymis is lined by pseudostratified columnar epithelium with stereocilia. Junctional complexes, visible in the apical regions of these cells, provide a tight seal from the luminal contents. As the duct progresses from the head to the tail region, the epithelium decreases in height and the layer of smooth increases in thickness, gaining additional layers from head to tail. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stereocilia",
+      "explicacao_original": "The duct of the epididymis is lined by pseudostratified columnar epithelium with stereocilia. Junctional complexes, visible in the apical regions of these cells, provide a tight seal from the luminal contents. As the duct progresses from the head to the tail region, the epithelium decreases in height and the layer of smooth increases in thickness, gaining additional layers from head to tail. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Stereocilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The duct of the epididymis is lined by pseudostratified columnar epithelium with stereocilia. Junctional complexes, visible in the apical regions of these cells, provide a tight seal from the luminal contents. As the duct progresses from the head to the tail region, the epithelium decreases in height and the layer of smooth increases in thickness, gaining additional layers from head to tail. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Junctional complexes",
+      "explicacao_original": "Junctional complexes, composed of zonula occludens, zonula adherens and desmosomes, serve to seal the surface of the epithelium and attach the cells together. By light microscopy, these junctional complexes are often referred to as a terminal bars.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Junctional complexes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Junctional complexes, composed of zonula occludens, zonula adherens and desmosomes, serve to seal the surface of the epithelium and attach the cells together. By light microscopy, these junctional complexes are often referred to as a terminal bars.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal cells",
+      "explicacao_original": "Basal cells are small, round basal cells that rest on the basement membrane and serve as stem cells for the epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-7-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Basal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basal cells are small, round basal cells that rest on the basement membrane and serve as stem cells for the epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Migrating cells",
+      "explicacao_original": "The epithelium also contains a variety migratory immune cells including macrophages, lymphocytes and monocytes. Among these cells are suppressor T cells to prevent the development of an immune response to auto-antigens on spermatozoa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-5-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Migrating cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium also contains a variety migratory immune cells including macrophages, lymphocytes and monocytes. Among these cells are suppressor T cells to prevent the development of an immune response to auto-antigens on spermatozoa.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "Smooth muscle surrounding the epithelium gradually increases in thickness from the head to tail regions. In the head, smooth muscle is circularly arranged, but an outer longitudinal layer is added in the body region and a third layer is added in the tail, characteristic of the three muscle layers seen in the ductus deferens. Peristaltic contractions of the smooth muscle propel the sperm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-6-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Smooth muscle surrounding the epithelium gradually increases in thickness from the head to tail regions. In the head, smooth muscle is circularly arranged, but an outer longitudinal layer is added in the body region and a third layer is added in the tail, characteristic of the three muscle layers seen in the ductus deferens. Peristaltic contractions of the smooth muscle propel the sperm.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Spermatozoa",
+      "explicacao_original": "Spermatozoa entering the epididymis are immature. While stored in the epididymis, they mature, acquiring motility and the ability to fertilize an ovum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.E.BT_.05-fix-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.E.BT_.05-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/09/O.R.M.E.BT_.05-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Epididymis: body and tail'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.E.BT_.05-fix.jpg'. Destaca a estrutura ou conceito 'Spermatozoa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatozoa entering the epididymis are immature. While stored in the epididymis, they mature, acquiring motility and the ability to fertilize an ovum.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Epididymis > Body and Tail > Epididymis body tail 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/epididymis/body-and-tail/epididymis-body-tail-5/, acesso em 2026-08-07."
+    }
+  ]
+}

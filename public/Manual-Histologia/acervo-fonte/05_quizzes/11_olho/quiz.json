@@ -1,0 +1,3256 @@
+{
+  "id_pagina": 21119,
+  "id_h5p": "29",
+  "titulo": "Olho",
+  "titulo_original": "Eye quiz",
+  "url_origem": "https://digitalhistology.org/quizzes/eye/",
+  "licenca_metadado_h5p": "U",
+  "questoes": [
+    {
+      "numero": 1,
+      "enunciado": "Identify the structure outlined in this image.",
+      "imagem": "imagens/file-5b43a74e5ec14.jpg",
+      "caminho_h5p_imagem": "images/file-5b43a74e5ec14.jpg",
+      "alternativas": [
+        {
+          "texto": "Ciliary body",
+          "correta": true,
+          "feedback": "CORRECT. The ciliary body is the anterior expansion of the choroid, forming a ring encircling the lens. When cut in cross section, the ciliary body appears triangular in shape. The ciliary body contains the ciliary muscle, three subdivisions of smooth muscle that alter the shape of the lens via suspensory fibers that extend between the ciliary body and the lens."
+        },
+        {
+          "texto": "Iris",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Choroid",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Non-sensory retina",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Limbus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "enunciado": "Identify the structure indicated by the rectangle.",
+      "imagem": "imagens/file-5b43a81b57a05.jpg",
+      "caminho_h5p_imagem": "images/file-5b43a81b57a05.jpg",
+      "alternativas": [
+        {
+          "texto": "Trabecular meshwork",
+          "correta": true,
+          "feedback": "The trabecular meshwork, located in the limbus, is a series of endothelium-lined channels that drain aqueous humor from the anterior chamber of the eye. Aqueous humor flows from the trabecular meshwork into the larger canal of Schlemm, which connects with the venous system external to the eye."
+        },
+        {
+          "texto": "Conjuctiva",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Canal of Schlemm",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Zonule fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ora serrata",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b43a8a5368e8.jpg",
+      "caminho_h5p_imagem": "images/file-5b43a8a5368e8.jpg",
+      "alternativas": [
+        {
+          "texto": "Cornea",
+          "correta": true,
+          "feedback": "CORRECT. The cornea, located in the anterior one-fifth of the eye, is the transparent portion of the outer tunic, where major refraction occurs. Its convex curvature aids in focusing light. The cornea consists of inner and outer epithelial layers that sandwich a stroma of collagen fibers that are precisely aligned to provide transparency to the cornea. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva that covers the sclera."
+        },
+        {
+          "texto": "Limbus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Sclera",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Lens",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Iris",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "enunciado": "Identify the space indicated by the double arrow.",
+      "imagem": "imagens/file-5b43a957dee86.jpg",
+      "caminho_h5p_imagem": "images/file-5b43a957dee86.jpg",
+      "alternativas": [
+        {
+          "texto": "Vitreous space",
+          "correta": true,
+          "feedback": "CORRECT. The vitreous chamber is located behind the posterior chamber and is filled with a gelatinous fluid called the vitreous body. The vitreous body is a gelatinous substance that lightly supports the retina."
+        },
+        {
+          "texto": "Limbus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Posterior chamber",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Anterior chamber",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tarsus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "enunciado": "Identify the space indicated by the double arrows.",
+      "imagem": "imagens/file-5b43a9def0e4c.jpg",
+      "caminho_h5p_imagem": "images/file-5b43a9def0e4c.jpg",
+      "alternativas": [
+        {
+          "texto": "Anterior chamber",
+          "correta": true,
+          "feedback": "CORRECT. The anterior chamber is bounded by the cornea, iris and anterior surface of the lens. The chamber is filled with aqueous humor, a watery fluid produced by the ciliary body. Aqueous humor flows through the posterior chamber into the anterior chamber and exits at the limbus via the trabecular meshwork and the canal of Schlemm."
+        },
+        {
+          "texto": "Limbus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Posterior chamber",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Vitreous space",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tarsus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b43aa83500f8.jpg",
+      "caminho_h5p_imagem": "images/file-5b43aa83500f8.jpg",
+      "alternativas": [
+        {
+          "texto": "Dilator pupillae muscle",
+          "correta": true,
+          "feedback": "CORRECT. The dilator pupillae muscle in the iris is derived from the more anterior, pigmented epithelial layer. It consists of radially oriented cells whose contraction increases the pupil diameter (dilation), thereby allow more light to enter the eye."
+        },
+        {
+          "texto": "Non-pigmented retina",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Choroid",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Constrictor pupillae muscle",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Zonular fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "enunciado": "Identify the structure indicated by the bars.",
+      "imagem": "imagens/file-5b43ab0cbf5d9.jpg",
+      "caminho_h5p_imagem": "images/file-5b43ab0cbf5d9.jpg",
+      "alternativas": [
+        {
+          "texto": "Choroid",
+          "correta": true,
+          "feedback": "CORRECT. The choroid forms the majority of the vascular or middle tunic (uvea), covering the posterior portion of the eye. The choroid is composed of loose connective tissue, with an abundant vascular supply and pigmented cells. The choroid supplies nutrients to the deep layers of the retina; its pigmented cells serve to absorb reflected and stray light within the globe."
+        },
+        {
+          "texto": "Sclera",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cornea",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Limbus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary body",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "enunciado": "Identify the structure indicated by the double arrow.",
+      "imagem": "imagens/file-5b43aba8c7268.jpg",
+      "caminho_h5p_imagem": "images/file-5b43aba8c7268.jpg",
+      "alternativas": [
+        {
+          "texto": "Sclera",
+          "correta": true,
+          "feedback": "CORRECT. The sclera, a component of the fibrous tunic, is an opaque layer surrounding the posterior four-fifths of the eye. The sclera is composed of dense connective tissue that provides support for the eye and attachment for extraocular eye muscles."
+        },
+        {
+          "texto": "Choroid",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cornea",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Limbus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary body",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "enunciado": "Identify the structure indicated in this image.",
+      "imagem": "imagens/file-5b43ac3c55d4f.jpg",
+      "caminho_h5p_imagem": "images/file-5b43ac3c55d4f.jpg",
+      "alternativas": [
+        {
+          "texto": "Ciliary muscle",
+          "correta": true,
+          "feedback": "CORRECT. The ciliary muscle, located within the ciliary body, is composed of smooth muscle fibers oriented in three planes. The fibers insert onto the sclera and ciliary body and contraction releases tension on the zonule fibers, allowing the lens to become more spherical during the process of accommodation."
+        },
+        {
+          "texto": "Constrictor pupillae muscle",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Sclera",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Choroid",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Trabecular meshwork",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b43ad1c3a65c.jpg",
+      "caminho_h5p_imagem": "images/file-5b43ad1c3a65c.jpg",
+      "alternativas": [
+        {
+          "texto": "Ciliary process",
+          "correta": true,
+          "feedback": "CORRECT. The ciliary processes are ridge-like extensions of the ciliary body and are also covered by ciliary epithelium. Zonular fibers are delicate microfibrils that arise from the basal lamina of the ciliary epithelium in the grooves separating the ciliary processes. Zonular fibers attach to the lens capsule and contraction of ciliary body muscles alters the tension on these fibers and, thus, affects the shape of the lens."
+        },
+        {
+          "texto": "Zonular fiber",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Iris",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary body",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary muscle",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b44bbb130384.jpg",
+      "caminho_h5p_imagem": "images/file-5b44bbb130384.jpg",
+      "alternativas": [
+        {
+          "texto": "Iris",
+          "correta": true,
+          "feedback": "The iris is a portion of the middle, or vascular, tunic and is attached to the anterior portion of the ciliary body. The iris is a disk-shaped structure with a central opening, the pupil. Most of the core of the iris consists of loose connective tissue with many melanocytes and blood vessels. Contraction of smooth muscle groups in the iris alters the diameter of the pupil and, therefore, adjust the amount of light entering the eye."
+        },
+        {
+          "texto": "Ciliary process",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary body",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary muscle",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cornea",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 12,
+      "enunciado": "Identify the layer indicated by the arrows.",
+      "imagem": "imagens/file-5b44c6462474d.jpg",
+      "caminho_h5p_imagem": "images/file-5b44c6462474d.jpg",
+      "alternativas": [
+        {
+          "texto": "Pigment epithelium",
+          "correta": true,
+          "feedback": "CORRECT. Pigment epithelium constitutes the outermost layer of the retina and consists of a simple cuboidal epithelium with melanin granules. Pigment epithelial cells phagocytose worn-out components of photoreceptors, absorb light passing through the retina to prevent reflection, and form the blood-retinal barrier. The basal lamina of this epithelium is a component of Bruch's membrane."
+        },
+        {
+          "texto": "Sclera",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Choroid",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ciliary body",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Choriocapillaris",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 13,
+      "enunciado": "Identify the layer indicated by the rectangle.",
+      "imagem": "imagens/file-5b44c78913cf8.jpg",
+      "caminho_h5p_imagem": "images/file-5b44c78913cf8.jpg",
+      "alternativas": [
+        {
+          "texto": "Inner nuclear layer",
+          "correta": true,
+          "feedback": "CORRECT. The inner nucler layer contains the cell bodies and nuclei of bipolar cells, as well as interneurons (horizontal and amacrine cells), and Muller cells."
+        },
+        {
+          "texto": "Photoreceptor layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Outer nuclear layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ganglion cell layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inner plexiform layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 14,
+      "enunciado": "Identify the cell indicated by the arrows.",
+      "imagem": "imagens/file-5b44ca5bc6156.jpg",
+      "caminho_h5p_imagem": "images/file-5b44ca5bc6156.jpg",
+      "alternativas": [
+        {
+          "texto": "Cone",
+          "correta": true,
+          "feedback": "CORRECT. Cones are less numerous than rods and provide greater visual acuity than the rods. Cones are so named based of the conical shape of their outer segments which contain the visual pigment iodopsin. Cones are concentrated in the central retina, notably in the fovea, the region of greatest visual acuity."
+        },
+        {
+          "texto": "Ganglion cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Bipolar cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Muller cell",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Rod",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 15,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b44cb12d194f.jpg",
+      "caminho_h5p_imagem": "images/file-5b44cb12d194f.jpg",
+      "alternativas": [
+        {
+          "texto": "Outer limiting membrane",
+          "correta": true,
+          "feedback": "CORRECT. The outer limiting membrane is not a true membrane. It is formed by adherent junctions between Muller cells, radially oriented astrocytes, and with the photoreceptors. Muller cells extend between the outer and inner limiting membranes and support and nourish the retinal neurons and their processes."
+        },
+        {
+          "texto": "Photoreceptor layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Outer plexiform layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inner limiting membrane",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inner plexiform layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 16,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b44cc263f9d9.jpg",
+      "caminho_h5p_imagem": "images/file-5b44cc263f9d9.jpg",
+      "alternativas": [
+        {
+          "texto": "Orbicular oculi muscle",
+          "correta": true,
+          "feedback": "CORRECT. The orbicularis oculi muscle is skeletal muscle, a portion of which is located in the core of the eyelid. The orbicularis oculi muscle is a sphincter muscle that closes the eyelids. Also present in the eyelid are Meibomian glands, modified sebaceous glands, embedded in the tarsus. The secretions of these glands provide an oily surface layer to the tear film that reduces evaporation of this layer."
+        },
+        {
+          "texto": "Meibomium gland",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Tarsus",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Conjunctiva",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Fornix",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 17,
+      "enunciado": "Identify the region indicated by the rectangle.",
+      "imagem": "imagens/file-5b44ccdc96eb0.jpg",
+      "caminho_h5p_imagem": "images/file-5b44ccdc96eb0.jpg",
+      "alternativas": [
+        {
+          "texto": "Fovea",
+          "correta": true,
+          "feedback": "CORRECT. The fovea is the region of the retina providing greatest visual acuity. It consists entirely of cones; other retinal layers are displaced centrifugally to create an unimpeded path for light to reach the photoreceptors. The center of the fovea is called the foveola."
+        },
+        {
+          "texto": "Optic disk",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Optic papilla",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Foveola",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ora serrata",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 18,
+      "enunciado": "Identify the region indicated by the rectangle.",
+      "imagem": "imagens/file-5b44cdc25fddc.jpg",
+      "caminho_h5p_imagem": "images/file-5b44cdc25fddc.jpg",
+      "alternativas": [
+        {
+          "texto": "Ora serrata",
+          "correta": true,
+          "feedback": "CORRECT. This image shows the ora serrata. Note how the multilayered, sensory retina (to the right) collapses into a single layer of cuboidal to columnar epithelium. The pigment epithelium continues forward and underlies the layer derived from the sensory retina."
+        },
+        {
+          "texto": "Ciliary body",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Optic disc",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Fovea",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Optic papilla",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 19,
+      "enunciado": "Identify the structure indicated by the arrows.",
+      "imagem": "imagens/file-5b44ce91332ca.jpg",
+      "caminho_h5p_imagem": "images/file-5b44ce91332ca.jpg",
+      "alternativas": [
+        {
+          "texto": "Corneal epithelium",
+          "correta": true,
+          "feedback": "CORRECT. The outermost layer of the cornea is a thin, stratified squamous moist epithelium with abundant sensory innervation. The corneal epithelium rests on Bowman’s membrane."
+        },
+        {
+          "texto": "Bowman's membrane",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Stroma",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Descemet's membrane",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Endothelium",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 20,
+      "enunciado": "Identify the layer indicated by the arrows.",
+      "imagem": "imagens/file-5b44cf18b35e1.jpg",
+      "caminho_h5p_imagem": "images/file-5b44cf18b35e1.jpg",
+      "alternativas": [
+        {
+          "texto": "Outer plexiform layer",
+          "correta": true,
+          "feedback": "CORRECT. The outer plexiform layer is a synaptic layer where axons of photoreceptor cells terminate on the dendrites of bipolar cells and horizontal cells."
+        },
+        {
+          "texto": "Outer segments of rods and cones",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Outer nuclear layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Inner plexiform layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ganglion cell layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    }
+  ],
+  "json_h5p_original": {
+    "introPage": {
+      "showIntroPage": false,
+      "startButtonText": "Start Quiz",
+      "introduction": ""
+    },
+    "progressType": "textual",
+    "passPercentage": 50,
+    "texts": {
+      "prevButton": "Previous question",
+      "nextButton": "Next question",
+      "finishButton": "Finish",
+      "textualProgress": "Question: @current of @total questions",
+      "jumpToQuestion": "Question %d of %total",
+      "questionLabel": "Question",
+      "readSpeakerProgress": "Question @current of @total",
+      "unansweredText": "Unanswered",
+      "answeredText": "Answered",
+      "currentQuestionText": "Current question"
+    },
+    "disableBackwardsNavigation": false,
+    "randomQuestions": true,
+    "endGame": {
+      "showResultPage": true,
+      "showSolutionButton": true,
+      "noResultMessage": "Finished",
+      "message": "Your result:",
+      "overallFeedback": [
+        {
+          "from": 0,
+          "to": 100
+        }
+      ],
+      "solutionButtonText": "Show solution",
+      "retryButtonText": "Retry",
+      "finishButtonText": "Finish",
+      "showAnimations": false,
+      "skippable": false,
+      "skipButtonText": "Skip video"
+    },
+    "override": {
+      "checkButton": true
+    },
+    "questions": [
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43a74e5ec14.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "4c71de78-1d3c-491f-8e3d-f681105b4751",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; The ciliary body is the anterior expansion of the choroid, forming a ring encircling the lens.&nbsp; When cut in cross section, the ciliary body appears triangular in shape.&nbsp; The ciliary body contains the ciliary muscle, three subdivisions of smooth muscle that alter the shape of the lens via suspensory fibers that extend between the ciliary body and the lens.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary body </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Iris</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choroid</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Non-sensory retina</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Limbus</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure outlined in this image.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "84a0fb21-ac2f-435f-a094-f8f62240b511",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43a81b57a05.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c36fd7bd-7f22-4ce8-b550-03473e8653c2",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nThe trabecular meshwork, located in the limbus, is a series of endothelium-lined channels that drain aqueous humor from the anterior chamber of the eye.&nbsp; Aqueous humor flows from the trabecular meshwork into the larger canal of Schlemm, which connects with the venous system external to the eye.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Trabecular meshwork</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Conjuctiva</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Canal of Schlemm</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Zonule fibers</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ora serrata</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the rectangle.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "29cec6bb-b407-4e6b-a96a-b37d201a4f67",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43a8a5368e8.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "f7bc6008-b023-4ec3-af54-d7d98e2173b8",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The cornea, located in the anterior one-fifth of the eye, is the transparent portion of the outer tunic, where major refraction occurs.&nbsp; Its convex curvature aids in focusing light.&nbsp; The cornea consists of inner and outer epithelial layers that sandwich a stroma of collagen fibers that are precisely aligned to provide transparency to the cornea.&nbsp; The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva that covers the sclera. \n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cornea</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Limbus</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Sclera</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Lens</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Iris</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "d34bae51-e45a-4f6f-a7f4-cdb713a622d2",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43a957dee86.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "ca3c7ab0-5ccf-42fc-bc47-c3b174af6a14",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The vitreous chamber is located behind the posterior chamber and is filled with a gelatinous fluid called the vitreous body.&nbsp; The vitreous body is a gelatinous substance that lightly supports the retina.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Vitreous space</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Limbus</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Posterior chamber</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Anterior chamber</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Tarsus</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the space indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "267583ad-640a-42cf-93ad-5a2fb24fdf9b",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43a9def0e4c.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "ce1d4ac4-395f-4acd-a2c4-b4446b03939b",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The anterior chamber is bounded by the cornea, iris and anterior surface of the lens.&nbsp; The chamber is filled with aqueous humor, a watery fluid produced by the ciliary body.&nbsp; Aqueous humor flows through the posterior chamber into the anterior chamber and exits at the limbus via the trabecular meshwork and the canal of Schlemm. \n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Anterior chamber</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Limbus</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Posterior chamber</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Vitreous space</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Tarsus</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the space indicated by the double arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "52a57e17-2d0f-43c6-9dbd-808770402473",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43aa83500f8.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "72ff935c-31f5-4735-8263-73a064cd3550",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; The dilator pupillae muscle in the iris is derived from the more anterior, pigmented epithelial layer.&nbsp; It consists of radially oriented cells whose contraction increases the pupil diameter (dilation), thereby allow more light to enter the eye.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dilator pupillae muscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Non-pigmented retina</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choroid</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Constrictor pupillae muscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Zonular fibers</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "c02cf167-ee23-46b7-b21b-ed3000c4c559",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43ab0cbf5d9.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c40f925e-f699-4528-9754-553369cf1851",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The choroid forms the majority of the vascular or middle tunic (uvea), covering the posterior portion of the eye.&nbsp; The choroid is composed of loose connective tissue, with an abundant vascular supply and pigmented cells.&nbsp; The choroid supplies nutrients to the deep layers of the retina; its pigmented cells serve to absorb reflected and stray light within the globe.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choroid</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Sclera</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cornea</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Limbus</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary body</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the bars.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "cfddacf3-df75-4717-9436-fe35c4ea41f9",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43aba8c7268.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c141942e-9856-4bed-b715-5cc5d018b1e3",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The sclera, a component of the fibrous tunic, is an opaque layer surrounding the posterior four-fifths of the eye.&nbsp; The sclera is composed of dense connective tissue that provides support for the eye and attachment for extraocular eye muscles.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Sclera</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choroid</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "notChosenFeedback": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": ""
+              },
+              "text": "<div>Cornea</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Limbus</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary body</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the double arrow.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "05d0f79a-9835-451a-8813-ac2cad2f8b63",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43ac3c55d4f.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "224fb724-dc5a-471d-927f-b58527f392c0",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The ciliary muscle, located within the ciliary body, is composed of smooth muscle fibers oriented in three planes.&nbsp; The fibers insert onto the sclera and ciliary body and contraction releases tension on the zonule fibers, allowing the lens to become more spherical during the process of accommodation.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary muscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Constrictor pupillae muscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Sclera</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choroid</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Trabecular meshwork</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated in this image.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "33689567-5165-413f-a22b-168a04206c05",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b43ad1c3a65c.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "e3095629-1682-43aa-9ad2-3fd50896cb3d",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; The ciliary processes are ridge-like extensions of the ciliary body and are also covered by ciliary epithelium.&nbsp; Zonular fibers are delicate microfibrils that arise from the basal lamina of the ciliary epithelium in the grooves separating the ciliary processes.&nbsp; Zonular fibers attach to the lens capsule and contraction of ciliary body muscles alters the tension on these fibers and, thus, affects the shape of the lens.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary process</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Zonular fiber</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nIris\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary body</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary muscle</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "ea351040-4799-4ac4-a0c8-96944ca2e8b2",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44bbb130384.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "e28ecba6-0803-45bc-8f9f-8f8b9aff6e19",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>The iris is a portion of the middle, or vascular, tunic and is attached to the anterior portion of the ciliary body.&nbsp; The iris is a disk-shaped structure with a central opening, the pupil.&nbsp; Most of the core of the iris consists of loose connective tissue with many melanocytes and blood vessels.&nbsp; Contraction of smooth muscle groups in the iris alters the diameter of the pupil and, therefore, adjust the amount of light entering the eye.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Iris</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary process</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary body</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary muscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cornea</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "e4830469-96ee-4449-88d8-0f1722a90230",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44c6462474d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "d30f8544-4b81-4b7d-9526-728e6e25a341",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; Pigment epithelium constitutes the outermost layer of the retina and consists of a simple cuboidal epithelium with melanin granules.&nbsp; Pigment epithelial cells phagocytose worn-out components of photoreceptors, absorb light passing through the retina to prevent reflection, and form the blood-retinal barrier.&nbsp; The basal lamina of this epithelium is a component of Bruch's membrane.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Pigment epithelium</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Sclera</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choroid</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ciliary body</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Choriocapillaris</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the layer indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "d8d60ee0-6aa2-49a0-9f02-7ca8cfeb10a0",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44c78913cf8.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "64717c87-ba04-47ce-9e2f-12ce6e9eb3c3",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The inner nucler layer contains the cell bodies and nuclei of bipolar cells, as well as interneurons (horizontal and amacrine cells), and Muller cells.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inner nuclear layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Photoreceptor layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Outer nuclear layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ganglion cell layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inner plexiform layer</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the layer indicated by the rectangle.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "895e1ac4-adf6-4b00-b946-17f14dfe1a1d",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44ca5bc6156.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "9fefa883-3144-47e7-b4ff-950427e03ca6",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; Cones are less numerous than rods and provide greater visual acuity than the rods.&nbsp; Cones are so named based of the conical shape of their outer segments which contain the visual pigment iodopsin. Cones are concentrated in the central retina, notably in the fovea, the region of greatest visual acuity.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cone</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ganglion cell</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Bipolar cell</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Muller cell</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Rod</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cell indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "6ce1591a-a48c-4726-8f00-42510b749673",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44cb12d194f.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "84bb9dd4-d55d-4242-ad47-c3f09c55bde5",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The outer limiting membrane is not a true membrane.&nbsp; It is formed by adherent junctions between Muller cells, radially oriented astrocytes, and with the photoreceptors.&nbsp; Muller cells extend between the outer and inner limiting membranes and support and nourish the retinal neurons and their processes.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Outer limiting membrane</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Photoreceptor layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Outer plexiform layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inner limiting membrane</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Inner plexiform layer</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "e04084b1-1ffe-4863-bfbb-9b861dba20de",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44cc263f9d9.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "93f47c4a-f0ad-4d61-8ada-b38070345cad",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The orbicularis oculi muscle is skeletal muscle, a portion of which is located in the core of the eyelid.&nbsp; The orbicularis oculi muscle is a sphincter muscle that closes the eyelids.&nbsp; Also present in the eyelid are Meibomian glands, modified sebaceous glands, embedded in the tarsus.&nbsp; The secretions of these glands provide an oily surface layer to the tear film that reduces evaporation of this layer.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Orbicular oculi muscle</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nMeibomium gland\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nTarsus\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nConjunctiva\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nFornix\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "4a54de31-070f-4766-af5f-f8a1447c48fd",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44ccdc96eb0.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "c843410e-dbaa-46d5-b614-076d8e322af2",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The fovea is the region of the retina providing greatest visual acuity.&nbsp; It consists entirely of cones; other retinal layers are displaced centrifugally to create an unimpeded path for light to reach the photoreceptors.&nbsp; The center of the fovea is called the foveola.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fovea</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nOptic disk\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Optic papilla</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Foveola</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ora serrata</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the region indicated by the rectangle.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "464cb718-f7d0-4636-8751-fe2551451777",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44cdc25fddc.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "b5b06250-a956-4374-97d9-003ac38cf3e7",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp; This image shows the ora serrata.&nbsp; Note how the multilayered, sensory retina (to the right) collapses into a single layer of cuboidal to columnar epithelium.&nbsp; The pigment epithelium continues forward and underlies the layer derived from the sensory retina.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ora serrata </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nCiliary body\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nOptic disc\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nFovea\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Optic papilla</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the region indicated by the rectangle.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "6ad1a44d-11af-4a62-825f-7d792de0a7a5",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44ce91332ca.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "0e9a921c-b318-40a7-893f-3c572a5e8fed",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The outermost layer of the cornea is a thin, stratified squamous moist epithelium with abundant sensory innervation.&nbsp; The corneal epithelium rests on Bowman’s membrane.&nbsp; \n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Corneal epithelium </div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Bowman's membrane</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nStroma\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nDescemet's membrane\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nEndothelium\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structure indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "cc3ea5b4-48aa-499e-bf42-ad13e0ac4bfa",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b44cf18b35e1.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "db3d475d-acb2-4e02-8faa-4ed88b25be79",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT.&nbsp; The outer plexiform layer is a synaptic layer where axons of photoreceptor cells terminate on the dendrites of bipolar cells and horizontal cells.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Outer plexiform layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nOuter segments of rods and cones\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nOuter nuclear layer\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nInner plexiform layer\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nGanglion cell layer\n</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the layer indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "fc311f76-a7ec-44f8-980c-def896a94b24",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      }
+    ]
+  }
+}

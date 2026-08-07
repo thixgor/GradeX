@@ -1,0 +1,66 @@
+{
+  "id": 28592,
+  "titulo": "Mucosa: MALT",
+  "titulo_wordpress": "Small intestine 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 13"
+  ],
+  "descricao_original": "Mucosa-associated lymphoid tissue (MALT) refers to collections of lymphoid tissue located in the lamina propria throughout the tubular digestive tract. MALT is present either as diffuse cells (left), condensed nodules (middle) or aggregates of nodules (right). MALT consists primarily of B and T lymphocytes, and provides antigen surveillance of tissue fluid to initiate an immune response. 200x, 50x, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-13/",
+  "creditos_identificados": [
+    "Image credit: This image was taken of a slide in the University of Pittsburgh slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosa: MALT', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 13. Descricao original da pagina: Mucosa-associated lymphoid tissue (MALT) refers to collections of lymphoid tissue located in the lamina propria throughout the tubular digestive tract. MALT is present either as diffuse cells (left), condensed nodules (middle) or aggregates of nodules (right). MALT consists primarily of B and T lymphocytes, and provides antigen surveillance of tissue fluid to initiate an immune response. 200x, 50x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "Diffuse lymphoid tissue consists of dispersed lymphoid cells (B and T lymphocytes, macrophages and plasma cells) in the lamina propria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-11-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: MALT'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Diffuse lymphoid tissue consists of dispersed lymphoid cells (B and T lymphocytes, macrophages and plasma cells) in the lamina propria.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nodular lymphoid tissue",
+      "explicacao_original": "Nodular lymphoid tissue consists of tightly packed lymphoid cells that form primary nodules (solid-looking spheres of lymphocytes) or secondary nodules. Secondary nodules are derived from primary nodules and contain a central, pale zone called the germinal center surrounded composed of proliferating lymphocytes. Nodules respond to antigens carried in the tissue fluid.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-11-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: MALT'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg'. Destaca a estrutura ou conceito 'Nodular lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nodular lymphoid tissue consists of tightly packed lymphoid cells that form primary nodules (solid-looking spheres of lymphocytes) or secondary nodules. Secondary nodules are derived from primary nodules and contain a central, pale zone called the germinal center surrounded composed of proliferating lymphocytes. Nodules respond to antigens carried in the tissue fluid.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nodule aggregate (Peyer’s patch)",
+      "explicacao_original": "Nodule aggregates (Peyer’s patches) are common in the lamina propria of the ileum on the side opposite the mesentery. They consist of both diffuse and nodular lymphoid tissues.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-11-NEW-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: MALT'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg'. Destaca a estrutura ou conceito 'Nodule aggregate (Peyer’s patch)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Nodule aggregates (Peyer’s patches) are common in the lamina propria of the ileum on the side opposite the mesentery. They consist of both diffuse and nodular lymphoid tissues.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image credit",
+      "explicacao_original": "This image was taken of a slide in the University of Pittsburgh slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Pitt-image-credit.png",
+      "arquivo": "imagens/marcadores/Pitt-image-credit.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: MALT'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-11-NEW.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Pittsburgh slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-13/, acesso em 2026-08-07."
+    }
+  ]
+}

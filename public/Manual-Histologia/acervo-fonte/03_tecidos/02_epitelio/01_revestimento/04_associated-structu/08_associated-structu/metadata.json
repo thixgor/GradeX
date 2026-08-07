@@ -1,0 +1,54 @@
+{
+  "id": 3947,
+  "titulo": "Stereocilia",
+  "titulo_wordpress": "Associated structures 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 8"
+  ],
+  "descricao_original": "Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-8.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stereocilia', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 8. Descricao original da pagina: Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pseudostratified, columnar epithelium",
+      "explicacao_original": "Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-8-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-8-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stereocilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-8.jpg'. Destaca a estrutura ou conceito 'Pseudostratified, columnar epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 8. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stereocilia",
+      "explicacao_original": "Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-8-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stereocilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-8.jpg'. Destaca a estrutura ou conceito 'Stereocilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 8. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Terminal bars",
+      "explicacao_original": "Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-8-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stereocilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-8.jpg'. Destaca a estrutura ou conceito 'Terminal bars' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stereocilia are modified microvilli which facilitate absorption of luminal contents. Also visible are terminal bars, the light microscopic term for junctional complexes that are better resolved with the electron microscope. 1500x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 8. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-8/, acesso em 2026-08-07."
+    }
+  ]
+}

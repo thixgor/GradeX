@@ -1,0 +1,74 @@
+{
+  "id": 13101,
+  "titulo": "Placenta: 1st trimester",
+  "titulo_wordpress": "Placenta 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 5"
+  ],
+  "descricao_original": "The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.jpg",
+      "arquivo": "imagens/base/O.R.F.P.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Placenta: 1st trimester', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 5. Descricao original da pagina: The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chorionic villi",
+      "explicacao_original": "The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.05.P01.png",
+      "imagem_base": "imagens/base/O.R.F.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.05.jpg'. Destaca a estrutura ou conceito 'Chorionic villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Embryonic connective tissue",
+      "explicacao_original": "The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.05.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.05.jpg'. Destaca a estrutura ou conceito 'Embryonic connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cytotrophoblast",
+      "explicacao_original": "The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.05.P03.png",
+      "imagem_base": "imagens/base/O.R.F.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.05.jpg'. Destaca a estrutura ou conceito 'Cytotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The composition of villi is demonstrated in an enlargement of floating chorionic villi located in the intervillous space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Syncytiotrophoblast",
+      "explicacao_original": "Syncytiotrophoblast is a single-cell syncytium that covers each villus and all chorionic surfaces, thus lining the intervillous space. This syncytium possesses abundant microvilli to increase surface area for transport. Syncytiotrophoblast synthesizes most of the placental hormones and is an important component of the barrier between fetal and maternal blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.05.P04.png",
+      "imagem_base": "imagens/base/O.R.F.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.05.jpg'. Destaca a estrutura ou conceito 'Syncytiotrophoblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Syncytiotrophoblast is a single-cell syncytium that covers each villus and all chorionic surfaces, thus lining the intervillous space. This syncytium possesses abundant microvilli to increase surface area for transport. Syncytiotrophoblast synthesizes most of the placental hormones and is an important component of the barrier between fetal and maternal blood.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Microvilli",
+      "explicacao_original": "Syncytiotrophoblast is a single-cell syncytium that covers each villus and all chorionic surfaces, thus lining the intervillous space. This syncytium possesses abundant microvilli to increase surface area for transport. Syncytiotrophoblast synthesizes most of the placental hormones and is an important component of the barrier between fetal and maternal blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.05.P05.png",
+      "imagem_base": "imagens/base/O.R.F.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Placenta: 1st trimester'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.05.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Syncytiotrophoblast is a single-cell syncytium that covers each villus and all chorionic surfaces, thus lining the intervillous space. This syncytium possesses abundant microvilli to increase surface area for transport. Syncytiotrophoblast synthesizes most of the placental hormones and is an important component of the barrier between fetal and maternal blood.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-5/, acesso em 2026-08-07."
+    }
+  ]
+}

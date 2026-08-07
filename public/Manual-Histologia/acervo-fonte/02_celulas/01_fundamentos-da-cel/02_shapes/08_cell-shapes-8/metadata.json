@@ -1,0 +1,73 @@
+{
+  "id": 1033,
+  "titulo": "Cell shapes: stellate",
+  "titulo_wordpress": "Cell shapes 8",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 8"
+  ],
+  "descricao_original": "A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8.jpg",
+      "arquivo": "imagens/base/C.B.Sh-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: stellate', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 8. Descricao original da pagina: A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cell body",
+      "explicacao_original": "A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-8-2-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: stellate'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-8.jpg'. Destaca a estrutura ou conceito 'Cell body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 8. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleus",
+      "explicacao_original": "A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-8-3-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: stellate'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-8.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 8. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-8-4-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: stellate'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-8.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 8. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nissl bodies",
+      "explicacao_original": "A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8-5-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-8-5-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: stellate'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-8.jpg'. Destaca a estrutura ou conceito 'Nissl bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 8. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Processes",
+      "explicacao_original": "A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-8-1-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: stellate'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-8.jpg'. Destaca a estrutura ou conceito 'Processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A stellate, or star-shaped nerve cell (multipolar neuron) has numerous long processes emanating from the cell body. The cytoplasm is filled with clumps of rough endoplasmic reticulum and polysomes called Nissl bodies. The numerous processes provide impulse conduction between multiple cells. Spinal cord 400x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 8. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-8/, acesso em 2026-08-07."
+    }
+  ]
+}

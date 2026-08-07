@@ -1,0 +1,1962 @@
+{
+  "id_pagina": 21106,
+  "id_h5p": "36",
+  "titulo": "Cartilagem",
+  "titulo_original": "Cartilage quiz",
+  "url_origem": "https://digitalhistology.org/quizzes/cartilage/",
+  "licenca_metadado_h5p": "U",
+  "questoes": [
+    {
+      "numero": 1,
+      "enunciado": "Identify the layer indicated by the arrows.",
+      "imagem": "imagens/file-5b59f03749809.jpg",
+      "caminho_h5p_imagem": "images/file-5b59f03749809.jpg",
+      "alternativas": [
+        {
+          "texto": "Perichondrium, fibrous layer",
+          "correta": true,
+          "feedback": "CORRECT. The fibrous layer of the perichondrium is composed of dense connective tissue proper and contains flattened, multipotential cells resembling fibroblasts. These cells round up and differentiate into the chondroblasts located in the chondrogenic layer. The fibrous layer serves as a reserve-cell source for the chondrogenic layer and as protection for the cartilage."
+        },
+        {
+          "texto": "Perichondrium, chondrogenic layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Periosteum, fibrous layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Periosteum, osteogenic layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense regular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 2,
+      "enunciado": "Identify the layer indicated by the arrows.",
+      "imagem": "imagens/file-5b59f06dd8453.jpg",
+      "caminho_h5p_imagem": "images/file-5b59f06dd8453.jpg",
+      "alternativas": [
+        {
+          "texto": "Perichondrium, chondrogenic layer",
+          "correta": true,
+          "feedback": "CORRECT. The chondrogenic layer of the perichondrium is interposed between the fibrous layer and cartilage tissue proper. This layer contains chondroblasts lying adjacent to the cartilage. Chondroblasts surround themselves with cartilage matrix, thus becoming chondrocytes and increasing the thickness of the cartilage by appositional growth."
+        },
+        {
+          "texto": "Perichondrium, fibrous layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Periosteum, fibrous layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Periosteum, osteogenic layer",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense, regular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 3,
+      "enunciado": "Classify the tissue indicated by the arrow.",
+      "imagem": "imagens/file-5b59f34fde229.jpg",
+      "caminho_h5p_imagem": "images/file-5b59f34fde229.jpg",
+      "alternativas": [
+        {
+          "texto": "Hyaline cartilage",
+          "correta": true,
+          "feedback": "CORRECT. Hyaline cartilage proper is composed of cells (chondrocytes) and their surrounding extracellular matrix. Chondrocytes are usually present as isogenous groups. The glassy (hyaline) extracellular matrix is composed of a firm-rubber ground substance and collagen (type II) fibrils."
+        },
+        {
+          "texto": "Woven bone",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Compact woven bone",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Fibrocartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Isogenous groups",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 4,
+      "enunciado": "What is the specific name of the region around the tips of the arrows?",
+      "imagem": "imagens/file-5b5a32c78eac3.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a32c78eac3.jpg",
+      "alternativas": [
+        {
+          "texto": "Territorial matrix",
+          "correta": true,
+          "feedback": "CORRECT. The darkly staining extracellular matrix immediately around an isogenous group is called the territorial matrix and represents an area where glycosaminoglycans are highly concentrated."
+        },
+        {
+          "texto": "Interterritorial matrix",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Calcified cartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Isogenous group",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Isogenous growth",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 5,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b5a3482505fa.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a3482505fa.jpg",
+      "alternativas": [
+        {
+          "texto": "Chondroblasts",
+          "correta": true,
+          "feedback": "CORRECT. Chondroblasts in the chondrogenic layer secrete cartilage matrix around themselves, becoming chondrocytes and increasing cartilage thickness by appositional growth. The exact point at which a chondroblast becomes a chondrocyte is hard to visualize. The transition, however, of inactive, flattened cells to plump, secretory chondroblasts to spherical chondrocytes is well shown."
+        },
+        {
+          "texto": "Chondrocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Fibroblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Osteoblast",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Osteocyte",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 6,
+      "enunciado": "Classify the tisue that fills the field.",
+      "imagem": "imagens/file-5b5a357025508.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a357025508.jpg",
+      "alternativas": [
+        {
+          "texto": "Elastic cartilage",
+          "correta": true,
+          "feedback": "CORRECT. The qualities that distinguish elastic cartilage are quite evident here: numerous chondrocytes with few isogenous groups, less extracellular matrix than hyaline cartilage and abundant, very obvious elastic fibers."
+        },
+        {
+          "texto": "Hyaline cartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Fibrocartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Woven lamellar bone",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Compact lamellar bone",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 7,
+      "enunciado": "Identify the cells indicated by the arrows.",
+      "imagem": "imagens/file-5b5a370404d39.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a370404d39.jpg",
+      "alternativas": [
+        {
+          "texto": "Chondrocytes",
+          "correta": true,
+          "feedback": "CORRECT. Fibrocartilage can be difficult to differentiate from dense connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae."
+        },
+        {
+          "texto": "Chondroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Macrophages",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Osteoblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 8,
+      "enunciado": "Classify the tissue indicated by the arrows.",
+      "imagem": "imagens/file-5b5a38d90d314.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a38d90d314.jpg",
+      "alternativas": [
+        {
+          "texto": "Fibrocartilage",
+          "correta": true,
+          "feedback": "CORRECT. Fibrocartilage, the strongest of the cartilages, blends the strength of dense CT with that of cartilage: obvious collagen fiber bundles (similar to dense CT) and a flexible, noncompressible ground substance (similar to cartilage). Fibrocartilage exists in isolated pockets where extra strength is needed, rather than as an independent cartilage; therefore, it has no perichondrium."
+        },
+        {
+          "texto": "Hyaline cartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Elastic cartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Dense regular connective tissue",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Woven bone",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 9,
+      "enunciado": "Identify the structures indicated by the arrows.",
+      "imagem": "imagens/file-5b5a3a0dbc64d.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a3a0dbc64d.jpg",
+      "alternativas": [
+        {
+          "texto": "Elastic fibers",
+          "correta": true,
+          "feedback": "CORRECT. With a special stain, elastic fibers are readily visible in the elastic cartilage matrix, helping to differentiate it from hyaline cartilage."
+        },
+        {
+          "texto": "Collagen fibers",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Cement lines",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Interstitial lamellae",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Volkmann's canals",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 10,
+      "enunciado": "What is the specific name for the region in which the \"X\"s are located?",
+      "imagem": "imagens/file-5b5a3b7e7b1f1.jpg",
+      "caminho_h5p_imagem": "images/file-5b5a3b7e7b1f1.jpg",
+      "alternativas": [
+        {
+          "texto": "Interterritorial matrix",
+          "correta": true,
+          "feedback": "CORRECT. The lightly staining matrix outside the dark, basophilic halo surrounding chondrocytes is called the interterritorial matrix. Glycosaminoglycans are less concentrated farther away from chondrocytes and, consequently, this area stains more palely."
+        },
+        {
+          "texto": "Territorial matrix",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Calcified cartilage",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Ground substance",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Isogenous group",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 11,
+      "enunciado": "Identify the cells at the tips of the arrows.",
+      "imagem": "imagens/file-5b5aecf29b072.jpg",
+      "caminho_h5p_imagem": "images/file-5b5aecf29b072.jpg",
+      "alternativas": [
+        {
+          "texto": "Chondrocytes",
+          "correta": true,
+          "feedback": "CORRECT. Chondrocytes, chondroblasts that have completely surrounded themselves by matrix, lie in potential spaces called lacunae. Although surrounded by a firm, rubbery matrix that seems difficult to manipulate, chondrocytes produce matrix and divide (interstitial growth), forming isogenous groups. Black spheres within these cells are lipid droplets."
+        },
+        {
+          "texto": "Chondroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Active fibroblasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Osteocytes",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Osteoclasts",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    },
+    {
+      "numero": 12,
+      "enunciado": "Identify the type of tissue growth occurring in the cluster of cells included in the oval.",
+      "imagem": "imagens/file-5b5aeff3e17a6.jpg",
+      "caminho_h5p_imagem": "images/file-5b5aeff3e17a6.jpg",
+      "alternativas": [
+        {
+          "texto": "Interstitial growth",
+          "correta": true,
+          "feedback": "CORRECT. Chondrocytes lying within the cartilages divide and lay down cartilage matrix around themselves. This growth is termed interstitial growth."
+        },
+        {
+          "texto": "Appositional growth",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Endochondral growth",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        },
+        {
+          "texto": "Intramembranous growth",
+          "correta": false,
+          "feedback": "Incorrect, try again."
+        }
+      ]
+    }
+  ],
+  "json_h5p_original": {
+    "introPage": {
+      "showIntroPage": false,
+      "startButtonText": "Start Quiz",
+      "introduction": ""
+    },
+    "progressType": "dots",
+    "passPercentage": 50,
+    "questions": [
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b59f03749809.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "0d2ca703-86a4-494e-9c4b-5fabcb935f17",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT. The fibrous layer of the perichondrium is composed of dense connective tissue proper and contains flattened, multipotential cells resembling fibroblasts. These cells round up and differentiate into the chondroblasts located in the chondrogenic layer. The fibrous layer serves as a reserve-cell source for the chondrogenic layer and as protection for the cartilage.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Perichondrium, fibrous layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Perichondrium, chondrogenic layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Periosteum, fibrous layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Periosteum, osteogenic layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense regular connective tissue</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the layer indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "6c44fd12-3ece-4e1a-a5db-9ee7e48a522a",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b59f06dd8453.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "733fba58-2810-45b9-9b3b-6c452dd8c316",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT. The chondrogenic layer of the perichondrium is interposed between the fibrous layer and cartilage tissue proper. This layer contains chondroblasts lying adjacent to the cartilage. Chondroblasts surround themselves with cartilage matrix, thus becoming chondrocytes and increasing the thickness of the cartilage by appositional growth.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Perichondrium, chondrogenic layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Perichondrium, fibrous layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Periosteum, fibrous layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Periosteum, osteogenic layer</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense, regular connective tissue</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the layer indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "bbaafdd0-075c-4c78-84f5-b3badd425716",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b59f34fde229.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "5fe6e581-9419-4c13-9aaa-a95c69ab1c01",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nCORRECT. Hyaline cartilage proper is composed of cells (chondrocytes) and their surrounding extracellular matrix. Chondrocytes are usually present as isogenous groups. The glassy (hyaline) extracellular matrix is composed of a firm-rubber ground substance and collagen (type II) fibrils.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Hyaline cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Woven bone</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Compact woven bone</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fibrocartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Isogenous groups</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue indicated by the arrow.</p>\n\n<p>&nbsp;</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "71bd5516-a800-4f13-b47f-6ba3acb5fbb7",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a32c78eac3.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "3c1f74dc-d4b1-41bd-b484-3cc6a325d1cc",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;The darkly staining extracellular matrix immediately around an isogenous group &nbsp;is called the territorial matrix and represents an area where glycosaminoglycans are highly  concentrated.&nbsp;</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Territorial matrix</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Interterritorial matrix</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Calcified cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Isogenous group</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Isogenous growth</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>What is the specific name of the region around the tips of the arrows?</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "8758f398-e764-418f-9705-98c69c9dca1d",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a3482505fa.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "a44934a1-41cb-4c83-b341-de492d7f413a",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;Chondroblasts in the chondrogenic layer secrete cartilage matrix around  themselves, becoming chondrocytes and increasing cartilage thickness by appositional growth. The  exact point at which a chondroblast becomes a chondrocyte is hard to visualize. The transition, however, of inactive, flattened cells to plump, secretory chondroblasts to spherical chondrocytes is well shown.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Chondroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Chondrocyte</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fibroblast</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Osteoblast</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Osteocyte</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "a291ffb4-2836-4c77-ac35-d5783c303ac0",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a357025508.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "35e465c9-0237-4e2e-92ea-6d91ea68dd13",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;The qualities that distinguish elastic cartilage are quite evident here: numerous chondrocytes with few isogenous groups, less extracellular matrix than hyaline cartilage and abundant, very obvious elastic fibers.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Hyaline cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fibrocartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Woven lamellar bone</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Compact lamellar bone</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tisue that fills the field.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "5c5c900b-0210-4e4e-b54b-7a01f3ca874c",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a370404d39.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "aed6fac4-19d1-4335-a2c4-be270f7af88e",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT.&nbsp;&nbsp;Fibrocartilage can be difficult to differentiate from dense connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Chondrocytes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Chondroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fibroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Macrophages</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Osteoblasts</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "19c84b89-f183-4ba7-aee6-df3198cd4a95",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a38d90d314.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "ae1cf0b1-bd54-44e8-9ce5-0e594b9f5a4d",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp;Fibrocartilage, the strongest of the cartilages, blends the strength of dense CT with that of cartilage: obvious collagen fiber bundles (similar to dense CT) and a flexible, noncompressible ground substance (similar to cartilage). Fibrocartilage exists in isolated pockets where extra strength is needed, rather than as an independent cartilage; therefore, it has no perichondrium.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Fibrocartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Hyaline cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Dense regular connective tissue</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Woven bone</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Classify the tissue indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "ac20aec5-947d-417b-bd7d-2d4f5efa1cd6",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a3a0dbc64d.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "5ab1636b-d6fe-477d-bd0a-41e2a87288dc",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>CORRECT. With a special stain, elastic fibers are readily visible in the elastic cartilage matrix, helping to differentiate it from hyaline cartilage. </div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Elastic fibers</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Collagen fibers</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Cement lines</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Interstitial lamellae</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Volkmann's canals</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the structures indicated by the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "09f1db42-f339-439f-8eab-cfb545d2349e",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5a3b7e7b1f1.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "3d8382d5-13ac-4476-8748-a328b50fdbe7",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT.&nbsp;The lightly staining matrix outside the dark, basophilic halo surrounding chondrocytes is called the interterritorial matrix. Glycosaminoglycans are less concentrated farther away from chondrocytes and, consequently, this area stains more palely.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Interterritorial matrix</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Territorial matrix</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Calcified cartilage</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Ground substance</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Isogenous group</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>What is the specific name for the region in which the \"X\"s are located?</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "8d0e5a76-5c76-4268-832a-6c568a300a21",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5aecf29b072.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "1d3b91c2-8ee9-4149-9651-a97e5aab3499",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT. Chondrocytes, chondroblasts that have completely surrounded themselves by matrix, lie in potential spaces called lacunae. Although surrounded by a firm, rubbery matrix that seems difficult to manipulate, chondrocytes produce matrix and divide (interstitial growth), forming isogenous groups. Black spheres within these cells are lipid droplets.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Chondrocytes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>\nChondroblasts\n</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Active fibroblasts</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Osteocytes</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>\nIncorrect, try again.\n</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Osteoclasts</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the cells at the tips of the arrows.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "c197e8d8-e21e-4d21-bdf9-b10cb79c6d6f",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      },
+      {
+        "params": {
+          "media": {
+            "params": {
+              "contentName": "Image",
+              "file": {
+                "path": "images/file-5b5aeff3e17a6.jpg",
+                "mime": "image/jpeg",
+                "copyright": {
+                  "license": "U"
+                },
+                "width": 1920,
+                "height": 1280
+              }
+            },
+            "library": "H5P.Image 1.0",
+            "subContentId": "2128c2ba-72e4-4d6e-903f-c48b9ab971e8",
+            "metadata": {
+              "contentType": "Image",
+              "license": "U"
+            }
+          },
+          "answers": [
+            {
+              "correct": true,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>CORRECT. Chondrocytes lying within the cartilages divide and lay down cartilage matrix around themselves. This growth is termed interstitial growth.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Interstitial growth</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Appositional growth</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "tip": "",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Endochondral growth</div>\n"
+            },
+            {
+              "correct": false,
+              "tipsAndFeedback": {
+                "tip": "",
+                "chosenFeedback": "<div>Incorrect, try again.</div>\n",
+                "notChosenFeedback": ""
+              },
+              "text": "<div>Intramembranous growth</div>\n"
+            }
+          ],
+          "overallFeedback": [
+            {
+              "from": 0,
+              "to": 100
+            }
+          ],
+          "UI": {
+            "checkAnswerButton": "Check",
+            "showSolutionButton": "Show solution",
+            "tryAgainButton": "Retry",
+            "tipsLabel": "Show tip",
+            "scoreBarLabel": "You got :num out of :total points",
+            "tipAvailable": "Tip available",
+            "feedbackAvailable": "Feedback available",
+            "readFeedback": "Read feedback",
+            "wrongAnswer": "Wrong answer",
+            "correctAnswer": "Correct answer",
+            "shouldCheck": "Should have been checked",
+            "shouldNotCheck": "Should not have been checked",
+            "noInput": "Please answer before viewing the solution"
+          },
+          "behaviour": {
+            "enableRetry": true,
+            "enableSolutionsButton": true,
+            "enableCheckButton": true,
+            "type": "auto",
+            "singlePoint": false,
+            "randomAnswers": true,
+            "showSolutionsRequiresInput": true,
+            "disableImageZooming": false,
+            "confirmCheckDialog": false,
+            "confirmRetryDialog": false,
+            "autoCheck": false,
+            "passPercentage": 100,
+            "showScorePoints": true
+          },
+          "confirmCheck": {
+            "header": "Finish ?",
+            "body": "Are you sure you wish to finish ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Finish"
+          },
+          "confirmRetry": {
+            "header": "Retry ?",
+            "body": "Are you sure you wish to retry ?",
+            "cancelLabel": "Cancel",
+            "confirmLabel": "Confirm"
+          },
+          "question": "<p>Identify the type of tissue growth occurring in the cluster of cells included in the oval.</p>\n"
+        },
+        "library": "H5P.MultiChoice 1.12",
+        "subContentId": "313be18f-966d-4b7a-9972-e1c4c62a0ddb",
+        "metadata": {
+          "contentType": "Multiple Choice",
+          "license": "U",
+          "title": "Untitled Multiple Choice"
+        }
+      }
+    ],
+    "texts": {
+      "prevButton": "Previous question",
+      "nextButton": "Next question",
+      "finishButton": "Finish",
+      "textualProgress": "Question: @current of @total questions",
+      "jumpToQuestion": "Question %d of %total",
+      "questionLabel": "Question",
+      "readSpeakerProgress": "Question @current of @total",
+      "unansweredText": "Unanswered",
+      "answeredText": "Answered",
+      "currentQuestionText": "Current question"
+    },
+    "disableBackwardsNavigation": false,
+    "randomQuestions": false,
+    "endGame": {
+      "showResultPage": true,
+      "showSolutionButton": true,
+      "noResultMessage": "Finished",
+      "message": "Your result:",
+      "overallFeedback": [
+        {
+          "from": 0,
+          "to": 100
+        }
+      ],
+      "solutionButtonText": "Show solution",
+      "retryButtonText": "Retry",
+      "finishButtonText": "Finish",
+      "showAnimations": false,
+      "skippable": false,
+      "skipButtonText": "Skip video"
+    },
+    "override": {
+      "checkButton": true
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": 6882,
+  "titulo": "Stomach: pylorus",
+  "titulo_wordpress": "Regions 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 11"
+  ],
+  "descricao_original": "The junction of the gastric pit with the body of a pyloric gland is shown. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: pylorus', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 11. Descricao original da pagina: The junction of the gastric pit with the body of a pyloric gland is shown. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "The junction of the gastric pit with the body of a pyloric gland is shown. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-11.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The junction of the gastric pit with the body of a pyloric gland is shown. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pyloric glands",
+      "explicacao_original": "Pyloric glands are highly convoluted and the majority of its cells produce mucus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-11.jpg'. Destaca a estrutura ou conceito 'Pyloric glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pyloric glands are highly convoluted and the majority of its cells produce mucus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucous cells",
+      "explicacao_original": "The mucin in the cells has been mostly lost during tissue preparation, so those regions of the gland cells (blue arrows) and cells lining the pits (red arrows) are pale staining. However both cell types show a reddish-staining, basal cytoplasm and nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-11.jpg'. Destaca a estrutura ou conceito 'Mucous cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucin in the cells has been mostly lost during tissue preparation, so those regions of the gland cells (blue arrows) and cells lining the pits (red arrows) are pale staining. However both cell types show a reddish-staining, basal cytoplasm and nucleus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The glands are surrounded by lamina propria composed of loose connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-11.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glands are surrounded by lamina propria composed of loose connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The muscularis mucosae is the deepest layer of the mucosa and lies just above the submucosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-11-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-11-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-11.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis mucosae is the deepest layer of the mucosa and lies just above the submucosa.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-11/, acesso em 2026-08-07."
+    }
+  ]
+}

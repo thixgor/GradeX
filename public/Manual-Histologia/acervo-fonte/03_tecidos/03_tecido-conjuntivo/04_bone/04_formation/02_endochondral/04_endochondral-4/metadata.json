@@ -1,0 +1,67 @@
+{
+  "id": 10622,
+  "titulo": "Bone: endochondral ossification",
+  "titulo_wordpress": "Endochondral 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Endochondral",
+    "Endochondral 4"
+  ],
+  "descricao_original": "A longitudinal section through a fetal finger shows progressive changes that occur in long bones. Hyaline cartilage forms a template for the future bone and is gradually replaced by bone. Because bone is replacing a cartilage model, this ossification is called endochondral ossification. 4x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-3/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.jpg",
+      "arquivo": "imagens/base/T.C.B.F.E.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: endochondral ossification', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 4. Descricao original da pagina: A longitudinal section through a fetal finger shows progressive changes that occur in long bones. Hyaline cartilage forms a template for the future bone and is gradually replaced by bone. Because bone is replacing a cartilage model, this ossification is called endochondral ossification. 4x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cartilage",
+      "explicacao_original": "Typical hyaline cartilage formed the original template of these long bones and still exists in the region of the future epiphyses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.E.03.P01.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.03.jpg'. Destaca a estrutura ou conceito 'Cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Typical hyaline cartilage formed the original template of these long bones and still exists in the region of the future epiphyses.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Periosteal collar",
+      "explicacao_original": "Early in endochondral ossification, the perichondrium becomes vascularized, enabling this layer to act as a periosteum, depositing bone at the periphery of the cartilage template. This periosteal collar is formed by intramembranous ossification, as bone is laid on, rather than replacing, cartilage. The periosteal collar supports the forming bone and contributes to its future diaphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.E.03.P02.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.03.jpg'. Destaca a estrutura ou conceito 'Periosteal collar' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Early in endochondral ossification, the perichondrium becomes vascularized, enabling this layer to act as a periosteum, depositing bone at the periphery of the cartilage template. This periosteal collar is formed by intramembranous ossification, as bone is laid on, rather than replacing, cartilage. The periosteal collar supports the forming bone and contributes to its future diaphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.E.03.P03.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.03.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.E.03.P04.png",
+      "imagem_base": "imagens/base/T.C.B.F.E.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.F.E.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.E.03.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Mississippi collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-3/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": 2322,
+  "titulo": "Interphase",
+  "titulo_wordpress": "Mitosis overview 4",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 4"
+  ],
+  "descricao_original": "Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-3.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Interphase', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 4. Descricao original da pagina: Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-3-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-3-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-3-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-3-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-3-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-3-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interphase accounts for about 95% of the cell cycle. It consists of an initial a period of cell growth (G1), followed by a synthesis phase (S) during which DNA and centriole replication occurs, and lastly by a second growth phase (G2) just prior to mitosis. This diagrammatic illustration of the G1 stage, depicts the chromosomes in the condensed state; they will not actually condense until prophase of mitosis.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Chromosomes",
+      "explicacao_original": "Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. In this diagram only a single homologous pair is shown, one in red and the other in blue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-3-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-3-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Humans have 23 pairs of chromosomes, 22 pairs of autosomes and one pair of sex chromosomes, XX or XY. The full complement of 23 pairs of chromosomes is designated 2N. In this diagram only a single homologous pair is shown, one in red and the other in blue.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "The centrosome, the microtubule organizing center of the cell, consists of two centrioles (diplosome) oriented at right angles that are surrounded by the centrosome matrix. During S-phase, the centrosome duplicates; during prophase, each centrosome, with duplicated centrioles, moves to opposite poles of the cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-3-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-3-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The centrosome, the microtubule organizing center of the cell, consists of two centrioles (diplosome) oriented at right angles that are surrounded by the centrosome matrix. During S-phase, the centrosome duplicates; during prophase, each centrosome, with duplicated centrioles, moves to opposite poles of the cell.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-4/, acesso em 2026-08-07."
+    }
+  ]
+}

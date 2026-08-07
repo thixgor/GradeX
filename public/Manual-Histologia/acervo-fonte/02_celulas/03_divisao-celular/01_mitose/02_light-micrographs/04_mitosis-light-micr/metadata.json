@@ -1,0 +1,94 @@
+{
+  "id": 2408,
+  "titulo": "Metaphase",
+  "titulo_wordpress": "Mitosis light micrographs 4",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Light Micrographs",
+    "Mitosis light micrographs 4"
+  ],
+  "descricao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "arquivo": "imagens/base/Metaphase-mockup.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Metaphase', no setor Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Descricao original da pagina: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Early metaphase",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-1-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Early metaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Metaphase",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-2-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Metaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-3-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Metaphase plates",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-4-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Metaphase plates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Spindle fibers",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-5-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Spindle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-6-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-6-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Interphase nuclei",
+      "explicacao_original": "During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.LM-4-7-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mit_.LM-4-7-ping.png",
+      "imagem_base": "imagens/base/Metaphase-mockup.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/Metaphase-mockup.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'Metaphase-mockup.jpg'. Destaca a estrutura ou conceito 'Interphase nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align forming the metaphase plate. The first two panels show events early in this process as the chromatids migrate to the central region of the cell. The third panel shows a fully formed metaphase plate with its mitotic spindle composed of microtubules. Both centrosomes are also visible at the points where the microtubules converge. Whitefish blastula, 1500x. Contexto setorial: Células > Divisão Celular > Mitose > Light Micrographs > Mitosis light micrographs 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/light-micrographs/mitosis-light-micrographs-4/, acesso em 2026-08-07."
+    }
+  ]
+}

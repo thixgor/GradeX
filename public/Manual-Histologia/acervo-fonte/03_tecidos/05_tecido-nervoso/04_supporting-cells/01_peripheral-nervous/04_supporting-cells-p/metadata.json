@@ -1,0 +1,74 @@
+{
+  "id": 3024,
+  "titulo": "Schwann cells",
+  "titulo_wordpress": "Supporting cells PNS 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Peripheral Nervous System",
+    "Supporting cells PNS 4"
+  ],
+  "descricao_original": "A peripheral nerve, cut in cross section, shows numerous axons of various sizes surrounded by myelin sheaths. The myelin sheath is produced by Schwann cells in the peripheral nervous system and consists of a series of myelin units, internodes, each produced by a single Schwann cell. Each internode is produced by the spiraling wrapping of Schwann cell membrane around the axon. The Schwann cell nucleus is located midway along the length of each internode and thus nuclei are not visible in each myelinated axon. An endoneurium surrounds each sheath. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4.jpg",
+      "arquivo": "imagens/base/T.N.SuppPNS-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Schwann cells', no setor Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 4. Descricao original da pagina: A peripheral nerve, cut in cross section, shows numerous axons of various sizes surrounded by myelin sheaths. The myelin sheath is produced by Schwann cells in the peripheral nervous system and consists of a series of myelin units, internodes, each produced by a single Schwann cell. Each internode is produced by the spiraling wrapping of Schwann cell membrane around the axon. The Schwann cell nucleus is located midway along the length of each internode and thus nuclei are not visible in each myelinated axon. An endoneurium surrounds each sheath. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axons",
+      "explicacao_original": "A peripheral nerve, cut in cross section, shows numerous axons of various sizes surrounded by myelin sheaths. The myelin sheath is produced by Schwann cells in the peripheral nervous system and consists of a series of myelin units, internodes, each produced by a single Schwann cell. Each internode is produced by the spiraling wrapping of Schwann cell membrane around the axon. The Schwann cell nucleus is located midway along the length of each internode and thus nuclei are not visible in each myelinated axon. An endoneurium surrounds each sheath. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-4-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-4.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A peripheral nerve, cut in cross section, shows numerous axons of various sizes surrounded by myelin sheaths. The myelin sheath is produced by Schwann cells in the peripheral nervous system and consists of a series of myelin units, internodes, each produced by a single Schwann cell. Each internode is produced by the spiraling wrapping of Schwann cell membrane around the axon. The Schwann cell nucleus is located midway along the length of each internode and thus nuclei are not visible in each myelinated axon. An endoneurium surrounds each sheath. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myelin sheaths",
+      "explicacao_original": "A myelin sheath surrounds an individual axon and consists of myelin segments (internodes) arranged linearly along the axon. Each internode is produced by the spiral wrapping of the Schwann cell plasma membrane around the axon. The uniquely high lipid content of the myelin membrane insulates the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Endoneurium surrounds the Schwann cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-4-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-4.jpg'. Destaca a estrutura ou conceito 'Myelin sheaths' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A myelin sheath surrounds an individual axon and consists of myelin segments (internodes) arranged linearly along the axon. Each internode is produced by the spiral wrapping of the Schwann cell plasma membrane around the axon. The uniquely high lipid content of the myelin membrane insulates the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Endoneurium surrounds the Schwann cells.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "A myelin sheath surrounds an individual axon and consists of myelin segments (internodes) arranged linearly along the axon. Each internode is produced by the spiral wrapping of the Schwann cell plasma membrane around the axon. The uniquely high lipid content of the myelin membrane insulates the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Endoneurium surrounds the Schwann cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-4-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-4.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A myelin sheath surrounds an individual axon and consists of myelin segments (internodes) arranged linearly along the axon. Each internode is produced by the spiral wrapping of the Schwann cell plasma membrane around the axon. The uniquely high lipid content of the myelin membrane insulates the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Endoneurium surrounds the Schwann cells.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endoneurium",
+      "explicacao_original": "A myelin sheath surrounds an individual axon and consists of myelin segments (internodes) arranged linearly along the axon. Each internode is produced by the spiral wrapping of the Schwann cell plasma membrane around the axon. The uniquely high lipid content of the myelin membrane insulates the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Endoneurium surrounds the Schwann cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-4-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-4.jpg'. Destaca a estrutura ou conceito 'Endoneurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A myelin sheath surrounds an individual axon and consists of myelin segments (internodes) arranged linearly along the axon. Each internode is produced by the spiral wrapping of the Schwann cell plasma membrane around the axon. The uniquely high lipid content of the myelin membrane insulates the axon and increases conduction velocity. The radial lines in the sheath are proteinaceous remnants of the plasma membrane. Endoneurium surrounds the Schwann cells.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to that outlined by the rectangle seen by electron microscopy.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-4-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.N.SuppPNS-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-4.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that outlined by the rectangle seen by electron microscopy.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 4. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-4/, acesso em 2026-08-07."
+    }
+  ]
+}

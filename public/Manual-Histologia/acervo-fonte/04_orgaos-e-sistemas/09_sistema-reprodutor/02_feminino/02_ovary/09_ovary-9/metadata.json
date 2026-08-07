@@ -1,0 +1,94 @@
+{
+  "id": 12334,
+  "titulo": "Ovary: secondary follicle",
+  "titulo_wordpress": "Ovary 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 9"
+  ],
+  "descricao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: secondary follicle', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Descricao original da pagina: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary oocyte nucleus",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Primary oocyte nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zona pellucida",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Zona pellucida' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cumulus oophorus",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Cumulus oophorus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Antrum",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Antrum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stratum granulosum",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P05.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Stratum granulosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Theca interna",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P06-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P06-1.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Theca interna' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Theca externa",
+      "explicacao_original": "The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.P07-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.09.P07-1.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.09.jpg'. Destaca a estrutura ou conceito 'Theca externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secondary follicle continues to grow, its multiple antral spaces coalescing into a single antrum. The primary oocyte remains arrested in prophase of the first meiotic division. It is surrounded by a ring of granulosal cells (the cumulus oophorus) and protrudes into the antral space. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-9/, acesso em 2026-08-07."
+    }
+  ]
+}

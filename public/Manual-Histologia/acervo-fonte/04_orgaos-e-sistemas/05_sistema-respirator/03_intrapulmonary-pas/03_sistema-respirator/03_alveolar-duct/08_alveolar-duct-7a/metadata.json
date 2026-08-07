@@ -1,0 +1,55 @@
+{
+  "id": 31388,
+  "titulo": "Alveloar sacs",
+  "titulo_wordpress": "Alveolar duct 7A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveolar Duct",
+    "Alveolar duct 7A"
+  ],
+  "descricao_original": "Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-7a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07AA.jpg",
+      "arquivo": "imagens/base/O.R.I.R.AD_.07AA.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Alveloar sacs', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 7A. Descricao original da pagina: Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-7a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar sacs",
+      "explicacao_original": "Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.07A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.07AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveloar sacs'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.07AA.jpg'. Destaca a estrutura ou conceito 'Alveolar sacs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Alveoli",
+      "explicacao_original": "Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.07A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.07AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveloar sacs'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.07AA.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interalveolar septa",
+      "explicacao_original": "Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.AD_.07A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.AD_.07AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.AD_.07AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveloar sacs'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.AD_.07AA.jpg'. Destaca a estrutura ou conceito 'Interalveolar septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar sacs form the terminal components of the respiratory system and consist of alveoli clustered around a central space, sometimes referred to as an atrium. Interalveolar septa in alveolar sacs generally lack smooth muscle knobs. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveolar Duct > Alveolar duct 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveolar-duct/alveolar-duct-7a/, acesso em 2026-08-07."
+    }
+  ]
+}

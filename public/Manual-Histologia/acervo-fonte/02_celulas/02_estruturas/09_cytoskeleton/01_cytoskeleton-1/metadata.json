@@ -1,0 +1,63 @@
+{
+  "id": 1898,
+  "titulo": "Cytoskeleton",
+  "titulo_wordpress": "Cytoskeleton 1",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Cytoskeleton",
+    "Cytoskeleton 1"
+  ],
+  "descricao_original": "The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1.jpg",
+      "arquivo": "imagens/base/C.S.Cyto-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cytoskeleton', no setor Células > Estruturas > Cytoskeleton > Cytoskeleton 1. Descricao original da pagina: The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Microfilament bundles",
+      "explicacao_original": "The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-1-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cytoskeleton'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-1.jpg'. Destaca a estrutura ou conceito 'Microfilament bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 1. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intermediate filaments and microtubules",
+      "explicacao_original": "The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-1-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cytoskeleton'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-1.jpg'. Destaca a estrutura ou conceito 'Intermediate filaments and microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 1. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-1-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cytoskeleton'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-1.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 1. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cell processes",
+      "explicacao_original": "The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-1-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cytoskeleton'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-1.jpg'. Destaca a estrutura ou conceito 'Cell processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cytoskeleton consists of fibrous structures providing support, movement and intracellular transport. Components include microfilaments (4-6 nm), intermediate filaments (8-10 nm) and microtubules (20-25 nm). Microfilaments and microtubules are similar in all cells, while intermediate filaments are heterogeneous and cell-type specific. 800x, 1000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 1. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-1/, acesso em 2026-08-07."
+    }
+  ]
+}

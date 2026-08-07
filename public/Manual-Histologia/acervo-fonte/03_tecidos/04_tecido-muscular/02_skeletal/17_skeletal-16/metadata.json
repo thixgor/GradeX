@@ -1,0 +1,133 @@
+{
+  "id": 2580,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 16",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 16"
+  ],
+  "descricao_original": "The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "arquivo": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Descricao original da pagina: The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Myofibrils almost totally fill the cytoplasm of skeletal muscle fibers and contain the contractile thick and thin myofilaments. The myofilament overlap remains in register across each myofibril, thus accounting for the banding pattern within each myofibril. Alignment of all myofibrils in the cell produces the banding visible at the light microscopic level. Due to their dense packing within the fibers, individual myofibrils are not visible in the light micrograph.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Myofibrils almost totally fill the cytoplasm of skeletal muscle fibers and contain the contractile thick and thin myofilaments. The myofilament overlap remains in register across each myofibril, thus accounting for the banding pattern within each myofibril. Alignment of all myofibrils in the cell produces the banding visible at the light microscopic level. Due to their dense packing within the fibers, individual myofibrils are not visible in the light micrograph.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myofilament organization",
+      "explicacao_original": "This diagram illustrates a single sarcomere and the myofilaments that compose it. Note how the thick and thin myofilaments overlap, producing the striations visible by both light and electron microscopy. This molecular organization of the sarcomere will be correlated with the image seen by electron microscopy.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Myofilament organization' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This diagram illustrates a single sarcomere and the myofilaments that compose it. Note how the thick and thin myofilaments overlap, producing the striations visible by both light and electron microscopy. This molecular organization of the sarcomere will be correlated with the image seen by electron microscopy.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sarcomeres",
+      "explicacao_original": "The sarcomere is the contractile unit of striated muscles and extends from one Z line to an adjacent Z line. During contraction, the interval between adjacent Z lines narrows, i.e., the sarcomere shortens. The width of the A band remains constant during contraction, but both the I and H bands shorten as the areas of overlap of thin and thick myofilaments increases.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-2A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Sarcomeres' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the contractile unit of striated muscles and extends from one Z line to an adjacent Z line. During contraction, the interval between adjacent Z lines narrows, i.e., the sarcomere shortens. The width of the A band remains constant during contraction, but both the I and H bands shorten as the areas of overlap of thin and thick myofilaments increases.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "A band",
+      "explicacao_original": "The A band corresponds to the length of the thick myofilaments. Thin myofilaments overlap with thick filaments at the margins of the A band, but they do not extend all the way to its center, leaving a lighter central region. This thin filament-free central region of the A band is the H band, with a centermost portion called the M line. During contraction, the width of the A band remains constant.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-4A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-4A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'A band' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The A band corresponds to the length of the thick myofilaments. Thin myofilaments overlap with thick filaments at the margins of the A band, but they do not extend all the way to its center, leaving a lighter central region. This thin filament-free central region of the A band is the H band, with a centermost portion called the M line. During contraction, the width of the A band remains constant.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "H band",
+      "explicacao_original": "The H band is the central region of the A band which lacks thin filaments. This region of the A band decreases in width as the ends of the thin filaments are drawn toward the center of the sarcomere during contraction.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-6A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-6A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'H band' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The H band is the central region of the A band which lacks thin filaments. This region of the A band decreases in width as the ends of the thin filaments are drawn toward the center of the sarcomere during contraction.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "M line",
+      "explicacao_original": "The M line bisects the H band and contains myosin-binding proteins that maintain the alignment of the thick myofilaments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-7A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-7A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'M line' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The M line bisects the H band and contains myosin-binding proteins that maintain the alignment of the thick myofilaments.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "I band",
+      "explicacao_original": "The I band, or light band, contains only thin myofilaments and is bisected by the Z line. During contraction, the width of A band decreases.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-5A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'I band' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The I band, or light band, contains only thin myofilaments and is bisected by the Z line. During contraction, the width of A band decreases.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Z line",
+      "explicacao_original": "The Z line lies in the center of the I band and is the attachment site for thin myofilaments. The Z line is composed primarily of the protein alpha-actinin. The region from one Z line to the next is called a sarcomere.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-3A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-3A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Z line' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Z line lies in the center of the I band and is the attachment site for thin myofilaments. The Z line is composed primarily of the protein alpha-actinin. The region from one Z line to the next is called a sarcomere.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-8-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Sarcoplasmic reticulum (SER)",
+      "explicacao_original": "The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-9-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-9-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Sarcoplasmic reticulum (SER)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Glycogen",
+      "explicacao_original": "The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk16-NEW-10-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk16-NEW-10-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-16-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-16-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-16-NEW.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The banding pattern seen in the high magnification light micrograph (left) is compared with that seen by electron microscopy (right). The bands in all the individual myofibrils are closely aligned, resulting in the overall banding pattern seen by light microscopy. Sparse cytoplasm (sarcoplasm) between the myofibrils contains mitochondria, sarcoplasmic reticulum and glycogen. 1,000x, 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 16. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-16/, acesso em 2026-08-07."
+    }
+  ]
+}

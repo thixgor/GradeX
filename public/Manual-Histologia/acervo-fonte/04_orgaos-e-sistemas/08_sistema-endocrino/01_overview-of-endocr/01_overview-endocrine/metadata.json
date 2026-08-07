@@ -1,0 +1,63 @@
+{
+  "id": 4768,
+  "titulo": "Overview",
+  "titulo_wordpress": "Overview (endocrine) 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Overview of endocrine organs",
+    "Overview (endocrine) 1"
+  ],
+  "descricao_original": "The endocrine system is a major regulatory system of the body and, with the nervous system with which it is intimately associated, forms the neuroendocrine axis. Secretory products of endocrine cells (hormones) are released into the blood to stimulate target cells possessing specific receptors for that hormone. The endocrine system is composed of individual cells, cell clusters and organs.",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 1. Descricao original da pagina: The endocrine system is a major regulatory system of the body and, with the nervous system with which it is intimately associated, forms the neuroendocrine axis. Secretory products of endocrine cells (hormones) are released into the blood to stimulate target cells possessing specific receptors for that hormone. The endocrine system is composed of individual cells, cell clusters and organs.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "DNES cells",
+      "explicacao_original": "Some hormone-secreting cells occur singly, forming the diffuse neuroendocrine system (DNES). The hormones released by these cells may influence adjacent cells (paracrine secretion) or be released into the blood (endocrine secretion). DNES cells are common in the digestive tract (enteroendocrine cells) and are also present in the respiratory and urinary systems.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-1.jpg'. Destaca a estrutura ou conceito 'DNES cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Some hormone-secreting cells occur singly, forming the diffuse neuroendocrine system (DNES). The hormones released by these cells may influence adjacent cells (paracrine secretion) or be released into the blood (endocrine secretion). DNES cells are common in the digestive tract (enteroendocrine cells) and are also present in the respiratory and urinary systems.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Clusters of endocrine cells",
+      "explicacao_original": "Clusters of endocrine cells may be found in organs with other functions such as the islets of Langerhans scattered throughout the exocrine pancreas. Some other examples are follicular, thecal and luteal cells in the ovary, as well as Leydig cells in the testis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Clusters of endocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Clusters of endocrine cells may be found in organs with other functions such as the islets of Langerhans scattered throughout the exocrine pancreas. Some other examples are follicular, thecal and luteal cells in the ovary, as well as Leydig cells in the testis.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endocrine organs",
+      "explicacao_original": "Entire organs are dedicated to endocrine functions. Examples are the adrenal gland, the thyroid gland with the two pairs of parathyroid glands (in red) embedded in its posterior surface, and the pituitary gland (hypophysis).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Endocrine organs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Entire organs are dedicated to endocrine functions. Examples are the adrenal gland, the thyroid gland with the two pairs of parathyroid glands (in red) embedded in its posterior surface, and the pituitary gland (hypophysis).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Neuroendocrine pathway",
+      "explicacao_original": "The pituitary gland lies beneath the hypothalamaus of the brain and is attached to it via both vascular and neural connections. Such connections allow these two major regulatory systems to integrate and coordinate bodily functions. Hormones from the pituitary influence a variety of cells in the body and specifically target many of the endocrine organs, as indicated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Neuroendocrine pathway' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pituitary gland lies beneath the hypothalamaus of the brain and is attached to it via both vascular and neural connections. Such connections allow these two major regulatory systems to integrate and coordinate bodily functions. Hormones from the pituitary influence a variety of cells in the body and specifically target many of the endocrine organs, as indicated.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-1/, acesso em 2026-08-07."
+    }
+  ]
+}

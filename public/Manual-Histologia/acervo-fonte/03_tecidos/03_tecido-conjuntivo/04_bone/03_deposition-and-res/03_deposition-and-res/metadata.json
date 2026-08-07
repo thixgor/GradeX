@@ -1,0 +1,84 @@
+{
+  "id": 10320,
+  "titulo": "Bone: deposition",
+  "titulo_wordpress": "Deposition and Resorption 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 3"
+  ],
+  "descricao_original": "New bone can also be deposited on surfaces within bone tissue. A cross section of such an internal space is seen within this diaphysis of a long bone. Because the space is internal, it is lined by an endosteum, capable of forming or resorbing bone. This endosteum has recently begun depositing new lamellae on the pre-existing bone. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "arquivo": "imagens/base/T.C.B.D.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: deposition', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Descricao original da pagina: New bone can also be deposited on surfaces within bone tissue. A cross section of such an internal space is seen within this diaphysis of a long bone. Because the space is internal, it is lined by an endosteum, capable of forming or resorbing bone. This endosteum has recently begun depositing new lamellae on the pre-existing bone. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pre-existing bone",
+      "explicacao_original": "The pre-existing bone is indicated by the arrows.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.03.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.03.jpg'. Destaca a estrutura ou conceito 'Pre-existing bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pre-existing bone is indicated by the arrows.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "First lamella",
+      "explicacao_original": "The first lamella of new bone has been deposited on the pre-existing bone around the periphery of the space. The second layer would be deposited on the first; the third on the second, etc., forming concentric lamellae laid down in a centripetal manner. The central space is continually decreased with the addition of each successive layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.03.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.03.jpg'. Destaca a estrutura ou conceito 'First lamella' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The first lamella of new bone has been deposited on the pre-existing bone around the periphery of the space. The second layer would be deposited on the first; the third on the second, etc., forming concentric lamellae laid down in a centripetal manner. The central space is continually decreased with the addition of each successive layer.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteon",
+      "explicacao_original": "The structure that is forming in this internal space is called an osteon, or Haversian system. It is shaped like a column, seen here in cross section, and will be composed of concentric lamellae when fully mature. The central cavity of the osteon is the Haversian canal. This forming osteon is composed of only its first lamina and a portion of a second.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.03.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.03.jpg'. Destaca a estrutura ou conceito 'Osteon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure that is forming in this internal space is called an osteon, or Haversian system. It is shaped like a column, seen here in cross section, and will be composed of concentric lamellae when fully mature. The central cavity of the osteon is the Haversian canal. This forming osteon is composed of only its first lamina and a portion of a second.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Haversian canal",
+      "explicacao_original": "The structure that is forming in this internal space is called an osteon, or Haversian system. It is shaped like a column, seen here in cross section, and will be composed of concentric lamellae when fully mature. The central cavity of the osteon is the Haversian canal. This forming osteon is composed of only its first lamina and a portion of a second.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/T.C.B.D.03.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.03.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.03.jpg'. Destaca a estrutura ou conceito 'Haversian canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure that is forming in this internal space is called an osteon, or Haversian system. It is shaped like a column, seen here in cross section, and will be composed of concentric lamellae when fully mature. The central cavity of the osteon is the Haversian canal. This forming osteon is composed of only its first lamina and a portion of a second.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Canal contents",
+      "explicacao_original": "Each Haversian canal is filled with loose connective tissue and at least one blood vessel (black arrow). Because the Haversian canal is an internal space, it is lined by cells (blue arrow). The cells can be lining cells, osteoblasts (as seen here) and/or osteoclasts. The diameter of the Haversian canal decreases with the deposition of each successive layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.03.P05.png",
+      "imagem_base": "imagens/base/T.C.B.D.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.03.jpg'. Destaca a estrutura ou conceito 'Canal contents' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each Haversian canal is filled with loose connective tissue and at least one blood vessel (black arrow). Because the Haversian canal is an internal space, it is lined by cells (blue arrow). The cells can be lining cells, osteoblasts (as seen here) and/or osteoclasts. The diameter of the Haversian canal decreases with the deposition of each successive layer.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image shows what this osteon will look like after more lamellae have been deposited.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.P06.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.03.P06.png",
+      "imagem_base": "imagens/base/T.C.B.D.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.03.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image shows what this osteon will look like after more lamellae have been deposited.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-3/, acesso em 2026-08-07."
+    }
+  ]
+}

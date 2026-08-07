@@ -1,0 +1,104 @@
+{
+  "id": 13674,
+  "titulo": "Overview",
+  "titulo_wordpress": "Inner ear overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Overview of the inner ear",
+    "Inner ear overview 1"
+  ],
+  "descricao_original": "The inner ear, located in the petrous portion of the temporal bone, houses receptors that monitor changes in sound, gravity and movement. These receptors are located in a series of membranous tubes and sacs, collectively termed the membranous labyrinth, which are suspended in a series of bony spaces, the osseous labyrinth. The osseous labyrinth is shown in purple.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "arquivo": "imagens/base/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Descricao original da pagina: The inner ear, located in the petrous portion of the temporal bone, houses receptors that monitor changes in sound, gravity and movement. These receptors are located in a series of membranous tubes and sacs, collectively termed the membranous labyrinth, which are suspended in a series of bony spaces, the osseous labyrinth. The osseous labyrinth is shown in purple.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Enlargement",
+      "explicacao_original": "An enlargement of the osseous labyrinth of the left ear is seen in the inset.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/O.E.IE_.01.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Enlargement' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An enlargement of the osseous labyrinth of the left ear is seen in the inset.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The cochlea is the portion of the osseous labyrinth that is coiled into a spiral of 2.5 turns, resembling a snail shell. The portion of the membranous labyrinth housed within the cochlea is the cochlear duct, containing the receptor for sound, the organ of Corti.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01.P02-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P02-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea is the portion of the osseous labyrinth that is coiled into a spiral of 2.5 turns, resembling a snail shell. The portion of the membranous labyrinth housed within the cochlea is the cochlear duct, containing the receptor for sound, the organ of Corti.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule is the central portion of the osseous labyrinth. The vestibule is a large chamber that is continuous with and attached to both the cochlea and the semicircular canals. The portions of the membranous labyrinth housed within the vestibule are the utricle and saccule, each containing a macula, the receptor for linear acceleration and gravity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01.P03-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P03-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule is the central portion of the osseous labyrinth. The vestibule is a large chamber that is continuous with and attached to both the cochlea and the semicircular canals. The portions of the membranous labyrinth housed within the vestibule are the utricle and saccule, each containing a macula, the receptor for linear acceleration and gravity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endolymphatic duct",
+      "explicacao_original": "The endolymphatic duct begins as two ducts from the utricle and saccule in the vestibule and terminates in a sac-like ending between the meninges of the brain. Cells lining the duct presumably absorb endolymph and dispose of cellular debris that may be present in endolymph.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/O.E.IE_.01.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Endolymphatic duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endolymphatic duct begins as two ducts from the utricle and saccule in the vestibule and terminates in a sac-like ending between the meninges of the brain. Cells lining the duct presumably absorb endolymph and dispose of cellular debris that may be present in endolymph.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Semicircular canals",
+      "explicacao_original": "The semicircular canals are three tunnels that form the posterolateral portion of the osseous labyrinth. Each canal is oriented in a plane that is mutually perpendicular to the other canals. The portion of the membranous labyrinth housed within each semicircular canal is the semicircular duct, containing a crista ampullaris, the receptor for angular acceleration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01.P04-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P04-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Semicircular canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semicircular canals are three tunnels that form the posterolateral portion of the osseous labyrinth. Each canal is oriented in a plane that is mutually perpendicular to the other canals. The portion of the membranous labyrinth housed within each semicircular canal is the semicircular duct, containing a crista ampullaris, the receptor for angular acceleration.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "CN VIII",
+      "explicacao_original": "Cranial nerve VIII, the vestibulocochlear, innervates the receptors of the inner ear, the organ of Corti, the maculae, and the cristae ampullares.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01.P05-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P05-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cranial nerve VIII, the vestibulocochlear, innervates the receptors of the inner ear, the organ of Corti, the maculae, and the cristae ampullares.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Temporal bone",
+      "explicacao_original": "The inner ear is housed in the petrous portion of the temporal bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01.P06-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P06-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Temporal bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner ear is housed in the petrous portion of the temporal bone.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Marcador 8",
+      "explicacao_original": "",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/O.E.IE_.01.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.01.P01-2.png",
+      "imagem_base": "imagens/base/O.E.IE_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.01-1.jpg'. Destaca a estrutura ou conceito 'Marcador 8' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: nao informada. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

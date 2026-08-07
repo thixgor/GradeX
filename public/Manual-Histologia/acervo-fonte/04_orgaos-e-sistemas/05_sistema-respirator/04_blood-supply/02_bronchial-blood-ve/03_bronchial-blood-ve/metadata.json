@@ -1,0 +1,86 @@
+{
+  "id": 31563,
+  "titulo": "Bronchial blood vessels",
+  "titulo_wordpress": "Bronchial blood vessels 3A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Blood Supply",
+    "Bronchial Blood Vessels",
+    "Bronchial blood vessels 3A"
+  ],
+  "descricao_original": "Bronchial vessels are shown in the wall of this small bronchus. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the Duke University collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "arquivo": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bronchial blood vessels', no setor Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Descricao original da pagina: Bronchial vessels are shown in the wall of this small bronchus. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Bronchial vessels",
+      "explicacao_original": "Bronchial vessels are shown in the wall of this small bronchus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.B.03-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchial blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.B.03-NEW.jpg'. Destaca a estrutura ou conceito 'Bronchial vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial vessels are shown in the wall of this small bronchus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Bronchial vessels are shown in the wall of this small bronchus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.B.03-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchial blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.B.03-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial vessels are shown in the wall of this small bronchus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Muscularis",
+      "explicacao_original": "Bronchial vessels are shown in the wall of this small bronchus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.B.03-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchial blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.B.03-NEW.jpg'. Destaca a estrutura ou conceito 'Muscularis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial vessels are shown in the wall of this small bronchus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cartilage plate",
+      "explicacao_original": "Bronchial vessels are shown in the wall of this small bronchus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.B.03-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchial blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.B.03-NEW.jpg'. Destaca a estrutura ou conceito 'Cartilage plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial vessels are shown in the wall of this small bronchus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Alveoli",
+      "explicacao_original": "Bronchial vessels are shown in the wall of this small bronchus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.B.03-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchial blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.B.03-NEW.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial vessels are shown in the wall of this small bronchus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the Duke University collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.B.B.03-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.B.B.03-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.B.B.03-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchial blood vessels'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.B.B.03-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the Duke University collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Bronchial Blood Vessels > Bronchial blood vessels 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/bronchial-blood-vessels/bronchial-blood-vessels-3a/, acesso em 2026-08-07."
+    }
+  ]
+}

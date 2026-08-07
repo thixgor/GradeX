@@ -1,0 +1,74 @@
+{
+  "id": 16807,
+  "titulo": "Active fibroblast",
+  "titulo_wordpress": "Cells 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 6"
+  ],
+  "descricao_original": "The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Active fibroblast', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 6. Descricao original da pagina: The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-6-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-6.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Rough endoplasmic reticulum",
+      "explicacao_original": "The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-6-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-6.jpg'. Destaca a estrutura ou conceito 'Rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Golgi",
+      "explicacao_original": "The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-6-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-6.jpg'. Destaca a estrutura ou conceito 'Golgi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-6-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-6.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-6-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-6.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibroblast is responsible for the synthesis and secretion of collagen and elastic fibers, as well as the ground substance. This cell contains the extensive rough endoplasmic reticulum and Golgi apparatus needed for this synthetic activity. The highly euchromatic nucleus, seen in the upper portion of the micrograph is indicative of an actively secreting cell. 8000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-6/, acesso em 2026-08-07."
+    }
+  ]
+}

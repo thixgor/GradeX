@@ -1,0 +1,124 @@
+{
+  "id": 13739,
+  "titulo": "Vestibular macula",
+  "titulo_wordpress": "Vestibule 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Vestibule",
+    "Vestibule 4"
+  ],
+  "descricao_original": "The image on the left shows a portion of the utricle, the larger membranous chamber in the vestibule, adjacent to its junction with the ampulla of a semicircular duct. The receptors for both structures (the macula of the utricle and the crista ampullaris of the semicircular duct) are present as well. 30x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "arquivo": "imagens/base/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Vestibular macula', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Descricao original da pagina: The image on the left shows a portion of the utricle, the larger membranous chamber in the vestibule, adjacent to its junction with the ampulla of a semicircular duct. The receptors for both structures (the macula of the utricle and the crista ampullaris of the semicircular duct) are present as well. 30x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Plane of section",
+      "explicacao_original": "The left image is similar to a plane of section indicated by the double arrow in the illustration on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Plane of section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The left image is similar to a plane of section indicated by the double arrow in the illustration on the right.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Utricle",
+      "explicacao_original": "The utricle is a portion of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Utricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The utricle is a portion of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Utricular macula",
+      "explicacao_original": "The utricle is a portion of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Utricular macula' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The utricle is a portion of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Macular components",
+      "explicacao_original": "Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths (blue arrow) are suspended at the surface of the gel. Cells of the planum semilunatum (black arrows) produce endolymph. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Macular components' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths (blue arrow) are suspended at the surface of the gel. Cells of the planum semilunatum (black arrows) produce endolymph. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Semicircular ducts",
+      "explicacao_original": "Each semicircular duct, suspended in its bony semicircular canal, is a circularly arranged tube; both ends of the tube join the utricle. An enlargement, the ampulla, at one end of the tube houses its receptor, the crista ampullaris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Semicircular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each semicircular duct, suspended in its bony semicircular canal, is a circularly arranged tube; both ends of the tube join the utricle. An enlargement, the ampulla, at one end of the tube houses its receptor, the crista ampullaris.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ampullae",
+      "explicacao_original": "Each semicircular duct, suspended in its bony semicircular canal, is a circularly arranged tube; both ends of the tube join the utricle. An enlargement, the ampulla, at one end of the tube houses its receptor, the crista ampullaris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Ampullae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each semicircular duct, suspended in its bony semicircular canal, is a circularly arranged tube; both ends of the tube join the utricle. An enlargement, the ampulla, at one end of the tube houses its receptor, the crista ampullaris.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Cristae ampullares",
+      "explicacao_original": "The ampulla, at one end of the semicircular duct houses the receptor, the crista ampullaris (black arrow). Each receptor possesses a gelatinous cupula (red arrow) that extends to the opposite wall of the ampulla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Cristae ampullares' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ampulla, at one end of the semicircular duct houses the receptor, the crista ampullaris (black arrow). Each receptor possesses a gelatinous cupula (red arrow) that extends to the opposite wall of the ampulla.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Connective tissue reticulum",
+      "explicacao_original": "Connective tissue cells that appear scattered in the perilymph around the outside of the ampulla are part of the connective tissue reticulum that secures the membranous labyrinth in the osseous labyrinth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P08.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P08.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Connective tissue reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissue cells that appear scattered in the perilymph around the outside of the ampulla are part of the connective tissue reticulum that secures the membranous labyrinth in the osseous labyrinth.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Temporal bone",
+      "explicacao_original": "The temporal bone comprises the wall of the spaces forming the osseous labyrinth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P09.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P09.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Temporal bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The temporal bone comprises the wall of the spaces forming the osseous labyrinth.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Ganglion of CN VIII",
+      "explicacao_original": "The sensory cell bodies of the neurons supplying the maculae and cristae ampullares are located adjacent to these receptors. These neurons are part of the vestibular division of the vestibulocochlear nerve, CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.P10.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.04.P10.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.04.jpg'. Destaca a estrutura ou conceito 'Ganglion of CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sensory cell bodies of the neurons supplying the maculae and cristae ampullares are located adjacent to these receptors. These neurons are part of the vestibular division of the vestibulocochlear nerve, CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-4/, acesso em 2026-08-07."
+    }
+  ]
+}

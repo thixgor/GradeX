@@ -1,0 +1,183 @@
+{
+  "id": 9234,
+  "titulo": "Sensory retina",
+  "titulo_wordpress": "Retina 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 5"
+  ],
+  "descricao_original": "This image shows the layers of the sensory retina in greater detail. The naming of the layers is based on their position relative to the neural pathway (outer to inner), not the light pathway (inner to outer). 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina', no setor Órgãos e Sistemas > Olho > Retina > Retina 5. Descricao original da pagina: This image shows the layers of the sensory retina in greater detail. The naming of the layers is based on their position relative to the neural pathway (outer to inner), not the light pathway (inner to outer). 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Retina",
+      "explicacao_original": "This image shows the layers of the sensory retina in greater detail. The naming of the layers is based on their position relative to the neural pathway (outer to inner), not the light pathway (inner to outer). 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the layers of the sensory retina in greater detail. The naming of the layers is based on their position relative to the neural pathway (outer to inner), not the light pathway (inner to outer). 400x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pigment epithelium",
+      "explicacao_original": "The pigment epithelium is simple cuboidal with melanin and apical microvilli that extend between the photoreceptors. The pigment epithelium cells phagocytose worn-out components of photoreceptors, absorb light passing through the retina to prevent reflection and form the blood-retinal barrier. The basal lamina of this epithelium is a component of Bruch’s membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Pigment epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pigment epithelium is simple cuboidal with melanin and apical microvilli that extend between the photoreceptors. The pigment epithelium cells phagocytose worn-out components of photoreceptors, absorb light passing through the retina to prevent reflection and form the blood-retinal barrier. The basal lamina of this epithelium is a component of Bruch’s membrane.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Photoreceptor layer",
+      "explicacao_original": "The photoreceptor layer contains rods and cones, the photosensitive cells. The outer portion of each receptor is subdivided into inner and outer segments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Photoreceptor layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The photoreceptor layer contains rods and cones, the photosensitive cells. The outer portion of each receptor is subdivided into inner and outer segments.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Outer segments",
+      "explicacao_original": "The outer segment, the site of photosensitivity, contains the pigments, rhodopsin (rods) and iodopsin (cones) and is cylindrical in rods and conical in cones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Outer segments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer segment, the site of photosensitivity, contains the pigments, rhodopsin (rods) and iodopsin (cones) and is cylindrical in rods and conical in cones.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Inner segments",
+      "explicacao_original": "The inner segment contains the majority of the metabolic organelles of the rods and cones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Inner segments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner segment contains the majority of the metabolic organelles of the rods and cones.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Outer limiting membrane",
+      "explicacao_original": "The outer limiting membrane is not a true membrane but represents the adherent junctions of Muller cells. Muller cells are glial cells (specifically astrocytes) that support and nourish the retinal neurons and their processes. Muller cells extend between the outer and inner limiting membranes, with their nuclei located in the inner nuclear layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Outer limiting membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer limiting membrane is not a true membrane but represents the adherent junctions of Muller cells. Muller cells are glial cells (specifically astrocytes) that support and nourish the retinal neurons and their processes. Muller cells extend between the outer and inner limiting membranes, with their nuclei located in the inner nuclear layer.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Outer nuclear layer",
+      "explicacao_original": "The outer nuclear layer consists of several rows of nuclei and cell bodies of the rods and cones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Outer nuclear layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer nuclear layer consists of several rows of nuclei and cell bodies of the rods and cones.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Outer plexiform layer",
+      "explicacao_original": "In the outer plexiform layer, axons of photoreceptor cells terminate on the dendrites of bipolar cells and horizontal cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-8-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-8-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Outer plexiform layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the outer plexiform layer, axons of photoreceptor cells terminate on the dendrites of bipolar cells and horizontal cells.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Inner nuclear layer",
+      "explicacao_original": "The inner nuclear layer contains the cell bodies and nuclei of bipolar cells. The cell bodies of several ancillary cells are also present here: Muller cells and two interneurons (horizontal and amacrine cells).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-9-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Inner nuclear layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner nuclear layer contains the cell bodies and nuclei of bipolar cells. The cell bodies of several ancillary cells are also present here: Muller cells and two interneurons (horizontal and amacrine cells).. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Inner plexiform layer",
+      "explicacao_original": "In the inner plexiform layer, the processes of bipolar cells and the other interneurons synapse with the ganglion cell dendrites.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-10-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Inner plexiform layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the inner plexiform layer, the processes of bipolar cells and the other interneurons synapse with the ganglion cell dendrites.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Ganglion cell layer",
+      "explicacao_original": "The ganglion cell layer contains the cell bodies and nuclei of ganglion cells. Ganglion cells are multipolar in shape with large euchromatic nuclei and long processes that collectively form the nerve fiber layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-11-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Ganglion cell layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ganglion cell layer contains the cell bodies and nuclei of ganglion cells. Ganglion cells are multipolar in shape with large euchromatic nuclei and long processes that collectively form the nerve fiber layer.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Nerve fiber layer",
+      "explicacao_original": "The nerve fiber layer consists of the axons of ganglion cells. These axons run along the surface of the retina and exit the globe at the optic disc, the head of the optic nerve (Cranial Nerve II). Optic nerve axons project to the brain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-11a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-11a-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Nerve fiber layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nerve fiber layer consists of the axons of ganglion cells. These axons run along the surface of the retina and exit the globe at the optic disc, the head of the optic nerve (Cranial Nerve II). Optic nerve axons project to the brain.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Inner limiting membrane",
+      "explicacao_original": "The inner limiting membrane, consists of a thickened basal lamina, lies adjacent to the vitreous body and marks the inner boundary of the sensory retina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-12-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Inner limiting membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner limiting membrane, consists of a thickened basal lamina, lies adjacent to the vitreous body and marks the inner boundary of the sensory retina.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Choriocapillaris",
+      "explicacao_original": "The choriocapillary layer consists of fenestrated capillaries that supply the pigment epithelium and the outer layers of the retina. The basal laminae of these capillaries forms the outermost layer of Bruch’s membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-13-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Choriocapillaris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choriocapillary layer consists of fenestrated capillaries that supply the pigment epithelium and the outer layers of the retina. The basal laminae of these capillaries forms the outermost layer of Bruch’s membrane.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Bruch’s membrane",
+      "explicacao_original": "Bruch’s membrane appears as a thin, refractile layer between the pigment epithelium and the choriocapillaris. It consists of the basal lamina of the pigment epithelial cells, a middle region containing collagen and elastic fibers, and the basal lamina of endothelial cells of the choriocapillaris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-14-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Bruch’s membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bruch’s membrane appears as a thin, refractile layer between the pigment epithelium and the choriocapillaris. It consists of the basal lamina of the pigment epithelial cells, a middle region containing collagen and elastic fibers, and the basal lamina of endothelial cells of the choriocapillaris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 16,
+      "rotulo": "Choroid",
+      "explicacao_original": "The choroid layer, which is pigmented and highly vascular, forms part of the vascular tunic, along with the ciliary body and the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-5-15-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-5-15-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Retina-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Retina-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Retina-5.jpg'. Destaca a estrutura ou conceito 'Choroid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroid layer, which is pigmented and highly vascular, forms part of the vascular tunic, along with the ciliary body and the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-5/, acesso em 2026-08-07."
+    }
+  ]
+}

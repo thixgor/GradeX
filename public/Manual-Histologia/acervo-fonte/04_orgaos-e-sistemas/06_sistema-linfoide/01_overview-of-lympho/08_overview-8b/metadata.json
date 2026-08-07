@@ -1,0 +1,73 @@
+{
+  "id": 30408,
+  "titulo": "Overview: Lymphoid nodules",
+  "titulo_wordpress": "Overview 8B",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Overview 8B"
+  ],
+  "descricao_original": "These images show lymphoid nodules in MALT. Nodules result from initial antigen detection in diffuse lymphoid tissues and the subsequent recruitment of additional immune cells to the region. 200x, 200x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Lymphoid nodules', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 8B. Descricao original da pagina: These images show lymphoid nodules in MALT. Nodules result from initial antigen detection in diffuse lymphoid tissues and the subsequent recruitment of additional immune cells to the region. 200x, 200x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary nodule",
+      "explicacao_original": "Primary nodules consist of spherical clusters of tightly-packed lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-1.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-8A-NEW-1.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-8A-NEW-2025.jpg'. Destaca a estrutura ou conceito 'Primary nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary nodules consist of spherical clusters of tightly-packed lymphocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 8B. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secondary nodule",
+      "explicacao_original": "Primary nodules progress to secondary nodules with the rapid proliferation of B cells in the center of the nodule. This response generates a pale-staining central region called the germinal center. Most nodules seen in MALT are secondary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-8A-NEW-2.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-8A-NEW-2025.jpg'. Destaca a estrutura ou conceito 'Secondary nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary nodules progress to secondary nodules with the rapid proliferation of B cells in the center of the nodule. This response generates a pale-staining central region called the germinal center. Most nodules seen in MALT are secondary.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 8B. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Germinal center",
+      "explicacao_original": "Primary nodules progress to secondary nodules with the rapid proliferation of B cells in the center of the nodule. This response generates a pale-staining central region called the germinal center. Most nodules seen in MALT are secondary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-3.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-8A-NEW-3.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-8A-NEW-2025.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Primary nodules progress to secondary nodules with the rapid proliferation of B cells in the center of the nodule. This response generates a pale-staining central region called the germinal center. Most nodules seen in MALT are secondary.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 8B. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "These images show lymphoid nodules in MALT. Nodules result from initial antigen detection in diffuse lymphoid tissues and the subsequent recruitment of additional immune cells to the region. 200x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-4.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-8A-NEW-4.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-8A-NEW-2025.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show lymphoid nodules in MALT. Nodules result from initial antigen detection in diffuse lymphoid tissues and the subsequent recruitment of additional immune cells to the region. 200x, 200x.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 8B. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "These images show lymphoid nodules in MALT. Nodules result from initial antigen detection in diffuse lymphoid tissues and the subsequent recruitment of additional immune cells to the region. 200x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-5.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-8A-NEW-5.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.OV-8A-NEW-2025.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Lymphoid nodules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-8A-NEW-2025.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show lymphoid nodules in MALT. Nodules result from initial antigen detection in diffuse lymphoid tissues and the subsequent recruitment of additional immune cells to the region. 200x, 200x.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 8B. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-8b/, acesso em 2026-08-07."
+    }
+  ]
+}

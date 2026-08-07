@@ -1,0 +1,84 @@
+{
+  "id": 10322,
+  "titulo": "Bone: deposition",
+  "titulo_wordpress": "Deposition and Resorption 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 4"
+  ],
+  "descricao_original": "This image shows what the forming osteon in the previous image would look like after additional layers of bone are deposited. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "arquivo": "imagens/base/T.C.B.D.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: deposition', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Descricao original da pagina: This image shows what the forming osteon in the previous image would look like after additional layers of bone are deposited. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Forming osteon",
+      "explicacao_original": "This partially formed osteon, or Haversian system (black arrow) is composed of layers that were deposited centripetally on the original lamella (blue arrow), thus reducing the size of the Haversian canal. Additional lamellae will be apposed to those already present, until a mature osteon is formed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.04.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.04.jpg'. Destaca a estrutura ou conceito 'Forming osteon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This partially formed osteon, or Haversian system (black arrow) is composed of layers that were deposited centripetally on the original lamella (blue arrow), thus reducing the size of the Haversian canal. Additional lamellae will be apposed to those already present, until a mature osteon is formed.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Haversian canal",
+      "explicacao_original": "The Haversian canal (black arrow) is the central cavity of the osteon. In life, it is lined by an endosteum and is filled with loose connective tissue and at least one blood vessel (blue arrow).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.04.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.04.jpg'. Destaca a estrutura ou conceito 'Haversian canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Haversian canal (black arrow) is the central cavity of the osteon. In life, it is lined by an endosteum and is filled with loose connective tissue and at least one blood vessel (blue arrow).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteons",
+      "explicacao_original": "Other, more completely formed osteons are visible in the field. Each is composed of a central Haversian canal surrounded by concentric lamellae of bone. The Haversian canal is lined by an endosteum and filled with loose connective tissue and at least one blood vessel.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.C.B.D.04.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.04.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.04.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Other, more completely formed osteons are visible in the field. Each is composed of a central Haversian canal surrounded by concentric lamellae of bone. The Haversian canal is lined by an endosteum and filled with loose connective tissue and at least one blood vessel.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cement lines",
+      "explicacao_original": "The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.04.P05.png",
+      "imagem_base": "imagens/base/T.C.B.D.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.04.jpg'. Destaca a estrutura ou conceito 'Cement lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer boundaries of these osteons are marked by cement lines. Cement lines have a high concentration of ground substance and, therefore, appear as basophilic bands around the osteons. Cement lines mark the transition between resorption and new growth, as well as indicating interruptions in a growth pattern, similar to tree rings.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Woven bone",
+      "explicacao_original": "Woven bone is also present, indicating that this is an immature bone. The rounded osteocyte lacunae and the absence of lamellae are indicative of woven bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.04.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.04.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Woven bone is also present, indicating that this is an immature bone. The rounded osteocyte lacunae and the absence of lamellae are indicative of woven bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Classification",
+      "explicacao_original": "This bone is classified as compact, woven and lamellar bone. The bone is compact because the majority of the image is filled with bone; non-bone tissue is minimal. Both woven and lamellar bone (osteons) are present, so both should be included in the classification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.P06.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.04.P06.png",
+      "imagem_base": "imagens/base/T.C.B.D.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.04.jpg'. Destaca a estrutura ou conceito 'Classification' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone is classified as compact, woven and lamellar bone. The bone is compact because the majority of the image is filled with bone; non-bone tissue is minimal. Both woven and lamellar bone (osteons) are present, so both should be included in the classification.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-4/, acesso em 2026-08-07."
+    }
+  ]
+}

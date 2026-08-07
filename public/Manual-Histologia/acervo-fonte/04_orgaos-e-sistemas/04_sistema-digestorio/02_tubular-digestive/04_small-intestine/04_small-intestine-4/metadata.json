@@ -1,0 +1,116 @@
+{
+  "id": 28483,
+  "titulo": "Mucosa: Villi",
+  "titulo_wordpress": "Small intestine 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 4"
+  ],
+  "descricao_original": "The mucosae of the duodenum (left) and ileum (right) are shown in this image. The mucosa is the innermost layer of the small intestine and consists of three layers: a simple columnar epithelium with microvilli and goblet cells; a lamina propria of loose connective tissue in which intestinal glands and MALT are located; and a thin muscularis mucosae of smooth muscle. The mucosa forms villi, which are finger-like projections from the surface of the small intestine and consist of a central core of lamina propria covered by its overlying surface epithelium. The presence of villi is diagnostic for the small intestine. 200x, 300x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Mississippi slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosa: Villi', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Descricao original da pagina: The mucosae of the duodenum (left) and ileum (right) are shown in this image. The mucosa is the innermost layer of the small intestine and consists of three layers: a simple columnar epithelium with microvilli and goblet cells; a lamina propria of loose connective tissue in which intestinal glands and MALT are located; and a thin muscularis mucosae of smooth muscle. The mucosa forms villi, which are finger-like projections from the surface of the small intestine and consist of a central core of lamina propria covered by its overlying surface epithelium. The presence of villi is diagnostic for the small intestine. 200x, 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa consists of a simple columnar epithelium, a lamina propria of loose connective tissue and a muscularis mucosae. Between the villi, the epithelium extends into the lamina propria forming intestinal glands, also known as crypts of Lieberkuhn. Intestinal glands extend down to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Villi",
+      "explicacao_original": "Villi are distinguishing features of the small intestine. They are finger-like projections from the surface of the small intestine into the lumen of the organ. Villi are composed of a central core of lamina propria covered by its overlying surface epithelium. The shape of villi changes along the length of the small intestine, being more club shaped in the duodenum and thinner in the more distal segments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi are distinguishing features of the small intestine. They are finger-like projections from the surface of the small intestine into the lumen of the organ. Villi are composed of a central core of lamina propria covered by its overlying surface epithelium. The shape of villi changes along the length of the small intestine, being more club shaped in the duodenum and thinner in the more distal segments.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosa consists of dense, irregular connective tissue containing larger blood vessels, nerves and lymphatics. Unique to the duodenum, the submucosa contains mucus-secreting submucosal glands (Brunner’s glands)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa consists of dense, irregular connective tissue containing larger blood vessels, nerves and lymphatics. Unique to the duodenum, the submucosa contains mucus-secreting submucosal glands (Brunner’s glands). Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Submucosal gland (Brunner's gland)",
+      "explicacao_original": "The duodenum of the small intestine can be differentiated from the remainder of the small intestine primarily by the presence of submucosal glands (Brunner’s glands). These glands produce an alkaline mucus that helps neutralize the acidity of the chyme entering the duodenum from the stomach. They empty into the base of intestinal glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Submucosal gland (Brunner's gland)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The duodenum of the small intestine can be differentiated from the remainder of the small intestine primarily by the presence of submucosal glands (Brunner’s glands). These glands produce an alkaline mucus that helps neutralize the acidity of the chyme entering the duodenum from the stomach. They empty into the base of intestinal glands.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Mississippi slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-4-NEW-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosa: Villi'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-4-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Mississippi slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-4/, acesso em 2026-08-07."
+    }
+  ]
+}

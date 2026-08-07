@@ -1,0 +1,54 @@
+{
+  "id": 12757,
+  "titulo": "Uterus: menstrual phase (Days 1-5)",
+  "titulo_wordpress": "Uterus 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 13"
+  ],
+  "descricao_original": "When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.jpg",
+      "arquivo": "imagens/base/O.R.F.U.13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: menstrual phase (Days 1-5)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 13. Descricao original da pagina: When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Surface epithelium",
+      "explicacao_original": "When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.13.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.13.jpg'. Destaca a estrutura ou conceito 'Surface epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sloughed tissue",
+      "explicacao_original": "When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.13.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.13.jpg'. Destaca a estrutura ou conceito 'Sloughed tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Glands",
+      "explicacao_original": "When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.13.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.13.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When the ischemic tissue in the functional zone loses its integrity, it is sloughed as menstruation. This image, taken from early in the menstrual phase, shows an intact surface epithelium on the right half of the image, while tissue has already begun to slough in other areas (left half). 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-13/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "id": 9200,
+  "titulo": "Globe: Limbus",
+  "titulo_wordpress": "Globe 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 5"
+  ],
+  "descricao_original": "This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-5/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of Iowa collection. Inset: Arizona Veterinary Diagnostic Laboratory."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Limbus', no setor Órgãos e Sistemas > Olho > Globe > Globe 5. Descricao original da pagina: This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cornea",
+      "explicacao_original": "This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.EY_.G.05.P04.png",
+      "arquivo": "imagens/marcadores/O.EY_.G.05.P04.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-5.jpg'. Destaca a estrutura ou conceito 'Cornea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sclera",
+      "explicacao_original": "This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.EY_.G.05.P05.png",
+      "arquivo": "imagens/marcadores/O.EY_.G.05.P05.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-5.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Iris",
+      "explicacao_original": "This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-5.jpg'. Destaca a estrutura ou conceito 'Iris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of the limbus shows the trabecular meshwork and the canal of Schlemm, also referred to as the scleral venous sinus. These structures are responsible for draining aqueous humor from the anterior chamber. Aqueous humor maintains intraocular pressure and provides nutrition for avascular ocular tissues.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Trabecular meshwork",
+      "explicacao_original": "The trabecular meshwork, located at the iridoscleral angle, consists of a network of connective tissue plates and cords lined by a specialized endothelium. Aqueous humor in the anterior chamber percolates through the spaces to eventually reach the canal of Schlemm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-5.jpg'. Destaca a estrutura ou conceito 'Trabecular meshwork' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trabecular meshwork, located at the iridoscleral angle, consists of a network of connective tissue plates and cords lined by a specialized endothelium. Aqueous humor in the anterior chamber percolates through the spaces to eventually reach the canal of Schlemm.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Canal of Schlemm",
+      "explicacao_original": "The canal of Schlemm is a ring-shaped vascular sinus that is located at the junction of the cornea and sclera. It is lined by endothelium and receives the aqueous humor from the trabecular meshwork. From the canal of Schlemm, fluid passes into veins of the sclera. This flow is facilitated by contraction of the ciliary muscle. Improper drainage of the aqueous humor results in increased intraocular pressure, a condition known as glaucoma, and can result in blindness.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-5.jpg'. Destaca a estrutura ou conceito 'Canal of Schlemm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The canal of Schlemm is a ring-shaped vascular sinus that is located at the junction of the cornea and sclera. It is lined by endothelium and receives the aqueous humor from the trabecular meshwork. From the canal of Schlemm, fluid passes into veins of the sclera. This flow is facilitated by contraction of the ciliary muscle. Improper drainage of the aqueous humor results in increased intraocular pressure, a condition known as glaucoma, and can result in blindness.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of Iowa collection. Inset: Arizona Veterinary Diagnostic Laboratory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Iowa-source-ping-1.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping-1.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-5.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of Iowa collection. Inset: Arizona Veterinary Diagnostic Laboratory.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-5/, acesso em 2026-08-07."
+    }
+  ]
+}

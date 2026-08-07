@@ -1,0 +1,113 @@
+{
+  "id": 10779,
+  "titulo": "Kidney: Cortex and medulla",
+  "titulo_wordpress": "Overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Overview of the urinary system",
+    "Overview 2"
+  ],
+  "descricao_original": "The kidney is grossly subdivided into cortex and medulla which are separated by the arcuate blood vessels. 20x, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "arquivo": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Kidney: Cortex and medulla', no setor Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Descricao original da pagina: The kidney is grossly subdivided into cortex and medulla which are separated by the arcuate blood vessels. 20x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Orientation",
+      "explicacao_original": "The image on the left is taken from an area similar to that outlined by the black rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2-A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-A-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Orientation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image on the left is taken from an area similar to that outlined by the black rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cortex",
+      "explicacao_original": "The cortex is subdivided into convoluted portions and medullary rays, which present an alternating striped appearance within the cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cortex is subdivided into convoluted portions and medullary rays, which present an alternating striped appearance within the cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Convoluted portions",
+      "explicacao_original": "The convoluted portions contains renal corpuscles, convoluted portions of proximal and distal tubules, and collecting tubules, which are the beginnings of collecting ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Convoluted portions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted portions contains renal corpuscles, convoluted portions of proximal and distal tubules, and collecting tubules, which are the beginnings of collecting ducts.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Medullary ray",
+      "explicacao_original": "Medullary rays contain straight portions of proximal and distal tubules, as well as cortical portions of collecting ducts. A medulla ray can be identified by the linearity of its tubules and by its lack of renal corpuscles. Tubules in the medullary rays are directly continuous with similar tubules in the medulla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Medullary ray' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medullary rays contain straight portions of proximal and distal tubules, as well as cortical portions of collecting ducts. A medulla ray can be identified by the linearity of its tubules and by its lack of renal corpuscles. Tubules in the medullary rays are directly continuous with similar tubules in the medulla.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Medulla",
+      "explicacao_original": "The medulla is composed of the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting tubules, including the ducts of Bellini. The medulla can be identified by the linearity of the tubules traversing it and by its lack of renal corpuscles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla is composed of the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting tubules, including the ducts of Bellini. The medulla can be identified by the linearity of the tubules traversing it and by its lack of renal corpuscles.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Renal pyramid",
+      "explicacao_original": "The conical renal pyramids are composed of medullary tissue with their bases abutting the cortex and their apices forming a papillae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A-NEW1.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2A-NEW1.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Renal pyramid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The conical renal pyramids are composed of medullary tissue with their bases abutting the cortex and their apices forming a papillae.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Renal columns",
+      "explicacao_original": "Renal columns are cortical tissue that is interposed between the pyramids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Renal columns' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Renal columns are cortical tissue that is interposed between the pyramids.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Arcuate vessels",
+      "explicacao_original": "Arcuate blood vessels separate the cortex from the medulla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Arcuate vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Arcuate blood vessels separate the cortex from the medulla.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Area shown in the next image",
+      "explicacao_original": "The next image is similar to that enclosed by the blue rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ur_.OV-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Kidney: Cortex and medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-2A.jpg'. Destaca a estrutura ou conceito 'Area shown in the next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that enclosed by the blue rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

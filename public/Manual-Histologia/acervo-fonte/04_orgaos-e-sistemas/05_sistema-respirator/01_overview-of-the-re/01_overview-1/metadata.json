@@ -1,0 +1,83 @@
+{
+  "id": 17833,
+  "titulo": "Respiratory: overview",
+  "titulo_wordpress": "Overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Overview of the respiratory system",
+    "Overview 1"
+  ],
+  "descricao_original": "The respiratory system is composed of tubular passages that conduct air into lung alveoli where oxygen and carbon dioxide are exchanged. These airways consists of both conducting portions (they only transmit air) and respiratory portions (possess alveoli for gas exchange). These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary conducting components. Additional portions of the conducting system are present within the lung (intrapulmonary). The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "arquivo": "imagens/base/O.R.O.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Respiratory: overview', no setor Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Descricao original da pagina: The respiratory system is composed of tubular passages that conduct air into lung alveoli where oxygen and carbon dioxide are exchanged. These airways consists of both conducting portions (they only transmit air) and respiratory portions (possess alveoli for gas exchange). These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary conducting components. Additional portions of the conducting system are present within the lung (intrapulmonary). The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nasal cavities",
+      "explicacao_original": "Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.P01A.png",
+      "arquivo": "imagens/marcadores/O.R.O.P01A.png",
+      "imagem_base": "imagens/base/O.R.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.01.jpg'. Destaca a estrutura ou conceito 'Nasal cavities' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pharynx",
+      "explicacao_original": "Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.P02A.png",
+      "arquivo": "imagens/marcadores/O.R.O.P02A.png",
+      "imagem_base": "imagens/base/O.R.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.01.jpg'. Destaca a estrutura ou conceito 'Pharynx' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Larynx",
+      "explicacao_original": "Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.P03A.png",
+      "arquivo": "imagens/marcadores/O.R.O.P03A.png",
+      "imagem_base": "imagens/base/O.R.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.01.jpg'. Destaca a estrutura ou conceito 'Larynx' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Trachea",
+      "explicacao_original": "Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.P04A.png",
+      "arquivo": "imagens/marcadores/O.R.O.P04A.png",
+      "imagem_base": "imagens/base/O.R.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.01.jpg'. Destaca a estrutura ou conceito 'Trachea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Primary bronchi",
+      "explicacao_original": "Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.P05A.png",
+      "arquivo": "imagens/marcadores/O.R.O.P05A.png",
+      "imagem_base": "imagens/base/O.R.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.01.jpg'. Destaca a estrutura ou conceito 'Primary bronchi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lungs",
+      "explicacao_original": "Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.O.P06A.png",
+      "arquivo": "imagens/marcadores/O.R.O.P06A.png",
+      "imagem_base": "imagens/base/O.R.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/O.R.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Respiratory: overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.O.01.jpg'. Destaca a estrutura ou conceito 'Lungs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory passages located outside the lung are referred to as extrapulmonary. These frontal and mid-sagittal views of the head and neck illustrate the extrapulmonary components of the conducting portion of the respiratory system. The inset shows the trachea dividing into two primary bronchi (in red), one supplying each lung.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Overview of the respiratory system > Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/overview-respiratory/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

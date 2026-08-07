@@ -1,0 +1,44 @@
+{
+  "id": 2537,
+  "titulo": "Simple squamous epithelium",
+  "titulo_wordpress": "Simple epithelium 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 1"
+  ],
+  "descricao_original": "Simple squamous epithelium is composed of a single layer of thin cells that are much wider than they are tall. This epithelium presents a minimal barrier to passive diffusion and, therefore, lines surfaces across which metabolites or gases can move rapidly. This epithelium also lines surfaces that require minimal protection, as shown here. Kidney, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-1-2.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Simp-1-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple squamous epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 1. Descricao original da pagina: Simple squamous epithelium is composed of a single layer of thin cells that are much wider than they are tall. This epithelium presents a minimal barrier to passive diffusion and, therefore, lines surfaces across which metabolites or gases can move rapidly. This epithelium also lines surfaces that require minimal protection, as shown here. Kidney, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple squamous",
+      "explicacao_original": "epithelium > The simple squamous epithelium at the black arrows serves a lining function with no transport occurring across its surface. The simple squamous epithelia at the green arrows line capillaries where large amounts of transport and diffusion occur.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-1-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-1-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-1-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-1-2.jpg'. Destaca a estrutura ou conceito 'Simple squamous' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: epithelium > The simple squamous epithelium at the black arrows serves a lining function with no transport occurring across its surface. The simple squamous epithelia at the green arrows line capillaries where large amounts of transport and diffusion occur.. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Simple cuboidal epithelium",
+      "explicacao_original": "Simple cuboidal epithelia frequently form the walls of ducts or tubules, as seen here. Cuboidal cells usually possess spherical nuclei, while the cells themselves vary from nearly cube-shaped to rectangular.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-1-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-1-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Simp-1-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-1-2.jpg'. Destaca a estrutura ou conceito 'Simple cuboidal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple cuboidal epithelia frequently form the walls of ducts or tubules, as seen here. Cuboidal cells usually possess spherical nuclei, while the cells themselves vary from nearly cube-shaped to rectangular.. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "id": 653,
+  "titulo": "Toluidine blue",
+  "titulo_wordpress": "Stains 4",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Corantes",
+    "Stains 4"
+  ],
+  "descricao_original": "Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x",
+  "url_origem": "https://digitalhistology.org/histology-basics/stains/stains-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4.jpg",
+      "arquivo": "imagens/base/C.B.St-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Toluidine blue', no setor Histologia Básica > Corantes > Stains 4. Descricao original da pagina: Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-4-1-ping.png",
+      "imagem_base": "imagens/base/C.B.St-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Toluidine blue'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-4.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-4-2-ping.png",
+      "imagem_base": "imagens/base/C.B.St-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Toluidine blue'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-4.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axons",
+      "explicacao_original": "Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-4-3-ping.png",
+      "imagem_base": "imagens/base/C.B.St-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Toluidine blue'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-4.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Toluidine blue is also a conventional stain. It is a blue-colored basic dye and, like hematoxylin, has a high affinity for negatively charged components of tissue. This stain is often used with plastic-embedded tissue sections. Peripheral nerve 1000x. Contexto setorial: Histologia Básica > Corantes > Stains 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myelin",
+      "explicacao_original": "The crisp, dark staining of the myelin sheath is enhanced by osmium tetroxide, which is used to fix lipid. Myelin membranes are uniquely high in lipid content.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-4-4-ping.png",
+      "imagem_base": "imagens/base/C.B.St-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Toluidine blue'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-4.jpg'. Destaca a estrutura ou conceito 'Myelin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The crisp, dark staining of the myelin sheath is enhanced by osmium tetroxide, which is used to fix lipid. Myelin membranes are uniquely high in lipid content.. Contexto setorial: Histologia Básica > Corantes > Stains 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Metachromasia (Mast cells)",
+      "explicacao_original": "Metachromasia results when toluidine blue, a basic dye, binds to structures with abundant polyanions (negatively charged molecules). Due to the high density of the negative charges, the dye molecules are bound in close proximity and form aggregates with different absorptive properties from the single dye molecule. The secretory granules in these mast cells demonstrate metachromasia, staining magenta, not blue, indicating the high charge density of their contents (proteoglycans).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-4-5-ping.png",
+      "imagem_base": "imagens/base/C.B.St-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/03/C.B.St-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Toluidine blue'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-4.jpg'. Destaca a estrutura ou conceito 'Metachromasia (Mast cells)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Metachromasia results when toluidine blue, a basic dye, binds to structures with abundant polyanions (negatively charged molecules). Due to the high density of the negative charges, the dye molecules are bound in close proximity and form aggregates with different absorptive properties from the single dye molecule. The secretory granules in these mast cells demonstrate metachromasia, staining magenta, not blue, indicating the high charge density of their contents (proteoglycans).. Contexto setorial: Histologia Básica > Corantes > Stains 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-4/, acesso em 2026-08-07."
+    }
+  ]
+}

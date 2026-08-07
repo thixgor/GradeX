@@ -1,0 +1,176 @@
+{
+  "id": 30076,
+  "titulo": "Bone: a tissue and an organ",
+  "titulo_wordpress": "As a tissue 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 1"
+  ],
+  "descricao_original": "The term “bone” refers to both a tissue and an organ. Bone tissue is composed of cells and an extracellular matrix. Bone cells consist of osteoblasts and osteocytes, which produce and maintain bone, respectively; osteoclasts which resorb bone; and bone lining cells that include inactive osteoblasts and osteoprogenitor cells. Bone matrix consists of organic (fibers, ground substance) and inorganic (calcium phosphate) components. The organ bone is composed of bone tissue along with surface coverings (periosteum, endosteum), marrow tissue, articular cartilage, and blood and nerve supplies. 1x, 200x, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/",
+  "creditos_identificados": [
+    "Image source: Images taken of a slide in the University of Iowa slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "arquivo": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: a tissue and an organ', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Descricao original da pagina: The term “bone” refers to both a tissue and an organ. Bone tissue is composed of cells and an extracellular matrix. Bone cells consist of osteoblasts and osteocytes, which produce and maintain bone, respectively; osteoclasts which resorb bone; and bone lining cells that include inactive osteoblasts and osteoprogenitor cells. Bone matrix consists of organic (fibers, ground substance) and inorganic (calcium phosphate) components. The organ bone is composed of bone tissue along with surface coverings (periosteum, endosteum), marrow tissue, articular cartilage, and blood and nerve supplies. 1x, 200x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Orientation",
+      "explicacao_original": "This composite image shows a long bone, the femur (left), and two light micrographs taken from the region indicated by the green box. The center image shows the outer surface of the bone; the image to the right shows the inner surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Orientation.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Orientation.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Orientation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This composite image shows a long bone, the femur (left), and two light micrographs taken from the region indicated by the green box. The center image shows the outer surface of the bone; the image to the right shows the inner surface.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Center",
+      "explicacao_original": "This image shows bone tissue at the outer surface along with its periosteal covering.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Middle.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Middle.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows bone tissue at the outer surface along with its periosteal covering.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Right",
+      "explicacao_original": "This image shows bone tissue at the inner surface along with its endosteal covering.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Right.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Right.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Right' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows bone tissue at the inner surface along with its endosteal covering.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bone the tissue",
+      "explicacao_original": "Bone tissue is composed of cells (osteoblasts, osteocytes, osteoclasts and bone lining cells) and an extracellular matrix with organic (fibers and ground substance) and inorganic (calcium phosphate) components. Bone cells are also located on the surface as components of the periosteum and endosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-As-a-tissue.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-As-a-tissue.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Bone the tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone tissue is composed of cells (osteoblasts, osteocytes, osteoclasts and bone lining cells) and an extracellular matrix with organic (fibers and ground substance) and inorganic (calcium phosphate) components. Bone cells are also located on the surface as components of the periosteum and endosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "Osteoblasts are cells that lie on the surface of bone and produce the matrix (deposition), surrounding themselves during the process. Once entirely enclosed by matrix, these cells are called osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Osteoblasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Osteoblasts.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts are cells that lie on the surface of bone and produce the matrix (deposition), surrounding themselves during the process. Once entirely enclosed by matrix, these cells are called osteocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Osteoblasts are cells that lie on the surface of bone and produce the matrix (deposition), surrounding themselves during the process. Once entirely enclosed by matrix, these cells are called osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Osteocytes.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts are cells that lie on the surface of bone and produce the matrix (deposition), surrounding themselves during the process. Once entirely enclosed by matrix, these cells are called osteocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "Osteoclasts are located on bony surfaces. Osteoclasts break down the bony matrix (resorption) during bone remodeling and also mobilize calcium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Osteoclasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Osteoclasts.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoclasts are located on bony surfaces. Osteoclasts break down the bony matrix (resorption) during bone remodeling and also mobilize calcium.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "Bone lining cells are quiescent, flattened osteoblasts that cover bone surfaces where neither bone resorption nor bone formation is occurring. They can be induced to proliferate and differentiate into osteoblasts and may also represent a source of “determined” osteogenic precursors. Bone lining cells maintain bone remodeling and mineral homeostasis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Lining-cells.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Lining-cells.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone lining cells are quiescent, flattened osteoblasts that cover bone surfaces where neither bone resorption nor bone formation is occurring. They can be induced to proliferate and differentiate into osteoblasts and may also represent a source of “determined” osteogenic precursors. Bone lining cells maintain bone remodeling and mineral homeostasis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Extracellular matrix",
+      "explicacao_original": "The extracellular matrix of bone has both organic components, consisting of fibers and ground substance as well as inorganic components, primarily calcium phosphate (hydroxyapatite). The matrix of mature bone is highly eosinophilic due to its large content of collagen fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Matrix.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Matrix.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Extracellular matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The extracellular matrix of bone has both organic components, consisting of fibers and ground substance as well as inorganic components, primarily calcium phosphate (hydroxyapatite). The matrix of mature bone is highly eosinophilic due to its large content of collagen fibers.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Bone as a organ",
+      "explicacao_original": "This bone is the femur, a long bone located in the thigh. The bulbous end of the bone is the epiphysis, attached to diaphysis, the cylindrical portion below it. The organ bone is composed of bone tissue along with its surface coverings (periosteum, endosteum), marrow tissue, articular hyaline cartilage, and blood and nerve supplies.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-As-an-organ.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-As-an-organ.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Bone as a organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This bone is the femur, a long bone located in the thigh. The bulbous end of the bone is the epiphysis, attached to diaphysis, the cylindrical portion below it. The organ bone is composed of bone tissue along with its surface coverings (periosteum, endosteum), marrow tissue, articular hyaline cartilage, and blood and nerve supplies.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Periosteum",
+      "explicacao_original": "Periosteum is a connective tissue layer that covers the exterior surface of bones, excluding the articular surfaces. The periosteum consists of dense connective tissue plus a layer of bone progenitor cells and bone lining cells. Osteoblasts and osteoclasts are also located in the periosteum in regions of bone deposition and resorption, respectively. The periosteum also serves to anchor ligaments and muscle tendons to the bone surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Periosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Periosteum.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum is a connective tissue layer that covers the exterior surface of bones, excluding the articular surfaces. The periosteum consists of dense connective tissue plus a layer of bone progenitor cells and bone lining cells. Osteoblasts and osteoclasts are also located in the periosteum in regions of bone deposition and resorption, respectively. The periosteum also serves to anchor ligaments and muscle tendons to the bone surface.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Endosteum",
+      "explicacao_original": "The endosteum consists of single layer of cells that cover all internal bone surfaces. In non-active regions, the cells are squamous-shaped and include inactive osteoblasts as well as osteoprogenitor cells, which have the capacity to differentiate into osteoblasts. These two cell types are difficult to distinguish from each other. In areas of bone deposition, inactive osteoblasts transform into active, cuboidal-shaped osteoblasts. In areas of bone resorption, osteoclasts are present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Endosteum.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Endosteum.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endosteum consists of single layer of cells that cover all internal bone surfaces. In non-active regions, the cells are squamous-shaped and include inactive osteoblasts as well as osteoprogenitor cells, which have the capacity to differentiate into osteoblasts. These two cell types are difficult to distinguish from each other. In areas of bone deposition, inactive osteoblasts transform into active, cuboidal-shaped osteoblasts. In areas of bone resorption, osteoclasts are present.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Bone is a highly vascularized organ and tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Blood-vessels.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Blood-vessels.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone is a highly vascularized organ and tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Marrow",
+      "explicacao_original": "The central cavity of the bone is called the marrow cavity (X) and contains either red marrow (blood forming) or yellow marrow (fat cells).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-Up-Marrow.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.01-Up-Marrow.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The central cavity of the bone is called the marrow cavity (X) and contains either red marrow (blood forming) or yellow marrow (fat cells).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Image source",
+      "explicacao_original": "Images taken of a slide in the University of Iowa slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/06/Iowa-plural.png",
+      "arquivo": "imagens/marcadores/Iowa-plural.png",
+      "imagem_base": "imagens/base/T.C.B.T.01-UpdateA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/06/T.C.B.T.01-UpdateA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: a tissue and an organ'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.01-UpdateA.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Images taken of a slide in the University of Iowa slide collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

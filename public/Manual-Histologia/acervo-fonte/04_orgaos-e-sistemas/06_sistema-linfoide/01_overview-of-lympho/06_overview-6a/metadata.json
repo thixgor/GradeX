@@ -1,0 +1,83 @@
+{
+  "id": 28296,
+  "titulo": "Overview: Innate immunity",
+  "titulo_wordpress": "Overview 6A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Overview of lymphoid tissues and organs",
+    "Overview 6A"
+  ],
+  "descricao_original": "Epithelial membranes, such as the epidermis of skin or mucosae lining internal organs, e.g., the digestive system (shown above), serve as physical barriers against entry of pathogens and toxins. Epithelia are a components of the innate immune system that are present at birth and form the so-called “first line of defense”. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "arquivo": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Innate immunity', no setor Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Descricao original da pagina: Epithelial membranes, such as the epidermis of skin or mucosae lining internal organs, e.g., the digestive system (shown above), serve as physical barriers against entry of pathogens and toxins. Epithelia are a components of the innate immune system that are present at birth and form the so-called “first line of defense”. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelial barrier",
+      "explicacao_original": "The epithelium provides a physical barrier to microbe entry along with secretions on its surface, such as digestive enzymes and stomach acid that destroy microorganisms. Epithelia may also contain wandering immune cells, like macrophages, that provide local protection through phagocytosis and recruitment of additional immune cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-2-NEW-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Innate immunity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-2-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelial barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium provides a physical barrier to microbe entry along with secretions on its surface, such as digestive enzymes and stomach acid that destroy microorganisms. Epithelia may also contain wandering immune cells, like macrophages, that provide local protection through phagocytosis and recruitment of additional immune cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Microbes",
+      "explicacao_original": "The epithelium provides a physical barrier to microbe entry along with secretions on its surface, such as digestive enzymes and stomach acid that destroy microorganisms. Epithelia may also contain wandering immune cells, like macrophages, that provide local protection through phagocytosis and recruitment of additional immune cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-2-NEW-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Innate immunity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-2-NEW.jpg'. Destaca a estrutura ou conceito 'Microbes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium provides a physical barrier to microbe entry along with secretions on its surface, such as digestive enzymes and stomach acid that destroy microorganisms. Epithelia may also contain wandering immune cells, like macrophages, that provide local protection through phagocytosis and recruitment of additional immune cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Macrophages",
+      "explicacao_original": "The epithelium provides a physical barrier to microbe entry along with secretions on its surface, such as digestive enzymes and stomach acid that destroy microorganisms. Epithelia may also contain wandering immune cells, like macrophages, that provide local protection through phagocytosis and recruitment of additional immune cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-2-NEW-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Innate immunity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-2-NEW.jpg'. Destaca a estrutura ou conceito 'Macrophages' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium provides a physical barrier to microbe entry along with secretions on its surface, such as digestive enzymes and stomach acid that destroy microorganisms. Epithelia may also contain wandering immune cells, like macrophages, that provide local protection through phagocytosis and recruitment of additional immune cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Microbe entry",
+      "explicacao_original": "If microbes penetrate the epithelium they enter a connective tissue layer, such as the dermis of skin or lamina propria of a mucosa. There, they are met with a variety of internal defenses consisting of phagocytic and natural killer cells as well as chemical defenses including complement activation and inflammation. All these defenses are components of the innate immune response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-2-NEW-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Innate immunity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-2-NEW.jpg'. Destaca a estrutura ou conceito 'Microbe entry' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: If microbes penetrate the epithelium they enter a connective tissue layer, such as the dermis of skin or lamina propria of a mucosa. There, they are met with a variety of internal defenses consisting of phagocytic and natural killer cells as well as chemical defenses including complement activation and inflammation. All these defenses are components of the innate immune response.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The lamina propria contains phagocytic macrophages, natural killer cells and mast cells, all of which are components of MALT (mucosa-associated lymphoid tissue). Immune cells in the lamina propria may also initiate an adaptive immune response which is slower to develop but highly specific for a particular antigen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-2-NEW-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Innate immunity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-2-NEW.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lamina propria contains phagocytic macrophages, natural killer cells and mast cells, all of which are components of MALT (mucosa-associated lymphoid tissue). Immune cells in the lamina propria may also initiate an adaptive immune response which is slower to develop but highly specific for a particular antigen.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Mast cell",
+      "explicacao_original": "Mast cells contain cytoplasmic granules that are released in response to contact with microbes or antigens, eliciting an allergic reaction.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.OV-2-NEW-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.OV-2-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Ly_.OV-2-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Innate immunity'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.OV-2-NEW.jpg'. Destaca a estrutura ou conceito 'Mast cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mast cells contain cytoplasmic granules that are released in response to contact with microbes or antigens, eliciting an allergic reaction.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Overview of lymphoid tissues and organs > Overview 6A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/overview-lymphoid/overview-15/, acesso em 2026-08-07."
+    }
+  ]
+}

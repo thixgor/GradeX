@@ -1,0 +1,94 @@
+{
+  "id": 5296,
+  "titulo": "Arteriole",
+  "titulo_wordpress": "Arteries 23",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 23"
+  ],
+  "descricao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Arteriole', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Descricao original da pagina: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Internal elastic lamina",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'Internal elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tunica media",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Smooth muscle cells",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'Smooth muscle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "External lamina",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'External lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-23-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-23-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-23.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a portion of the wall of an arteriole with two layers of smooth muscle cells. Some of the space between the smooth muscle cells is due to artifactual shrinkage during fixation. The endothelial cells lie immediately above the internal elastic lamina and a portion of the tunica adventitia with fibroblast processes is visible in the lower left. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 23. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-23/, acesso em 2026-08-07."
+    }
+  ]
+}

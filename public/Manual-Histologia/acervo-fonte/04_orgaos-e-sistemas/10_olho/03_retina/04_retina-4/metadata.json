@@ -1,0 +1,155 @@
+{
+  "id": 9232,
+  "titulo": "Sensory retina",
+  "titulo_wordpress": "Retina 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Retina",
+    "Retina 4"
+  ],
+  "descricao_original": "This image shows the elegant structural organization of the retina, which embryologically is a part of the central nervous system. Functionally, the retina consists of a three-cell pathway: photoreceptors (rods and cones), bipolar cells and ganglion cells. Neural integration between these layers occurs in two synaptic regions, the outer plexiform layer and the inner plexiform layer. The vitreous chamber is visible in the upper left, the choroid is visible in the lower right. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/retina/retina-4/",
+  "creditos_identificados": [
+    "Image credit: Image taken of a slide from the University of New England College of Osteopathic Medicine collection. The slide was produced by Dr. Allen Bell."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "arquivo": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sensory retina', no setor Órgãos e Sistemas > Olho > Retina > Retina 4. Descricao original da pagina: This image shows the elegant structural organization of the retina, which embryologically is a part of the central nervous system. Functionally, the retina consists of a three-cell pathway: photoreceptors (rods and cones), bipolar cells and ganglion cells. Neural integration between these layers occurs in two synaptic regions, the outer plexiform layer and the inner plexiform layer. The vitreous chamber is visible in the upper left, the choroid is visible in the lower right. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Retina",
+      "explicacao_original": "This image shows the elegant structural organization of the retina, which embryologically is a part of the central nervous system. Functionally, the retina consists of a three-cell pathway: photoreceptors (rods and cones), bipolar cells and ganglion cells. Neural integration between these layers occurs in two synaptic regions, the outer plexiform layer and the inner plexiform layer. The vitreous chamber is visible in the upper left, the choroid is visible in the lower right. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-1-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Retina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the elegant structural organization of the retina, which embryologically is a part of the central nervous system. Functionally, the retina consists of a three-cell pathway: photoreceptors (rods and cones), bipolar cells and ganglion cells. Neural integration between these layers occurs in two synaptic regions, the outer plexiform layer and the inner plexiform layer. The vitreous chamber is visible in the upper left, the choroid is visible in the lower right. 400x. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pigment epithelium",
+      "explicacao_original": "The pigment epithelium is the outermost layer of the retina and is non-visual. It consists of a simple cuboidal epithelium with cells containing melanin to absorb stray light and prevent reflection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Retina-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4-2-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Pigment epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pigment epithelium is the outermost layer of the retina and is non-visual. It consists of a simple cuboidal epithelium with cells containing melanin to absorb stray light and prevent reflection.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Rods and cones",
+      "explicacao_original": "Rods and cones are photoreceptors that form the photoreceptor layer. These cells transduce light energy into neural activity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-2A-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Rods and cones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Rods and cones are photoreceptors that form the photoreceptor layer. These cells transduce light energy into neural activity.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bipolar cells",
+      "explicacao_original": "Bipolar cells synapse with rods and cones as well as ganglion cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-3-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Bipolar cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bipolar cells synapse with rods and cones as well as ganglion cells.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Ganglion cells",
+      "explicacao_original": "Ganglion cells, located in the ganglion cell layer, synapse with bipolar cells and their cell bodies. Axons from these cells travel in the nerve fiber layer, passing toward the optic disc, where they exit as the optic nerve.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-4-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Ganglion cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ganglion cells, located in the ganglion cell layer, synapse with bipolar cells and their cell bodies. Axons from these cells travel in the nerve fiber layer, passing toward the optic disc, where they exit as the optic nerve.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nerve fiber layer",
+      "explicacao_original": "Ganglion cells, located in the ganglion cell layer, synapse with bipolar cells and their cell bodies. Axons from these cells travel in nerve fiber layer, passing toward the optic disc, where they exit as the optic nerve.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/08/Or.Eye_.Retina-4A-NFL-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-NFL-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Nerve fiber layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ganglion cells, located in the ganglion cell layer, synapse with bipolar cells and their cell bodies. Axons from these cells travel in nerve fiber layer, passing toward the optic disc, where they exit as the optic nerve.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Outer plexiform layer",
+      "explicacao_original": "The outer plexiform layer is the location of synapses of rods and cones with bipolar cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-5-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Outer plexiform layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer plexiform layer is the location of synapses of rods and cones with bipolar cells.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Inner plexiform layer",
+      "explicacao_original": "The inner plexiform layer is the location of synapses of bipolar cells and ganglion cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-6-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Inner plexiform layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner plexiform layer is the location of synapses of bipolar cells and ganglion cells.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Vitreous chamber",
+      "explicacao_original": "The vitreous chamber is visible in the upper left.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-8-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Vitreous chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vitreous chamber is visible in the upper left.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Choroid",
+      "explicacao_original": "The choroid is visible in the lower right. The choroid layer, which is pigmented and highly vascular, forms part of the vascular tunic, along with the ciliary body and the iris.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-9-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Choroid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The choroid is visible in the lower right. The choroid layer, which is pigmented and highly vascular, forms part of the vascular tunic, along with the ciliary body and the iris.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Light pathway",
+      "explicacao_original": "In most areas of the retina, light must pass through the entire retina to reach the photoreceptors (rods and cones), where it is transduced into neural signals. In the region of the retina with greatest visual acuity, the fovea, the bipolar and ganglion cells are displaced laterally, allowing light to directly reach the photoreceptors.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-10-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Light pathway' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most areas of the retina, light must pass through the entire retina to reach the photoreceptors (rods and cones), where it is transduced into neural signals. In the region of the retina with greatest visual acuity, the fovea, the bipolar and ganglion cells are displaced laterally, allowing light to directly reach the photoreceptors.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Neural pathway",
+      "explicacao_original": "Visual signals originate in the photoreceptors and are transmitted in the opposite direction from the light path, i.e., from photoreceptors to bipolar cells to ganglion cells. Visual integration occurs along this pathway before reaching the ganglion cells, whose axons transmit visual signals to the brain through the optic nerve.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Retina-4A-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Retina-4A-11-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Neural pathway' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visual signals originate in the photoreceptors and are transmitted in the opposite direction from the light path, i.e., from photoreceptors to bipolar cells to ganglion cells. Visual integration occurs along this pathway before reaching the ganglion cells, whose axons transmit visual signals to the brain through the optic nerve.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Image credit",
+      "explicacao_original": "Image taken of a slide from the University of New England College of Osteopathic Medicine collection. The slide was produced by Dr. Allen Bell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/UNEBell-source-ping.png",
+      "arquivo": "imagens/marcadores/UNEBell-source-ping.png",
+      "imagem_base": "imagens/base/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sensory retina'. Deve ser sobreposta, sem redimensionamento independente, a 'Retina-UNE-Osteopath-Med-fix-add-Allen-Bell-to-citation.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of New England College of Osteopathic Medicine collection. The slide was produced by Dr. Allen Bell.. Contexto setorial: Órgãos e Sistemas > Olho > Retina > Retina 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/retina/retina-4/, acesso em 2026-08-07."
+    }
+  ]
+}

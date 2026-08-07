@@ -1,0 +1,104 @@
+{
+  "id": 7458,
+  "titulo": "Secretory units",
+  "titulo_wordpress": "Major salivary glands",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands"
+  ],
+  "descricao_original": "These electron micrographs compare the structure of a mucous tubule (left) with that of a serous acinus (right). 5000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secretory units', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Descricao original da pagina: These electron micrographs compare the structure of a mucous tubule (left) with that of a serous acinus (right). 5000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucous tubule",
+      "explicacao_original": "The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Mucous tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucous granules",
+      "explicacao_original": "The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Mucous granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Wide lumen with mucus",
+      "explicacao_original": "The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Wide lumen with mucus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tubule cells contain numerous irregular mucous-containing secretory granules. This mucus is often lost during routine histological processing resulting in the foamy appearance of the cytoplasm. Nuclei are located at the base of the cells and the tubule shows a wide lumen.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Serous acinus",
+      "explicacao_original": "The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Serous acinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Serous granules",
+      "explicacao_original": "The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Serous granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Small lumen with serous product",
+      "explicacao_original": "The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-20-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-20A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-20A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-20A.jpg'. Destaca a estrutura ou conceito 'Small lumen with serous product' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The acinus consists of pyramidal-shaped cells, whose apical cytoplasm is filled with darkly-stained, uniformly-sized, secretory granules. The small central lumen contains the serous secretory product contained in the granules.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands/, acesso em 2026-08-07."
+    }
+  ]
+}

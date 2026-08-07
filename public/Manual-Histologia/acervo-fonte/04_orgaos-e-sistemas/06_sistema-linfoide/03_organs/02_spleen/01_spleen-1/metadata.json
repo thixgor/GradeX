@@ -1,0 +1,104 @@
+{
+  "id": 8563,
+  "titulo": "Spleen",
+  "titulo_wordpress": "Spleen 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Spleen",
+    "Spleen 1"
+  ],
+  "descricao_original": "The spleen, in the upper left quadrant of the abdomen, filters blood, responding to blood-borne antigens, and also removes aged red blood cells and platelets. The spleen is subdivided into white pulp and red pulp, named because of their appearance in the fresh state. Reticular connective tissue forms the stroma. Because it filters blood, the spleen has an intricate vascular supply. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Spleen', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Descricao original da pagina: The spleen, in the upper left quadrant of the abdomen, filters blood, responding to blood-borne antigens, and also removes aged red blood cells and platelets. The spleen is subdivided into white pulp and red pulp, named because of their appearance in the fresh state. Reticular connective tissue forms the stroma. Because it filters blood, the spleen has an intricate vascular supply. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capsule",
+      "explicacao_original": "Because the spleen projects into the abdominal cavity, it is covered by a serosa, which overlies a dense connective tissue capsule. Long trabeculae extend from the capsule into the organ. Arteries enter the spleen at its hilum and travel in the trabeculae to supply splenic parenchyma. Veins leave the parenchyma, enter the trabeculae and exit at the hilum. Reticular connective tissue forms the stroma of the splenic interior.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the spleen projects into the abdominal cavity, it is covered by a serosa, which overlies a dense connective tissue capsule. Long trabeculae extend from the capsule into the organ. Arteries enter the spleen at its hilum and travel in the trabeculae to supply splenic parenchyma. Veins leave the parenchyma, enter the trabeculae and exit at the hilum. Reticular connective tissue forms the stroma of the splenic interior.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Trabecula",
+      "explicacao_original": "Because the spleen projects into the abdominal cavity, it is covered by a serosa, which overlies a dense connective tissue capsule. Long trabeculae extend from the capsule into the organ. Arteries enter the spleen at its hilum and travel in the trabeculae to supply splenic parenchyma. Veins leave the parenchyma, enter the trabeculae and exit at the hilum. Reticular connective tissue forms the stroma of the splenic interior.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Trabecula' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the spleen projects into the abdominal cavity, it is covered by a serosa, which overlies a dense connective tissue capsule. Long trabeculae extend from the capsule into the organ. Arteries enter the spleen at its hilum and travel in the trabeculae to supply splenic parenchyma. Veins leave the parenchyma, enter the trabeculae and exit at the hilum. Reticular connective tissue forms the stroma of the splenic interior.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "White pulp",
+      "explicacao_original": "The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'White pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Periarterial lymphoid sheath (PALS)",
+      "explicacao_original": "The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Periarterial lymphoid sheath (PALS)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lymphoid nodules",
+      "explicacao_original": "The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Lymphoid nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Germinal centers",
+      "explicacao_original": "The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Germinal centers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The white pulp surrounds arterioles after they leave the trabeculae. White pulp consists of both diffuse (T-dependent) and nodular (B-dependent) lymphoid tissues. The diffuse tissue forms a sleeve around each arteriole, called the periarterial lymphoid sheath (PALS). The lymphoid nodules are suspended within these diffuse areas of red pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Red pulp",
+      "explicacao_original": "The red pulp consists of splenic cords (of Billroth) and splenic sinuses. Splenic cords are composed of a variety of lymphatic cells supported by reticular connective tissue. The sinuses are vascular channels between the splenic cords. Because of the large number of these vascular sinuses, red pulp appears red in fresh tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Red pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The red pulp consists of splenic cords (of Billroth) and splenic sinuses. Splenic cords are composed of a variety of lymphatic cells supported by reticular connective tissue. The sinuses are vascular channels between the splenic cords. Because of the large number of these vascular sinuses, red pulp appears red in fresh tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Veins in red pulp",
+      "explicacao_original": "The red pulp consists of splenic cords (of Billroth) and splenic sinuses. Splenic cords are composed of a variety of lymphatic cells supported by reticular connective tissue. The sinuses are vascular channels between the splenic cords. Because of the large number of these vascular sinuses, red pulp appears red in fresh tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Spleen-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Spleen-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Spleen-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Or_.Spleen-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spleen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Spleen-1.jpg'. Destaca a estrutura ou conceito 'Veins in red pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The red pulp consists of splenic cords (of Billroth) and splenic sinuses. Splenic cords are composed of a variety of lymphatic cells supported by reticular connective tissue. The sinuses are vascular channels between the splenic cords. Because of the large number of these vascular sinuses, red pulp appears red in fresh tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Spleen > Spleen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/spleen/spleen-1/, acesso em 2026-08-07."
+    }
+  ]
+}

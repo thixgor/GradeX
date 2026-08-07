@@ -1,0 +1,54 @@
+{
+  "id": 27177,
+  "titulo": "Microscopy",
+  "titulo_wordpress": "Tissue preparation 8",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 8"
+  ],
+  "descricao_original": "Microscopes allow us to look more closely at objects, seeing beyond what is visible with the naked eye. The two major types, light and electron microscopes, are fundamentally differentiated by the type of illumination they use to produce images. Additionally, they differ in their effective magnification ranges, with a significant overlap that corresponds to most histological applications. The size of structures that can be visualized are indicated across the top of the figure.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-8/",
+  "creditos_identificados": [
+    "Image source: Image used by permission from the University of Waikato Te Whare Wānanga o Waikato, www.sciencelearn.org.nz."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7.jpg",
+      "arquivo": "imagens/base/HB-TP-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Microscopy', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 8. Descricao original da pagina: Microscopes allow us to look more closely at objects, seeing beyond what is visible with the naked eye. The two major types, light and electron microscopes, are fundamentally differentiated by the type of illumination they use to produce images. Additionally, they differ in their effective magnification ranges, with a significant overlap that corresponds to most histological applications. The size of structures that can be visualized are indicated across the top of the figure.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Light microscopy",
+      "explicacao_original": "Light microscopes have an effective range of magnification from 10x to 1000x. Tissue structure and cells are readily seen in this range, and at higher magnifications, larger intracellular structures like mitochondria are visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-7-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-7.jpg'. Destaca a estrutura ou conceito 'Light microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Light microscopes have an effective range of magnification from 10x to 1000x. Tissue structure and cells are readily seen in this range, and at higher magnifications, larger intracellular structures like mitochondria are visible.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 8. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Electron microscopy",
+      "explicacao_original": "Electron microscopes have an effective range of magnification from 500x to 200,000x. The electron microscope reveals greater detail of cell and tissue structure as well as revealing the complex set of intracellular structures like membranes and filaments. Some high performance electron microscopes provide images at the molecular level.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-7-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-7.jpg'. Destaca a estrutura ou conceito 'Electron microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Electron microscopes have an effective range of magnification from 500x to 200,000x. The electron microscope reveals greater detail of cell and tissue structure as well as revealing the complex set of intracellular structures like membranes and filaments. Some high performance electron microscopes provide images at the molecular level.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 8. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Image source",
+      "explicacao_original": "Image used by permission from the University of Waikato Te Whare Wānanga o Waikato, www.sciencelearn.org.nz.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-7-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-7.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image used by permission from the University of Waikato Te Whare Wānanga o Waikato, www.sciencelearn.org.nz.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 8. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-8/, acesso em 2026-08-07."
+    }
+  ]
+}

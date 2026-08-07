@@ -1,0 +1,63 @@
+{
+  "id": 4788,
+  "titulo": "Clusters of endocrine cells",
+  "titulo_wordpress": "Cells and Clusters 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Cells and Clusters",
+    "Cells and Clusters 6"
+  ],
+  "descricao_original": "Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6.jpg",
+      "arquivo": "imagens/base/Or.Endo_.CC-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Clusters of endocrine cells', no setor Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 6. Descricao original da pagina: Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Islet of Langerhans",
+      "explicacao_original": "Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Clusters of endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-6.jpg'. Destaca a estrutura ou conceito 'Islet of Langerhans' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Clusters of endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-6.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Exocrine pancreas",
+      "explicacao_original": "Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Clusters of endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-6.jpg'. Destaca a estrutura ou conceito 'Exocrine pancreas' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Acini of exocrine pancreas",
+      "explicacao_original": "Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.CC-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.CC-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.CC-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Clusters of endocrine cells'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.CC-6.jpg'. Destaca a estrutura ou conceito 'Acini of exocrine pancreas' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Islets of Langerhans are clusters of peptide-producing cells scattered throughout the exocrine pancreas. With a special stain (on right), two subclasses of islet cells can be identified. Glucagon is produced by alpha cells (red cells) and insulin, by beta cells (blue cells). Delta cells, secreting somatostatin, cannot be identified here. 400x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Cells and Clusters > Cells and Clusters 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/cells-and-clusters/cells-and-clusters-6/, acesso em 2026-08-07."
+    }
+  ]
+}

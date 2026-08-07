@@ -1,0 +1,44 @@
+{
+  "id": 9682,
+  "titulo": "Neutrophilic band cells and segmented neutrophils",
+  "titulo_wordpress": "Hemopoiesis 12",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 12"
+  ],
+  "descricao_original": "The band cell stage follows the metamyelocyte stage, with cells developing an elongated nucleus of uniform width and a prominent horseshoe shape. The nucleus then develops constrictions, giving rise to 3-5 nuclear lobes connected by thin strands of chromatin. This latter stage is called the segmented neutrophil stage or mature polymorphonuclear neutrophil. Specific granules are difficult to identify in these cells. 1000x all",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-12.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Neutrophilic band cells and segmented neutrophils', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 12. Descricao original da pagina: The band cell stage follows the metamyelocyte stage, with cells developing an elongated nucleus of uniform width and a prominent horseshoe shape. The nucleus then develops constrictions, giving rise to 3-5 nuclear lobes connected by thin strands of chromatin. This latter stage is called the segmented neutrophil stage or mature polymorphonuclear neutrophil. Specific granules are difficult to identify in these cells. 1000x all. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neutrophilic band cells",
+      "explicacao_original": "The band cell stage follows the metamyelocyte stage, with cells developing an elongated nucleus of uniform width and a prominent horseshoe shape. The nucleus then develops constrictions, giving rise to 3-5 nuclear lobes connected by thin strands of chromatin. This latter stage is called the segmented neutrophil stage or mature polymorphonuclear neutrophil. Specific granules are difficult to identify in these cells. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophilic band cells and segmented neutrophils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-12.jpg'. Destaca a estrutura ou conceito 'Neutrophilic band cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The band cell stage follows the metamyelocyte stage, with cells developing an elongated nucleus of uniform width and a prominent horseshoe shape. The nucleus then develops constrictions, giving rise to 3-5 nuclear lobes connected by thin strands of chromatin. This latter stage is called the segmented neutrophil stage or mature polymorphonuclear neutrophil. Specific granules are difficult to identify in these cells. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Segmented neutrophils",
+      "explicacao_original": "The band cell stage follows the metamyelocyte stage, with cells developing an elongated nucleus of uniform width and a prominent horseshoe shape. The nucleus then develops constrictions, giving rise to 3-5 nuclear lobes connected by thin strands of chromatin. This latter stage is called the segmented neutrophil stage or mature polymorphonuclear neutrophil. Specific granules are difficult to identify in these cells. 1000x all",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neutrophilic band cells and segmented neutrophils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-12.jpg'. Destaca a estrutura ou conceito 'Segmented neutrophils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The band cell stage follows the metamyelocyte stage, with cells developing an elongated nucleus of uniform width and a prominent horseshoe shape. The nucleus then develops constrictions, giving rise to 3-5 nuclear lobes connected by thin strands of chromatin. This latter stage is called the segmented neutrophil stage or mature polymorphonuclear neutrophil. Specific granules are difficult to identify in these cells. 1000x all. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-12/, acesso em 2026-08-07."
+    }
+  ]
+}

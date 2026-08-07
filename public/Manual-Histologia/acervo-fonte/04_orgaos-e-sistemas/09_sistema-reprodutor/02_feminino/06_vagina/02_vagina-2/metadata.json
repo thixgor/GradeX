@@ -1,0 +1,54 @@
+{
+  "id": 13250,
+  "titulo": "Vagina",
+  "titulo_wordpress": "Vagina 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Vagina",
+    "Vagina 2"
+  ],
+  "descricao_original": "The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/vagina/vagina-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02-.jpg",
+      "arquivo": "imagens/base/O.R.F.V.02-.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Vagina', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Vagina > Vagina 2. Descricao original da pagina: The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/vagina/vagina-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Stratified squamous moist epithelium",
+      "explicacao_original": "The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.V.02.P01.png",
+      "imagem_base": "imagens/base/O.R.F.V.02-.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02-.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vagina'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.V.02-.jpg'. Destaca a estrutura ou conceito 'Stratified squamous moist epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Vagina > Vagina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/vagina/vagina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.V.02.P02.png",
+      "imagem_base": "imagens/base/O.R.F.V.02-.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02-.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vagina'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.V.02-.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Vagina > Vagina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/vagina/vagina-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Veins",
+      "explicacao_original": "The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.V.02.P03.png",
+      "imagem_base": "imagens/base/O.R.F.V.02-.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.V.02-.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vagina'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.V.02-.jpg'. Destaca a estrutura ou conceito 'Veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the vagina is composed of a stratified squamous moist epithelium that accumulates glycogen (under the influence of high estrogen at the time of ovulation) and a well vascularized lamina propria. The thin-walled veins in the connective tissue simulate erectile tissue during arousal. No glands are present in the vagina. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Vagina > Vagina 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/vagina/vagina-2/, acesso em 2026-08-07."
+    }
+  ]
+}

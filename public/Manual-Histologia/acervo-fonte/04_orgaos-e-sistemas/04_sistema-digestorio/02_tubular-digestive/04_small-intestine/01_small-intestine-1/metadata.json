@@ -1,0 +1,114 @@
+{
+  "id": 28434,
+  "titulo": "Overview",
+  "titulo_wordpress": "Small intestine 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 1"
+  ],
+  "descricao_original": "The small intestine, is the longest segment of the tubular digestive tract, measuring about 6 meters (20 feet) in length. It consists of three regions, duodenum (~25 cm), jejunum (~2.5 m) and ileum (~3.5 m) and functions in the completion of digestion and absorption of metabolites. Like the other regions of the digestive tract in general, the small intestine is composed of a mucosa, submucosa, muscularis externa and usually a serosa. Jejunum, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Descricao original da pagina: The small intestine, is the longest segment of the tubular digestive tract, measuring about 6 meters (20 feet) in length. It consists of three regions, duodenum (~25 cm), jejunum (~2.5 m) and ileum (~3.5 m) and functions in the completion of digestion and absorption of metabolites. Like the other regions of the digestive tract in general, the small intestine is composed of a mucosa, submucosa, muscularis externa and usually a serosa. Jejunum, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen",
+      "explicacao_original": "The small intestine, is the longest segment of the tubular digestive tract, measuring about 6 meters (20 feet) in length. It consists of three regions, duodenum (~25 cm), jejunum (~2.5 m) and ileum (~3.5 m) and functions in the completion of digestion and absorption of metabolites. Like the other regions of the digestive tract in general, the small intestine is composed of a mucosa, submucosa, muscularis externa and usually a serosa. Jejunum, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine, is the longest segment of the tubular digestive tract, measuring about 6 meters (20 feet) in length. It consists of three regions, duodenum (~25 cm), jejunum (~2.5 m) and ileum (~3.5 m) and functions in the completion of digestion and absorption of metabolites. Like the other regions of the digestive tract in general, the small intestine is composed of a mucosa, submucosa, muscularis externa and usually a serosa. Jejunum, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa is the innermost layer of the small intestine and consists of three layers: a simple columnar epithelium with microvilli and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa is the innermost layer of the small intestine and consists of three layers: a simple columnar epithelium with microvilli and goblet cells; a lamina propria of loose connective tissue in which intestinal glands are located; and a thin muscularis mucosae of smooth muscle.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Villi",
+      "explicacao_original": "Villi are finger-like projections from the surface of the small intestine into the lumen of the organ. Villi are composed of a central core of lamina propria covered by the intestinal epithelium. The presence of villi are diagnostic for the small intestine.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Villi are finger-like projections from the surface of the small intestine into the lumen of the organ. Villi are composed of a central core of lamina propria covered by the intestinal epithelium. The presence of villi are diagnostic for the small intestine.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosa consists of dense, irregular connective tissue containing larger blood vessels, nerves and lymphatics.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa consists of dense, irregular connective tissue containing larger blood vessels, nerves and lymphatics.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Plicae circulares",
+      "explicacao_original": "Plicae circulares are circular folds extending around the inner circumference of the small intestine. The central core of each plica, formed by the submucosa, pushes up all the overlying layers. Therefore, the entire mucosa (including villi and glands) overlying the submucosal core is included in each plica.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Plicae circulares' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plicae circulares are circular folds extending around the inner circumference of the small intestine. The central core of each plica, formed by the submucosa, pushes up all the overlying layers. Therefore, the entire mucosa (including villi and glands) overlying the submucosal core is included in each plica.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The muscularis externa of the small intestine is composed of inner circular and outer longitudinal layers of smooth muscle, similar to other regions of the digestive tract.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis externa of the small intestine is composed of inner circular and outer longitudinal layers of smooth muscle, similar to other regions of the digestive tract.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Serosa",
+      "explicacao_original": "The outermost layer of the small intestine may be either an adventitia (in the part of the duodenum that is retroperitoneal) or a serosa, in the remainder of the duodenum and in the jejunum and ileum (shown here).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outermost layer of the small intestine may be either an adventitia (in the part of the duodenum that is retroperitoneal) or a serosa, in the remainder of the duodenum and in the jejunum and ileum (shown here).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Mesentery",
+      "explicacao_original": "The mesentery suspends most of the small intestine from the dorsal body wall. It is composed of two serosal layers and an intervening layer of loose connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Mesentery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mesentery suspends most of the small intestine from the dorsal body wall. It is composed of two serosal layers and an intervening layer of loose connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "Area shown in next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.Ov-1-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/05/Or.Dig_.Tub_.SmI_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Area shown in next image.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 4816,
+  "titulo": "Pars nervosa",
+  "titulo_wordpress": "Pituitary 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 14"
+  ],
+  "descricao_original": "The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-14-fix.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-14-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pars nervosa', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 14. Descricao original da pagina: The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Unmyelinated axons",
+      "explicacao_original": "The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-14-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-14-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-14-fix.jpg'. Destaca a estrutura ou conceito 'Unmyelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Herring bodies",
+      "explicacao_original": "The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-14-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-14-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-14-fix.jpg'. Destaca a estrutura ou conceito 'Herring bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pituicytes",
+      "explicacao_original": "The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-14-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-14-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-14-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-14-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-14-fix.jpg'. Destaca a estrutura ou conceito 'Pituicytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pit-14-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-14-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-14-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Endo_.Pit-14-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pars nervosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-14-fix.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars nervosa is continuous with the infundibulum, the extension of the hypothalamus, and, thus, resembles nervous tissue. Unmyelinated axons from neurons in the supraoptic and paraventricular hypothalamic nuclei travel into the pars nervosa via the infundibulum and end as Herring bodies. Also present among the axons and terminals are pituicytes, highly branched cells that resemble astrocytes. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-14/, acesso em 2026-08-07."
+    }
+  ]
+}

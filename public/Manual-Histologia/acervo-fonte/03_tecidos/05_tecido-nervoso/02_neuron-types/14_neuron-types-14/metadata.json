@@ -1,0 +1,75 @@
+{
+  "id": 2997,
+  "titulo": "Pseudounipolar neuron",
+  "titulo_wordpress": "Neuron types 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 14"
+  ],
+  "descricao_original": "The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/",
+  "creditos_identificados": [
+    "Image source: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-NEW.jpg",
+      "arquivo": "imagens/base/T.N.Type-14-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pseudounipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 14. Descricao original da pagina: The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pseudounipolar neurons",
+      "explicacao_original": "The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-1b-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-1b-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14-NEW.jpg'. Destaca a estrutura ou conceito 'Pseudounipolar neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Emerging stem process",
+      "explicacao_original": "The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-2b-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-2b-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14-NEW.jpg'. Destaca a estrutura ou conceito 'Emerging stem process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Glomerulus",
+      "explicacao_original": "The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-4b-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-4b-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14-NEW.jpg'. Destaca a estrutura ou conceito 'Glomerulus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Axons",
+      "explicacao_original": "The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-3b-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-14-3b-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14-NEW.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The unique shape of sensory, pseudounipolar neurons is demonstrated in this silver-stained section. A single stem process emerges from the spherical cell body and eventually branches into central and peripheral axons. This bifurcation is not visible here however the silver stain does reveal the twisted course of the stem process as it leaves the cell body. This region is called the initial glomerulus of Cajal. No dendrites originate from the cell body. Silver stain, 600x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/Calvo.png",
+      "arquivo": "imagens/marcadores/Calvo.png",
+      "imagem_base": "imagens/base/T.N.Type-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-14-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 14. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-14/, acesso em 2026-08-07."
+    }
+  ]
+}

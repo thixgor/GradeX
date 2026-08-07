@@ -1,0 +1,64 @@
+{
+  "id": 7002,
+  "titulo": "Liver: sinusoids",
+  "titulo_wordpress": "Liver 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Liver",
+    "Liver 7"
+  ],
+  "descricao_original": "Sinusoids are discontinuous capillaries that separate plates of hepatocytes. Kupffer cells, spanning the lumen of these sinusoids, are a type of macrophage that phagocytose aging red blood cells and other debris in the sinusoidal lumen. Like other macrophages, their cytoplasm contains large numbers of lysosomes and often appears vacuolated and lacy. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-7.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Liv-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Liver: sinusoids', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 7. Descricao original da pagina: Sinusoids are discontinuous capillaries that separate plates of hepatocytes. Kupffer cells, spanning the lumen of these sinusoids, are a type of macrophage that phagocytose aging red blood cells and other debris in the sinusoidal lumen. Like other macrophages, their cytoplasm contains large numbers of lysosomes and often appears vacuolated and lacy. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hepatocytes",
+      "explicacao_original": "Sinusoids are discontinuous capillaries that separate plates of hepatocytes. Kupffer cells, spanning the lumen of these sinusoids, are a type of macrophage that phagocytose aging red blood cells and other debris in the sinusoidal lumen. Like other macrophages, their cytoplasm contains large numbers of lysosomes and often appears vacuolated and lacy. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-7-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-7-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-7.jpg'. Destaca a estrutura ou conceito 'Hepatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids are discontinuous capillaries that separate plates of hepatocytes. Kupffer cells, spanning the lumen of these sinusoids, are a type of macrophage that phagocytose aging red blood cells and other debris in the sinusoidal lumen. Like other macrophages, their cytoplasm contains large numbers of lysosomes and often appears vacuolated and lacy. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hepatic sinusoids",
+      "explicacao_original": "Sinusoids are discontinuous capillaries that separate plates of hepatocytes. Kupffer cells, spanning the lumen of these sinusoids, are a type of macrophage that phagocytose aging red blood cells and other debris in the sinusoidal lumen. Like other macrophages, their cytoplasm contains large numbers of lysosomes and often appears vacuolated and lacy. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-7.jpg'. Destaca a estrutura ou conceito 'Hepatic sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sinusoids are discontinuous capillaries that separate plates of hepatocytes. Kupffer cells, spanning the lumen of these sinusoids, are a type of macrophage that phagocytose aging red blood cells and other debris in the sinusoidal lumen. Like other macrophages, their cytoplasm contains large numbers of lysosomes and often appears vacuolated and lacy. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Kupffer cells",
+      "explicacao_original": "Kupffer cells belong to the mononuclear phagocyte series of phagocytic cells, which include macrophages, Langherhans cells in the skin, osteoclasts and alveolar macrophages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-7.jpg'. Destaca a estrutura ou conceito 'Kupffer cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Kupffer cells belong to the mononuclear phagocyte series of phagocytic cells, which include macrophages, Langherhans cells in the skin, osteoclasts and alveolar macrophages.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Neutrophil",
+      "explicacao_original": "Kupffer cells belong to the mononuclear phagocyte series of phagocytic cells, which include macrophages, Langherhans cells in the skin, osteoclasts and alveolar macrophages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver: sinusoids'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-7.jpg'. Destaca a estrutura ou conceito 'Neutrophil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Kupffer cells belong to the mononuclear phagocyte series of phagocytic cells, which include macrophages, Langherhans cells in the skin, osteoclasts and alveolar macrophages.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-7/, acesso em 2026-08-07."
+    }
+  ]
+}

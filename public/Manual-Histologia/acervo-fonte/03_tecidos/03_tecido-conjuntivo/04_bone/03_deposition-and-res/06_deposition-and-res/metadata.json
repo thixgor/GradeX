@@ -1,0 +1,74 @@
+{
+  "id": 10326,
+  "titulo": "Bone: deposition",
+  "titulo_wordpress": "Deposition and Resorption 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 6"
+  ],
+  "descricao_original": "A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.jpg",
+      "arquivo": "imagens/base/T.C.B.D.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: deposition', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 6. Descricao original da pagina: A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteons",
+      "explicacao_original": "A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.06.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.06.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.06.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.06.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Outer circumferential lamellae",
+      "explicacao_original": "A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.06.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.06.jpg'. Destaca a estrutura ou conceito 'Outer circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Inner circumferential lamellae",
+      "explicacao_original": "A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.06.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.06.jpg'. Destaca a estrutura ou conceito 'Inner circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Volkmann's canal",
+      "explicacao_original": "A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.06.P05.png",
+      "imagem_base": "imagens/base/T.C.B.D.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.06.jpg'. Destaca a estrutura ou conceito 'Volkmann's canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A cross section through the diaphysis of a developing long bone summarizes the configurations produced by bone deposition by endosteum and periosteum. Inner and outer circumferential lamellae increase the diameter of the diaphysis to accommodate increasing body mass. Centrally located osteons provide great strength to long bones. 40x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-6/, acesso em 2026-08-07."
+    }
+  ]
+}

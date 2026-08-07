@@ -1,0 +1,4 @@
+import { createHash } from 'node:crypto'; import { createReadStream } from 'node:fs'; import { readFile } from 'node:fs/promises'; import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..'); const rows=(await readFile(path.join(root,'dados/plano-assets-blob.jsonl'),'utf8')).trim().split(/\r?\n/).filter(Boolean).map(JSON.parse); let bad=0;
+for(let i=0;i<rows.length;i++){const r=rows[i], h=createHash('sha256'); const file=path.join(root,r.arquivoLocal); await new Promise((ok,no)=>createReadStream(file).on('data',d=>h.update(d)).on('end',ok).on('error',no)); if(h.digest('hex')!==r.sha256){console.error('Hash divergente:',r.arquivoLocal);bad++} if((i+1)%500===0)console.log(`${i+1}/${rows.length}`)}
+if(bad)process.exit(1); console.log(`OK: ${rows.length} arquivos únicos validados.`);

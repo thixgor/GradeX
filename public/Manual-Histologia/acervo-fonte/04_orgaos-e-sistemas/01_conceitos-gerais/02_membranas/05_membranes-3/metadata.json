@@ -1,0 +1,105 @@
+{
+  "id": 11838,
+  "titulo": "Mucosal and serosal membranes",
+  "titulo_wordpress": "Membranes 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Membranas",
+    "Membranes 3"
+  ],
+  "descricao_original": "The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/",
+  "creditos_identificados": [
+    "Image source: Image taken from a slide in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mucosal and serosal membranes', no setor Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Descricao original da pagina: The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Area shown in micrograph",
+      "explicacao_original": "The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Area shown in micrograph' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-1a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-1a-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Serosa",
+      "explicacao_original": "The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The small intestine is an organ that eventually opens to the exterior of the body; therefore, its lumen is lined by a mucosal membrane or mucosa. Because this portion of the small intestine also protrudes into the peritoneal cavity, an internal cavity that does not open to the exterior, the outer surface of the organ is covered by a serosal membrane or serosa. 40x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Peritoneal cavity",
+      "explicacao_original": "The peritoneal cavity in the abdomen is one of the three internal body cavities and is the one into which many organs of the digestive system protrude. The other internal body cavities are the pleural cavities, into which the lungs protrude, and the pericardial cavity, which surrounds the heart.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Peritoneal cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The peritoneal cavity in the abdomen is one of the three internal body cavities and is the one into which many organs of the digestive system protrude. The other internal body cavities are the pleural cavities, into which the lungs protrude, and the pericardial cavity, which surrounds the heart.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mesentery",
+      "explicacao_original": "A mesentery suspends several digestive organs into the peritoneal cavity from the dorsal body wall. A mesentery consists of two apposed serosal layers and the intervening connective tissue. Therefore, most of this small intestine is surrounded by a serosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Mesentery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A mesentery suspends several digestive organs into the peritoneal cavity from the dorsal body wall. A mesentery consists of two apposed serosal layers and the intervening connective tissue. Therefore, most of this small intestine is surrounded by a serosa.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Adventitia",
+      "explicacao_original": "Most of this small intestine is surrounded by a serosa, but beneath the connective tissue of the mesentery, a relatively small area of the intestine would possess a connective tissue adventitia and lack the serosal epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most of this small intestine is surrounded by a serosa, but beneath the connective tissue of the mesentery, a relatively small area of the intestine would possess a connective tissue adventitia and lack the serosal epithelium.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lumen",
+      "explicacao_original": "The lumen is the canal, or cavity, of a hollow organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lumen is the canal, or cavity, of a hollow organ.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken from a slide in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mucosal and serosal membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-3.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken from a slide in the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-3/, acesso em 2026-08-07."
+    }
+  ]
+}

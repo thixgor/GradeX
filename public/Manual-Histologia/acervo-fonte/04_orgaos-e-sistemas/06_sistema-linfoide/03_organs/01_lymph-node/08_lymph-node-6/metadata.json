@@ -1,0 +1,134 @@
+{
+  "id": 8553,
+  "titulo": "Lymph node: sinuses",
+  "titulo_wordpress": "Lymph node 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Lymph Node",
+    "Lymph node 6"
+  ],
+  "descricao_original": "This image shows a region of cortex with an extension of medullary tissue. Beneath the capsule is the subcapsular sinus, which drains into radially oriented trabecular sinuses that eventually communicate with medullary sinuses. Trabecular sinuses travel with connective tissue trabeculae that extend inward from the capsule toward the medulla. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymph node: sinuses', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Descricao original da pagina: This image shows a region of cortex with an extension of medullary tissue. Beneath the capsule is the subcapsular sinus, which drains into radially oriented trabecular sinuses that eventually communicate with medullary sinuses. Trabecular sinuses travel with connective tissue trabeculae that extend inward from the capsule toward the medulla. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capsule",
+      "explicacao_original": "The capsule surrounding the lymph node is composed of dense connective tissue and sends short trabeculae into the node to provide support.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The capsule surrounding the lymph node is composed of dense connective tissue and sends short trabeculae into the node to provide support.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Trabeculum",
+      "explicacao_original": "The capsule surrounding the lymph node is composed of dense connective tissue and sends short trabeculae into the node to provide support.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Trabeculum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The capsule surrounding the lymph node is composed of dense connective tissue and sends short trabeculae into the node to provide support.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lymphoid nodules",
+      "explicacao_original": "The outer portion of the cortex, filled with lymphoid nodules, is a B-dependent area. Like all secondary nodules in the immune system, these nodules possess a germinal center with a light and dark region. Antigen stimulation results in the formation of a germinal center that responds by producing additional B lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Lymphoid nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer portion of the cortex, filled with lymphoid nodules, is a B-dependent area. Like all secondary nodules in the immune system, these nodules possess a germinal center with a light and dark region. Antigen stimulation results in the formation of a germinal center that responds by producing additional B lymphocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Germinal centers",
+      "explicacao_original": "The outer portion of the cortex, filled with lymphoid nodules, is a B-dependent area. Like all secondary nodules in the immune system, these nodules possess a germinal center with a light and dark region. Antigen stimulation results in the formation of a germinal center that responds by producing additional B lymphocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Germinal centers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer portion of the cortex, filled with lymphoid nodules, is a B-dependent area. Like all secondary nodules in the immune system, these nodules possess a germinal center with a light and dark region. Antigen stimulation results in the formation of a germinal center that responds by producing additional B lymphocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Paracortex (Deep cortex)",
+      "explicacao_original": "The inner region of the cortex, the paracortex or deep cortex, is a T-dependent area. Under antigenic stimulation, T cells in this region become activated, replicate and leave the lymph node via the efferent lymphatic vessels. These T cells are then returned to the blood and carried to peripheral sites throughout the body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Paracortex (Deep cortex)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner region of the cortex, the paracortex or deep cortex, is a T-dependent area. Under antigenic stimulation, T cells in this region become activated, replicate and leave the lymph node via the efferent lymphatic vessels. These T cells are then returned to the blood and carried to peripheral sites throughout the body.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Medulla",
+      "explicacao_original": "The medulla of the lymph node consists of medullary sinuses, through which lymph percolates, and medullary cords, composed of B lymphocytes, macrophages, reticular cells and plasma cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla of the lymph node consists of medullary sinuses, through which lymph percolates, and medullary cords, composed of B lymphocytes, macrophages, reticular cells and plasma cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Subcapsular sinus",
+      "explicacao_original": "Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Subcapsular sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Trabecular sinuses",
+      "explicacao_original": "Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Trabecular sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Medullary sinuses",
+      "explicacao_original": "Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Medullary sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Medullary cords",
+      "explicacao_original": "Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-10-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'Medullary cords' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "High endothelial venules",
+      "explicacao_original": "Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-6-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-6-11-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-6-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Ly_.Node-6-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node: sinuses'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-6-light.jpg'. Destaca a estrutura ou conceito 'High endothelial venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent lymph vessels penetrate the node at its convex surface, where lymph enters the subcapsular sinus. From there, lymph percolates through trabecular (intermediate) sinuses adjacent to trabeculae, and into medullary sinuses. Any foreign matter carried in the lymph is exposed to and processed by macrophages occupying these sinuses.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-6/, acesso em 2026-08-07."
+    }
+  ]
+}

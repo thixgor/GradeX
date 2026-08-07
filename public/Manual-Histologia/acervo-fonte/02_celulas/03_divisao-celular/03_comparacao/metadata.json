@@ -1,0 +1,142 @@
+{
+  "id": 188,
+  "titulo": "Comparison of mitosis and meiosis",
+  "titulo_wordpress": "Comparison",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Comparação"
+  ],
+  "descricao_original": "This image diagrammatically compares mitosis and meiosis using cells with a single pair of chromosomes. Mitosis occurs in tissues where cell renewal is required and produces two identical, diploid daughter cells. Meiosis occurs only in the ovary and testis and results in the production of gametes (ova and sperm). Meiosis results in four dissimilar, haploid daughter cells.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/comparison/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "arquivo": "imagens/base/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Comparison of mitosis and meiosis', no setor Células > Divisão Celular > Comparação. Descricao original da pagina: This image diagrammatically compares mitosis and meiosis using cells with a single pair of chromosomes. Mitosis occurs in tissues where cell renewal is required and produces two identical, diploid daughter cells. Meiosis occurs only in the ovary and testis and results in the production of gametes (ova and sperm). Meiosis results in four dissimilar, haploid daughter cells.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mitosis vs Meiosis",
+      "explicacao_original": "Mitosis consists of a single cell division resulting in the production of two identical daughter cells. Meiosis entails two successive cell divisions: reductional division, (Meiosis I), reducing chromosome number by one-half; and equational division (Meiosis II), reducing the DNA content by one-half. Meiosis results in four dissimilar daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Mitosis vs Meiosis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mitosis consists of a single cell division resulting in the production of two identical daughter cells. Meiosis entails two successive cell divisions: reductional division, (Meiosis I), reducing chromosome number by one-half; and equational division (Meiosis II), reducing the DNA content by one-half. Meiosis results in four dissimilar daughter cells.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interphase",
+      "explicacao_original": "Interphase is similar in meiosis and mitosis. The first stage of interphase, the G1 stage, is seen here, which is followed by S phase, when both the centrioles of the centrosome are duplicated and the DNA of the chromosomes is replicated. For diagrammatic purposes, chromosomes are shown in a condensed state.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Interphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interphase is similar in meiosis and mitosis. The first stage of interphase, the G1 stage, is seen here, which is followed by S phase, when both the centrioles of the centrosome are duplicated and the DNA of the chromosomes is replicated. For diagrammatic purposes, chromosomes are shown in a condensed state.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Prophase",
+      "explicacao_original": "Prophase of meiosis I is much longer than prophase of mitosis and is marked by side-by-side linkage of homologous chromosomes. This linkage, and the proximity it provides, allows for the exchange of chromosomal segments between chromatids (crossing over). Crossing over increases greater genetic diversity of the daughter cells. A similar linkage does not occur in mitosis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Prophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Prophase of meiosis I is much longer than prophase of mitosis and is marked by side-by-side linkage of homologous chromosomes. This linkage, and the proximity it provides, allows for the exchange of chromosomal segments between chromatids (crossing over). Crossing over increases greater genetic diversity of the daughter cells. A similar linkage does not occur in mitosis.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Metaphase",
+      "explicacao_original": "During metaphase of meiosis I, replicated homologous chromosomes remain linked, with one member of the pair aligning on either side of the metaphase plate. In mitosis, replicated chromosomes (sister chromatids) align at the equatorial plate but each member of a pair of homologous chromosomes is distributed independently within the plate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Metaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase of meiosis I, replicated homologous chromosomes remain linked, with one member of the pair aligning on either side of the metaphase plate. In mitosis, replicated chromosomes (sister chromatids) align at the equatorial plate but each member of a pair of homologous chromosomes is distributed independently within the plate.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Anaphase",
+      "explicacao_original": "During anaphase of meiosis I, one duplicated chromosome of each homologous pair moves toward a pole; sister chromatids remain attached. This process halves the number of chromosomes, resulting in haploid daughter cells. Anaphase of mitosis separates sister chromatids. Each sister chromatid, now referred to as a chromosome, moves to a pole, resulting in diploid daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Anaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During anaphase of meiosis I, one duplicated chromosome of each homologous pair moves toward a pole; sister chromatids remain attached. This process halves the number of chromosomes, resulting in haploid daughter cells. Anaphase of mitosis separates sister chromatids. Each sister chromatid, now referred to as a chromosome, moves to a pole, resulting in diploid daughter cells.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Telophase",
+      "explicacao_original": "In both meiosis and mitosis, the nuclear envelope reforms during telophase. In meiosis I, the resultant nuclei contain one replicated chromosome of each homologous pair (haploid, 1N); sister chromatids remain attached. In mitosis, resultant nuclei contain an entire set of paired, homologous chromosomes (diploid, 2N).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-6-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-6-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Telophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In both meiosis and mitosis, the nuclear envelope reforms during telophase. In meiosis I, the resultant nuclei contain one replicated chromosome of each homologous pair (haploid, 1N); sister chromatids remain attached. In mitosis, resultant nuclei contain an entire set of paired, homologous chromosomes (diploid, 2N).. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Division completed",
+      "explicacao_original": "Cytokinesis proceeds similarly in mitosis and meiosis I. Meiosis I results in the formation of two dissimilar daughter cells, each with a single set of chromosomes (haploid, 1N). Mitosis results in the formation of two identical daughter cells, each with two sets of homologous chromosomes (diploid, 2N).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-7-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-7-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Division completed' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cytokinesis proceeds similarly in mitosis and meiosis I. Meiosis I results in the formation of two dissimilar daughter cells, each with a single set of chromosomes (haploid, 1N). Mitosis results in the formation of two identical daughter cells, each with two sets of homologous chromosomes (diploid, 2N).. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Meiosis II: Prophase",
+      "explicacao_original": "Cells enter prophase of meiosis II rapidly after cytokinesis of meiosis I without any intervening DNA synthesis. Prophase of meiosis II is not prolonged as in prophase of meiosis I; crossing over does not occur; and events closely parallel those of mitosis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-8-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-8-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Meiosis II: Prophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells enter prophase of meiosis II rapidly after cytokinesis of meiosis I without any intervening DNA synthesis. Prophase of meiosis II is not prolonged as in prophase of meiosis I; crossing over does not occur; and events closely parallel those of mitosis.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Meiosis II: Metaphase",
+      "explicacao_original": "During metaphase of meiosis II, the haploid set of replicated chromosomes (sister chromatids) align at the metaphase plate. The cohesive protein complex attaching the chromatids is cleaved, allowing for furture separation at the centromere during anaphase.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-9-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-9-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Meiosis II: Metaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase of meiosis II, the haploid set of replicated chromosomes (sister chromatids) align at the metaphase plate. The cohesive protein complex attaching the chromatids is cleaved, allowing for furture separation at the centromere during anaphase.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Meiosis II: Anaphase",
+      "explicacao_original": "Anaphase of meiosis II begins abruptly as sister chromatids separate and each is drawn towards one pole of the cell. The end of anaphase is marked by the segregation of a single set of chromosomes to each spindle pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-10-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-10-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Meiosis II: Anaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase of meiosis II begins abruptly as sister chromatids separate and each is drawn towards one pole of the cell. The end of anaphase is marked by the segregation of a single set of chromosomes to each spindle pole.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Meiosis II: Telophase",
+      "explicacao_original": "Telophase of meiosis II is marked by the reformation of the nuclear envelope, decondensation of the chromosomal DNA and the reappearance of the nucleolus. A cleavage furrow develops, indicating the initial formation of the daughter cells (cytokinesis).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-11-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-11-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Meiosis II: Telophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Telophase of meiosis II is marked by the reformation of the nuclear envelope, decondensation of the chromosomal DNA and the reappearance of the nucleolus. A cleavage furrow develops, indicating the initial formation of the daughter cells (cytokinesis).. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Meiosis II: Completed",
+      "explicacao_original": "Cytokinesis produces gametes (ova or sperm), each with a haploid (1N) set of chromosomes. However, while nuclear events producing ova (oogenesis) and sperm (spermatogenesis) are similar, cytoplasmic stages are different between the two. In males, a single germ cell produces four sperm; in females, only a single ovum is formed, along with two to three non-functional polar bodies.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1-12-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Comp-1-12-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Comp-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Comp-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Comparison of mitosis and meiosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Comp-1.jpg'. Destaca a estrutura ou conceito 'Meiosis II: Completed' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cytokinesis produces gametes (ova or sperm), each with a haploid (1N) set of chromosomes. However, while nuclear events producing ova (oogenesis) and sperm (spermatogenesis) are similar, cytoplasmic stages are different between the two. In males, a single germ cell produces four sperm; in females, only a single ovum is formed, along with two to three non-functional polar bodies.. Contexto setorial: Células > Divisão Celular > Comparação. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/comparison/, acesso em 2026-08-07."
+    }
+  ]
+}

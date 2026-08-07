@@ -1,0 +1,83 @@
+{
+  "id": 5384,
+  "titulo": "Semilunar valve",
+  "titulo_wordpress": "Heart 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Heart",
+    "Heart 13"
+  ],
+  "descricao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "arquivo": "imagens/base/Or.CV_.H-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Semilunar valve', no setor Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Descricao original da pagina: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Aortic valve leaflet",
+      "explicacao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-13-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semilunar valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-13.jpg'. Destaca a estrutura ou conceito 'Aortic valve leaflet' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Aortic wall",
+      "explicacao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-13-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semilunar valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-13.jpg'. Destaca a estrutura ou conceito 'Aortic wall' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Membranous septum",
+      "explicacao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-13-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semilunar valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-13.jpg'. Destaca a estrutura ou conceito 'Membranous septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Atrial wall",
+      "explicacao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-13-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semilunar valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-13.jpg'. Destaca a estrutura ou conceito 'Atrial wall' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Annulus fibrosus",
+      "explicacao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-13-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semilunar valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-13.jpg'. Destaca a estrutura ou conceito 'Annulus fibrosus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.H-13-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.H-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.H-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Semilunar valve'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.H-13.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semilunar valves in aortic (shown here) and pulmonary trunks consist of three, cup-shaped leaflets. Semilunar valves resemble atrioventricular valves with a central, dense connective tissue core covered on both surfaces by an endothelium. Each valve inserts into an annulus fibrosus. The atrial wall is much thinner than is the more muscular ventricular wall. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Heart > Heart 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/heart/heart-13/, acesso em 2026-08-07."
+    }
+  ]
+}

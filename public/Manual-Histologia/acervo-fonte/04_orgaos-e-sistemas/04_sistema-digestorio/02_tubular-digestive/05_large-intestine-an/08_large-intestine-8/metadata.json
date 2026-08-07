@@ -1,0 +1,84 @@
+{
+  "id": 6944,
+  "titulo": "Large intestine",
+  "titulo_wordpress": "Large intestine 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Large Intestine and Anus",
+    "Large intestine 8"
+  ],
+  "descricao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Large intestine', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Descricao original da pagina: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-7-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-7-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-7.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-7-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-7-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-7.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-7-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-7-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-7.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Submucosal (Meissner's) plexus",
+      "explicacao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-7-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-7-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-7.jpg'. Destaca a estrutura ou conceito 'Submucosal (Meissner's) plexus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-7-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-7-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-7.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.LgI-7-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.LgI-7-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.LgI-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.LgI-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large intestine'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.LgI-7.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosal (Meissner’s) plexus is an extensive network of nerve fibers and ganglia in the submucosa of the tubular digestive tract. This plexus primarily carries motor fibers to muscularis mucosae. Ganglia, composed of postsynaptic neuronal cell bodies, are scattered along the fibers of the plexus. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Large Intestine and Anus > Large intestine 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/large-intestine/large-intestine-8/, acesso em 2026-08-07."
+    }
+  ]
+}

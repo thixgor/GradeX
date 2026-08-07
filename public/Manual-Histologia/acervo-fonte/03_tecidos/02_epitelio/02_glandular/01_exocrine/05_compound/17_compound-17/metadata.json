@@ -1,0 +1,125 @@
+{
+  "id": 4571,
+  "titulo": "Compound tubuloacinar gland",
+  "titulo_wordpress": "Compound 17",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 17"
+  ],
+  "descricao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound tubuloacinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Descricao original da pagina: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucus-secreting tubules",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Mucus-secreting tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei of mucous cells",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Nuclei of mucous cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucin granules",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Mucin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tubule lumens",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Tubule lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Serous-secreting acini",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Serous-secreting acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nuclei of serous cells",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Nuclei of serous cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Acinar lumens",
+      "explicacao_original": "The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Acinar lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The morphology of serous and mucous secretory units is demonstrated in this image. Each serous unit is acinar with a narrow lumen and contains cells with secretory granules and spherical nuclei. Each mucous unit is tubular with a wide lumen. The secretory cells appear vacuolated, with nuclei flattened at the base of the cell. Submandibular gland 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Serous demilunes",
+      "explicacao_original": "Serous demilunes are crescent-shaped units of serous-producing cells capping the ends of tubules. Secretions from the demilune drain into the tubule lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-9-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-9-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Serous demilunes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Serous demilunes are crescent-shaped units of serous-producing cells capping the ends of tubules. Secretions from the demilune drain into the tubule lumen.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "The portion of the intralobular duct indicated by the rectangle shows the very initial region of the duct at the termination of the tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-16-10-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-16-10-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Comp-16-light.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound tubuloacinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-16-light.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The portion of the intralobular duct indicated by the rectangle shows the very initial region of the duct at the termination of the tubule.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 17. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-17/, acesso em 2026-08-07."
+    }
+  ]
+}

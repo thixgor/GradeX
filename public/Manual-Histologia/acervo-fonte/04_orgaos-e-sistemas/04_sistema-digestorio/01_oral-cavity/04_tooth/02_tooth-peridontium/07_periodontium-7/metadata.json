@@ -1,0 +1,85 @@
+{
+  "id": 29211,
+  "titulo": "Dental pulp",
+  "titulo_wordpress": "Periodontium 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth peridontium",
+    "Periodontium 7"
+  ],
+  "descricao_original": "This image shows the cellular organization of dental pulp in the crown of this molar. 10x, 800x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Dental pulp', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Descricao original da pagina: This image shows the cellular organization of dental pulp in the crown of this molar. 10x, 800x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dentin",
+      "explicacao_original": "This image shows the cellular organization of dental pulp in the crown of this molar. 10x, 800x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7-Dentin.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-7-Dentin.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dental pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-7.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the cellular organization of dental pulp in the crown of this molar. 10x, 800x.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Coronal pulp",
+      "explicacao_original": "Coronal pulp is contained within the crown of the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7-Cor-Pulp.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-7-Cor-Pulp.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dental pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-7.jpg'. Destaca a estrutura ou conceito 'Coronal pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Coronal pulp is contained within the crown of the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Odontoblastic layer",
+      "explicacao_original": "The odontoblastic layer contains odontoblasts, which secrete dentin. This layer also contains nerve fibers that accompany odontoblast processes as they extend into the dentinal tubules. Additionally, this layer contains inflammatory cells to help protect against infection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7-Odontoblast-layer.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-7-Odontoblast-layer.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dental pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-7.jpg'. Destaca a estrutura ou conceito 'Odontoblastic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The odontoblastic layer contains odontoblasts, which secrete dentin. This layer also contains nerve fibers that accompany odontoblast processes as they extend into the dentinal tubules. Additionally, this layer contains inflammatory cells to help protect against infection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cell free zone (of Weil)",
+      "explicacao_original": "The relatively cell-free zone of Weil contains a rich network of capillaries and nerve fibers and is most apparent in coronal pulp",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7-Cell-free.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-7-Cell-free.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dental pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-7.jpg'. Destaca a estrutura ou conceito 'Cell free zone (of Weil)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The relatively cell-free zone of Weil contains a rich network of capillaries and nerve fibers and is most apparent in coronal pulp. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cell rich zone",
+      "explicacao_original": "The cell rich zone contains ectomesenchymal stem cells capable of differentiating into dentin-producing odontoblasts in response to the loss of odontoblasts due to trauma or infection (reparative or tertiary dentin). This layer also contains fibroblasts and nerve plexuses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7-Cell-rich.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-7-Cell-rich.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dental pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-7.jpg'. Destaca a estrutura ou conceito 'Cell rich zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cell rich zone contains ectomesenchymal stem cells capable of differentiating into dentin-producing odontoblasts in response to the loss of odontoblasts due to trauma or infection (reparative or tertiary dentin). This layer also contains fibroblasts and nerve plexuses.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Radicular pulp",
+      "explicacao_original": "Radicular pulp is contained within the pulp cavity in the root of the tooth and is continuous with the connective tissue of the periodontal ligament at the apical foramen. An odontoblastic layer, as well as cell free and cell rich zones are also present in the radicular pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7-Rad-Pulp.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-7-Rad-Pulp.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dental pulp'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-7.jpg'. Destaca a estrutura ou conceito 'Radicular pulp' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Radicular pulp is contained within the pulp cavity in the root of the tooth and is continuous with the connective tissue of the periodontal ligament at the apical foramen. An odontoblastic layer, as well as cell free and cell rich zones are also present in the radicular pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-7/, acesso em 2026-08-07."
+    }
+  ]
+}

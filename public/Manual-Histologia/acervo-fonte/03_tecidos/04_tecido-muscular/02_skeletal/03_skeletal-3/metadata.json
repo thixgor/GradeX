@@ -1,0 +1,113 @@
+{
+  "id": 728,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 3"
+  ],
+  "descricao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "arquivo": "imagens/base/T.M.Sk-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Descricao original da pagina: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-4a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-4a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleus",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-5a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-5a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-6a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-6a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myofilaments",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-7a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-7a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Myofilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sarcolemma",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk3-8-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-8-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Sarcolemma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Basal laminae",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-1a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-1a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Basal laminae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Endomysium",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk3-9-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-9-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Endomysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Reticular fibers",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-2a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Reticular fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Fibroblast process",
+      "explicacao_original": "Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/02/T.M.Sk3-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk3-3a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-3.jpg'. Destaca a estrutura ou conceito 'Fibroblast process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Skeletal muscle fibers secrete an external lamina that lies immediately adjacent to the sarcolemma (cell membrane). Outside the basal lamina is a layer of reticular fibers, produced by fibroblasts, which form the endomysium. Some consider the basal lamina to be a component of the endomysium. 15,000x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-3/, acesso em 2026-08-07."
+    }
+  ]
+}

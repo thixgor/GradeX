@@ -1,0 +1,104 @@
+{
+  "id": 3933,
+  "titulo": "Basement membrane",
+  "titulo_wordpress": "Associated structures 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 1"
+  ],
+  "descricao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Basement membrane', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Descricao original da pagina: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple squamous epithelial cell",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Simple squamous epithelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleus",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inset (higher magnification)",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Inset (higher magnification)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamina lucida",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Lamina lucida' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lamina densa",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Lamina densa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Reticular lamina",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Reticular lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Junctional complex",
+      "explicacao_original": "All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-1-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-1-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-1a-no-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-1a-no-inset.jpg'. Destaca a estrutura ou conceito 'Junctional complex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: All epithelia rest on a basement membrane, which consists of two components, the basal lamina, secreted by epithelial cells, and a reticular lamina, secreted by fibroblasts in the underlying connective tissue. The basal lamina is, in turn, subdivided into lamina lucida and lamina densa. Additional studies have shown that the presence of the lamina lucida results from a fixation-shrinkage artifact of the tissue. The clear space does not exist in life and thus the lamina densa lies directly adjacent to the plasma membrane. Serosa 15,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 1. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-1/, acesso em 2026-08-07."
+    }
+  ]
+}

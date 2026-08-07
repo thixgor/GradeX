@@ -1,0 +1,116 @@
+{
+  "id": 6749,
+  "titulo": "Oral mucosa: Lining",
+  "titulo_wordpress": "Oral mucosa 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Oral Mucosa",
+    "Oral mucosa 4"
+  ],
+  "descricao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oral mucosa: Lining', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Descricao original da pagina: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epidermal pegs",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Epidermal pegs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Papillary layer of lamina propria",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Papillary layer of lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Reticular layer of lamina propria",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Reticular layer of lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Minor salivary gland",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Minor salivary gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Gland ducts",
+      "explicacao_original": "The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Gland ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epithelium of lining mucosa is stratified squamous moist; epithelial pegs (ridges) are short. The lamina propria in the oral cavity, like the dermis of the skin, is subdivided into a papillary portion immediately beneath the epithelium and a reticular portion of denser connective tissue. The submucosa, underlying the mucosa, contains minor salivary glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.OM-4-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.OM-4-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.OM-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.OM-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oral mucosa: Lining'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.OM-4.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Oral Mucosa > Oral mucosa 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/oral-mucosa/oral-mucosa-4/, acesso em 2026-08-07."
+    }
+  ]
+}

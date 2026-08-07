@@ -1,0 +1,64 @@
+{
+  "id": 16867,
+  "titulo": "Elastic and collagen fibers",
+  "titulo_wordpress": "Fibers 12",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Fibers",
+    "Fibers 12"
+  ],
+  "descricao_original": "Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Fibers-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic and collagen fibers', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 12. Descricao original da pagina: Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-11-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic and collagen fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-11.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-11-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic and collagen fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-11.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen fibrils",
+      "explicacao_original": "Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-11-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic and collagen fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-11.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fibroblast",
+      "explicacao_original": "Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-11-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic and collagen fibers'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-11.jpg'. Destaca a estrutura ou conceito 'Fibroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic and collagen fibers are shown in this electron micrograph of dense irregular connective tissue. Both fiber types are produced by fibroblasts. Elastic fibers, which appear amorphous and more darkly stained than collagen fibers, consist of a dense core of elastin protein surrounded by a network of microfibrils. Collagen fibers consist of bundles of individual collagen fibrils. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-12/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": 3048,
+  "titulo": "Ependymal cells",
+  "titulo_wordpress": "Supporting cells CNS 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 9"
+  ],
+  "descricao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ependymal cells', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Descricao original da pagina: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ependymal cells",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'Ependymal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ependymal cell nuclei",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'Ependymal cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Choroid plexus cells",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'Choroid plexus cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Brush border",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'Brush border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-6-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "CSF space",
+      "explicacao_original": "The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-7-7-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-7.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-7.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ependymal cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-7.jpg'. Destaca a estrutura ou conceito 'CSF space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ependyma consists of a low columnar, frequently ciliated, epithelium lining the ventricles and central canal of the CNS. The cilia facilitate the movement of the cerebrospinal fluid (CSF) which occupies the spaces lined by the ependymal cells. In some regions the ependyma is modified to form the choroid plexus which is highly folded and extends into the ventricle and produces the CSF. The cells have a prominent brush border of microvilli. 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 9. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": 9194,
+  "titulo": "Globe: Cornea",
+  "titulo_wordpress": "Globe 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 2"
+  ],
+  "descricao_original": "The cornea, the anterior portion of the fibrous tunic, is transparent, avascular, and serves as the major refractile structure in the eye. The cornea is composed of five layers; from anterior to posterior, they are: stratified epithelium, Bowman’s membrane, stroma, Descemet’s membrane and endothelium. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the University of New England College of Osteopathic Medicine collection. The low magnification inset is taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Cornea', no setor Órgãos e Sistemas > Olho > Globe > Globe 2. Descricao original da pagina: The cornea, the anterior portion of the fibrous tunic, is transparent, avascular, and serves as the major refractile structure in the eye. The cornea is composed of five layers; from anterior to posterior, they are: stratified epithelium, Bowman’s membrane, stroma, Descemet’s membrane and endothelium. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Corneal epithelium",
+      "explicacao_original": "The outermost layer of the cornea is a thin, stratified squamous moist epithelium with abundant sensory innervation. The cells of this epithelium undergo rapid regeneration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Corneal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outermost layer of the cornea is a thin, stratified squamous moist epithelium with abundant sensory innervation. The cells of this epithelium undergo rapid regeneration.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Bowman's membrane",
+      "explicacao_original": "Bowman’s membrane, a specialized layer of the corneal stroma, underlies the epithelium. This layer is composed of randomly arranged collagen fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Bowman's membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bowman’s membrane, a specialized layer of the corneal stroma, underlies the epithelium. This layer is composed of randomly arranged collagen fibrils.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stroma",
+      "explicacao_original": "The stroma of the cornea is composed of multiple layers of collagen fibrils. These fibrils are of uniform diameter and are regularly spaced in parallel array within each layer. Alternate layers are arranged at right angles to each other. The orderly arrangement of both the fibrils and the layers makes the cornea transparent and capable of transmitting light.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stroma of the cornea is composed of multiple layers of collagen fibrils. These fibrils are of uniform diameter and are regularly spaced in parallel array within each layer. Alternate layers are arranged at right angles to each other. The orderly arrangement of both the fibrils and the layers makes the cornea transparent and capable of transmitting light.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Descemet's membrane",
+      "explicacao_original": "Descemet’s membrane is a thick, homogeneous, basal lamina produced by the corneal endothelial cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Descemet's membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Descemet’s membrane is a thick, homogeneous, basal lamina produced by the corneal endothelial cells.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endothelium",
+      "explicacao_original": "The innermost layer of the cornea is a simple squamous epithelium, an endothelium. These cells pump excess fluid from the cornea, aiding in maintaining the transparency of this layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The innermost layer of the cornea is a simple squamous epithelium, an endothelium. These cells pump excess fluid from the cornea, aiding in maintaining the transparency of this layer.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Anterior chamber",
+      "explicacao_original": "The anterior chamber of the eye is bounded by the cornea, iris and anterior surface of the lens. The anterior chamber is filled with aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Anterior chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The anterior chamber of the eye is bounded by the cornea, iris and anterior surface of the lens. The anterior chamber is filled with aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the University of New England College of Osteopathic Medicine collection. The low magnification inset is taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/UNE-source-ping-2.png",
+      "arquivo": "imagens/marcadores/UNE-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Eye_.Globe-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Cornea'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the University of New England College of Osteopathic Medicine collection. The low magnification inset is taken of a slide owned by the Arizona Veterinary Diagnostic Laboratory.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-2/, acesso em 2026-08-07."
+    }
+  ]
+}

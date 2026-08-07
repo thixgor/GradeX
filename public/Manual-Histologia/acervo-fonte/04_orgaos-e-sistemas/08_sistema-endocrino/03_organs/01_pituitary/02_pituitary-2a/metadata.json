@@ -1,0 +1,146 @@
+{
+  "id": 28007,
+  "titulo": "Pituitary",
+  "titulo_wordpress": "Pituitary 2A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pituitary",
+    "Pituitary 2A"
+  ],
+  "descricao_original": "This image is a low magnification, midsagittal section of a human pituitary stained with hematoxylin and eosin. Note the distinct boundaries between the neurohypophyseal and adenohypophyseal tissues, indicating the different embryological origins of these subdivisions. 5x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of slide in the Oklahoma State University slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pituitary', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Descricao original da pagina: This image is a low magnification, midsagittal section of a human pituitary stained with hematoxylin and eosin. Note the distinct boundaries between the neurohypophyseal and adenohypophyseal tissues, indicating the different embryological origins of these subdivisions. 5x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Subdivisions",
+      "explicacao_original": "The terms neurohypophysis and adenohypophysis reflect the embryonic origin of these two subdivisions. Similar terms, posterior and anterior pituitary, are also commonly used for these subdivisions, reflecting their anatomical position.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Subdivisions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The terms neurohypophysis and adenohypophysis reflect the embryonic origin of these two subdivisions. Similar terms, posterior and anterior pituitary, are also commonly used for these subdivisions, reflecting their anatomical position.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Neurohypophysis",
+      "explicacao_original": "The neurohypophysis is derived from nervous tissue as a downgrowth from the hypothalamus of the brain and consists of the pars nervosa, the infundibulum and its continuation, the median eminence (not visible).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Neurohypophysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neurohypophysis is derived from nervous tissue as a downgrowth from the hypothalamus of the brain and consists of the pars nervosa, the infundibulum and its continuation, the median eminence (not visible).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pars nervosa",
+      "explicacao_original": "The neurohypophysis is derived from nervous tissue as a downgrowth from the hypothalamus of the brain and consists of the pars nervosa, the infundibulum and its continuation, the median eminence (not visible).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-7-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Pars nervosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neurohypophysis is derived from nervous tissue as a downgrowth from the hypothalamus of the brain and consists of the pars nervosa, the infundibulum and its continuation, the median eminence (not visible).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Infundibulum",
+      "explicacao_original": "The neurohypophysis is derived from nervous tissue as a downgrowth from the hypothalamus of the brain and consists of the pars nervosa, the infundibulum and its continuation, the median eminence (not visible).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-6-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Infundibulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neurohypophysis is derived from nervous tissue as a downgrowth from the hypothalamus of the brain and consists of the pars nervosa, the infundibulum and its continuation, the median eminence (not visible).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Adenohypophysis",
+      "explicacao_original": "The adenohypophysis is derived from the epithelium that lines the roof of the developing oral cavity and consists of the pars distalis, pars tuberalis and pars intermedia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-1B-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-1B-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Adenohypophysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adenohypophysis is derived from the epithelium that lines the roof of the developing oral cavity and consists of the pars distalis, pars tuberalis and pars intermedia.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Pars distalis",
+      "explicacao_original": "The adenohypophysis is derived from the epithelium that lines the roof of the developing oral cavity and consists of the pars distalis, pars tuberalis and pars intermedia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Pars distalis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adenohypophysis is derived from the epithelium that lines the roof of the developing oral cavity and consists of the pars distalis, pars tuberalis and pars intermedia.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Pars tuberalis",
+      "explicacao_original": "The pars tuberalis forms a sleeve that surrounds the infundibulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Pars tuberalis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars tuberalis forms a sleeve that surrounds the infundibulum.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Pars intermedia",
+      "explicacao_original": "The pars intermedia is located at the interface of the pars distalis and pars nervosa and its cells often migrate into the pars distalis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Pars intermedia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pars intermedia is located at the interface of the pars distalis and pars nervosa and its cells often migrate into the pars distalis.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Rathke's pouch remnants",
+      "explicacao_original": "The adenohypophysis originates from the oral ectoderm of the embryo as a sac-shaped structure termed Rathke’s pouch. Remnants of this pouch, typically filled with protein (colloid), are visible in the adult.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Rathke's pouch remnants' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The adenohypophysis originates from the oral ectoderm of the embryo as a sac-shaped structure termed Rathke’s pouch. Remnants of this pouch, typically filled with protein (colloid), are visible in the adult.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Capsule",
+      "explicacao_original": "The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. Only a portion of the capsule is retained in this section.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-8-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The entire pituitary is surrounded by a dense connective tissue capsule that is continuous with the dura mater. Only a portion of the capsule is retained in this section.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Section plane of next image",
+      "explicacao_original": "The section plane of the next image is indicated by the horizonal line.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pit-2A-9-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Section plane of next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The section plane of the next image is indicated by the horizonal line.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of slide in the Oklahoma State University slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/02/OK-State-University.png",
+      "arquivo": "imagens/marcadores/OK-State-University.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pit-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/02/Or.Endo_.Pit-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pituitary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pit-2A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide in the Oklahoma State University slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pituitary > Pituitary 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pituitary/pituitary-2a/, acesso em 2026-08-07."
+    }
+  ]
+}

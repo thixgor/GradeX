@@ -1,0 +1,104 @@
+{
+  "id": 14276,
+  "titulo": "Cochlea: innervation",
+  "titulo_wordpress": "Cochlea 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 8"
+  ],
+  "descricao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "arquivo": "imagens/base/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cochlea: innervation', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Descricao original da pagina: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Right image",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.08.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Right image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Modiolus",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.08.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Modiolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osseous spiral lamina",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.08.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Osseous spiral lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Organ of Corti",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.08.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Organ of Corti' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Spiral ganglia",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.08.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Spiral ganglia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bipolar neurons",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.08.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Bipolar neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Dendrites",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.C.08.P07.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P07.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "CN VIII",
+      "explicacao_original": "Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.C.08.P08.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.C.08.P08.png",
+      "imagem_base": "imagens/base/O.E.IE_.C.08B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.C.08B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea: innervation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.C.08B.jpg'. Destaca a estrutura ou conceito 'CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral dendrites of the vestibulocochlear nerve (CN VIII) innervate hair cells of the organ of Corti and then pass medially through the osseous spiral lamina to the spiral ganglion, location of their bipolar nerve cell bodies. Central axons form the cochlear division of the nerve. The modiolus with its osseous spiral lamina provides a framework for the cochlea and a conduit for the nerve. 40x, 200x.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-8/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "id": 29142,
+  "titulo": "Tooth apex and periodontium",
+  "titulo_wordpress": "Periodontium 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth peridontium",
+    "Periodontium 5"
+  ],
+  "descricao_original": "The apical region of the tooth and surrounding tissues of the periodontium are shown in this image. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth apex and periodontium', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Descricao original da pagina: The apical region of the tooth and surrounding tissues of the periodontium are shown in this image. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Apex of the tooth",
+      "explicacao_original": "The region at the tip of each root is the apex and is penetrated by an apical foramen. The foramen provides for passage of blood vessels and nerves into the pulp cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Apex.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Apex.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Apex of the tooth' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The region at the tip of each root is the apex and is penetrated by an apical foramen. The foramen provides for passage of blood vessels and nerves into the pulp cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Apical foramen",
+      "explicacao_original": "The region at the tip of each root is the apex and is penetrated by an apical foramen. The foramen provides for passage of blood vessels and nerves into the pulp cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Apical-foramen.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Apical-foramen.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Apical foramen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The region at the tip of each root is the apex and is penetrated by an apical foramen. The foramen provides for passage of blood vessels and nerves into the pulp cavity.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cellular cementum",
+      "explicacao_original": "Cellular cementum is found at the apical 1/3 of the tooth root. This type of cementum contains cementocytes within the mineralized cementum and is produced throughout life in response to force or trauma. Cementocytes reside within lacunae and have thin protoplasmic processes that occupy narrow tunnels called canaliculi.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Cellular-cementum.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Cellular-cementum.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Cellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cellular cementum is found at the apical 1/3 of the tooth root. This type of cementum contains cementocytes within the mineralized cementum and is produced throughout life in response to force or trauma. Cementocytes reside within lacunae and have thin protoplasmic processes that occupy narrow tunnels called canaliculi.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamellae",
+      "explicacao_original": "Lamellae are thicker bands of hypocalcified, cellular cementum that indicate areas where force or trauma induced new cementum deposition or remodeling. Lamellae are found only in cellular cementum and are most prominent at the apex of the tooth root.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Lamellae.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Lamellae.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellae are thicker bands of hypocalcified, cellular cementum that indicate areas where force or trauma induced new cementum deposition or remodeling. Lamellae are found only in cellular cementum and are most prominent at the apex of the tooth root.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Periodontal ligament",
+      "explicacao_original": "The periodontal ligament surrounds the root of the tooth and anchors it into the socket.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Peridontal-ligament.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Peridontal-ligament.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Periodontal ligament' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periodontal ligament surrounds the root of the tooth and anchors it into the socket.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Apical principal fibers",
+      "explicacao_original": "The apical principal fibers of the periodontal ligament connect the cellular cementum at the apex of the tooth to the alveolar bone proper.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Apical-principal-fibers.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Apical-principal-fibers.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Apical principal fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The apical principal fibers of the periodontal ligament connect the cellular cementum at the apex of the tooth to the alveolar bone proper.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveolar bone",
+      "explicacao_original": "Alveolar bone forms the tooth socket and is the anchorage site for the periodontal ligament. Along with the cementum and periodontal ligament, the alveolar bone functions to anchor the tooth into the socket.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Alveolar-bone.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Alveolar-bone.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Alveolar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar bone forms the tooth socket and is the anchorage site for the periodontal ligament. Along with the cementum and periodontal ligament, the alveolar bone functions to anchor the tooth into the socket.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin is deposited throughout life by odontoblasts that reside in the pulp. Dentin makes up the bulk of the hard tissue of the tooth and is 70% mineralized.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-4-Dentin.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-4-Dentin.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin is deposited throughout life by odontoblasts that reside in the pulp. Dentin makes up the bulk of the hard tissue of the tooth and is 70% mineralized.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-5-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth apex and periodontium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.TP-A-5-flip.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/periodontium-5/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": 2134,
+  "titulo": "Mitosis",
+  "titulo_wordpress": "Mitosis overview 2",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 2"
+  ],
+  "descricao_original": "Mitosis is the process whereby cells divide to produce two identical daughter cells. During the mitosis phase of the cell cycle, chromosomal segregation (karyokinesis) and cell division (cytokinesis) occur. The stages of mitosis are prophase, metaphase, anaphase and telophase. The remainder of the cell cycle is called interphase.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mitosis', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Descricao original da pagina: Mitosis is the process whereby cells divide to produce two identical daughter cells. During the mitosis phase of the cell cycle, chromosomal segregation (karyokinesis) and cell division (cytokinesis) occur. The stages of mitosis are prophase, metaphase, anaphase and telophase. The remainder of the cell cycle is called interphase.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Interphase",
+      "explicacao_original": "Interphase is the longest phase of the cell cycle. The nucleus is distinct, surrounded by an obvious nuclear envelope; individual chromosomes are not visible as distinct structures. During interphase in proliferating cells, chromosome replication and diplosome duplication occur.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-1-1-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-1-1-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-1a-1.jpg'. Destaca a estrutura ou conceito 'Interphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interphase is the longest phase of the cell cycle. The nucleus is distinct, surrounded by an obvious nuclear envelope; individual chromosomes are not visible as distinct structures. During interphase in proliferating cells, chromosome replication and diplosome duplication occur.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Prophase",
+      "explicacao_original": "During prophase, chromosomes condense, diplosomes move to opposite poles of the nucleus, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-1-2-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-1-2-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-1a-1.jpg'. Destaca a estrutura ou conceito 'Prophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During prophase, chromosomes condense, diplosomes move to opposite poles of the nucleus, the mitotic spindle assembles and the nuclear envelope and the nucleolus disappear.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Metaphase",
+      "explicacao_original": "During metaphase, chromosomes align, forming the metaphase plate, and the mitotic spindle is completed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-1-3-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-1-3-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-1a-1.jpg'. Destaca a estrutura ou conceito 'Metaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, chromosomes align, forming the metaphase plate, and the mitotic spindle is completed.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Anaphase",
+      "explicacao_original": "Anaphase begins abruptly as sister chromatids separate and are drawn toward the opposite poles of the cell. The end of anaphase is marked by the segregation of an identical set of chromosomes at each pole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-1-4-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-1-4-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-1a-1.jpg'. Destaca a estrutura ou conceito 'Anaphase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Anaphase begins abruptly as sister chromatids separate and are drawn toward the opposite poles of the cell. The end of anaphase is marked by the segregation of an identical set of chromosomes at each pole.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Telophase",
+      "explicacao_original": "During telophase the nuclear envelope and nucleolus reform, and the chromosomal DNA decondenses.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-1-5-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-1-5-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-1a-1.jpg'. Destaca a estrutura ou conceito 'Telophase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During telophase the nuclear envelope and nucleolus reform, and the chromosomal DNA decondenses.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cytokinesis",
+      "explicacao_original": "Cytokinesis, the division of the cytoplasm, completes mitosis and produces identical daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-1-6-ping-1.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-1-6-ping-1.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-1a-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-1a-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitosis'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-1a-1.jpg'. Destaca a estrutura ou conceito 'Cytokinesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cytokinesis, the division of the cytoplasm, completes mitosis and produces identical daughter cells.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 2. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-2/, acesso em 2026-08-07."
+    }
+  ]
+}

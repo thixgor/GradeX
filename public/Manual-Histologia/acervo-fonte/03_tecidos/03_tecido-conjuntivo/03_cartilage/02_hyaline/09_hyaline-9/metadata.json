@@ -1,0 +1,76 @@
+{
+  "id": 11606,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 9"
+  ],
+  "descricao_original": "This electron micrograph shows chondrocytes surrounded by matrix. The accompanying light micrograph inset shows a similar area. 12,000x, 1000x (inset).",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/",
+  "creditos_identificados": [
+    "Electron micrograph source: This electron micrograph comes from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-correct.jpg",
+      "arquivo": "imagens/base/T.C.C.H.09-New-correct.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 9. Descricao original da pagina: This electron micrograph shows chondrocytes surrounded by matrix. The accompanying light micrograph inset shows a similar area. 12,000x, 1000x (inset).. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "This electron micrograph shows chondrocytes surrounded by matrix. The accompanying light micrograph inset shows a similar area. 12,000x, 1000x (inset).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-6-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.09-New-6-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.09-New-correct.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-correct.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.09-New-correct.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows chondrocytes surrounded by matrix. The accompanying light micrograph inset shows a similar area. 12,000x, 1000x (inset).. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Capsular matrix",
+      "explicacao_original": "The matrix immediately surrounding the chondrocyte is called the capsular matrix and contains the highest glycosaminoglycan contain and thus is intensely basophilic by light microscopy. This region lacks Type II collagen fibrils but does contain other collagen subtypes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-7-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.09-New-7-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.09-New-correct.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-correct.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.09-New-correct.jpg'. Destaca a estrutura ou conceito 'Capsular matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The matrix immediately surrounding the chondrocyte is called the capsular matrix and contains the highest glycosaminoglycan contain and thus is intensely basophilic by light microscopy. This region lacks Type II collagen fibrils but does contain other collagen subtypes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Territorial matrix",
+      "explicacao_original": "Beyond the capsular matrix is the territorial matrix which also surrounds isogenous groups. Territorial matrix is rich in Type II collagen fibrils which do not display the banding pattern seen in Type I collagen fibrils. Territorial matrix has a lower concentration of glycosaminoglycans and thus stains less intensely.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-8-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.09-New-8-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.09-New-correct.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-correct.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.09-New-correct.jpg'. Destaca a estrutura ou conceito 'Territorial matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beyond the capsular matrix is the territorial matrix which also surrounds isogenous groups. Territorial matrix is rich in Type II collagen fibrils which do not display the banding pattern seen in Type I collagen fibrils. Territorial matrix has a lower concentration of glycosaminoglycans and thus stains less intensely.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interterritorial matrix",
+      "explicacao_original": "Interterritorial matrix is present between isogenous groups and has a much paler, pinkish stain. The major collagen here is also Type II. This region is not present in the electron micrograph.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-9-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.09-New-9-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.09-New-correct.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-correct.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.09-New-correct.jpg'. Destaca a estrutura ou conceito 'Interterritorial matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interterritorial matrix is present between isogenous groups and has a much paler, pinkish stain. The major collagen here is also Type II. This region is not present in the electron micrograph.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Electron micrograph source",
+      "explicacao_original": "This electron micrograph comes from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-10-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.09-New-10-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.09-New-correct.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.09-New-correct.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.09-New-correct.jpg'. Destaca a estrutura ou conceito 'Electron micrograph source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph comes from the University of Michigan collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-9/, acesso em 2026-08-07."
+    }
+  ]
+}

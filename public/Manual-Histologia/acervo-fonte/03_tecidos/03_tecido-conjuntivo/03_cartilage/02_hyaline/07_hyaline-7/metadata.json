@@ -1,0 +1,64 @@
+{
+  "id": 11602,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 7"
+  ],
+  "descricao_original": "Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.08.jpg",
+      "arquivo": "imagens/base/T.C.C.H.08.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 7. Descricao original da pagina: Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.07-1-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.07-1-NEW-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.08.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Isogenous groups",
+      "explicacao_original": "Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.08.P02.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.08.P02.png",
+      "imagem_base": "imagens/base/T.C.C.H.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.08.jpg'. Destaca a estrutura ou conceito 'Isogenous groups' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Territorial matrix",
+      "explicacao_original": "Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.07-4-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.07-4-NEW-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.08.jpg'. Destaca a estrutura ou conceito 'Territorial matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interterritorial matrix",
+      "explicacao_original": "Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.07-5-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.07-5-NEW-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.08.jpg'. Destaca a estrutura ou conceito 'Interterritorial matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Isogenous groups and interstitial growth results when chondrocytes divide and produce extracellular matrix. Territorial matrix lies immediately around each isogenous group and is high in glycosaminoglycans. Therefore, this matrix stains more intensely than matrix farther from an isogenous group, the interterritorial matrix. Collagen fibrils are not visible in hyaline cartilage matrix. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 7. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-7/, acesso em 2026-08-07."
+    }
+  ]
+}

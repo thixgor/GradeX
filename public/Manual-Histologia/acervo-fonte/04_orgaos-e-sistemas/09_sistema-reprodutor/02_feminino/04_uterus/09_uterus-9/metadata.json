@@ -1,0 +1,44 @@
+{
+  "id": 12749,
+  "titulo": "Uterus: secretory phase (Days 14-26)",
+  "titulo_wordpress": "Uterus 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 9"
+  ],
+  "descricao_original": "These images were show the junction of the basal and functional zones. The uterine endometrium at the time of implantation is distinguished by a thick endometrium; glands that are wide, sacculated and actively secreting; and coiled spiral arteries. 200x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.09.jpg",
+      "arquivo": "imagens/base/O.R.F.U.09.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: secretory phase (Days 14-26)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 9. Descricao original da pagina: These images were show the junction of the basal and functional zones. The uterine endometrium at the time of implantation is distinguished by a thick endometrium; glands that are wide, sacculated and actively secreting; and coiled spiral arteries. 200x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glands",
+      "explicacao_original": "These images were show the junction of the basal and functional zones. The uterine endometrium at the time of implantation is distinguished by a thick endometrium; glands that are wide, sacculated and actively secreting; and coiled spiral arteries. 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.09.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.09.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.09.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were show the junction of the basal and functional zones. The uterine endometrium at the time of implantation is distinguished by a thick endometrium; glands that are wide, sacculated and actively secreting; and coiled spiral arteries. 200x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Spiral arteries",
+      "explicacao_original": "These images were show the junction of the basal and functional zones. The uterine endometrium at the time of implantation is distinguished by a thick endometrium; glands that are wide, sacculated and actively secreting; and coiled spiral arteries. 200x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.09.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.09.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.09.jpg'. Destaca a estrutura ou conceito 'Spiral arteries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were show the junction of the basal and functional zones. The uterine endometrium at the time of implantation is distinguished by a thick endometrium; glands that are wide, sacculated and actively secreting; and coiled spiral arteries. 200x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-9/, acesso em 2026-08-07."
+    }
+  ]
+}

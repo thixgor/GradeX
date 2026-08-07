@@ -1,0 +1,124 @@
+{
+  "id": 12247,
+  "titulo": "Overview",
+  "titulo_wordpress": "Female Overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Overview of the female reproductive system",
+    "Female Overview 2"
+  ],
+  "descricao_original": "The hormones secreted by the ovary dictate the activity of all the other organs in the female reproductive system. Therefore, knowing the cyclicity of the ovary and its hormones is essential to understanding the functionality of the other organs.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "arquivo": "imagens/base/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Descricao original da pagina: The hormones secreted by the ovary dictate the activity of all the other organs in the female reproductive system. Therefore, knowing the cyclicity of the ovary and its hormones is essential to understanding the functionality of the other organs.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ovulation",
+      "explicacao_original": "The exocrine function of the ovary is the production of a secondary oocyte, the future ovum. Ovulation occurs two weeks before the beginning of the next menstrual cycle; thus, in a typical 28-day ovarian cycle, ovulation occurs on day 14. The follicle, housing the secondary oocyte, ruptures (ovulation) to release the secondary oocyte (arrow), which is then transported into the oviduct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P01.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Ovulation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The exocrine function of the ovary is the production of a secondary oocyte, the future ovum. Ovulation occurs two weeks before the beginning of the next menstrual cycle; thus, in a typical 28-day ovarian cycle, ovulation occurs on day 14. The follicle, housing the secondary oocyte, ruptures (ovulation) to release the secondary oocyte (arrow), which is then transported into the oviduct.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "1st half of cycle",
+      "explicacao_original": "The ovarian cycle can be divided into two halves of approximately 14 days each. Specific structures will be actively secreting a hormone(s) during each half of the cycle. Knowing when these structures are present and what hormone(s) they secrete is essential to understanding the activity of the ovary and, therefore, of the other female reproductive organs as well.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P02.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito '1st half of cycle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ovarian cycle can be divided into two halves of approximately 14 days each. Specific structures will be actively secreting a hormone(s) during each half of the cycle. Knowing when these structures are present and what hormone(s) they secrete is essential to understanding the activity of the ovary and, therefore, of the other female reproductive organs as well.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Structures",
+      "explicacao_original": "Follicles grow and function during the first half of the ovarian cycle, days 1-14. Follicles, classified as primordial, primary, secondary and Graafian (mature), house developing germ cells (oocytes) and secrete estrogen. The Graafian follicle ruptures at ovulation, releasing a secondary oocyte. A follicle consists of epithelium enclosing an oocyte; a fluid-filled cavity forms as the follicle matures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P03.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Structures' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Follicles grow and function during the first half of the ovarian cycle, days 1-14. Follicles, classified as primordial, primary, secondary and Graafian (mature), house developing germ cells (oocytes) and secrete estrogen. The Graafian follicle ruptures at ovulation, releasing a secondary oocyte. A follicle consists of epithelium enclosing an oocyte; a fluid-filled cavity forms as the follicle matures.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stage",
+      "explicacao_original": "Therefore, the first half of the ovarian cycle is called the follicular stage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P04.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Therefore, the first half of the ovarian cycle is called the follicular stage.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hormone",
+      "explicacao_original": "Follicle development is regulated by follicle stimulating hormone (FSH) secreted by gonadotrophs in the adenohypophysis. Follicles secrete estrogen, which stimulates some organs (oviduct, cervix of the uterus, vagina) in the female reproductive system to reach peak functional activity around day 14.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P05.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Hormone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Follicle development is regulated by follicle stimulating hormone (FSH) secreted by gonadotrophs in the adenohypophysis. Follicles secrete estrogen, which stimulates some organs (oviduct, cervix of the uterus, vagina) in the female reproductive system to reach peak functional activity around day 14.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "2nd half of cycle",
+      "explicacao_original": "During the second half of the ovarian cycle, days 14-28, the wall of the ruptured follicle differentiates into the second major functional structure in the ovary, the corpus luteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P06.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito '2nd half of cycle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the second half of the ovarian cycle, days 14-28, the wall of the ruptured follicle differentiates into the second major functional structure in the ovary, the corpus luteum.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Structure",
+      "explicacao_original": "The corpus luteum, the functional structure during the second half of the ovarian cycle, forms from the remains of the Graafian follicle after the secondary oocyte has been released (ovulation). The corpus luteum secretes progesterone and estrogen for 12 days, diminishing production of these hormones during the final 2-3 days of the second half of the ovarian cycle (days 26-28).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P07.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Structure' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum, the functional structure during the second half of the ovarian cycle, forms from the remains of the Graafian follicle after the secondary oocyte has been released (ovulation). The corpus luteum secretes progesterone and estrogen for 12 days, diminishing production of these hormones during the final 2-3 days of the second half of the ovarian cycle (days 26-28).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Stage",
+      "explicacao_original": "Therefore, the second half of the ovarian cycle is called the luteal stage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P08.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Stage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Therefore, the second half of the ovarian cycle is called the luteal stage.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Hormones",
+      "explicacao_original": "The corpus luteum is under the influence of luteinizing hormone (LH), secreted by gonadotrophs in the adenohypophysis. The corpus luteum secretes progesterone and estrogen, which, after estrogen influence during the first half of the cycle, stimulate the uterus to reach peak functional activity about day 21.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P09.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P09.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Hormones' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum is under the influence of luteinizing hormone (LH), secreted by gonadotrophs in the adenohypophysis. The corpus luteum secretes progesterone and estrogen, which, after estrogen influence during the first half of the cycle, stimulate the uterus to reach peak functional activity about day 21.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Begin again",
+      "explicacao_original": "The hormones secreted by the ovary dictate the activity of all the other organs in the female reproductive system. Therefore, knowing the cyclicity of the ovary and its hormones is essential to understanding the functionality of the other organs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.P10.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.02.P10.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.02.jpg'. Destaca a estrutura ou conceito 'Begin again' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hormones secreted by the ovary dictate the activity of all the other organs in the female reproductive system. Therefore, knowing the cyclicity of the ovary and its hormones is essential to understanding the functionality of the other organs.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

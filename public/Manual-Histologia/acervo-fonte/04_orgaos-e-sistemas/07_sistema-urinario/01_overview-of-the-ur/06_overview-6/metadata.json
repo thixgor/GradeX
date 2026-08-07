@@ -1,0 +1,53 @@
+{
+  "id": 10787,
+  "titulo": "Renal medulla",
+  "titulo_wordpress": "Overview 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Overview of the urinary system",
+    "Overview 6"
+  ],
+  "descricao_original": "The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-6.jpg",
+      "arquivo": "imagens/base/Or.Ur_.OV-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Renal medulla', no setor Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 6. Descricao original da pagina: The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Straight tubules",
+      "explicacao_original": "The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-6.jpg'. Destaca a estrutura ou conceito 'Straight tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Thin limbs",
+      "explicacao_original": "The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-6.jpg'. Destaca a estrutura ou conceito 'Thin limbs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collecting ducts",
+      "explicacao_original": "The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-6.jpg'. Destaca a estrutura ou conceito 'Collecting ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla contains the straight portions of the proximal and distal tubules, the thin limbs of the loops of Henle, and collecting ducts. Because of their linear course through the medullary pyramid, these tubules are usually seen in longitudinal section, lying parallel to one another. 200x, 20x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-6/, acesso em 2026-08-07."
+    }
+  ]
+}

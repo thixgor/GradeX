@@ -1,0 +1,73 @@
+{
+  "id": 4772,
+  "titulo": "Overview",
+  "titulo_wordpress": "Overview (endocrine) 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Overview of endocrine organs",
+    "Overview (endocrine) 3"
+  ],
+  "descricao_original": "This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Ov-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 3. Descricao original da pagina: This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endocrine cells",
+      "explicacao_original": "This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Endocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillary",
+      "explicacao_original": "This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endothelial cell nucleus",
+      "explicacao_original": "This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fenestrated endothelium",
+      "explicacao_original": "This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Ov-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Ov-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Ov-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Ov-3.jpg'. Destaca a estrutura ou conceito 'Fenestrated endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows endocrine cells which secrete a peptide hormone. Hormone is stored in secretory granules and released into the extracellular space via the merocrine mode of secretion. The close association of these cells with a nearby fenestrated capillary facilitates the rapid entry of the hormones into the circulation. Endocrine pancreas 12,000x. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Overview of endocrine organs > Overview (endocrine) 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/overview-endocrine/overview-endocrine-3/, acesso em 2026-08-07."
+    }
+  ]
+}

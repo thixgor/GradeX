@@ -1,0 +1,85 @@
+{
+  "id": 6852,
+  "titulo": "Overview: Surface epithelium",
+  "titulo_wordpress": "Overview 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Overview of the stomach",
+    "Overview 2"
+  ],
+  "descricao_original": "The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Surface epithelium', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Descricao original da pagina: The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Surface epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucin",
+      "explicacao_original": "The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Surface epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Mucin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Surface epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal part of cells",
+      "explicacao_original": "The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Surface epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Basal part of cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Surface epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The simple columnar epithelium lining the stomach is modified to form a sheet gland, with each cell in the sheet actively producing the mucus that protects the stomach from its acidic environment. Mucin accumulates in the apex of each cell while the cytoplasm and nucleus are squeezed into the slender stem of the cell. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Gastric pit",
+      "explicacao_original": "A gastric pit is formed by the invagination of the sheet gland into the lamina propria. The gastric pit serves as the duct for the gastric gland that opens at its base.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Ov-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Ov-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Surface epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Gastric pit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A gastric pit is formed by the invagination of the sheet gland into the lamina propria. The gastric pit serves as the duct for the gastric gland that opens at its base.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Overview of the stomach > Overview 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/overview-stomach-tubular/overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

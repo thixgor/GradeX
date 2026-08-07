@@ -1,0 +1,64 @@
+{
+  "id": 16805,
+  "titulo": "Active fibroblast",
+  "titulo_wordpress": "Cells 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 5"
+  ],
+  "descricao_original": "This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Active fibroblast', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 5. Descricao original da pagina: This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fibroblast nuclei",
+      "explicacao_original": "This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-5-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-5.jpg'. Destaca a estrutura ou conceito 'Fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibroblast processes",
+      "explicacao_original": "This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-5-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-5.jpg'. Destaca a estrutura ou conceito 'Fibroblast processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-5-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-5.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of dense irregular connective tissue shows active fibroblasts surrounded by collagen and elastic fibers. Active fibroblasts have euchromatic nuclei and in this tissue they have thin cell processes. 5000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Elastic fibers are composed of different proteins than collagen fibers and stain with greater electron density.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-5-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Active fibroblast'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-5.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic fibers are composed of different proteins than collagen fibers and stain with greater electron density.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-5/, acesso em 2026-08-07."
+    }
+  ]
+}

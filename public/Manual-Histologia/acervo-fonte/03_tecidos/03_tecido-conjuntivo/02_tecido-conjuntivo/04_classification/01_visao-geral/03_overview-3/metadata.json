@@ -1,0 +1,77 @@
+{
+  "id": 16887,
+  "titulo": "Connective tissue proper classification overview",
+  "titulo_wordpress": "Overview 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Classification",
+    "Visão Geral",
+    "Overview 3"
+  ],
+  "descricao_original": "In a typical organ, loose connective tissue is located immediately beneath an epithelium, providing padding, allowing diffusion and cellular migration, but offering little strength. A thicker layer of dense connective tissue, typically underlying the loose tissue, possesses larger caliber collagen fibers that provides strength and resistance. These sections of small intestine (left) and skin (right) illustrate this organization. 200x, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Class_.OV-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Connective tissue proper classification overview', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 3. Descricao original da pagina: In a typical organ, loose connective tissue is located immediately beneath an epithelium, providing padding, allowing diffusion and cellular migration, but offering little strength. A thicker layer of dense connective tissue, typically underlying the loose tissue, possesses larger caliber collagen fibers that provides strength and resistance. These sections of small intestine (left) and skin (right) illustrate this organization. 200x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "In a typical organ, loose connective tissue is located immediately beneath an epithelium, providing padding, allowing diffusion and cellular migration, but offering little strength. A thicker layer of dense connective tissue, typically underlying the loose tissue, possesses larger caliber collagen fibers that provides strength and resistance. These sections of small intestine (left) and skin (right) illustrate this organization. 200x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-3-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-3.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In a typical organ, loose connective tissue is located immediately beneath an epithelium, providing padding, allowing diffusion and cellular migration, but offering little strength. A thicker layer of dense connective tissue, typically underlying the loose tissue, possesses larger caliber collagen fibers that provides strength and resistance. These sections of small intestine (left) and skin (right) illustrate this organization. 200x, 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Loose connective tissue",
+      "explicacao_original": "Loose connective tissue is present beneath all epithelia and is highly vascularized. The high content of ground substance and the loose fiber arrangement provide padding and allow for diffusion and cell migration. The loose connective tissue in the small intestine is highly cellular due to migrating white blood cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-3-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-3.jpg'. Destaca a estrutura ou conceito 'Loose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Loose connective tissue is present beneath all epithelia and is highly vascularized. The high content of ground substance and the loose fiber arrangement provide padding and allow for diffusion and cell migration. The loose connective tissue in the small intestine is highly cellular due to migrating white blood cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dense connective tissue",
+      "explicacao_original": "Dense connective tissue, underlying the loose connective tissue, has larger caliber collagen fibers and fewer cells than does loose. In the left image, a thin band of smooth muscle (X) is interposed between the two connective tissue layers. In the right image, the two connective tissues blend directly into each other.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-3-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-3.jpg'. Destaca a estrutura ou conceito 'Dense connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dense connective tissue, underlying the loose connective tissue, has larger caliber collagen fibers and fewer cells than does loose. In the left image, a thin band of smooth muscle (X) is interposed between the two connective tissue layers. In the right image, the two connective tissues blend directly into each other.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glands",
+      "explicacao_original": "The glands seen in the left image are formed by deep invaginations of the epithelium and, thus, are immediately surrounded by loose connective tissue. Glands are also present in skin (right image), though not visible in this section.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-3-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-3.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glands seen in the left image are formed by deep invaginations of the epithelium and, thus, are immediately surrounded by loose connective tissue. Glands are also present in skin (right image), though not visible in this section.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-3-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-3.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Michigan collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

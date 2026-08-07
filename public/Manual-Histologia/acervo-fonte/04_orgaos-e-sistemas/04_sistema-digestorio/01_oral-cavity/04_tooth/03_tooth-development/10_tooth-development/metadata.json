@@ -1,0 +1,117 @@
+{
+  "id": 29451,
+  "titulo": "Root stage of tooth development",
+  "titulo_wordpress": "Tooth development 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 10"
+  ],
+  "descricao_original": "This image shows a developing tooth during the root stage, the final period in development. During this stage, enamel deposition ceases and cementum deposition begins. In addition, the eventual shape of the tooth root is determined. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/",
+  "creditos_identificados": [
+    "Image source: This image was taken of slide in the University of Michigan slide collection"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "arquivo": "imagens/base/Root-stage-10A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Root stage of tooth development', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Descricao original da pagina: This image shows a developing tooth during the root stage, the final period in development. During this stage, enamel deposition ceases and cementum deposition begins. In addition, the eventual shape of the tooth root is determined. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gingiva",
+      "explicacao_original": "The gingiva (commonly called the gums) has a masticatory mucosa, composed of a stratified squamous, moist orthokeratinized or parakeratinized epithelium with an underlying lamina propria of connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Gingiva-10A.png",
+      "arquivo": "imagens/marcadores/Gingiva-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Gingiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The gingiva (commonly called the gums) has a masticatory mucosa, composed of a stratified squamous, moist orthokeratinized or parakeratinized epithelium with an underlying lamina propria of connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Alveolar bone",
+      "explicacao_original": "Alveolar bone forms the alveolus (tooth socket) and anchors the tooth via the periodontal ligament.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Alveolar-bone-10A.png",
+      "arquivo": "imagens/marcadores/Alveolar-bone-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Alveolar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar bone forms the alveolus (tooth socket) and anchors the tooth via the periodontal ligament.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Enamel",
+      "explicacao_original": "Enamel is produced by ameloblasts that secrete an organic matrix that quickly becomes mineralized with hydroxyapatite crystals of calcium phosphate. The demineralization process used during tissue preparation extracts these crystals and thus the region where enamel is located appears empty. The location of the enamel in life is indicated by the green shading.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Enamel-10A.png",
+      "arquivo": "imagens/marcadores/Enamel-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel is produced by ameloblasts that secrete an organic matrix that quickly becomes mineralized with hydroxyapatite crystals of calcium phosphate. The demineralization process used during tissue preparation extracts these crystals and thus the region where enamel is located appears empty. The location of the enamel in life is indicated by the green shading.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin is the first hard tissue deposited during tooth development and makes up the majority of the hard tissue of the tooth. Dentin is produced by odontoblasts, which, like ameloblasts, secrete an organic matrix that rapidly becomes mineralized with hydroxyapatite crystals.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dentine-10A.png",
+      "arquivo": "imagens/marcadores/Dentine-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin is the first hard tissue deposited during tooth development and makes up the majority of the hard tissue of the tooth. Dentin is produced by odontoblasts, which, like ameloblasts, secrete an organic matrix that rapidly becomes mineralized with hydroxyapatite crystals.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cementum",
+      "explicacao_original": "Cementum, produced by cementoblasts, forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Cementum.png",
+      "arquivo": "imagens/marcadores/Cementum.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum, produced by cementoblasts, forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cemento-enamel junction",
+      "explicacao_original": "Cementum, produced by cementoblasts, forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/C-E-junction-10A.png",
+      "arquivo": "imagens/marcadores/C-E-junction-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Cemento-enamel junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum, produced by cementoblasts, forms a thin layer of bone-like tissue extending from the cemento-enamel junction to cover the root of the tooth. Anchoring collagen fibers of the periodontal ligament, extend from the cementum to the alveolar bone to stabilized the tooth in its socket.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Dental pulp organ",
+      "explicacao_original": "At the root stage, the ectomesenchymal cells of the dental papillae have fully differentiated into the dental pulp organ. This tissue will form the dental pulp containing odontoblast cell bodies, nerves, and numerous blood vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Pulp-organ-10A.png",
+      "arquivo": "imagens/marcadores/Pulp-organ-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Dental pulp organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the root stage, the ectomesenchymal cells of the dental papillae have fully differentiated into the dental pulp organ. This tissue will form the dental pulp containing odontoblast cell bodies, nerves, and numerous blood vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Apical foramen",
+      "explicacao_original": "The apical foramen is the opening at the apex of the tooth root where the connective tissue of the pulp communicates with the connective tissue of the periodontal ligament allowing passage of blood vessels and nerves into the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Apical-foramen-10A.png",
+      "arquivo": "imagens/marcadores/Apical-foramen-10A.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Apical foramen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The apical foramen is the opening at the apex of the tooth root where the connective tissue of the pulp communicates with the connective tissue of the periodontal ligament allowing passage of blood vessels and nerves into the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of slide in the University of Michigan slide collection",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Root-stage-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide in the University of Michigan slide collection. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-10/, acesso em 2026-08-07."
+    }
+  ]
+}

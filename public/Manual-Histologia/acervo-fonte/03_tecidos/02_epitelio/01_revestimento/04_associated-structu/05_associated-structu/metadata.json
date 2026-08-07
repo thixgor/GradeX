@@ -1,0 +1,104 @@
+{
+  "id": 3941,
+  "titulo": "Microvilli",
+  "titulo_wordpress": "Associated structures 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 5"
+  ],
+  "descricao_original": "Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane that collectively form the brush border. Microvilli greatly increase surface area, and, thus, are commonly found on epithelia with absorptive functions. These microvilli possess a glycocalyx, consisting of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. Small intestine 10,000x, 25,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Microvilli', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Descricao original da pagina: Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane that collectively form the brush border. Microvilli greatly increase surface area, and, thus, are commonly found on epithelia with absorptive functions. These microvilli possess a glycocalyx, consisting of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. Small intestine 10,000x, 25,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Microvilli",
+      "explicacao_original": "Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane that collectively form the brush border. Microvilli greatly increase surface area, and, thus, are commonly found on epithelia with absorptive functions. These microvilli possess a glycocalyx, consisting of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. Small intestine 10,000x, 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microvilli are short (less than one micron), non-motile extensions of the apical plasma membrane that collectively form the brush border. Microvilli greatly increase surface area, and, thus, are commonly found on epithelia with absorptive functions. These microvilli possess a glycocalyx, consisting of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. Small intestine 10,000x, 25,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Microfilaments",
+      "explicacao_original": "Each microvillus is supported by a core of microfilaments that extend down into the apical region of the cell and contact the terminal web. The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Microfilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each microvillus is supported by a core of microfilaments that extend down into the apical region of the cell and contact the terminal web. The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Terminal web",
+      "explicacao_original": "Each microvillus is supported by a core of microfilaments that extend down into the apical region of the cell and contact the terminal web. The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Terminal web' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each microvillus is supported by a core of microfilaments that extend down into the apical region of the cell and contact the terminal web. The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bundles of microfilaments",
+      "explicacao_original": "Each microvillus is supported by a core of microfilaments that extend down into the apical region of the cell and contact the terminal web. The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Bundles of microfilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each microvillus is supported by a core of microfilaments that extend down into the apical region of the cell and contact the terminal web. The terminal web is composed of a meshwork of microfilaments and microfilament bundles. The terminal web serves to stabilize the apical cell surface as well as anchor and support the microvilli.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Glycocalyx",
+      "explicacao_original": "The glycocalyx consists of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. In the small intestine the glycocalyx serves to retain digestive enzymes and intestinal bacteria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Glycocalyx' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glycocalyx consists of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. In the small intestine the glycocalyx serves to retain digestive enzymes and intestinal bacteria.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "The glycocalyx consists of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. In the small intestine the glycocalyx serves to retain digestive enzymes and intestinal bacteria.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glycocalyx consists of the carbohydrate groups of membrane glycoproteins and glycolipids that extend into the lumen. In the small intestine the glycocalyx serves to retain digestive enzymes and intestinal bacteria.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Junctional complex",
+      "explicacao_original": "The junctional complex consists of a zonula occludens (apical-most), zonula adherens and a desmosome which collectively serve to attach adjacent cells and seal the luminal space from the intercellular space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Junctional complex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The junctional complex consists of a zonula occludens (apical-most), zonula adherens and a desmosome which collectively serve to attach adjacent cells and seal the luminal space from the intercellular space.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The junctional complex consists of a zonula occludens (apical-most), zonula adherens and a desmosome which collectively serve to attach adjacent cells and seal the luminal space from the intercellular space.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-5-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-5-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-5-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.AS_.-5-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Microvilli'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-5-new.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The junctional complex consists of a zonula occludens (apical-most), zonula adherens and a desmosome which collectively serve to attach adjacent cells and seal the luminal space from the intercellular space.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-5/, acesso em 2026-08-07."
+    }
+  ]
+}

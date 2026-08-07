@@ -1,0 +1,54 @@
+{
+  "id": 11782,
+  "titulo": "Elastic cartilage",
+  "titulo_wordpress": "Elastic 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Elastic",
+    "Elastic 5"
+  ],
+  "descricao_original": "With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.jpg",
+      "arquivo": "imagens/base/T.C.C.E.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 5. Descricao original da pagina: With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.P01.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.05.P01.png",
+      "imagem_base": "imagens/base/T.C.C.E.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.05.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Isogenous group",
+      "explicacao_original": "With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.P02.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.05.P02.png",
+      "imagem_base": "imagens/base/T.C.C.E.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.05.jpg'. Destaca a estrutura ou conceito 'Isogenous group' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.P03.png",
+      "arquivo": "imagens/marcadores/T.C.C.E.05.P03.png",
+      "imagem_base": "imagens/base/T.C.C.E.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.E.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.E.05.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With a special stain, elastic fibers are readily visible in elastic cartilage, helping to differentiate it from hyaline cartilage. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-5/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "id": 18758,
+  "titulo": "Interalveolar septum",
+  "titulo_wordpress": "Alveoli 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveoli",
+    "Alveoli 2"
+  ],
+  "descricao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "arquivo": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Interalveolar septum', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Descricao original da pagina: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar lumens",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-1-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-1-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Alveolar lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interalveolar septum",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-2-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-2-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Interalveolar septum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capillaries",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-3-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-3-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Connective tissue core",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-4-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-4-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Connective tissue core' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fibroblast",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-5-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-5-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Fibroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Type I cells",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-5A-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-5A-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Type I cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Endothelial cell nuclei",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-8-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-8-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Endothelial cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Blood cells",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-6-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-6-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Air-blood barrier",
+      "explicacao_original": "This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-7-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.02-7-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.02-fixing-crop-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Interalveolar septum'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.02-fixing-crop-USE.jpg'. Destaca a estrutura ou conceito 'Air-blood barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows many of the components of the interalveolar septum illustrated in the previous illustration. Particularly thin type I cells line the entire alveolus and the bulging of capillaries into the air space is prominent. Surfactant is not preserved during fixation of lung tissue, and no septal cells nor macrophages are present in this image. 4000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-2/, acesso em 2026-08-07."
+    }
+  ]
+}

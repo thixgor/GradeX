@@ -1,0 +1,95 @@
+{
+  "id": 23467,
+  "titulo": "External ear: Auricle",
+  "titulo_wordpress": "External ear 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "External Ear",
+    "External ear 5"
+  ],
+  "descricao_original": "The auricle, stained here with the trichome stain, consists of a core of elastic cartilage covered by thin skin. Skeletal muscle fibers of the auricular muscle have little, but variable, function in humans. Numerous hair follicles with their accompanying sebaceous glands are also present. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the Drexel University collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "arquivo": "imagens/base/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'External ear: Auricle', no setor Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Descricao original da pagina: The auricle, stained here with the trichome stain, consists of a core of elastic cartilage covered by thin skin. Skeletal muscle fibers of the auricular muscle have little, but variable, function in humans. Numerous hair follicles with their accompanying sebaceous glands are also present. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Thin skin",
+      "explicacao_original": "Thin skin covers the auricle and though not well shown here, is thicker posteriorly than anteriorly. Fine hairs are present on both surfaces. With aging, especially in men, large stiff hairs may develop around the entrance to the auditory meatus and at the posterior edge of the auricle. Sebaceous glands associated with hair follicles may be of considerable size.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P01.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P01.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Thin skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thin skin covers the auricle and though not well shown here, is thicker posteriorly than anteriorly. Fine hairs are present on both surfaces. With aging, especially in men, large stiff hairs may develop around the entrance to the auditory meatus and at the posterior edge of the auricle. Sebaceous glands associated with hair follicles may be of considerable size.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hair follicle",
+      "explicacao_original": "Thin skin covers the auricle and though not well shown here, is thicker posteriorly than anteriorly. Fine hairs are present on both surfaces. With aging, especially in men, large stiff hairs may develop around the entrance to the auditory meatus and at the posterior edge of the auricle. Sebaceous glands associated with hair follicles may be of considerable size.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P02.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P02.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Hair follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thin skin covers the auricle and though not well shown here, is thicker posteriorly than anteriorly. Fine hairs are present on both surfaces. With aging, especially in men, large stiff hairs may develop around the entrance to the auditory meatus and at the posterior edge of the auricle. Sebaceous glands associated with hair follicles may be of considerable size.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sebaceous glands",
+      "explicacao_original": "Thin skin covers the auricle and though not well shown here, is thicker posteriorly than anteriorly. Fine hairs are present on both surfaces. With aging, especially in men, large stiff hairs may develop around the entrance to the auditory meatus and at the posterior edge of the auricle. Sebaceous glands associated with hair follicles may be of considerable size.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P03.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P03.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Sebaceous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Thin skin covers the auricle and though not well shown here, is thicker posteriorly than anteriorly. Fine hairs are present on both surfaces. With aging, especially in men, large stiff hairs may develop around the entrance to the auditory meatus and at the posterior edge of the auricle. Sebaceous glands associated with hair follicles may be of considerable size.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Elastic cartilage",
+      "explicacao_original": "The framework for the auricle consists of a single, irregularly shaped, elastic cartilage. The trichrome stain used on this section highlights the elastic fibers in the cartilage. A prominent perichondrium surrounds the cartilage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P04.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P04.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Elastic cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The framework for the auricle consists of a single, irregularly shaped, elastic cartilage. The trichrome stain used on this section highlights the elastic fibers in the cartilage. A prominent perichondrium surrounds the cartilage.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Perichondrium",
+      "explicacao_original": "The framework for the auricle consists of a single, irregularly shaped, elastic cartilage. The trichrome stain used on this section highlights the elastic fibers in the cartilage. A prominent perichondrium surrounds the cartilage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P05.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P05.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Perichondrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The framework for the auricle consists of a single, irregularly shaped, elastic cartilage. The trichrome stain used on this section highlights the elastic fibers in the cartilage. A prominent perichondrium surrounds the cartilage.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Skeletal muscle",
+      "explicacao_original": "Several small auricular muscles are present. The ability to move the auricle of the external ear by contraction of auricular muscles is critical to the survival of many animal species. Little such function is present in the human although the shape of the human auricle does aid sound localization in the vertical plane (above and below).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P06.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P06.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Skeletal muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several small auricular muscles are present. The ability to move the auricle of the external ear by contraction of auricular muscles is critical to the survival of many animal species. Little such function is present in the human although the shape of the human auricle does aid sound localization in the vertical plane (above and below).. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the Drexel University collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.EE_.02A.P07.png",
+      "arquivo": "imagens/marcadores/O.E.EE_.02A.P07.png",
+      "imagem_base": "imagens/base/O.E.EE_.02AA.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.02AA.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: Auricle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.02AA.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the Drexel University collection.. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-5/, acesso em 2026-08-07."
+    }
+  ]
+}

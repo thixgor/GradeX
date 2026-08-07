@@ -1,0 +1,84 @@
+{
+  "id": 5294,
+  "titulo": "Arteriole and venule",
+  "titulo_wordpress": "Arteries 22",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 22"
+  ],
+  "descricao_original": "An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Arteriole and venule', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Descricao original da pagina: An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Arteriole",
+      "explicacao_original": "An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-22-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-22-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole and venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-22.jpg'. Destaca a estrutura ou conceito 'Arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Venule",
+      "explicacao_original": "An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-22-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-22-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole and venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-22.jpg'. Destaca a estrutura ou conceito 'Venule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "The thin tunica intima of the arteriole is clearly visible along with its highly reduced internal elastic lamina, which is particularly evident in the lower half of the vessel. In the venule, the basophilic cytoplasm of the endothelial cells is indicated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-22-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-22-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole and venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-22.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thin tunica intima of the arteriole is clearly visible along with its highly reduced internal elastic lamina, which is particularly evident in the lower half of the vessel. In the venule, the basophilic cytoplasm of the endothelial cells is indicated.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tunica media",
+      "explicacao_original": "An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-22-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-22-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole and venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-22.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-22-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-22-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole and venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-22.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-22-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-22-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-22.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-22.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Arteriole and venule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-22.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An arteriole consists of a tunica intima, a thin tunica media of one to two layers of smooth muscle cells and a tunica adventitia. The wall of the adjacent venule is thinner and less regular, consisting only of an endothelium, forming the tunica intima. A tunica media is absent and the thin tunica adventitia is indistinguishable from the surrounding connective tissue. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 22. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-22/, acesso em 2026-08-07."
+    }
+  ]
+}

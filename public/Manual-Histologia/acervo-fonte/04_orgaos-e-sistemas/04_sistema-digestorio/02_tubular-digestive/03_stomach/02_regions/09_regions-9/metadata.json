@@ -1,0 +1,97 @@
+{
+  "id": 28100,
+  "titulo": "Stomach: fundus and pylorus",
+  "titulo_wordpress": "Regions 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 9"
+  ],
+  "descricao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/",
+  "creditos_identificados": [
+    "Image credit: This image was taken of a slide in the University of Tasmania slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: fundus and pylorus', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Descricao original da pagina: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fundus",
+      "explicacao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Fundus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pylorus",
+      "explicacao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Pylorus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-4A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-4A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Gastric glands",
+      "explicacao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-5A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-5A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Gastric glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-6A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-6A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A comparison of gastric glands of the fundus/body (left) and the pyloric regions (right) demonstrates the variation in ratio of gastric pits to gastric glands in these regions. In the fundus, gastric pits are about a quarter the length of the glands. In the pylorus, gastric pits are longer than the glands. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image credit",
+      "explicacao_original": "This image was taken of a slide in the University of Tasmania slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-9-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Stom_.Reg-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and pylorus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-9A.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Tasmania slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-9a/, acesso em 2026-08-07."
+    }
+  ]
+}

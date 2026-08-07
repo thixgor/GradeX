@@ -1,0 +1,73 @@
+{
+  "id": 2160,
+  "titulo": "Meiosis I: Metaphase",
+  "titulo_wordpress": "Meiosis 4",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Meiose",
+    "Meiosis 4"
+  ],
+  "descricao_original": "During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4.jpg",
+      "arquivo": "imagens/base/C.CD_.Mei-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meiosis I: Metaphase', no setor Células > Divisão Celular > Meiose > Meiosis 4. Descricao original da pagina: During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pair of homologous chromosomes",
+      "explicacao_original": "During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-4-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-4.jpg'. Destaca a estrutura ou conceito 'Pair of homologous chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-4-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-4.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mitotic spindle",
+      "explicacao_original": "Microtubules of the spindle apparatus extend from the centrioles. One set attaches to the kinetochore of the chromatids (kinetochore microtubules); one set overlaps with opposing microtubules at the midline; and a third set extends away from the spindle (astral microtubles).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-4-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-4.jpg'. Destaca a estrutura ou conceito 'Mitotic spindle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules of the spindle apparatus extend from the centrioles. One set attaches to the kinetochore of the chromatids (kinetochore microtubules); one set overlaps with opposing microtubules at the midline; and a third set extends away from the spindle (astral microtubles).. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-4-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-4.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Centromere",
+      "explicacao_original": "During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-4-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-4.jpg'. Destaca a estrutura ou conceito 'Centromere' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, paired homologous chromosomes, which are still joined by chiasmata, align at the metaphase plate. These pairs, consisting of four chromatids, are called bivalents. As in mitosis, the centrosomes have migrated to opposite poles of the cell and the mitotic spindle is complete.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 4. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": 27606,
+  "titulo": "Oligdendrocytes - Myelin sheath",
+  "titulo_wordpress": "Supporting cells CNS 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 7"
+  ],
+  "descricao_original": "This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. The node is flanked by myelin internodes. (Image courtesy of Dr. Jeffrey Dupree) 40,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oligdendrocytes - Myelin sheath', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Descricao original da pagina: This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. The node is flanked by myelin internodes. (Image courtesy of Dr. Jeffrey Dupree) 40,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axon",
+      "explicacao_original": "This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. The node is flanked by myelin internodes. (Image courtesy of Dr. Jeffrey Dupree) 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows a longitudinal section of a myelinated axon in the region of the node of Ranvier. The node is flanked by myelin internodes. (Image courtesy of Dr. Jeffrey Dupree) 40,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Microtubules",
+      "explicacao_original": "Axons contain an abundant cytoskeleton, notably, large numbers of microtubules for transport and neurofilaments for support and stability.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Axons contain an abundant cytoskeleton, notably, large numbers of microtubules for transport and neurofilaments for support and stability.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Neurofilaments",
+      "explicacao_original": "Axons contain an abundant cytoskeleton, notably, large numbers of microtubules for transport and neurofilaments for support and stability.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Neurofilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Axons contain an abundant cytoskeleton, notably, large numbers of microtubules for transport and neurofilaments for support and stability.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Node of Ranvier",
+      "explicacao_original": "The node of Ranvier is a specialized region of the axon located in the gap between adjacent internodes. The plasma membrane of the axon at the node of Ranvier possesses a high concentration of sodium channels, which depolarize the membrane and propagate the action potential by the process of saltatory conduction.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Node of Ranvier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The node of Ranvier is a specialized region of the axon located in the gap between adjacent internodes. The plasma membrane of the axon at the node of Ranvier possesses a high concentration of sodium channels, which depolarize the membrane and propagate the action potential by the process of saltatory conduction.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Myelin internodes",
+      "explicacao_original": "The myelin sheath consists of individual myelin segments, internodes, that are aligned along the axon. Each internode consists of a compacted region, where cytoplasm between the membranes has been extruded, and uncompacted regions where the cytoplasm remains. Most of the internode consists of compact myelin; the uncompacted regions adjacent to node of Ranvier are called paranodes. Each oligodendrocyte produces multiple internodes on numerous axons by the spiral wrapping of its plasma membrane around the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-8-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-8-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Myelin internodes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The myelin sheath consists of individual myelin segments, internodes, that are aligned along the axon. Each internode consists of a compacted region, where cytoplasm between the membranes has been extruded, and uncompacted regions where the cytoplasm remains. Most of the internode consists of compact myelin; the uncompacted regions adjacent to node of Ranvier are called paranodes. Each oligodendrocyte produces multiple internodes on numerous axons by the spiral wrapping of its plasma membrane around the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Compact myelin",
+      "explicacao_original": "Compact myelin, constituting most of a myelin internode, is composed of membranes with a uniquely high lipid content, providing insulation to ensure salutatory conduction occurs. Only a small portion of compact myelin is visible on the left.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-7-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Compact myelin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Compact myelin, constituting most of a myelin internode, is composed of membranes with a uniquely high lipid content, providing insulation to ensure salutatory conduction occurs. Only a small portion of compact myelin is visible on the left.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Paranode",
+      "explicacao_original": "Paranodes, located at the ends of an internode adjacent to the node of Ranvier, consist of uncompacted myelin membranes. The paranode consists of cytoplasm-filled, plasma membrane loops (paranodal loops) of the myelinating cells. Each loop contacts the axon membrane forming tight junctions that anchor the internode to the axon and restrict the lateral movement of the sodium channels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Paranode' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Paranodes, located at the ends of an internode adjacent to the node of Ranvier, consist of uncompacted myelin membranes. The paranode consists of cytoplasm-filled, plasma membrane loops (paranodal loops) of the myelinating cells. Each loop contacts the axon membrane forming tight junctions that anchor the internode to the axon and restrict the lateral movement of the sodium channels.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Paranodal loops",
+      "explicacao_original": "Paranodes, located at the ends of an internode adjacent to the node of Ranvier, consist of uncompacted myelin membranes. The paranode consists of cytoplasm-filled, plasma membrane loops (paranodal loops) of the myelinating cells. Each loop contacts the axon membrane forming tight junctions that anchor the internode to the axon and restrict the lateral movement of the sodium channels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-5b-6-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-5b.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/T.N.SuppCNS-5b.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligdendrocytes - Myelin sheath'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-5b.jpg'. Destaca a estrutura ou conceito 'Paranodal loops' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Paranodes, located at the ends of an internode adjacent to the node of Ranvier, consist of uncompacted myelin membranes. The paranode consists of cytoplasm-filled, plasma membrane loops (paranodal loops) of the myelinating cells. Each loop contacts the axon membrane forming tight junctions that anchor the internode to the axon and restrict the lateral movement of the sodium channels.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-7-2/, acesso em 2026-08-07."
+    }
+  ]
+}

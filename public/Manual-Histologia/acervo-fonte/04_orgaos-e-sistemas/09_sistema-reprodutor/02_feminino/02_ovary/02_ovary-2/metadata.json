@@ -1,0 +1,84 @@
+{
+  "id": 12320,
+  "titulo": "Ovary",
+  "titulo_wordpress": "Ovary 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 2"
+  ],
+  "descricao_original": "This enlargement shows the serosa, composed of the germinal epithelium and a thin connective tissue layer, overlying the tunica albuginea. An outer cortex contains follicles of varying sizes, while the inner medulla is composed of loose connective tissue with blood vessels, lymphatic vessels and nerves. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Descricao original da pagina: This enlargement shows the serosa, composed of the germinal epithelium and a thin connective tissue layer, overlying the tunica albuginea. An outer cortex contains follicles of varying sizes, while the inner medulla is composed of loose connective tissue with blood vessels, lymphatic vessels and nerves. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cortex",
+      "explicacao_original": "This enlargement shows the serosa, composed of the germinal epithelium and a thin connective tissue layer, overlying the tunica albuginea. An outer cortex contains follicles of varying sizes, while the inner medulla is composed of loose connective tissue with blood vessels, lymphatic vessels and nerves. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.02.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.02.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This enlargement shows the serosa, composed of the germinal epithelium and a thin connective tissue layer, overlying the tunica albuginea. An outer cortex contains follicles of varying sizes, while the inner medulla is composed of loose connective tissue with blood vessels, lymphatic vessels and nerves. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Medulla",
+      "explicacao_original": "This enlargement shows the serosa, composed of the germinal epithelium and a thin connective tissue layer, overlying the tunica albuginea. An outer cortex contains follicles of varying sizes, while the inner medulla is composed of loose connective tissue with blood vessels, lymphatic vessels and nerves. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.02.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.02.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This enlargement shows the serosa, composed of the germinal epithelium and a thin connective tissue layer, overlying the tunica albuginea. An outer cortex contains follicles of varying sizes, while the inner medulla is composed of loose connective tissue with blood vessels, lymphatic vessels and nerves. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Serosa",
+      "explicacao_original": "The serosal epithelium covering the ovary is called germinal epithelium, so named because it was once thought to be the site of germ cell formation. It is a simple cuboidal epithelium rather than the simple squamous usually found in a serosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.02.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.02.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The serosal epithelium covering the ovary is called germinal epithelium, so named because it was once thought to be the site of germ cell formation. It is a simple cuboidal epithelium rather than the simple squamous usually found in a serosa.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The connective tissue beneath the epithelium is thickened to form the tunica albuginea, a dense connective tissue layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.02.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.02.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.02.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The connective tissue beneath the epithelium is thickened to form the tunica albuginea, a dense connective tissue layer.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Follicles",
+      "explicacao_original": "Small follicles (arrows) are clustered beneath the tunica albuginea, while larger follicles (X) are located deeper in the cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.02.P05.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.02.jpg'. Destaca a estrutura ou conceito 'Follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Small follicles (arrows) are clustered beneath the tunica albuginea, while larger follicles (X) are located deeper in the cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.02.P07.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.02.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-2/, acesso em 2026-08-07."
+    }
+  ]
+}

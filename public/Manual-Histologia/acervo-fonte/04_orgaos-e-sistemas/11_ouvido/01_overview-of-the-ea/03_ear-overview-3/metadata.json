@@ -1,0 +1,63 @@
+{
+  "id": 12128,
+  "titulo": "Overview: inner ear",
+  "titulo_wordpress": "Ear Overview 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Overview of the ear",
+    "Ear Overview 3"
+  ],
+  "descricao_original": "The inner ear is formed by a series of cavernous canals and spaces (the osseous labyrinth) lying protected in the petrous portion of the temporal bone; a fluid, perilymph, fills the osseous labyrinth. Suspended in this labyrinth is the membranous labyrinth, a series of ducts and sacs filled with endolymph. The membranous labyrinth is not demonstrated in this illustration.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.03-fix.jpg",
+      "arquivo": "imagens/base/O.E.O.03-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: inner ear', no setor Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 3. Descricao original da pagina: The inner ear is formed by a series of cavernous canals and spaces (the osseous labyrinth) lying protected in the petrous portion of the temporal bone; a fluid, perilymph, fills the osseous labyrinth. Suspended in this labyrinth is the membranous labyrinth, a series of ducts and sacs filled with endolymph. The membranous labyrinth is not demonstrated in this illustration.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule is the central space of the osseous labyrinth. Its lateral wall contains the oval window in which the foot plate of the stapes is located. The utricle and saccule, portions of the membranous labyrinth, are suspended in the vestibule but are not illustrated here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Vestibule.png",
+      "arquivo": "imagens/marcadores/Vestibule.png",
+      "imagem_base": "imagens/base/O.E.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: inner ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule is the central space of the osseous labyrinth. Its lateral wall contains the oval window in which the foot plate of the stapes is located. The utricle and saccule, portions of the membranous labyrinth, are suspended in the vestibule but are not illustrated here.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stapes",
+      "explicacao_original": "The vestibule is the central space of the osseous labyrinth. Its lateral wall contains the oval window in which the foot plate of the stapes is located. The utricle and saccule, portions of the membranous labyrinth, are suspended in the vestibule but are not illustrated here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Stapes.png",
+      "arquivo": "imagens/marcadores/Stapes.png",
+      "imagem_base": "imagens/base/O.E.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: inner ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Stapes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule is the central space of the osseous labyrinth. Its lateral wall contains the oval window in which the foot plate of the stapes is located. The utricle and saccule, portions of the membranous labyrinth, are suspended in the vestibule but are not illustrated here.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Semicircular canals",
+      "explicacao_original": "The semicircular canals (black arrows), are three tubular spaces of the osseous labyrinth. They communicate with and lie posterolaterally to the vestibule and are oriented in mutually perpendicular planes to each other. A semicircular duct, a portion of the membranous labyrinth, is located in each semicircular canal. An enlargement (red arrows) at one end of each canal houses the ampulla of each semicircular duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Semicircular-canals.png",
+      "arquivo": "imagens/marcadores/Semicircular-canals.png",
+      "imagem_base": "imagens/base/O.E.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: inner ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Semicircular canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The semicircular canals (black arrows), are three tubular spaces of the osseous labyrinth. They communicate with and lie posterolaterally to the vestibule and are oriented in mutually perpendicular planes to each other. A semicircular duct, a portion of the membranous labyrinth, is located in each semicircular canal. An enlargement (red arrows) at one end of each canal houses the ampulla of each semicircular duct.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, communicates with and lies anteromedially to the vestibule. The cochlea is a coiled spiral with 2.5 turns, resembling a snail shell. The cochlear duct is the portion of the membranous labyrinth located within the cochlea.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Cochlea.png",
+      "arquivo": "imagens/marcadores/Cochlea.png",
+      "imagem_base": "imagens/base/O.E.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: inner ear'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, communicates with and lies anteromedially to the vestibule. The cochlea is a coiled spiral with 2.5 turns, resembling a snail shell. The cochlear duct is the portion of the membranous labyrinth located within the cochlea.. Contexto setorial: Órgãos e Sistemas > Ouvido > Overview of the ear > Ear Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/overview-ear/ear-overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

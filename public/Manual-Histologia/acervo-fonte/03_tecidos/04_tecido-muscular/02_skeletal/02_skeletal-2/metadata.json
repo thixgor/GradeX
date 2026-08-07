@@ -1,0 +1,73 @@
+{
+  "id": 241,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 2"
+  ],
+  "descricao_original": "A Masson-stained cross section of skeletal muscle shows clearly the association of connective tissue with the muscle fibers. An endomysium of reticular fibers surrounds individual muscle fibers, which are filled with myofibrils. A portion of the perimysium is visible in the lower right. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-2-new-crop.jpg",
+      "arquivo": "imagens/base/T.M.Sk-2-new-crop.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 2. Descricao original da pagina: A Masson-stained cross section of skeletal muscle shows clearly the association of connective tissue with the muscle fibers. An endomysium of reticular fibers surrounds individual muscle fibers, which are filled with myofibrils. A portion of the perimysium is visible in the lower right. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "Muscle fibers appear as irregular polygons and their cytoplasm is filled with myofibrils. Their nuclei are not visible in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/T.M.Sk2-1a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk2-1a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-2-new-crop.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-2-new-crop.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-2-new-crop.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle fibers appear as irregular polygons and their cytoplasm is filled with myofibrils. Their nuclei are not visible in this image.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myofibrils",
+      "explicacao_original": "Muscle fibers appear as irregular polygons and their cytoplasm is filled with myofibrils. Their nuclei are not visible in this image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/T.M.Sk2-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk2-2a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-2-new-crop.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-2-new-crop.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-2-new-crop.jpg'. Destaca a estrutura ou conceito 'Myofibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle fibers appear as irregular polygons and their cytoplasm is filled with myofibrils. Their nuclei are not visible in this image.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endomysium",
+      "explicacao_original": "The endomysium consists of a meshwork of reticular fibers that surround individual muscle fibers like a sleeve. In addition, the muscle fibers themselves secrete an external lamina that is similar in composition to the basal lamina of epithelial tissues. The external lamina is closely apposed to the endomysium and some consider it to be a component of the endomysium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/T.M.Sk2-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk2-3a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-2-new-crop.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-2-new-crop.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-2-new-crop.jpg'. Destaca a estrutura ou conceito 'Endomysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endomysium consists of a meshwork of reticular fibers that surround individual muscle fibers like a sleeve. In addition, the muscle fibers themselves secrete an external lamina that is similar in composition to the basal lamina of epithelial tissues. The external lamina is closely apposed to the endomysium and some consider it to be a component of the endomysium.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Perimysium",
+      "explicacao_original": "The perimysium, composed of Type I collagen fibers, encloses groups of skeletal muscle fibers, forming functional groups called fascicles. Larger blood vessels and nerves travel in the perimysium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/04/T.M.Sk2-4a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk2-4a-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-2-new-crop.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-2-new-crop.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-2-new-crop.jpg'. Destaca a estrutura ou conceito 'Perimysium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perimysium, composed of Type I collagen fibers, encloses groups of skeletal muscle fibers, forming functional groups called fascicles. Larger blood vessels and nerves travel in the perimysium.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Next image",
+      "explicacao_original": "The electron micrograph in the next image shows the region in the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk2-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-2-new-crop.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.M.Sk-2-new-crop.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-2-new-crop.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The electron micrograph in the next image shows the region in the rectangle.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 2. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-2/, acesso em 2026-08-07."
+    }
+  ]
+}

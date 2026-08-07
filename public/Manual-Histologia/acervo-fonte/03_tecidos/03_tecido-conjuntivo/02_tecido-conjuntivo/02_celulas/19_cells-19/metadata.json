@@ -1,0 +1,84 @@
+{
+  "id": 16833,
+  "titulo": "Lymphocyte",
+  "titulo_wordpress": "Cells 19",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 19"
+  ],
+  "descricao_original": "Lymphocytes are small, spherical cells with rounded, highly heterochromatic nuclei and minimal cytoplasm. Lymphocytes are agranular white blood cells transported via the blood, but are active only after entering connective tissue. Lymphocytes function in the immune response and are classified as either T or B lymphocytes. B lymphocytes differentiate into plasma cells that produce antibodies. B and T lymphocytes can only be distinguished with immunohistochemical staining methods. 1000x, 7000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymphocyte', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Descricao original da pagina: Lymphocytes are small, spherical cells with rounded, highly heterochromatic nuclei and minimal cytoplasm. Lymphocytes are agranular white blood cells transported via the blood, but are active only after entering connective tissue. Lymphocytes function in the immune response and are classified as either T or B lymphocytes. B lymphocytes differentiate into plasma cells that produce antibodies. B and T lymphocytes can only be distinguished with immunohistochemical staining methods. 1000x, 7000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Light microscopy",
+      "explicacao_original": "This image shows numerous lymphocytes in the connective tissue surrounding mammary glands in the breast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-23-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-23.jpg'. Destaca a estrutura ou conceito 'Light microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows numerous lymphocytes in the connective tissue surrounding mammary glands in the breast.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lymphocytes",
+      "explicacao_original": "This image shows numerous lymphocytes in the connective tissue surrounding mammary glands in the breast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-23-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-23.jpg'. Destaca a estrutura ou conceito 'Lymphocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows numerous lymphocytes in the connective tissue surrounding mammary glands in the breast.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mammary glands",
+      "explicacao_original": "This image shows numerous lymphocytes in the connective tissue surrounding mammary glands in the breast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-23-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-23.jpg'. Destaca a estrutura ou conceito 'Mammary glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows numerous lymphocytes in the connective tissue surrounding mammary glands in the breast.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Electron microscopy",
+      "explicacao_original": "A lymphocyte has a distinct, heterochromatic, spherical nucleus and no cytoplasmic granules. This particular lymphocyte has a moderate amount of cytoplasm with organelles, and thus could either be a medium lymphocyte or a B lymphocyte which is beginning its transformation into a plasma cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-23-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-23.jpg'. Destaca a estrutura ou conceito 'Electron microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lymphocyte has a distinct, heterochromatic, spherical nucleus and no cytoplasmic granules. This particular lymphocyte has a moderate amount of cytoplasm with organelles, and thus could either be a medium lymphocyte or a B lymphocyte which is beginning its transformation into a plasma cell.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lymphocyte",
+      "explicacao_original": "A lymphocyte has a distinct, heterochromatic, spherical nucleus and no cytoplasmic granules. This particular lymphocyte has a moderate amount of cytoplasm with organelles, and thus could either be a medium lymphocyte or a B lymphocyte which is beginning its transformation into a plasma cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-23-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-23.jpg'. Destaca a estrutura ou conceito 'Lymphocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lymphocyte has a distinct, heterochromatic, spherical nucleus and no cytoplasmic granules. This particular lymphocyte has a moderate amount of cytoplasm with organelles, and thus could either be a medium lymphocyte or a B lymphocyte which is beginning its transformation into a plasma cell.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nucleus",
+      "explicacao_original": "A lymphocyte has a distinct, heterochromatic, spherical nucleus and no cytoplasmic granules. This particular lymphocyte has a moderate amount of cytoplasm with organelles, and thus could either be a medium lymphocyte or a B lymphocyte which is beginning its transformation into a plasma cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-23-6-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-23.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-23.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-23.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lymphocyte has a distinct, heterochromatic, spherical nucleus and no cytoplasmic granules. This particular lymphocyte has a moderate amount of cytoplasm with organelles, and thus could either be a medium lymphocyte or a B lymphocyte which is beginning its transformation into a plasma cell.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 19. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-19/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": 2953,
+  "titulo": "Neurons",
+  "titulo_wordpress": "Nervous tissue overview 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Visão Geral",
+    "Nervous tissue overview 1"
+  ],
+  "descricao_original": "Nervous tissue is highly specialized to use modifications in membrane electrical potentials to relay signals through the body. The impulse conducting cells are called neurons, and they are maintained structurally and metabolically by a variety of support cells, termed glial cells. Neurons have four functional compartments: the cell body, dendrites, axon and presynaptic terminals. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1.jpg",
+      "arquivo": "imagens/base/T.N.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Neurons', no setor Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 1. Descricao original da pagina: Nervous tissue is highly specialized to use modifications in membrane electrical potentials to relay signals through the body. The impulse conducting cells are called neurons, and they are maintained structurally and metabolically by a variety of support cells, termed glial cells. Neurons have four functional compartments: the cell body, dendrites, axon and presynaptic terminals. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cell body",
+      "explicacao_original": "The cell body (soma, perikaryon) of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic, reflecting the intense activity of these cells. One, two or numerous processes are attached to the cell body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-1-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-1.jpg'. Destaca a estrutura ou conceito 'Cell body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cell body (soma, perikaryon) of a neuron houses the nucleus and is the major synthetic region of the neuron. The nucleus of most nerve cells is large and very euchromatic, reflecting the intense activity of these cells. One, two or numerous processes are attached to the cell body.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dendrites",
+      "explicacao_original": "Most neurons have multiple dendrites, which have a cytoplasm similar to that of the cell body. Dendrites are usually short and branch frequently, tapering as they do so. The large surface area of dendrites enables them to make synaptic contact with numerous axon terminals. Dendrites transmit impulses toward the cell body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-1-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-1.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most neurons have multiple dendrites, which have a cytoplasm similar to that of the cell body. Dendrites are usually short and branch frequently, tapering as they do so. The large surface area of dendrites enables them to make synaptic contact with numerous axon terminals. Dendrites transmit impulses toward the cell body.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axon",
+      "explicacao_original": "Most neurons have a single axon that maintains a fairly uniform diameter. At its termination, the axon branches, forming a terminal arborization. Axons originate from a specialized region of the cell body called the axon hillock and are usually longer than dendrites. Axons transmit impulses away from the cell body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-1-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-1.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most neurons have a single axon that maintains a fairly uniform diameter. At its termination, the axon branches, forming a terminal arborization. Axons originate from a specialized region of the cell body called the axon hillock and are usually longer than dendrites. Axons transmit impulses away from the cell body.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Axon hillock",
+      "explicacao_original": "Most neurons have a single axon that maintains a fairly uniform diameter. At its termination, the axon branches, forming a terminal arborization. Axons originate from a specialized region of the cell body called the axon hillock and are usually longer than dendrites. Axons transmit impulses away from the cell body.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-1-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-1.jpg'. Destaca a estrutura ou conceito 'Axon hillock' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most neurons have a single axon that maintains a fairly uniform diameter. At its termination, the axon branches, forming a terminal arborization. Axons originate from a specialized region of the cell body called the axon hillock and are usually longer than dendrites. Axons transmit impulses away from the cell body.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Presynaptic terminals (boutons)",
+      "explicacao_original": "The terminal branches of axons end in small button-like structures called presynaptic terminals or terminal boutons. These terminals contain neurotransmitter vesicles, which are released to stimulate the next neuron, a muscle cell or a gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-1-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-1.jpg'. Destaca a estrutura ou conceito 'Presynaptic terminals (boutons)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The terminal branches of axons end in small button-like structures called presynaptic terminals or terminal boutons. These terminals contain neurotransmitter vesicles, which are released to stimulate the next neuron, a muscle cell or a gland.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 27384,
+  "titulo": "Venule (pericytic venule)",
+  "titulo_wordpress": "Veins 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Veins",
+    "Veins 4"
+  ],
+  "descricao_original": "Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.V-4A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Venule (pericytic venule)', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 4. Descricao original da pagina: Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-4A-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule (pericytic venule)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-4A.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pericyte nucleus",
+      "explicacao_original": "Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-4A-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule (pericytic venule)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-4A.jpg'. Destaca a estrutura ou conceito 'Pericyte nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pericyte processes",
+      "explicacao_original": "Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-4A-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule (pericytic venule)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-4A.jpg'. Destaca a estrutura ou conceito 'Pericyte processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal lamina",
+      "explicacao_original": "Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-4A-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-4A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-4A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Venule (pericytic venule)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-4A.jpg'. Destaca a estrutura ou conceito 'Basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Post-capillary venules often possess pericytes, multipotential cells with extensive cytoplasmic extensions that extend around the venule. Pericytes have contractile properties and form gap junctions with endothelial cells, with which they share a basal lamina. Pericytes also have additional roles in vessel growth and maintenance. 2500x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-17/, acesso em 2026-08-07."
+    }
+  ]
+}

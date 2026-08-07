@@ -1,0 +1,84 @@
+{
+  "id": 16869,
+  "titulo": "Elastic membrane",
+  "titulo_wordpress": "Fibers 13",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Fibers",
+    "Fibers 13"
+  ],
+  "descricao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic membrane', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Descricao original da pagina: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Respiratory epithelium",
+      "explicacao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-12-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-12-new.jpg'. Destaca a estrutura ou conceito 'Respiratory epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Elastic membrane",
+      "explicacao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-12-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-12-new.jpg'. Destaca a estrutura ou conceito 'Elastic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-12-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-12-new.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-12-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-12-new.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fibroblasts",
+      "explicacao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-12-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-12-new.jpg'. Destaca a estrutura ou conceito 'Fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Fibers-12-6-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Fibers-12-new.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Fibers-12-new.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Fibers-12-new.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A large accumulation of elastic fibers forms an elastic membrane in the connective tissue beneath the epithelium of the trachea. In this section, the elastic fibers are cut in cross section. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Fibers > Fibers 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/fibers/fibers-13/, acesso em 2026-08-07."
+    }
+  ]
+}

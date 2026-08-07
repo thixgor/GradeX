@@ -1,0 +1,95 @@
+{
+  "id": 15715,
+  "titulo": "Testis overview",
+  "titulo_wordpress": "Testis overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Overview of the testis",
+    "Testis overview 1"
+  ],
+  "descricao_original": "The testis is both an exocrine (producing spermatozoa) and an endocrine (producing androgens) gland. This immature testis, cut in cross section, provides an overview of the testis proper, its enclosing tunics, and its location in the scrotum. Also seen are the epididymis and the ductus deferens lying posterior to the testis. Immature testis 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "arquivo": "imagens/base/O.R.M.T.01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Testis overview', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Descricao original da pagina: The testis is both an exocrine (producing spermatozoa) and an endocrine (producing androgens) gland. This immature testis, cut in cross section, provides an overview of the testis proper, its enclosing tunics, and its location in the scrotum. Also seen are the epididymis and the ductus deferens lying posterior to the testis. Immature testis 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Testis proper",
+      "explicacao_original": "The testis proper is the blue, oval mass in the center of the image. The majority of this tissue is composed of the convoluted portions of the seminiferous tubules. At this stage, the seminiferous tubules are developing and not producing sperm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01.P01.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Testis proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis proper is the blue, oval mass in the center of the image. The majority of this tissue is composed of the convoluted portions of the seminiferous tubules. At this stage, the seminiferous tubules are developing and not producing sperm.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The testis is covered by a dense layer of connective tissue, the tunica albuginea (black arrows). Additionally, this layer protrudes into the testis at its posterior border, forming the mediastinum (red arrows and red oval in the illustration). In the adult the mediastinum is flattened against the posterior wall of the testis, as shown in the illustration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.T.01-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01-2-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis is covered by a dense layer of connective tissue, the tunica albuginea (black arrows). Additionally, this layer protrudes into the testis at its posterior border, forming the mediastinum (red arrows and red oval in the illustration). In the adult the mediastinum is flattened against the posterior wall of the testis, as shown in the illustration.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica vaginalis",
+      "explicacao_original": "The testis develops retroperitoneally in the abdomen, and descends into the scrotum. It is covered anteriorly, medially and laterally by peritoneum (serosa), which is called tunica vaginalis. The visceral portion of the tunica (black arrows) overlies tunica albuginea, while the parietal portion (red arrows) lines the internal scrotal wall. Processes vaginalis (X), former peritoneal space, separates the two tunics.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.T.01-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Tunica vaginalis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis develops retroperitoneally in the abdomen, and descends into the scrotum. It is covered anteriorly, medially and laterally by peritoneum (serosa), which is called tunica vaginalis. The visceral portion of the tunica (black arrows) overlies tunica albuginea, while the parietal portion (red arrows) lines the internal scrotal wall. Processes vaginalis (X), former peritoneal space, separates the two tunics.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Scrotum",
+      "explicacao_original": "The testis develops retroperitoneally in the abdomen, and descends into the scrotum. It is covered anteriorly, medially and laterally by peritoneum (serosa), which is called tunica vaginalis. The visceral portion of the tunica (black arrows) overlies tunica albuginea, while the parietal portion (red arrows) lines the internal scrotal wall. Processes vaginalis (X), former peritoneal space, separates the two tunics.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.T.01-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Scrotum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis develops retroperitoneally in the abdomen, and descends into the scrotum. It is covered anteriorly, medially and laterally by peritoneum (serosa), which is called tunica vaginalis. The visceral portion of the tunica (black arrows) overlies tunica albuginea, while the parietal portion (red arrows) lines the internal scrotal wall. Processes vaginalis (X), former peritoneal space, separates the two tunics.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epididymis",
+      "explicacao_original": "The epididymis lies posterior to the testis and is the site of sperm storage and maturation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01.P04.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Epididymis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epididymis lies posterior to the testis and is the site of sperm storage and maturation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ductus deferens",
+      "explicacao_original": "The ductus deferens continues from the duct of the epididymis and can be identified by its thickened, muscular wall.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.T.01-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01-6-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Ductus deferens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ductus deferens continues from the duct of the epididymis and can be identified by its thickened, muscular wall.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Next Image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.01.P06.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.01.P06.png",
+      "imagem_base": "imagens/base/O.R.M.T.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.01A.jpg'. Destaca a estrutura ou conceito 'Next Image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Overview of the testis > Testis overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/overview-testis/testis-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

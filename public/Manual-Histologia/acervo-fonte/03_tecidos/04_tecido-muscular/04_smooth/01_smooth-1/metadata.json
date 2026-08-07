@@ -1,0 +1,53 @@
+{
+  "id": 2789,
+  "titulo": "Smooth muscle",
+  "titulo_wordpress": "Smooth 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Smooth",
+    "Smooth 1"
+  ],
+  "descricao_original": "A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/smooth/smooth-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1a.jpg",
+      "arquivo": "imagens/base/T.M.Sm-1a.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Smooth muscle', no setor Tecidos > Tecido Muscular > Smooth > Smooth 1. Descricao original da pagina: A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nuclei",
+      "explicacao_original": "A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sm-1-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sm-1a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Smooth muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sm-1a.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Smooth > Smooth 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dense irregular connective tissue",
+      "explicacao_original": "A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sm-1-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sm-1a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Smooth muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sm-1a.jpg'. Destaca a estrutura ou conceito 'Dense irregular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Smooth > Smooth 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sm-1-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sm-1a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.M.Sm-1a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Smooth muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sm-1a.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A longitudinal section of smooth muscle shows non-striated, tapering fibers interlaced to form a highly compact tissue. The nuclei of smooth muscle fibers are euchromatic, centrally located and oval shaped. A region of dense irregular connective tissue is present in the lower left portion of the field. 1000x. Contexto setorial: Tecidos > Tecido Muscular > Smooth > Smooth 1. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/smooth/smooth-1/, acesso em 2026-08-07."
+    }
+  ]
+}

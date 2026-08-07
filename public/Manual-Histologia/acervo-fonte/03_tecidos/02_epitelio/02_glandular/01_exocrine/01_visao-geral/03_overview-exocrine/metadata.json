@@ -1,0 +1,135 @@
+{
+  "id": 4242,
+  "titulo": "Secretory units",
+  "titulo_wordpress": "Overview (exocrine) 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Visão Geral",
+    "Overview (exocrine) 3"
+  ],
+  "descricao_original": "This composite image compares the structure of an acinus (left) and a tubule (right). Pancreas 1000x (R), Sublingual salivary gland 600x (L)",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "arquivo": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secretory units', no setor Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Descricao original da pagina: This composite image compares the structure of an acinus (left) and a tubule (right). Pancreas 1000x (R), Sublingual salivary gland 600x (L). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acinus",
+      "explicacao_original": "An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-1-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-1-NEW-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Acinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Gland cells",
+      "explicacao_original": "An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-2-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-2-NEW-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Gland cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "RER",
+      "explicacao_original": "An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-3-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-3-NEW-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Secretory granules (serous)",
+      "explicacao_original": "An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-4-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-4-NEW-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Secretory granules (serous)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumen",
+      "explicacao_original": "An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-5-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-5-NEW-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell. The RER and nucleus are basally located in the cells, while their secretory granules are present in the apical regions. At the center of the acinus is a narrow lumen. Acinar secretions are watery or serous which enter the small central lumen.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Tubules",
+      "explicacao_original": "Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Tubule cells",
+      "explicacao_original": "Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Tubule cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Secretory granules (mucus)",
+      "explicacao_original": "Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-9-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-9-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Secretory granules (mucus)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Lumens",
+      "explicacao_original": "Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-10-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-10-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tubules, as the name indicates, are linear secretory units lined by cuboidal to columnar cells. A number of tubules in longitudinal and cross section are visible in the image. Most tubules secrete mucus and the apical region appears frothy or clear because the mucus is easily extracted during tissue processing. The nuclei are basally located and compressed by the mass of mucus above them. Tubules have a wide lumen to accommodate the thick, mucus secretion.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Polarity",
+      "explicacao_original": "Polarity is a feature of cells in which their organelles are distributed asymmetrically in the cytoplasm. This stable distribution of organelles reflects the differing functions performed in these areas. The secretory products, e.g., enzymes or mucus, are synthesized basally in the RER, packaged into secretory granules that are stored in the apical region of the cells for later release. Polarity is a characteristic feature of exocrine gland cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-11-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Glands.Ex_.Ov-3-11-ping.png",
+      "imagem_base": "imagens/base/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Glands.Ex_.Ov-3-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory units'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Glands.Ex_.Ov-3-NEW.jpg'. Destaca a estrutura ou conceito 'Polarity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Polarity is a feature of cells in which their organelles are distributed asymmetrically in the cytoplasm. This stable distribution of organelles reflects the differing functions performed in these areas. The secretory products, e.g., enzymes or mucus, are synthesized basally in the RER, packaged into secretory granules that are stored in the apical region of the cells for later release. Polarity is a characteristic feature of exocrine gland cells.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-3/, acesso em 2026-08-07."
+    }
+  ]
+}

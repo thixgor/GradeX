@@ -1,0 +1,77 @@
+{
+  "id": 31157,
+  "titulo": "Bronchiole",
+  "titulo_wordpress": "Bronchiole 5A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Conducting",
+    "Bronchiole",
+    "Bronchiole 5A"
+  ],
+  "descricao_original": "As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/",
+  "creditos_identificados": [
+    "Image source: These images were taken of slide in the University of Virginia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-NEW.jpg",
+      "arquivo": "imagens/base/O.R.I.C.B.05A-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bronchiole', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 5A. Descricao original da pagina: As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.05A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.05A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.05A-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cilia",
+      "explicacao_original": "As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.05A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.05A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.05A-NEW.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Goblet cell",
+      "explicacao_original": "As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.05A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.05A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.05A-NEW.jpg'. Destaca a estrutura ou conceito 'Goblet cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.05A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.05A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.05A-NEW.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As bronchioles decrease in diameter, the height of the epithelium transitions from pseudostratified columnar to simple columnar (left) to simple cuboidal (right). Additionally, goblet cells and cilia become less numerous and the overall thickness of the wall decreases. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of slide in the University of Virginia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/UVa-source-ping-plural.png",
+      "arquivo": "imagens/marcadores/UVa-source-ping-plural.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.05A-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.05A-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.05A-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of slide in the University of Virginia collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

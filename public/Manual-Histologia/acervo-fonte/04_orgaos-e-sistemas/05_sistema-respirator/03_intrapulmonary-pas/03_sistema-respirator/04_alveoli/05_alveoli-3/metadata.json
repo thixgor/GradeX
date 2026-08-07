@@ -1,0 +1,95 @@
+{
+  "id": 18760,
+  "titulo": "Alveolus",
+  "titulo_wordpress": "Alveoli 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveoli",
+    "Alveoli 3"
+  ],
+  "descricao_original": "Most of the alveolar surface is lined by an exceedingly thin simple squamous epithelium of Type I cells (pulmonary epithelial cells). Also present in the epithelium are cuboidal Type II cells (septal cells) that bulge into the lumen. Their cytoplasm contains numerous, surfactant-filled secretory granules. A third cell type, the alveolar macrophage, is located in the alveolar lumen. These cells are derived from blood monocytes and migrate from the septal connective tissue into the alveolar space. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "arquivo": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Alveolus', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Descricao original da pagina: Most of the alveolar surface is lined by an exceedingly thin simple squamous epithelium of Type I cells (pulmonary epithelial cells). Also present in the epithelium are cuboidal Type II cells (septal cells) that bulge into the lumen. Their cytoplasm contains numerous, surfactant-filled secretory granules. A third cell type, the alveolar macrophage, is located in the alveolar lumen. These cells are derived from blood monocytes and migrate from the septal connective tissue into the alveolar space. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar lumen",
+      "explicacao_original": "Most of the alveolar surface is lined by an exceedingly thin simple squamous epithelium of Type I cells (pulmonary epithelial cells). Also present in the epithelium are cuboidal Type II cells (septal cells) that bulge into the lumen. Their cytoplasm contains numerous, surfactant-filled secretory granules. A third cell type, the alveolar macrophage, is located in the alveolar lumen. These cells are derived from blood monocytes and migrate from the septal connective tissue into the alveolar space. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-1A-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-1A-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Alveolar lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Most of the alveolar surface is lined by an exceedingly thin simple squamous epithelium of Type I cells (pulmonary epithelial cells). Also present in the epithelium are cuboidal Type II cells (septal cells) that bulge into the lumen. Their cytoplasm contains numerous, surfactant-filled secretory granules. A third cell type, the alveolar macrophage, is located in the alveolar lumen. These cells are derived from blood monocytes and migrate from the septal connective tissue into the alveolar space. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interalveolar septa",
+      "explicacao_original": "The core of the interalveolar septum is composed of elastic and reticular fibers, fibroblasts, alveolar macrophages and an extensive capillary plexus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-6AA-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-6AA-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Interalveolar septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The core of the interalveolar septum is composed of elastic and reticular fibers, fibroblasts, alveolar macrophages and an extensive capillary plexus.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Type I cell",
+      "explicacao_original": "Pulmonary epithelial or type I alveolar cells form a simple squamous epithelium that lines most of the alveolar surface. The cytoplasm of the cells is too thin to be resolved with the light microscope, but occasionally a flattened epithelial nucleus can be seen protruding into the alveolar space. Though Type II cells outnumber Type I cells by nearly two to one, 95% of the alveolar surface is covered by the flattened Type I cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-2AA-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-2AA-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Type I cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pulmonary epithelial or type I alveolar cells form a simple squamous epithelium that lines most of the alveolar surface. The cytoplasm of the cells is too thin to be resolved with the light microscope, but occasionally a flattened epithelial nucleus can be seen protruding into the alveolar space. Though Type II cells outnumber Type I cells by nearly two to one, 95% of the alveolar surface is covered by the flattened Type I cells.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Type II cells",
+      "explicacao_original": "Septal cells (type II alveolar cells) form the remainder of the alveolar lining. These spherical cells bulge into the alveolar space and are the source of surfactant. Their secretory granules, also called lamellar bodies, contain phospholipids which are extracted during routine tissue processing, resulting in their frothy appearance. The surfactant layer reduces surface tension, thus aiding inflation of the alveoli during inspiration and preventing collapse.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-3AA-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-3AA-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Type II cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Septal cells (type II alveolar cells) form the remainder of the alveolar lining. These spherical cells bulge into the alveolar space and are the source of surfactant. Their secretory granules, also called lamellar bodies, contain phospholipids which are extracted during routine tissue processing, resulting in their frothy appearance. The surfactant layer reduces surface tension, thus aiding inflation of the alveoli during inspiration and preventing collapse.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Septal cells (type II alveolar cells) form the remainder of the alveolar lining. These spherical cells bulge into the alveolar space and are the source of surfactant. Their secretory granules, also called lamellar bodies, contain phospholipids which are extracted during routine tissue processing, resulting in their frothy appearance. The surfactant layer reduces surface tension, thus aiding inflation of the alveoli during inspiration and preventing collapse.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-4AA-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-4AA-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Septal cells (type II alveolar cells) form the remainder of the alveolar lining. These spherical cells bulge into the alveolar space and are the source of surfactant. Their secretory granules, also called lamellar bodies, contain phospholipids which are extracted during routine tissue processing, resulting in their frothy appearance. The surfactant layer reduces surface tension, thus aiding inflation of the alveoli during inspiration and preventing collapse.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillaries",
+      "explicacao_original": "An extensive capillary plexus, supplied by branches of the pulmonary artery, facilitates gaseous exchange. Endothelial cell nuclei (X) are visible in some of these capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-7AA-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-7AA-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An extensive capillary plexus, supplied by branches of the pulmonary artery, facilitates gaseous exchange. Endothelial cell nuclei (X) are visible in some of these capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveolar macrophage",
+      "explicacao_original": "Alveolar macrophages are present within the interalveolar septum or lying free in the surfactant layer of the alveolus. They phagocytose particulate matter, such a carbon, that has escaped the cleansing mechanisms of higher passageways and are often referred to as dust cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-5AA-New-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.05-5AA-New-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.05-fix-crop-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.05-fix-crop-flip.jpg'. Destaca a estrutura ou conceito 'Alveolar macrophage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar macrophages are present within the interalveolar septum or lying free in the surfactant layer of the alveolus. They phagocytose particulate matter, such a carbon, that has escaped the cleansing mechanisms of higher passageways and are often referred to as dust cells.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveoli 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveoli-3/, acesso em 2026-08-07."
+    }
+  ]
+}

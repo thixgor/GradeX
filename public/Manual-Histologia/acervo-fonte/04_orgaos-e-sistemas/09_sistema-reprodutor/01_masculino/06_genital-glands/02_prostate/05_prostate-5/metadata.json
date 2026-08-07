@@ -1,0 +1,55 @@
+{
+  "id": 15817,
+  "titulo": "Prostate",
+  "titulo_wordpress": "Prostate 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Genital Glands",
+    "Prostate",
+    "Prostate 5"
+  ],
+  "descricao_original": "Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.jpg",
+      "arquivo": "imagens/base/O.R.M.GG_.P.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Prostate', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 5. Descricao original da pagina: Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glands",
+      "explicacao_original": "Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.05.P01.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.05.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.05.P02.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.05.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Prostatic concretion",
+      "explicacao_original": "Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.GG_.P.05.P03.png",
+      "imagem_base": "imagens/base/O.R.M.GG_.P.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.GG_.P.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Prostate'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.GG_.P.05.jpg'. Destaca a estrutura ou conceito 'Prostatic concretion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Several glands are visible, each lined by simple or pseudostratified columnar epithelium. Prostatic concretions (corpora amylacea) are diagnostic for the prostate. They are probably precipitated secretory product, whose number increases with age. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Genital Glands > Prostate > Prostate 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/genital-glands/prostate/prostate-5/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": 9819,
+  "titulo": "Bone matrix",
+  "titulo_wordpress": "As a tissue 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 9"
+  ],
+  "descricao_original": "The feature that most distinguishes bone from other connective tissues is the mineralized, inorganic component of the matrix, which forms an extremely hard tissue capable of providing support and protection. The inorganic component also prevents diffusion, and thus an extensive system of passageways is required to allow transport of nutrients and respiratory gasses through the matrix. The complexity of the matrix is best appreciated in ground bone specimens as seen here. Compact lamellar bone, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/",
+  "creditos_identificados": [
+    "Image source: Image source > Image from the University of Cincinnati slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "arquivo": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone matrix', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Descricao original da pagina: The feature that most distinguishes bone from other connective tissues is the mineralized, inorganic component of the matrix, which forms an extremely hard tissue capable of providing support and protection. The inorganic component also prevents diffusion, and thus an extensive system of passageways is required to allow transport of nutrients and respiratory gasses through the matrix. The complexity of the matrix is best appreciated in ground bone specimens as seen here. Compact lamellar bone, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lamellae",
+      "explicacao_original": "Lamellae > The matrix of mature bone is organized into lamellae that can be either by arranged concentrically (seen here) or as flattened plates on the surface of a bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.08-NEW-3A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.08-NEW-3A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-Matrix.jpg'. Destaca a estrutura ou conceito 'Lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellae > The matrix of mature bone is organized into lamellae that can be either by arranged concentrically (seen here) or as flattened plates on the surface of a bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteocyte lacunae",
+      "explicacao_original": "Osteocytes occupy small spaces called lacunae that are located between the matrix lamellae. In this preparation, lacunae appear as elongated black spaces. Delicate tunnels in the matrix radiate out from the lacunae, which, in life, contain fine cytoplasmic processes extending from the osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.08-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.08-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-Matrix.jpg'. Destaca a estrutura ou conceito 'Osteocyte lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes occupy small spaces called lacunae that are located between the matrix lamellae. In this preparation, lacunae appear as elongated black spaces. Delicate tunnels in the matrix radiate out from the lacunae, which, in life, contain fine cytoplasmic processes extending from the osteocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Canaliculi",
+      "explicacao_original": "Osteocytes occupy small spaces called lacunae that are located between the matrix lamellae. In this preparation, lacunae appear as elongated black spaces. Delicate tunnels in the matrix radiate out from the lacunae, which, in life, contain fine cytoplasmic processes extending from the osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.8-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.8-NEW-6-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-Matrix.jpg'. Destaca a estrutura ou conceito 'Canaliculi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes occupy small spaces called lacunae that are located between the matrix lamellae. In this preparation, lacunae appear as elongated black spaces. Delicate tunnels in the matrix radiate out from the lacunae, which, in life, contain fine cytoplasmic processes extending from the osteocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Haversian system",
+      "explicacao_original": "Concentric lamellae surround a central space called the Haversian canal and the entire structure is a Haversian system (osteon). Haversian canals contain blood vessels and are lined by endosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.08-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.08-NEW-5-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-Matrix.jpg'. Destaca a estrutura ou conceito 'Haversian system' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Concentric lamellae surround a central space called the Haversian canal and the entire structure is a Haversian system (osteon). Haversian canals contain blood vessels and are lined by endosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "Concentric lamellae surround a central space called the Haversian canal and the entire structure is a Haversian system (osteon). Haversian canals contain blood vessels and are lined by endosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.08-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.08-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-Matrix.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Concentric lamellae surround a central space called the Haversian canal and the entire structure is a Haversian system (osteon). Haversian canals contain blood vessels and are lined by endosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "Image source > Image from the University of Cincinnati slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/Cincinnati-center.png",
+      "arquivo": "imagens/marcadores/Cincinnati-center.png",
+      "imagem_base": "imagens/base/T.C.B.T.9-Matrix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.9-Matrix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.9-Matrix.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image source > Image from the University of Cincinnati slide collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-8/, acesso em 2026-08-07."
+    }
+  ]
+}

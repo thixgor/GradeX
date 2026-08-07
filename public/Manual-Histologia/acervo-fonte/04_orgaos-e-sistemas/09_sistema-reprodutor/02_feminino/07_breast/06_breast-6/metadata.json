@@ -1,0 +1,64 @@
+{
+  "id": 13300,
+  "titulo": "Breast: lactation",
+  "titulo_wordpress": "Breast 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Breast",
+    "Breast 6"
+  ],
+  "descricao_original": "The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.jpg",
+      "arquivo": "imagens/base/O.R.F.B.06.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Breast: lactation', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 6. Descricao original da pagina: The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.06.P01.png",
+      "imagem_base": "imagens/base/O.R.F.B.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.06.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Variation in activity",
+      "explicacao_original": "The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.06.P04.png",
+      "imagem_base": "imagens/base/O.R.F.B.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.06.jpg'. Destaca a estrutura ou conceito 'Variation in activity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interlobular connective tissue",
+      "explicacao_original": "The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.06.P02.png",
+      "imagem_base": "imagens/base/O.R.F.B.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.06.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.06.P03.png",
+      "imagem_base": "imagens/base/O.R.F.B.06.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.F.B.06.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: lactation'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.06.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lactating stage of the breast is characterized by the large amount of glandular parenchyma relative to the connective tissue and by the presence of widely distended acini. Different lobules of the breast are in different stages of milk production and release. The acini and ducts are filled with milk. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-6/, acesso em 2026-08-07."
+    }
+  ]
+}

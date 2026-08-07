@@ -1,0 +1,116 @@
+{
+  "id": 15789,
+  "titulo": "Penis",
+  "titulo_wordpress": "Penis 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Penis",
+    "Penis 1"
+  ],
+  "descricao_original": "A cross section of the penis shows its three cylinders of erectile tissue and the urethra. The paired corpora cavernosa lie dorsally; the corpus spongiosum, lying ventrally, houses the urethra. Thin skin encloses the penis. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/",
+  "creditos_identificados": [
+    "Image source: The image was taken of a slide in the University of Mississippi slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "arquivo": "imagens/base/O.R.M.P.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Penis', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Descricao original da pagina: A cross section of the penis shows its three cylinders of erectile tissue and the urethra. The paired corpora cavernosa lie dorsally; the corpus spongiosum, lying ventrally, houses the urethra. Thin skin encloses the penis. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Corpora cavernosa",
+      "explicacao_original": "The corpora cavernosa are paired cylinders of erectile tissue, composed of venous channels (cavernous spaces) and intervening trabeculae of connective tissue and smooth muscle. The corpora are surrounded by a dense connective tissue layer called the tunica albuginea, that forms an incomplete central partition between the two cylinders.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.P.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P01.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Corpora cavernosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpora cavernosa are paired cylinders of erectile tissue, composed of venous channels (cavernous spaces) and intervening trabeculae of connective tissue and smooth muscle. The corpora are surrounded by a dense connective tissue layer called the tunica albuginea, that forms an incomplete central partition between the two cylinders.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The corpora cavernosa are paired cylinders of erectile tissue, composed of venous channels (cavernous spaces) and intervening trabeculae of connective tissue and smooth muscle. The corpora are surrounded by a dense connective tissue layer called the tunica albuginea, that forms an incomplete central partition between the two cylinders.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.P.01.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P02.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpora cavernosa are paired cylinders of erectile tissue, composed of venous channels (cavernous spaces) and intervening trabeculae of connective tissue and smooth muscle. The corpora are surrounded by a dense connective tissue layer called the tunica albuginea, that forms an incomplete central partition between the two cylinders.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Deep artery",
+      "explicacao_original": "A deep artery supplies each corpus cavernosum. Branches of the deep artery supply either the trabeculae of the corpus, via nutritive arteries during the flaccid state, or the venous channels (cavernous spaces), via helicine arteries during erection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.P.01.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P03.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Deep artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A deep artery supplies each corpus cavernosum. Branches of the deep artery supply either the trabeculae of the corpus, via nutritive arteries during the flaccid state, or the venous channels (cavernous spaces), via helicine arteries during erection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Corpus spongiosum",
+      "explicacao_original": "The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.P.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P04.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Corpus spongiosum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.P.01.P05.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P05.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Urethra",
+      "explicacao_original": "The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.P.01.P06.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P06.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Urethra' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Glands of Littre",
+      "explicacao_original": "The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.P.01.P07.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P07.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Glands of Littre' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus spongiosum is another cylinder of erectile tissue that lies in the ventral midline. Its tunica albuginea is less dense than that surrounding the dorsal corpora, thus ensuring that the urethra it contains will not be occluded during ejaculation. The glands of Littre are mucus-secreting glands that secrete into the urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Thin skin",
+      "explicacao_original": "The penis is covered by a layer of thin skin. The underlying subcutaneous tissue is thickened, lacks adipose tissue and has few sweat glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.P08.png",
+      "arquivo": "imagens/marcadores/O.R.M.P.01.P08.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Thin skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The penis is covered by a layer of thin skin. The underlying subcutaneous tissue is thickened, lacks adipose tissue and has few sweat glands.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "The image was taken of a slide in the University of Mississippi slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Mississippi-source-ping.png",
+      "arquivo": "imagens/marcadores/Mississippi-source-ping.png",
+      "imagem_base": "imagens/base/O.R.M.P.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.M.P.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Penis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.P.01.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image was taken of a slide in the University of Mississippi slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Penis > Penis 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/penis/penis-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": 13741,
+  "titulo": "Vestibular macula",
+  "titulo_wordpress": "Vestibule 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Vestibule",
+    "Vestibule 5"
+  ],
+  "descricao_original": "The image on the left shows a portion of the utricle, the larger membranous chamber in the vestibule, with its receptor, the macula. 30x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "arquivo": "imagens/base/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Vestibular macula', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Descricao original da pagina: The image on the left shows a portion of the utricle, the larger membranous chamber in the vestibule, with its receptor, the macula. 30x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Plane of section",
+      "explicacao_original": "The left image is similar to a plane of section indicated by the double arrow in the illustration on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.V.05.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Plane of section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The left image is similar to a plane of section indicated by the double arrow in the illustration on the right.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Utricle",
+      "explicacao_original": "The utricle is one of the two structures of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05.P02A.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P02A.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Utricle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The utricle is one of the two structures of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Utricular macula",
+      "explicacao_original": "The utricle is one of the two structures of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05.P03A.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P03A.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Utricular macula' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The utricle is one of the two structures of the membranous labyrinth located in the vestibule. A thickening in the epithelial lining of the utricle forms the macula, a neuroepithelial receptor, innervated by the vestibular division of cranial nerve VIII. The macula of the saccule would be identical to that shown here in the utricle.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Hair cells",
+      "explicacao_original": "Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the surface of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05.P04A.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P04A.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Hair cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the surface of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Gel",
+      "explicacao_original": "Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the surface of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05.P05A.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P05A.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Gel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the surface of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Otoliths",
+      "explicacao_original": "Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the surface of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05.P06A.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P06A.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Otoliths' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each macula contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the surface of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ganglion of CN VIII",
+      "explicacao_original": "The sensory cell bodies of the neurons supplying the maculae and cristae ampullares are located adjacent to these receptors. These neurons are part of the vestibular division of the vestibulocochlear nerve, CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05.P07A.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.05.P07A.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.05A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.E.IE_.V.05A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibular macula'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.05A.jpg'. Destaca a estrutura ou conceito 'Ganglion of CN VIII' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sensory cell bodies of the neurons supplying the maculae and cristae ampullares are located adjacent to these receptors. These neurons are part of the vestibular division of the vestibulocochlear nerve, CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-5/, acesso em 2026-08-07."
+    }
+  ]
+}

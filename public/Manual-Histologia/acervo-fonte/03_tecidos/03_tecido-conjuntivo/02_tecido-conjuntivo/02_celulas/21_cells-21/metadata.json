@@ -1,0 +1,64 @@
+{
+  "id": 16837,
+  "titulo": "Plasma cell",
+  "titulo_wordpress": "Cells 21",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 21"
+  ],
+  "descricao_original": "Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-21/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-20.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Plasma cell', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 21. Descricao original da pagina: Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-21/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Rough endoplasmic reticulum",
+      "explicacao_original": "Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-20-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-20.jpg'. Destaca a estrutura ou conceito 'Rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 21. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Golgi apparatus",
+      "explicacao_original": "Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-20-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-20.jpg'. Destaca a estrutura ou conceito 'Golgi apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 21. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Clockface chromatin",
+      "explicacao_original": "Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-20-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-20.jpg'. Destaca a estrutura ou conceito 'Clockface chromatin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 21. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-20-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-20.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Plasma cells have distinctive features that are clearly seen in this electron micrograph: a prominent Golgi; well developed rough endoplasmic reticulum; and a nucleus with large clumps of heterochromatin at the margin of the nucleus (clock-face nucleus). Compare these features with the high magnification light microscopic inset. Plasma cells are derived from B lymphocytes and produce antibodies. 8,000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 21. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-21/, acesso em 2026-08-07."
+    }
+  ]
+}

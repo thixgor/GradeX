@@ -1,0 +1,54 @@
+{
+  "id": 10330,
+  "titulo": "Bone: Volkmann's canal",
+  "titulo_wordpress": "Deposition and Resorption 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 8"
+  ],
+  "descricao_original": "Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.jpg",
+      "arquivo": "imagens/base/T.C.B.D.08.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: Volkmann's canal', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 8. Descricao original da pagina: Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Volkmann's canal",
+      "explicacao_original": "Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.08.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Volkmann's canal'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.08.jpg'. Destaca a estrutura ou conceito 'Volkmann's canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteons",
+      "explicacao_original": "Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.08.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Volkmann's canal'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.08.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Woven bone",
+      "explicacao_original": "Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.08.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.08.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.08.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Volkmann's canal'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.08.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood is carried from the marrow cavity or the periosteum via Volkmann’s canals to the blood vessels in Haversian canals. Volkmann’s canals run perpendicular to osteons and lack concentric lamellae. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 8. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-8/, acesso em 2026-08-07."
+    }
+  ]
+}

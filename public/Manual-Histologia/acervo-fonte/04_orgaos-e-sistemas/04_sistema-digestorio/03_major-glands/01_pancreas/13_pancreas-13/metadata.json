@@ -1,0 +1,86 @@
+{
+  "id": 6984,
+  "titulo": "Pancreas",
+  "titulo_wordpress": "Pancreas 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Pancreas",
+    "Pancreas 13"
+  ],
+  "descricao_original": "These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide from the Virtual Histology Laboratory website (http://www.histologyguide.com)"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pancreas', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Descricao original da pagina: These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Islets of Langerhans",
+      "explicacao_original": "These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-13-1A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-13A.jpg'. Destaca a estrutura ou conceito 'Islets of Langerhans' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Beta cells",
+      "explicacao_original": "These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-13-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-13A.jpg'. Destaca a estrutura ou conceito 'Beta cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Alpha cells",
+      "explicacao_original": "These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-13-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-13A.jpg'. Destaca a estrutura ou conceito 'Alpha cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Capillaries",
+      "explicacao_original": "These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13-4A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-13-4A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-13A.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Acini",
+      "explicacao_original": "These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13-5A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-13-5A-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-13A.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show two special histochemical stains used to distinguish among the different cell types in the islet of Langerhans. The aldehyde fuchsin method (left) stains insulin-secreting beta cells blue. The Gomori’s method (right) stains insulin-secreting beta cells light blue and glucagon-secreting alpha cells pink. Beta cells comprise about 70% of the islet cells, alpha cells about 20%. The remaining somtatostatin-secreting delta cells are not distinguished by these methods. 400x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide from the Virtual Histology Laboratory website (http://www.histologyguide.com)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Virtual-histology-laboratory-sing-png.png",
+      "arquivo": "imagens/marcadores/Virtual-histology-laboratory-sing-png.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.Dig_.MajGl_.Pan-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-13A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide from the Virtual Histology Laboratory website (http://www.histologyguide.com). Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-13/, acesso em 2026-08-07."
+    }
+  ]
+}

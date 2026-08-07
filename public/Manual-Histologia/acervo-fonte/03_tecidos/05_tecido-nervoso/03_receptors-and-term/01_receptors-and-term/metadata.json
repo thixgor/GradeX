@@ -1,0 +1,63 @@
+{
+  "id": 3005,
+  "titulo": "Receptors",
+  "titulo_wordpress": "Receptors and terminals 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Receptors and Terminals",
+    "Receptors and terminals 1"
+  ],
+  "descricao_original": "Receptors convert signals from the internal or external environment into a nervous signal (transduction) and are innervated by sensory, pseudounipolar neurons. Encapsulated receptors are enveloped by fibroblast-like cells and respond to pressure, light touch and vibration. Non-encapsulated receptors are essentially free nerve endings that respond to thermal and noxious (painful) stimuli. Receptors, while found throughout the body, are more numerous in regions such as joints and fingertips. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1.jpg",
+      "arquivo": "imagens/base/T.N.Rec-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Receptors', no setor Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 1. Descricao original da pagina: Receptors convert signals from the internal or external environment into a nervous signal (transduction) and are innervated by sensory, pseudounipolar neurons. Encapsulated receptors are enveloped by fibroblast-like cells and respond to pressure, light touch and vibration. Non-encapsulated receptors are essentially free nerve endings that respond to thermal and noxious (painful) stimuli. Receptors, while found throughout the body, are more numerous in regions such as joints and fingertips. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Meissner's corpuscle",
+      "explicacao_original": "Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of this spring generates action potentials in the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-1-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-1.jpg'. Destaca a estrutura ou conceito 'Meissner's corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of this spring generates action potentials in the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Skin epithelium (epidermis)",
+      "explicacao_original": "Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of this spring generates action potentials in the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-1-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-1.jpg'. Destaca a estrutura ou conceito 'Skin epithelium (epidermis)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of this spring generates action potentials in the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of the spring generates action potentials in the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-1-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-1.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of the spring generates action potentials in the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of the spring generates action potentials in the axon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-1-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-1.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Meissner’s corpuscles, encapsulated sensory receptors located in connective tissue of skin beneath the epithelium (epidermis), provide fine touch discrimination and are most concentrated in finger tips and lips. These corpuscles consist of Schwann cells, spiraling like a spring around an unmyelinated sensory axon. Deformation of the spring generates action potentials in the axon.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-1/, acesso em 2026-08-07."
+    }
+  ]
+}

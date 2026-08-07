@@ -1,0 +1,95 @@
+{
+  "id": 4240,
+  "titulo": "Structure of compound glands",
+  "titulo_wordpress": "Overview (exocrine) 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Visão Geral",
+    "Overview (exocrine) 2"
+  ],
+  "descricao_original": "Most compound glands are macroscopic organs, such as salivary glands, and their secretory portions are subdivided by connective tissue into lobules. Due to their size and complexity, compound glands are drained by a highly-branched duct system. Compound acinar glands typically have more ducts than tubular glands because the tubules can act as their own ducts. This illustration shows the organization of a compound acinar gland.",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "arquivo": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Structure of compound glands', no setor Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Descricao original da pagina: Most compound glands are macroscopic organs, such as salivary glands, and their secretory portions are subdivided by connective tissue into lobules. Due to their size and complexity, compound glands are drained by a highly-branched duct system. Compound acinar glands typically have more ducts than tubular glands because the tubules can act as their own ducts. This illustration shows the organization of a compound acinar gland.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory units",
+      "explicacao_original": "In this example of a compound acinar gland, all the secretory units are acini. Some compound glands have only tubules, while others have a combination of both acini and tubules. An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Secretory units' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this example of a compound acinar gland, all the secretory units are acini. Some compound glands have only tubules, while others have a combination of both acini and tubules. An acinus resembles a grapefruit cut in half, with each grapefruit segment representing an individual cell.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lobules",
+      "explicacao_original": "A lobule is a cluster of secretory units and the ducts that drain them. The space immediately surrounding the secretory units and their ducts is occupied by a loose connective tissue, called intralobular connective tissue. Between the lobules is interlobular connective tissue, a dense connective tissue that also forms partitions or septa within the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Lobules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobule is a cluster of secretory units and the ducts that drain them. The space immediately surrounding the secretory units and their ducts is occupied by a loose connective tissue, called intralobular connective tissue. Between the lobules is interlobular connective tissue, a dense connective tissue that also forms partitions or septa within the gland.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Intralobular connective tissue",
+      "explicacao_original": "A lobule is a cluster of secretory units and the ducts that drain them. The space immediately surrounding the secretory units and their ducts is occupied by a loose connective tissue, called intralobular connective tissue. Between the lobules is interlobular connective tissue, a dense connective tissue that also forms partitions or septa within the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Intralobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobule is a cluster of secretory units and the ducts that drain them. The space immediately surrounding the secretory units and their ducts is occupied by a loose connective tissue, called intralobular connective tissue. Between the lobules is interlobular connective tissue, a dense connective tissue that also forms partitions or septa within the gland.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interlobular connective tissue and septa",
+      "explicacao_original": "A lobule is a cluster of secretory units and the ducts that drain them. The space immediately surrounding the secretory units and their ducts is occupied by a loose connective tissue, called intralobular connective tissue. Between the lobules is interlobular connective tissue, a dense connective tissue that also forms partitions or septa within the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue and septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lobule is a cluster of secretory units and the ducts that drain them. The space immediately surrounding the secretory units and their ducts is occupied by a loose connective tissue, called intralobular connective tissue. Between the lobules is interlobular connective tissue, a dense connective tissue that also forms partitions or septa within the gland.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "Intralobular ducts drain the secretory units and are located within a lobule. They begin with a simple cuboidal epithelial lining. As they join other ducts, they become larger and their epithelium increases in height, becoming simple columnar. The two cross sections at the bottom of the illustration (blue arrows) are examples of these intralobular ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intralobular ducts drain the secretory units and are located within a lobule. They begin with a simple cuboidal epithelial lining. As they join other ducts, they become larger and their epithelium increases in height, becoming simple columnar. The two cross sections at the bottom of the illustration (blue arrows) are examples of these intralobular ducts.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "Interlobular ducts are formed by the convergence of intralobular ducts and they lie in the interlobular connective tissue between lobules. Interlobular ducts are lined by stratified epithelium and anastomose with ducts from other lobules to form the main duct.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interlobular ducts are formed by the convergence of intralobular ducts and they lie in the interlobular connective tissue between lobules. Interlobular ducts are lined by stratified epithelium and anastomose with ducts from other lobules to form the main duct.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Main duct",
+      "explicacao_original": "The main duct receives the larger interlobular ducts and its epithelium gradually assumes the characteristics of the epithelium onto which it empties.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gland_.Ov-2-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Gland_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gland_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Structure of compound glands'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gland_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Main duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The main duct receives the larger interlobular ducts and its epithelium gradually assumes the characteristics of the epithelium onto which it empties.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Visão Geral > Overview (exocrine) 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/overview/overview-exocrine-2/, acesso em 2026-08-07."
+    }
+  ]
+}

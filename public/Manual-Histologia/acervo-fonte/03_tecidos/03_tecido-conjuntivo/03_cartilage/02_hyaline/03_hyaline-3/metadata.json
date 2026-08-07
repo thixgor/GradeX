@@ -1,0 +1,114 @@
+{
+  "id": 11594,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 3"
+  ],
+  "descricao_original": "A higher magnification of the junction of perichondrium with hyaline cartilage is shown in this image. Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer, which is located adjacent to cartilage tissue proper. Trachea 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "arquivo": "imagens/base/T.C.C.H.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Descricao original da pagina: A higher magnification of the junction of perichondrium with hyaline cartilage is shown in this image. Multipotential cells in the fibrous layer of the perichondrium differentiate into chondroblasts in the chondrogenic layer, which is located adjacent to cartilage tissue proper. Trachea 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Perichondrium",
+      "explicacao_original": "The perichondrium surrounds cartilage and consists of two layers, an outer fibrous layer and an inner chondrogenic layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.03-A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03-A-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Perichondrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perichondrium surrounds cartilage and consists of two layers, an outer fibrous layer and an inner chondrogenic layer.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibrous layer",
+      "explicacao_original": "In the fibrous portion of the perichondrium, the nuclei of the cells resemble those of inactive fibroblasts. These cells are multipotential, however, and have the ability to differentiate into several types of adult connective tissue cells, including chondroblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.P01.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P01.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the fibrous portion of the perichondrium, the nuclei of the cells resemble those of inactive fibroblasts. These cells are multipotential, however, and have the ability to differentiate into several types of adult connective tissue cells, including chondroblasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chondrogenic layer",
+      "explicacao_original": "Chondroblasts in the chondrogenic layer secrete cartilage matrix around themselves, becoming chondrocytes and increasing cartilage thickness by appositional growth, i.e., growth at the surface. The exact point at which a chondroblast becomes a chondrocyte is not a well defined junction. The transition between the inactive, flattened cells to plump, secretory chondroblasts to spherical chondrocytes is demonstrated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.P02.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P02.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Chondrogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondroblasts in the chondrogenic layer secrete cartilage matrix around themselves, becoming chondrocytes and increasing cartilage thickness by appositional growth, i.e., growth at the surface. The exact point at which a chondroblast becomes a chondrocyte is not a well defined junction. The transition between the inactive, flattened cells to plump, secretory chondroblasts to spherical chondrocytes is demonstrated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Chondroblasts",
+      "explicacao_original": "Chondroblasts in the chondrogenic layer secrete cartilage matrix around themselves, becoming chondrocytes and increasing cartilage thickness by appositional growth, i.e., growth at the surface. The exact point at which a chondroblast becomes a chondrocyte is not a well defined junction. The transition between the inactive, flattened cells to plump, secretory chondroblasts to spherical chondrocytes is demonstrated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.P03.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P03.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Chondroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondroblasts in the chondrogenic layer secrete cartilage matrix around themselves, becoming chondrocytes and increasing cartilage thickness by appositional growth, i.e., growth at the surface. The exact point at which a chondroblast becomes a chondrocyte is not a well defined junction. The transition between the inactive, flattened cells to plump, secretory chondroblasts to spherical chondrocytes is demonstrated.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hyaline cartilage",
+      "explicacao_original": "The mature hyaline cartilage mass consists of chondrocytes, both individually and in groups (isogenous groups), surrounded by a glassy extracellular matrix. Regions of the matrix stain pink to blue-purple due to differences in the molecular components of these regions. The exact location where the chondrogenic layer becomes cartilage proper is difficult to pinpoint because the two layers blend imperceptibly with each other. Cartilage is avascular and thus chondrocytes are nourished by diffusion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.P04.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P04.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Hyaline cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mature hyaline cartilage mass consists of chondrocytes, both individually and in groups (isogenous groups), surrounded by a glassy extracellular matrix. Regions of the matrix stain pink to blue-purple due to differences in the molecular components of these regions. The exact location where the chondrogenic layer becomes cartilage proper is difficult to pinpoint because the two layers blend imperceptibly with each other. Cartilage is avascular and thus chondrocytes are nourished by diffusion.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Matrix",
+      "explicacao_original": "The mature hyaline cartilage mass consists of chondrocytes, both individually and in groups (isogenous groups), surrounded by a glassy extracellular matrix. Regions of the matrix stain pink to blue-purple due to differences in the molecular components of these regions. The exact location where the chondrogenic layer becomes cartilage proper is difficult to pinpoint because the two layers blend imperceptibly with each other. Cartilage is avascular and thus chondrocytes are nourished by diffusion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.03-7-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03-7-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mature hyaline cartilage mass consists of chondrocytes, both individually and in groups (isogenous groups), surrounded by a glassy extracellular matrix. Regions of the matrix stain pink to blue-purple due to differences in the molecular components of these regions. The exact location where the chondrogenic layer becomes cartilage proper is difficult to pinpoint because the two layers blend imperceptibly with each other. Cartilage is avascular and thus chondrocytes are nourished by diffusion.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "When chondroblasts have completely surrounded themselves by matrix they become chondrocytes and are located in potential spaces called lacunae. Chondrocytes continue to secrete matrix which provides growth of the cartilage from within. This type of growth is called interstitial growth and is analogous to bread dough rising. Despite the fact that the matrix is firm and rubbery, is it sufficiently flexible to allow for expansion of the cartilage mass from within.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.03.P05A.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P05A.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When chondroblasts have completely surrounded themselves by matrix they become chondrocytes and are located in potential spaces called lacunae. Chondrocytes continue to secrete matrix which provides growth of the cartilage from within. This type of growth is called interstitial growth and is analogous to bread dough rising. Despite the fact that the matrix is firm and rubbery, is it sufficiently flexible to allow for expansion of the cartilage mass from within.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Isogenous groups",
+      "explicacao_original": "Chondrocytes divide within their lacunae forming isogenous groups. Continued matrix deposition by these cells disperses them, adding to the interstitial growth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.P06.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P06.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Isogenous groups' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chondrocytes divide within their lacunae forming isogenous groups. Continued matrix deposition by these cells disperses them, adding to the interstitial growth.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "Clear spheres within these cells are lipid droplets.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.03.P05B.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.03.P05B.png",
+      "imagem_base": "imagens/base/T.C.C.H.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.H.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.03.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Clear spheres within these cells are lipid droplets.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-3/, acesso em 2026-08-07."
+    }
+  ]
+}

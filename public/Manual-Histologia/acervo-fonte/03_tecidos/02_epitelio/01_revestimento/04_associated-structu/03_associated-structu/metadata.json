@@ -1,0 +1,104 @@
+{
+  "id": 3937,
+  "titulo": "Basement membrane",
+  "titulo_wordpress": "Associated structures 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 3"
+  ],
+  "descricao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Basement membrane', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Descricao original da pagina: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelial cell",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Epithelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hemidesmosomes",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Hemidesmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Attachment plaques",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Attachment plaques' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Keratin filaments",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Keratin filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lamina lucida",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Lamina lucida' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lamina densa",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Lamina densa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Anchoring fibrils",
+      "explicacao_original": "This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-3-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-3-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-3-bright.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.-3-bright.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Basement membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-3-bright.jpg'. Destaca a estrutura ou conceito 'Anchoring fibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph of human skin shows the details of the basement membrane of an epithelium that is exposed to significant physical force. Numerous hemidesmosomes, which anchor the basal surface of the epithelial cells to the basal lamina, are present. Associated keratin filaments insert into the attachment plaques of the hemidesmosomes. Also visible are prominent anchoring fibrils that secure the epithelium to the underlying connective tissue. 45,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 3. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-3/, acesso em 2026-08-07."
+    }
+  ]
+}

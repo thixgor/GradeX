@@ -1,0 +1,106 @@
+{
+  "id": 12735,
+  "titulo": "Uterus",
+  "titulo_wordpress": "Uterus 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 2"
+  ],
+  "descricao_original": "The image on the far left shows a section through the entire wall of the uterus (10x); the panels to the right show regions of the wall at higher magnification. The uterine wall consists of an endometrium, similar to a mucosa; a myometrium, analogous to muscularis externa; and a perimetrium, that is either a serosa or an adventitia depending on its location. The endometrium, influenced by ovarian hormones, changes during the menstrual cycle, in preparation for implantation of the embryo.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/",
+  "creditos_identificados": [
+    "Image source: Images was taken of a slide in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "arquivo": "imagens/base/Uterus-low.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Descricao original da pagina: The image on the far left shows a section through the entire wall of the uterus (10x); the panels to the right show regions of the wall at higher magnification. The uterine wall consists of an endometrium, similar to a mucosa; a myometrium, analogous to muscularis externa; and a perimetrium, that is either a serosa or an adventitia depending on its location. The endometrium, influenced by ovarian hormones, changes during the menstrual cycle, in preparation for implantation of the embryo.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Endometrium",
+      "explicacao_original": "The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Endometrium.png",
+      "arquivo": "imagens/marcadores/Endometrium.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Endometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Epithelium.png",
+      "arquivo": "imagens/marcadores/Epithelium.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Uterine stroma",
+      "explicacao_original": "The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Stroma.png",
+      "arquivo": "imagens/marcadores/Stroma.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Uterine stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Uterine glands",
+      "explicacao_original": "The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Glands.png",
+      "arquivo": "imagens/marcadores/Glands.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Uterine glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Interface with myometrium",
+      "explicacao_original": "The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Interface.png",
+      "arquivo": "imagens/marcadores/Interface.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Interface with myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endometrium lines the uterus and consists of a simple columnar epithelium and its lamina propria, called uterine stroma. Uterine glands project inward from the epithelium and extend to the interface with the myometrium. Uterine glands exhibit different morphologies depending on changing hormonal influences during the menstrual (uterine) cycle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Myometrium",
+      "explicacao_original": "The myometrium forms a thick layer composed of smooth muscle. Muscle fascicles are highly interlaced allowing for coordinated and efficient contractions during menstruation and childbirth. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Myometrium.png",
+      "arquivo": "imagens/marcadores/Myometrium.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The myometrium forms a thick layer composed of smooth muscle. Muscle fascicles are highly interlaced allowing for coordinated and efficient contractions during menstruation and childbirth. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Perimetrium",
+      "explicacao_original": "The perimetrium consists of a thin layer of connective tissue on the surface of the uterus (adventitia) or a serosa where it is covered by visceral periosteum. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Perimetrium.png",
+      "arquivo": "imagens/marcadores/Perimetrium.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Perimetrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perimetrium consists of a thin layer of connective tissue on the surface of the uterus (adventitia) or a serosa where it is covered by visceral periosteum. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "Images was taken of a slide in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/08/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Uterus-low.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/08/Uterus-low.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus'. Deve ser sobreposta, sem redimensionamento independente, a 'Uterus-low.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Images was taken of a slide in the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-2/, acesso em 2026-08-07."
+    }
+  ]
+}

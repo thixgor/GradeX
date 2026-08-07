@@ -1,0 +1,63 @@
+{
+  "id": 2166,
+  "titulo": "Meiosis I: Telophase",
+  "titulo_wordpress": "Meiosis 6",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Meiose",
+    "Meiosis 6"
+  ],
+  "descricao_original": "As in mitosis, the nuclear envelope reforms during telophase. The resultant nuclei contain one replicated chromosome of each homologous pair; sister chromatids remain attached. This separation of a homologous pair reduces the number of chromosomes in daughter cells from 2N (diploid) to 1N (haploid). Therefore, meiosis I is called the reductional division.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/meiosis/meiosis-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6.jpg",
+      "arquivo": "imagens/base/C.CD_.Mei-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meiosis I: Telophase', no setor Células > Divisão Celular > Meiose > Meiosis 6. Descricao original da pagina: As in mitosis, the nuclear envelope reforms during telophase. The resultant nuclei contain one replicated chromosome of each homologous pair; sister chromatids remain attached. This separation of a homologous pair reduces the number of chromosomes in daughter cells from 2N (diploid) to 1N (haploid). Therefore, meiosis I is called the reductional division.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chromsomes",
+      "explicacao_original": "As in mitosis, the nuclear envelope reforms during telophase. The resultant nuclei contain one replicated chromosome of each homologous pair; sister chromatids remain attached. This separation of a homologous pair reduces the number of chromosomes in daughter cells from 2N (diploid) to 1N (haploid). Therefore, meiosis I is called the reductional division.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-6-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-6.jpg'. Destaca a estrutura ou conceito 'Chromsomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As in mitosis, the nuclear envelope reforms during telophase. The resultant nuclei contain one replicated chromosome of each homologous pair; sister chromatids remain attached. This separation of a homologous pair reduces the number of chromosomes in daughter cells from 2N (diploid) to 1N (haploid). Therefore, meiosis I is called the reductional division.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear envelopes",
+      "explicacao_original": "As in mitosis, the nuclear envelope reforms during telophase. The resultant nuclei contain one replicated chromosome of each homologous pair; sister chromatids remain attached. This separation of a homologous pair reduces the number of chromosomes in daughter cells from 2N (diploid) to 1N (haploid). Therefore, meiosis I is called the reductional division.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-6-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-6.jpg'. Destaca a estrutura ou conceito 'Nuclear envelopes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As in mitosis, the nuclear envelope reforms during telophase. The resultant nuclei contain one replicated chromosome of each homologous pair; sister chromatids remain attached. This separation of a homologous pair reduces the number of chromosomes in daughter cells from 2N (diploid) to 1N (haploid). Therefore, meiosis I is called the reductional division.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cleavage furrow",
+      "explicacao_original": "The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-6-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-6.jpg'. Destaca a estrutura ou conceito 'Cleavage furrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Contractile ring",
+      "explicacao_original": "The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-6-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis I: Telophase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-6.jpg'. Destaca a estrutura ou conceito 'Contractile ring' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cleavage furrow, marking the eventual separation site of the daughter cells, is formed by a contractile ring composed of actin and myosin filaments. Interaction between the filaments tightens the ring and eventually pinches the cell into two daughter cells.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-6/, acesso em 2026-08-07."
+    }
+  ]
+}

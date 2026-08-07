@@ -1,0 +1,144 @@
+{
+  "id": 15710,
+  "titulo": "Subdivisions",
+  "titulo_wordpress": "Male overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Overview of the male reproductive system",
+    "Male overview 1"
+  ],
+  "descricao_original": "The male reproductive system consists of four main subdivisions: the testis, producing haploid spermatozoa and male sex hormones; ducts, that conduct sperm away from the testis to the exterior; accessory genital glands, that produce seminal fluid; and the penis, that serves to deposit the ejaculate into the female.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "arquivo": "imagens/base/O.R.M.O.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Subdivisions', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Descricao original da pagina: The male reproductive system consists of four main subdivisions: the testis, producing haploid spermatozoa and male sex hormones; ducts, that conduct sperm away from the testis to the exterior; accessory genital glands, that produce seminal fluid; and the penis, that serves to deposit the ejaculate into the female.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Testis stroma",
+      "explicacao_original": "The testis is surrounded by a dense connective tissue capsule, the tunica albuginea (black arrows). Connective tissue, projecting inward from its posterior surface, forms the mediastinum (red oval), through which blood vessels and ducts enter and/or exit the testis. Septa (blue arrows) extend between the capsule and the mediastinum, dividing the testis into lobules. In this simplified drawing, only their connections with the tunica albuginea are shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.P02-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P02-1.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Testis stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testis is surrounded by a dense connective tissue capsule, the tunica albuginea (black arrows). Connective tissue, projecting inward from its posterior surface, forms the mediastinum (red oval), through which blood vessels and ducts enter and/or exit the testis. Septa (blue arrows) extend between the capsule and the mediastinum, dividing the testis into lobules. In this simplified drawing, only their connections with the tunica albuginea are shown.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Testis proper",
+      "explicacao_original": "The paired testes are both endocrine and exocrine glands. Each gland contains seminiferous tubules, divided into convoluted portions (blue arrows), where sperm are formed (exocrine function), and straight portions (red arrows) that transport sperm toward the mediastinum. Leydig cells produce male sex hormones (endocrine function) and are located in the connective tissue surrounding the tubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P01.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Testis proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paired testes are both endocrine and exocrine glands. Each gland contains seminiferous tubules, divided into convoluted portions (blue arrows), where sperm are formed (exocrine function), and straight portions (red arrows) that transport sperm toward the mediastinum. Leydig cells produce male sex hormones (endocrine function) and are located in the connective tissue surrounding the tubules.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Genital ducts",
+      "explicacao_original": "Genital ducts transport sperm produced in the testis to the exterior of the body. In order, they consist of intratesticular ducts, ducts in the epididymis (where sperm is stored and matures), ductus deferens, ejaculatory duct, and the urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.O.01.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P03.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Genital ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Genital ducts transport sperm produced in the testis to the exterior of the body. In order, they consist of intratesticular ducts, ducts in the epididymis (where sperm is stored and matures), ductus deferens, ejaculatory duct, and the urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intratesticular ducts",
+      "explicacao_original": "Sperm leaves the straight portions of the seminiferous tubules to enter the rete testis (red arrows) located in the mediastinum of the testis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.O.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P04.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Intratesticular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sperm leaves the straight portions of the seminiferous tubules to enter the rete testis (red arrows) located in the mediastinum of the testis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epididymal ducts",
+      "explicacao_original": "An epididymis lies posterior to each testis. Ducts in the epididymis consist of 15-20 efferent ducts (blue arrows) that are coiled into cone shapes in the head of the epididymis. Efferent ducts anastomose to form the duct of the epididymis (red arrows), a single, highly coiled tube that fills the remainder of the head and the entirety of the body and tail of the epididymis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.O.01.P05.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P05.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Epididymal ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An epididymis lies posterior to each testis. Ducts in the epididymis consist of 15-20 efferent ducts (blue arrows) that are coiled into cone shapes in the head of the epididymis. Efferent ducts anastomose to form the duct of the epididymis (red arrows), a single, highly coiled tube that fills the remainder of the head and the entirety of the body and tail of the epididymis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ductus deferens",
+      "explicacao_original": "A ductus deferens (blue arrows) continues from each duct of the epididymis, ascends through the inguinal canal, enters the peritoneal cavity and descends into the pelvis where it comes to lie posterior to the urinary bladder (X). Near its termination the ductus deferens enlarges as the ampulla (red arrow) and is joined by the duct from a seminal vesicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.O.01.P06.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P06.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Ductus deferens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A ductus deferens (blue arrows) continues from each duct of the epididymis, ascends through the inguinal canal, enters the peritoneal cavity and descends into the pelvis where it comes to lie posterior to the urinary bladder (X). Near its termination the ductus deferens enlarges as the ampulla (red arrow) and is joined by the duct from a seminal vesicle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ejaculatory duct",
+      "explicacao_original": "The ampulla portion of each ductus deferens joins with the duct of a seminal vesicle to form an ejaculatory duct (blue arrow). The paired ejaculatory ducts travel through the prostate gland to terminate in the prostatic urethra, a single midline structure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.O.01.P07.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P07.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Ejaculatory duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ampulla portion of each ductus deferens joins with the duct of a seminal vesicle to form an ejaculatory duct (blue arrow). The paired ejaculatory ducts travel through the prostate gland to terminate in the prostatic urethra, a single midline structure.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Urethra",
+      "explicacao_original": "The urethra carries urine but also transports sperm and seminal fluid during ejaculation. The portions of the urethra that transport the ejaculate are illustrated here. The prostatic urethra (blue arrow) is located in the prostate gland; the membranous urethra (red arrow) passes through the urogenital diaphragm; the penile urethra (green arrows) is located in corpus spongiosum of the penis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.O.01.P08.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P08.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Urethra' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urethra carries urine but also transports sperm and seminal fluid during ejaculation. The portions of the urethra that transport the ejaculate are illustrated here. The prostatic urethra (blue arrow) is located in the prostate gland; the membranous urethra (red arrow) passes through the urogenital diaphragm; the penile urethra (green arrows) is located in corpus spongiosum of the penis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Genital glands",
+      "explicacao_original": "Three major glands contribute to seminal fluid. Paired seminal vesicles (blue arrow), lie posterior to the urinary bladder (X); the duct of each joins the ampulla of the ductus deferens, to form an ejaculatory duct. The prostate (red arrow), a large single gland inferior to the urinary bladder, secretes into the prostatic urethra. Paired bulbourethral glands (green arrow) secrete into the beginning of the penile urethra.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.P09.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P09.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Genital glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three major glands contribute to seminal fluid. Paired seminal vesicles (blue arrow), lie posterior to the urinary bladder (X); the duct of each joins the ampulla of the ductus deferens, to form an ejaculatory duct. The prostate (red arrow), a large single gland inferior to the urinary bladder, secretes into the prostatic urethra. Paired bulbourethral glands (green arrow) secrete into the beginning of the penile urethra.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Penis",
+      "explicacao_original": "The penis consists of paired dorsal bodies, corpora cavernosa (blue arrows), and a single, ventral corpus spongiosum (red arrows) that houses the penile urethra. Cavernous spaces in these bodies form erectile tissue, becoming engorged with blood during erection so that the ejaculate (sperm and glandular secretions) can be intromitted into the female during intercourse.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.P10.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P10.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Penis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The penis consists of paired dorsal bodies, corpora cavernosa (blue arrows), and a single, ventral corpus spongiosum (red arrows) that houses the penile urethra. Cavernous spaces in these bodies form erectile tissue, becoming engorged with blood during erection so that the ejaculate (sperm and glandular secretions) can be intromitted into the female during intercourse.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Urinary bladder",
+      "explicacao_original": "The urinary bladder is located superior to the prostate gland. The urethra, draining the bladder, passes through the prostate gland, where it is joined by ducts of that gland and by the two ejaculatory ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.P11.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P11.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Urinary bladder' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The urinary bladder is located superior to the prostate gland. The urethra, draining the bladder, passes through the prostate gland, where it is joined by ducts of that gland and by the two ejaculatory ducts.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Begin again",
+      "explicacao_original": "The male reproductive system consists of four main subdivisions: the testis, producing haploid spermatozoa and male sex hormones; ducts, that conduct sperm away from the testis to the exterior; accessory genital glands, that produce seminal fluid; and the penis, that serves to deposit the ejaculate into the female.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.P12-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.O.01.P12-1.png",
+      "imagem_base": "imagens/base/O.R.M.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Subdivisions'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.O.01.jpg'. Destaca a estrutura ou conceito 'Begin again' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The male reproductive system consists of four main subdivisions: the testis, producing haploid spermatozoa and male sex hormones; ducts, that conduct sperm away from the testis to the exterior; accessory genital glands, that produce seminal fluid; and the penis, that serves to deposit the ejaculate into the female.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Overview of the male reproductive system > Male overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/overview-male-reproductive/male-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

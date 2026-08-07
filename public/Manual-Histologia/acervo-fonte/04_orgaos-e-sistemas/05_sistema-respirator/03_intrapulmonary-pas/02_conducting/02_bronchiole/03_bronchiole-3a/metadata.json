@@ -1,0 +1,107 @@
+{
+  "id": 18450,
+  "titulo": "Bronchiole",
+  "titulo_wordpress": "Bronchiole 3A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Conducting",
+    "Bronchiole",
+    "Bronchiole 3A"
+  ],
+  "descricao_original": "Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "arquivo": "imagens/base/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bronchiole', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Descricao original da pagina: Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Bronchiole",
+      "explicacao_original": "Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchioles often appear constricted due to postmortem contraction of the prominent smooth muscle layer. Similar to the previous image, this bronchiole is lined by a ciliated, pseudostratified columnar epithelium. Note the absence of both cartilage plates and glands. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "Bronchioles lack supporting cartilage plates and often appear in tissue sections with a highly folded mucosa which results from postmortem contraction of the smooth muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchioles lack supporting cartilage plates and often appear in tissue sections with a highly folded mucosa which results from postmortem contraction of the smooth muscle.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Alveoli",
+      "explicacao_original": "The bronchiole is surrounded by alveoli, indicating that it is an intrapulmonary structure. However, none of the alveoli communicate with the lumen of the bronchiole, indicating that these alveoli are not a component of the bronchiolar wall and that the bronchiole, therefore, cannot participate in gas exchange. A bronchiole is a component part of the conducting portion of the respiratory system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-6-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bronchiole is surrounded by alveoli, indicating that it is an intrapulmonary structure. However, none of the alveoli communicate with the lumen of the bronchiole, indicating that these alveoli are not a component of the bronchiolar wall and that the bronchiole, therefore, cannot participate in gas exchange. A bronchiole is a component part of the conducting portion of the respiratory system.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bronchial blood vessels",
+      "explicacao_original": "Bronchial blood vessels lie within the wall of and supply the tissues of this bronchiole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.B.03-NEW-7-ping.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Bronchial blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial blood vessels lie within the wall of and supply the tissues of this bronchiole.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/O.R.I.C.B.03A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.C.B.03A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.B.03A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Bronchiole > Bronchiole 3A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/bronchiole/bronchiole-2/, acesso em 2026-08-07."
+    }
+  ]
+}

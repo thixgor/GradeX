@@ -1,0 +1,44 @@
+{
+  "id": 16923,
+  "titulo": "Reticular connective tissue",
+  "titulo_wordpress": "Reticular 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Special",
+    "Reticular",
+    "Reticular 1"
+  ],
+  "descricao_original": "Reticular connective tissue is composed of a meshwork of reticular fibers (type III collagen) in an open arrangement. This special connective tissue forms the stroma for hemopoietic tissues and lymphoid structures and organs, except the thymus. These reticular fibers are secreted by reticular cells, which surround the fibers. Lymph node 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/special/reticular/reticular-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-1.jpg",
+      "arquivo": "imagens/base/T.CT_.Special.Retic-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Reticular connective tissue', no setor Tecidos > Tecido Conjuntivo > Special > Reticular > Reticular 1. Descricao original da pagina: Reticular connective tissue is composed of a meshwork of reticular fibers (type III collagen) in an open arrangement. This special connective tissue forms the stroma for hemopoietic tissues and lymphoid structures and organs, except the thymus. These reticular fibers are secreted by reticular cells, which surround the fibers. Lymph node 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/reticular/reticular-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Reticular fibers",
+      "explicacao_original": "Reticular fibers are composed of Type III collagen and are a component of most connective tissues. However, in hemopoietic tissues and lymphoid structures and organs, they constitute the majority of the stroma and are produced by reticular cells. In other tissues, reticular fibers can also be produced by fibroblasts, Schwann cells and smooth muscle cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Retic-1-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Retic-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Reticular connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Retic-1.jpg'. Destaca a estrutura ou conceito 'Reticular fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Reticular fibers are composed of Type III collagen and are a component of most connective tissues. However, in hemopoietic tissues and lymphoid structures and organs, they constitute the majority of the stroma and are produced by reticular cells. In other tissues, reticular fibers can also be produced by fibroblasts, Schwann cells and smooth muscle cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Reticular > Reticular 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/reticular/reticular-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lymphoid tissue",
+      "explicacao_original": "In addition to supporting lymphoid tissue, the open meshwork of reticular tissue allows for percolation of tissue fluid and lymph around the lymphoid cells for antigen surveillance and initiation of the immune response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.CT_.Special.Retic-1-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.Special.Retic-1-2A-ping.png",
+      "imagem_base": "imagens/base/T.CT_.Special.Retic-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.Special.Retic-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Reticular connective tissue'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.Special.Retic-1.jpg'. Destaca a estrutura ou conceito 'Lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In addition to supporting lymphoid tissue, the open meshwork of reticular tissue allows for percolation of tissue fluid and lymph around the lymphoid cells for antigen surveillance and initiation of the immune response.. Contexto setorial: Tecidos > Tecido Conjuntivo > Special > Reticular > Reticular 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/special/reticular/reticular-1/, acesso em 2026-08-07."
+    }
+  ]
+}

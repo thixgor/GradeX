@@ -1,0 +1,73 @@
+{
+  "id": 3082,
+  "titulo": "Meninges",
+  "titulo_wordpress": "Meninges 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Meninges",
+    "Meninges 3"
+  ],
+  "descricao_original": "This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/meninges/meninges-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3.jpg",
+      "arquivo": "imagens/base/T.N.Men-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meninges', no setor Tecidos > Tecido Nervoso > Meninges > Meninges 3. Descricao original da pagina: This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spinal cord",
+      "explicacao_original": "This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-3-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-3.jpg'. Destaca a estrutura ou conceito 'Spinal cord' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pia mater",
+      "explicacao_original": "This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-3-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-3.jpg'. Destaca a estrutura ou conceito 'Pia mater' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-3-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-3.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myelinated axons",
+      "explicacao_original": "This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-3-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-3.jpg'. Destaca a estrutura ou conceito 'Myelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Glial cell nuclei",
+      "explicacao_original": "This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Men-3-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Men-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Men-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meninges'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Men-3.jpg'. Destaca a estrutura ou conceito 'Glial cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This section shows the surface of a neonatal rat spinal cord and the surrounding pia mater. The dura mater and arachnoid layers have been removed. The pia mater lies directly on the surface of the spinal cord and accompanies blood vessels that penetrate the neural tissue. The pia is thicker in the neonate (shown here) than it will be in the adult. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Meninges > Meninges 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/meninges/meninges-3/, acesso em 2026-08-07."
+    }
+  ]
+}

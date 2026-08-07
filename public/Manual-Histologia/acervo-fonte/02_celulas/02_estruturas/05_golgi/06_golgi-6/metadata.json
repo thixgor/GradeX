@@ -1,0 +1,133 @@
+{
+  "id": 1576,
+  "titulo": "Golgi apparatus",
+  "titulo_wordpress": "Golgi 6",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Golgi",
+    "Golgi 6"
+  ],
+  "descricao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/golgi/golgi-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "arquivo": "imagens/base/C.S.Go-6A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Golgi apparatus', no setor Células > Estruturas > Golgi > Golgi 6. Descricao original da pagina: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Golgi complexes",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Golgi complexes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cis face",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Cis face' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mid-Golgi region",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Mid-Golgi region' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Trans face",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Trans face' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Trans Golgi network",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-5-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Trans Golgi network' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-6-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Mitochondrion",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-7-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Mitochondrion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Lysosome",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-8-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-8-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Lysosome' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Polysomes",
+      "explicacao_original": "The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-9-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-9-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Polysomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Golgi consists of stacks of smooth, flattened membranous sacs (cisternae), usually located near the nucleus. Newly synthesized proteins are transferred from the RER by transport vesicles, which fuse with the forming, or cis, face of the Golgi. From there, proteins move through the mid-Golgi where they are modified, and eventually exit in vesicles from the maturing, or trans, face. The resultant collection of vesicles, along with a network of microtubules, form the trans-Golgi network. The microtubules provide the tracks along which the vesicles are transported throughout the cell. 25,000x. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Plasma membranes",
+      "explicacao_original": "The plasma membranes of the cells can be seen running diagonally through the micrograph.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-10-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-10-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Plasma membranes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The plasma membranes of the cells can be seen running diagonally through the micrograph.. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Illustration of the Golgi apparatus",
+      "explicacao_original": "This overlay drawing of the Golgi apparatus shows the relationship of its components.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Go-6-11-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Go-6-11-ping.png",
+      "imagem_base": "imagens/base/C.S.Go-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Go-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Golgi apparatus'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Go-6A.jpg'. Destaca a estrutura ou conceito 'Illustration of the Golgi apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This overlay drawing of the Golgi apparatus shows the relationship of its components.. Contexto setorial: Células > Estruturas > Golgi > Golgi 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/golgi/golgi-6/, acesso em 2026-08-07."
+    }
+  ]
+}

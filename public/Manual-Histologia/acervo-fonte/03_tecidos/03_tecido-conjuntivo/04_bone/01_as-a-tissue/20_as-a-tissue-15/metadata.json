@@ -1,0 +1,84 @@
+{
+  "id": 9833,
+  "titulo": "Bone matrix: remodeling",
+  "titulo_wordpress": "As a tissue 15",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 15"
+  ],
+  "descricao_original": "This cross section through a developing bone shows both lamellar and woven bone. The central portion is composed of circular osteons mixed with areas of woven bone. The bone is increasing in diameter by the addition of flattened lamellae on either side of this central region. The marrow cavity, visible to the far left, is lined by endosteum and contains red marrow. Lamellae are difficult to distinguish in this decalcified bone tissue. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "arquivo": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone matrix: remodeling', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Descricao original da pagina: This cross section through a developing bone shows both lamellar and woven bone. The central portion is composed of circular osteons mixed with areas of woven bone. The bone is increasing in diameter by the addition of flattened lamellae on either side of this central region. The marrow cavity, visible to the far left, is lined by endosteum and contains red marrow. Lamellae are difficult to distinguish in this decalcified bone tissue. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Osteocytes are visible throughout this tissue and their pattern of distribution is a good indicator of the type of bone in which they are located.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.14-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.15-fix-USE.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes are visible throughout this tissue and their pattern of distribution is a good indicator of the type of bone in which they are located.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Woven bone",
+      "explicacao_original": "Areas of woven bone are still present in the center of this image, displaying a more amorphous structure. The osteocytes are rounder compared to lamellar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.14-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-NEW-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.15-fix-USE.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Areas of woven bone are still present in the center of this image, displaying a more amorphous structure. The osteocytes are rounder compared to lamellar bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamellar bone",
+      "explicacao_original": "Concentrically arranged lamellae form osteons in the central region of the bone. Bone surfaces are covered or lined by flattened lamellae that are arranged circumferentially. In lamellar bone, osteocytes are more flattened, located between lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.14-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-NEW-3-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.15-fix-USE.jpg'. Destaca a estrutura ou conceito 'Lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Concentrically arranged lamellae form osteons in the central region of the bone. Bone surfaces are covered or lined by flattened lamellae that are arranged circumferentially. In lamellar bone, osteocytes are more flattened, located between lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteons",
+      "explicacao_original": "Concentrically arranged lamellae form osteons in the central region of the bone. Bone surfaces are covered or lined by flattened lamellae that are arranged circumferentially. In lamellar bone, osteocytes are more flattened, located between lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.14-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.15-fix-USE.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Concentrically arranged lamellae form osteons in the central region of the bone. Bone surfaces are covered or lined by flattened lamellae that are arranged circumferentially. In lamellar bone, osteocytes are more flattened, located between lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "Concentrically arranged lamellae form osteons in the central region of the bone. Bone surfaces are covered or lined by flattened lamellae that are arranged circumferentially. In lamellar bone, osteocytes are more flattened, located between lamellae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.14-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-NEW-5-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.15-fix-USE.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Concentrically arranged lamellae form osteons in the central region of the bone. Bone surfaces are covered or lined by flattened lamellae that are arranged circumferentially. In lamellar bone, osteocytes are more flattened, located between lamellae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Circumferential lamellae",
+      "explicacao_original": "The interior and exterior surfaces are covered by lamellae of bone deposited in flat sheets, rather than being arranged in cylindrical Haversian systems. The exterior is covered by outer circumferential lamellae (black arrow); the interior is lined by inner circumferential lamellae (green arrow). These lamellae are laid down by the periosteum and the endosteum, respectively.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.B.T.14-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-NEW-6-ping.png",
+      "imagem_base": "imagens/base/T.C.B.T.15-fix-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.15-fix-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.15-fix-USE.jpg'. Destaca a estrutura ou conceito 'Circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interior and exterior surfaces are covered by lamellae of bone deposited in flat sheets, rather than being arranged in cylindrical Haversian systems. The exterior is covered by outer circumferential lamellae (black arrow); the interior is lined by inner circumferential lamellae (green arrow). These lamellae are laid down by the periosteum and the endosteum, respectively.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 15. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/as-a-tissue-14/, acesso em 2026-08-07."
+    }
+  ]
+}

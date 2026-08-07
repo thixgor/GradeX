@@ -1,0 +1,53 @@
+{
+  "id": 3050,
+  "titulo": "Peripheral nerve: Investments",
+  "titulo_wordpress": "Peripheral nerve 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 1"
+  ],
+  "descricao_original": "The peripheral nervous system, located outside the central nervous system, consists of peripheral nerves, as well as their ganglia, nerve endings and ensheathments. Individual axons are surrounded by an endoneurium, not easily seen at this magnification. Groups of axons form a fascicle enclosed by a perineurium. Groups of fascicles form major nerve trunks enclosed by an epineurium. 100x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1.jpg",
+      "arquivo": "imagens/base/T.N.PN-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve: Investments', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 1. Descricao original da pagina: The peripheral nervous system, located outside the central nervous system, consists of peripheral nerves, as well as their ganglia, nerve endings and ensheathments. Individual axons are surrounded by an endoneurium, not easily seen at this magnification. Groups of axons form a fascicle enclosed by a perineurium. Groups of fascicles form major nerve trunks enclosed by an epineurium. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nerve fascicles",
+      "explicacao_original": "The peripheral nervous system, located outside the central nervous system, consists of peripheral nerves, as well as their ganglia, nerve endings and ensheathments. Individual axons are surrounded by an endoneurium, not easily seen at this magnification. Groups of axons form a fascicle enclosed by a perineurium. Groups of fascicles form major nerve trunks enclosed by an epineurium. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-1-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve: Investments'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-1.jpg'. Destaca a estrutura ou conceito 'Nerve fascicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The peripheral nervous system, located outside the central nervous system, consists of peripheral nerves, as well as their ganglia, nerve endings and ensheathments. Individual axons are surrounded by an endoneurium, not easily seen at this magnification. Groups of axons form a fascicle enclosed by a perineurium. Groups of fascicles form major nerve trunks enclosed by an epineurium. 100x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Perineurium",
+      "explicacao_original": "The perineurial cells form a compact wrapping around fascicles that contributes to the protective blood-nerve barrier. These cells are squamous, exhibiting epithelial features, such as individual basal laminae and tight junctions. However, they also contract, possessing large numbers of actin filaments, and synthesize collagen. Thus, they also resemble smooth muscle cells and fibroblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-1-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve: Investments'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-1.jpg'. Destaca a estrutura ou conceito 'Perineurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perineurial cells form a compact wrapping around fascicles that contributes to the protective blood-nerve barrier. These cells are squamous, exhibiting epithelial features, such as individual basal laminae and tight junctions. However, they also contract, possessing large numbers of actin filaments, and synthesize collagen. Thus, they also resemble smooth muscle cells and fibroblasts.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Epineurium",
+      "explicacao_original": "The epineurium consists of a dense irregular connective tissue of collagen bundles that blends with the surrounding connective tissue. Epineurium surrounds larger trunks of peripheral nerves and is lost as peripheral nerves decrease in size.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-1-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve: Investments'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-1.jpg'. Destaca a estrutura ou conceito 'Epineurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The epineurium consists of a dense irregular connective tissue of collagen bundles that blends with the surrounding connective tissue. Epineurium surrounds larger trunks of peripheral nerves and is lost as peripheral nerves decrease in size.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 1. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-1/, acesso em 2026-08-07."
+    }
+  ]
+}

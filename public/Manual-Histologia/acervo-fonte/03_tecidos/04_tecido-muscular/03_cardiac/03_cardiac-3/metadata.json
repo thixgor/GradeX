@@ -1,0 +1,95 @@
+{
+  "id": 2709,
+  "titulo": "Cardiac muscle",
+  "titulo_wordpress": "Cardiac 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Cardiac",
+    "Cardiac 3"
+  ],
+  "descricao_original": "Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/",
+  "creditos_identificados": [
+    "Image source: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "arquivo": "imagens/base/T.M.C.-3A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cardiac muscle', no setor Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Descricao original da pagina: Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C-3A-1a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-3A-1a-ping.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fiber branching",
+      "explicacao_original": "Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C-3A-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-3A-2a-ping.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Fiber branching' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C-3A-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-3A-3a-ping.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Striations",
+      "explicacao_original": "Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C-3A-4a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-3A-4a-ping.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Striations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intercalated discs",
+      "explicacao_original": "Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C-3A-5a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-3A-5a-ping.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Intercalated discs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cardiac muscle fibers are unique in that they branch and interlace. This hematoxylin and eosin stained, longitudinal section shows cardiac muscle fibers forming a feltwork in the myocardium of the heart. Cardiac muscle fibers are striated, though the cross striations are not as prominent as in skeletal muscle fibers. 400x. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lipofuscin pigment",
+      "explicacao_original": "Lipofuscin is a pigment residue of lysosomal digestion and appears as fine, membrane-bound yellowish-brown granules in the cytoplasm. Lipofuscin is composed of oxidized lipids and proteins that accumulate in cells during normal aging. Lipofuscin is particularly abundant in long-lived cells such as these muscle fibers and neurons.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C-3A-6a-ping.png",
+      "arquivo": "imagens/marcadores/T.M.C-3A-6a-ping.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Lipofuscin pigment' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lipofuscin is a pigment residue of lysosomal digestion and appears as fine, membrane-bound yellowish-brown granules in the cytoplasm. Lipofuscin is composed of oxidized lipids and proteins that accumulate in cells during normal aging. Lipofuscin is particularly abundant in long-lived cells such as these muscle fibers and neurons.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/Calvo.png",
+      "arquivo": "imagens/marcadores/Calvo.png",
+      "imagem_base": "imagens/base/T.M.C.-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.C.-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cardiac muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.C.-3A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.. Contexto setorial: Tecidos > Tecido Muscular > Cardiac > Cardiac 3. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/cardiac/cardiac-3/, acesso em 2026-08-07."
+    }
+  ]
+}

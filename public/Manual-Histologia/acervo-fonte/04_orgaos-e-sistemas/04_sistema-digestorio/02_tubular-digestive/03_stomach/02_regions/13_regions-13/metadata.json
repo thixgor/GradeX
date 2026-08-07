@@ -1,0 +1,115 @@
+{
+  "id": 6886,
+  "titulo": "Gastro-duodenal junction",
+  "titulo_wordpress": "Regions 13",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 13"
+  ],
+  "descricao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Gastro-duodenal junction', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Descricao original da pagina: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pyloric stomach",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Pyloric stomach' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sheet gland",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Sheet gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pyloric glands",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Pyloric glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Duodenum",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Duodenum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Villi",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Brunner’s glands (submucosal glands)",
+      "explicacao_original": "At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-13-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-13-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Gastro-duodenal junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-13-USE.jpg'. Destaca a estrutura ou conceito 'Brunner’s glands (submucosal glands)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At the gastro-duodenal junction, the mucus-secreting, simple columnar epithelium (sheet gland) of the pylorus changes to a simple columnar epithelium of absorptive cells (enterocytes) and goblet cells in the duodenum. Additionally, the duodenum can be differentiated by its villi and by submucosal gland (Brunner’s glands) in the submucosa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 13. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-13/, acesso em 2026-08-07."
+    }
+  ]
+}

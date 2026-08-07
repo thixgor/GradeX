@@ -1,0 +1,117 @@
+{
+  "id": 29474,
+  "titulo": "Root stage of tooth development - Crown region",
+  "titulo_wordpress": "Tooth development 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 11"
+  ],
+  "descricao_original": "Root development occurs after crown formation and determines the eventual shape of the root. The area of the image on the right is indicated by the rectangle in the image to the left. 10x (l), 400x (r)",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide in the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "arquivo": "imagens/base/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Root stage of tooth development - Crown region', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Descricao original da pagina: Root development occurs after crown formation and determines the eventual shape of the root. The area of the image on the right is indicated by the rectangle in the image to the left. 10x (l), 400x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gingiva",
+      "explicacao_original": "Root development occurs after crown formation and determines the eventual shape of the root. The area of the image on the right is indicated by the rectangle in the image to the left. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Gingiva-11.png",
+      "arquivo": "imagens/marcadores/Gingiva-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Gingiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Root development occurs after crown formation and determines the eventual shape of the root. The area of the image on the right is indicated by the rectangle in the image to the left. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Enamel",
+      "explicacao_original": "The green shading in this image indicates the location of enamel, which is lost during tissue preparation in this demineralized specimen. Enamel is produced by ameloblasts that secrete an organic matrix that quickly becomes mineralized with hydroxyapatite crystals of calcium phosphate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Enamel-11.png",
+      "arquivo": "imagens/marcadores/Enamel-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The green shading in this image indicates the location of enamel, which is lost during tissue preparation in this demineralized specimen. Enamel is produced by ameloblasts that secrete an organic matrix that quickly becomes mineralized with hydroxyapatite crystals of calcium phosphate.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ameloblasts",
+      "explicacao_original": "The green shading in this image indicates the location of enamel, which is lost during tissue preparation in this demineralized specimen. Enamel is produced by ameloblasts that secrete an organic matrix that quickly becomes mineralized with hydroxyapatite crystals of calcium phosphate.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Ameloblasts-11.png",
+      "arquivo": "imagens/marcadores/Ameloblasts-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Ameloblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The green shading in this image indicates the location of enamel, which is lost during tissue preparation in this demineralized specimen. Enamel is produced by ameloblasts that secrete an organic matrix that quickly becomes mineralized with hydroxyapatite crystals of calcium phosphate.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Odontoblasts",
+      "explicacao_original": "Odontoblasts are located around the outer margin of the pulp organ and secrete the organic matrix of dentine, called predentin, from their apical surface. Predentin is pale staining compared with the mineralized dentine above it and in spanned by processes of odontoblasts called Tomes’ fibers. Tomes’ fibers extend into the dentinal tubules toward the enamel and cementum. A layer of predentin is present throughout life.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Odontoblasts-11.png",
+      "arquivo": "imagens/marcadores/Odontoblasts-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Odontoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts are located around the outer margin of the pulp organ and secrete the organic matrix of dentine, called predentin, from their apical surface. Predentin is pale staining compared with the mineralized dentine above it and in spanned by processes of odontoblasts called Tomes’ fibers. Tomes’ fibers extend into the dentinal tubules toward the enamel and cementum. A layer of predentin is present throughout life.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Predentin",
+      "explicacao_original": "Odontoblasts are located around the outer margin of the pulp organ and secrete the organic matrix of dentine, called predentin, from their apical surface. Predentin is pale staining compared with the mineralized dentine above it and in spanned by processes of odontoblasts called Tomes’ fibers. Tomes’ fibers extend into the dentinal tubules toward the enamel and cementum. A layer of predentin is present throughout life.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Predentin-11.png",
+      "arquivo": "imagens/marcadores/Predentin-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Predentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Odontoblasts are located around the outer margin of the pulp organ and secrete the organic matrix of dentine, called predentin, from their apical surface. Predentin is pale staining compared with the mineralized dentine above it and in spanned by processes of odontoblasts called Tomes’ fibers. Tomes’ fibers extend into the dentinal tubules toward the enamel and cementum. A layer of predentin is present throughout life.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin comprises the majority of the hard tissue of the tooth and is 70% mineralized, compared with 96% in enamel. Dentin is the first hard tissue deposited during tooth development.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dentine-11.png",
+      "arquivo": "imagens/marcadores/Dentine-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin comprises the majority of the hard tissue of the tooth and is 70% mineralized, compared with 96% in enamel. Dentin is the first hard tissue deposited during tooth development.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Pulp organ",
+      "explicacao_original": "Ectomesenchymal cells of the dental papillae differentiate into the dental pulp organ which will form the dental pulp containing odontoblast cell bodies, nerves, and numerous blood vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Pulp-organ-11.png",
+      "arquivo": "imagens/marcadores/Pulp-organ-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Pulp organ' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ectomesenchymal cells of the dental papillae differentiate into the dental pulp organ which will form the dental pulp containing odontoblast cell bodies, nerves, and numerous blood vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Ectomesenchymal cells of the dental papillae differentiate into the dental pulp organ which will form the dental pulp containing odontoblast cell bodies, nerves, and numerous blood vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Blood-vessels-11.png",
+      "arquivo": "imagens/marcadores/Blood-vessels-11.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Ectomesenchymal cells of the dental papillae differentiate into the dental pulp organ which will form the dental pulp containing odontoblast cell bodies, nerves, and numerous blood vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide in the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Root-stage-10-main-black.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Root-stage-10-main-black.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Root stage of tooth development - Crown region'. Deve ser sobreposta, sem redimensionamento independente, a 'Root-stage-10-main-black.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide in the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-11/, acesso em 2026-08-07."
+    }
+  ]
+}

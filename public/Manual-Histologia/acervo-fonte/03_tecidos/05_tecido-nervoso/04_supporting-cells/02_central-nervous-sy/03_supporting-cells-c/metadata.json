@@ -1,0 +1,54 @@
+{
+  "id": 3040,
+  "titulo": "Oligodendrocytes",
+  "titulo_wordpress": "Supporting cells CNS 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Central Nervous System",
+    "Supporting cells CNS 3"
+  ],
+  "descricao_original": "Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3.jpg",
+      "arquivo": "imagens/base/T.N.SuppCNS-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oligodendrocytes', no setor Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 3. Descricao original da pagina: Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Oligodendrocyte",
+      "explicacao_original": "Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-3-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-3.jpg'. Destaca a estrutura ou conceito 'Oligodendrocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Astrocytes",
+      "explicacao_original": "Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-3-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-3.jpg'. Destaca a estrutura ou conceito 'Astrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pyramidal neuron",
+      "explicacao_original": "Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppCNS-3-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppCNS-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppCNS-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oligodendrocytes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppCNS-3.jpg'. Destaca a estrutura ou conceito 'Pyramidal neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Satellite oligodendrocytes are located in grey matter of the CNS, adjacent to nerve cell bodies, such as this pyramidal neuron in the cerebral cortex. Also present in this region are protoplasmic astrocytes. The oligodendrocyte nucleus can be distinguished from the astrocyte nucleus by its smaller size and more heterochromatic staining.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Central Nervous System > Supporting cells CNS 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/central-nervous-system/supporting-cells-cns-3/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "id": 27184,
+  "titulo": "Magnification and resolution",
+  "titulo_wordpress": "Tissue preparation 9",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 9"
+  ],
+  "descricao_original": "The final image produced by a microscope entails both magnification and resolution. Magnification refers to the amount of enlargement of the specimen; resolution refers to the ability of a microscope to distinguish closely spaced structures as distinct objects.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8.jpg",
+      "arquivo": "imagens/base/HB-TP-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Magnification and resolution', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 9. Descricao original da pagina: The final image produced by a microscope entails both magnification and resolution. Magnification refers to the amount of enlargement of the specimen; resolution refers to the ability of a microscope to distinguish closely spaced structures as distinct objects.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Magnification",
+      "explicacao_original": "These images compare the appearance of mitochondria at the maximum magnification of the light microscope (1000x) (above) with that seen by the electron microscopy at 45,000x (below). In the electron micrograph, the mitochondria are larger, but importantly, because of the higher resolving power of the electron microscope, they are visible as individual structures (even within clumps) and their internal structure is revealed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-8-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Magnification and resolution'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-8.jpg'. Destaca a estrutura ou conceito 'Magnification' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of mitochondria at the maximum magnification of the light microscope (1000x) (above) with that seen by the electron microscopy at 45,000x (below). In the electron micrograph, the mitochondria are larger, but importantly, because of the higher resolving power of the electron microscope, they are visible as individual structures (even within clumps) and their internal structure is revealed.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "These images compare the appearance of mitochondria at the maximum magnification of the light microscope (1000x) (above) with that seen by the electron microscopy at 45,000x (below). In the electron micrograph, the mitochondria are larger, but importantly, because of the higher resolving power of the electron microscope, they are visible as individual structures (even within clumps) and their internal structure is revealed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-8-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Magnification and resolution'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-8.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of mitochondria at the maximum magnification of the light microscope (1000x) (above) with that seen by the electron microscopy at 45,000x (below). In the electron micrograph, the mitochondria are larger, but importantly, because of the higher resolving power of the electron microscope, they are visible as individual structures (even within clumps) and their internal structure is revealed.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Resolution",
+      "explicacao_original": "Resolution, a numeric quantification, is defined as the minimum distance at which two objects must be separated in order to be seen as individual structures. This property is fundamentally based on the wavelength of the illumination, with shorter wavelengths providing greater resolution.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-8-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Magnification and resolution'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-8.jpg'. Destaca a estrutura ou conceito 'Resolution' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Resolution, a numeric quantification, is defined as the minimum distance at which two objects must be separated in order to be seen as individual structures. This property is fundamentally based on the wavelength of the illumination, with shorter wavelengths providing greater resolution.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Non-resolved structures",
+      "explicacao_original": "Longer wavelength illumination, e.g., white light, is unable to pass between these two objects and thus they appear to be overlapping in the final image. For light microscopy, objects must be separated by more than 200 nm in order to be distinguished as separate structures.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8-4-pingA.png",
+      "arquivo": "imagens/marcadores/HB-TP-8-4-pingA.png",
+      "imagem_base": "imagens/base/HB-TP-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Magnification and resolution'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-8.jpg'. Destaca a estrutura ou conceito 'Non-resolved structures' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Longer wavelength illumination, e.g., white light, is unable to pass between these two objects and thus they appear to be overlapping in the final image. For light microscopy, objects must be separated by more than 200 nm in order to be distinguished as separate structures.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Resolved structures",
+      "explicacao_original": "Shorter wavelength illumination, e.g., an electron beam, is able to pass between these two objects and thus they appear as distinct structures in the final image. Resolving power is a major advantage of electron microscopy where objects can be as close as 1.0 nanometer and still can be distinguished as separate structures. The wavelength of an electron can be up to 100,000 times shorter than that of visible light.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8-5A-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-8-5A-ping.png",
+      "imagem_base": "imagens/base/HB-TP-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Magnification and resolution'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-8.jpg'. Destaca a estrutura ou conceito 'Resolved structures' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Shorter wavelength illumination, e.g., an electron beam, is able to pass between these two objects and thus they appear as distinct structures in the final image. Resolving power is a major advantage of electron microscopy where objects can be as close as 1.0 nanometer and still can be distinguished as separate structures. The wavelength of an electron can be up to 100,000 times shorter than that of visible light.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 9. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-9/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": 16885,
+  "titulo": "Connective tissue proper classification overview",
+  "titulo_wordpress": "Overview 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Classification",
+    "Visão Geral",
+    "Overview 2"
+  ],
+  "descricao_original": "The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Connective tissue proper classification overview', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Descricao original da pagina: The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Loose connective tissue",
+      "explicacao_original": "Loose connective tissue is characterized by numerous connective tissue cells, abundant ground substance and delicate collagen, reticular and elastic fibers. Loose connective tissue is more highly vascularized than dense and because of its porosity, allows for diffusion and cell migration, particularly for immune surveillance. Loose connective tissue also provides delicate padding between tissues and around organs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-6-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Loose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Loose connective tissue is characterized by numerous connective tissue cells, abundant ground substance and delicate collagen, reticular and elastic fibers. Loose connective tissue is more highly vascularized than dense and because of its porosity, allows for diffusion and cell migration, particularly for immune surveillance. Loose connective tissue also provides delicate padding between tissues and around organs.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dense connective tissue",
+      "explicacao_original": "Dense connective tissue is characterized by relatively few cell numbers and types (mostly fibroblasts), reduced ground substance and abundant collagen fiber bundles. Dense connective tissue is found where greater strength and support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-7-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-7-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Dense connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dense connective tissue is characterized by relatively few cell numbers and types (mostly fibroblasts), reduced ground substance and abundant collagen fiber bundles. Dense connective tissue is found where greater strength and support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Collagen bundles",
+      "explicacao_original": "The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Collagen bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Connective tissue cells",
+      "explicacao_original": "The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Connective tissue cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Class_.OV-2-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Class_.OV-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Class_.OV-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper classification overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Class_.OV-2.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of connective tissue proper varies according to the needs of the tissue. Loose connective tissue allows for diffusion of nutrients and migration of immune cells as wells as providing delicate padding beneath epithelia and around glands and vessels. Dense connective tissue is found where greater strength or support is needed, such as the deep layers of the skin and walls of organs. It also forms tendons and ligaments. Skin 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Classification > Visão Geral > Overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/classification/overview/overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": 6799,
+  "titulo": "Parotid gland",
+  "titulo_wordpress": "Major salivary glands 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 8"
+  ],
+  "descricao_original": "Serous secretions are released into the lumen of the acinus and continue into intercalated ducts. Intercalated ducts are initially lined by simple squamous epithelium which quickly becomes simple cuboidal. Intercalated ducts are smaller in diameter than the acini. The point where two acini empty into an intercalated duct is visible in this image. 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-8.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Parotid gland', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 8. Descricao original da pagina: Serous secretions are released into the lumen of the acinus and continue into intercalated ducts. Intercalated ducts are initially lined by simple squamous epithelium which quickly becomes simple cuboidal. Intercalated ducts are smaller in diameter than the acini. The point where two acini empty into an intercalated duct is visible in this image. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serous acini",
+      "explicacao_original": "Serous secretions are released into the lumen of the acinus and continue into the smaller of the intralobular ducts, the intercalated ducts. Intercalated ducts are initially lined by simple squamous epithelium which quickly becomes simple cuboidal. Intercalated ducts are smaller in diameter than the acini. The point where two acini empty into an intercalated duct is visible in this image. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-8.jpg'. Destaca a estrutura ou conceito 'Serous acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Serous secretions are released into the lumen of the acinus and continue into the smaller of the intralobular ducts, the intercalated ducts. Intercalated ducts are initially lined by simple squamous epithelium which quickly becomes simple cuboidal. Intercalated ducts are smaller in diameter than the acini. The point where two acini empty into an intercalated duct is visible in this image. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acinar lumens",
+      "explicacao_original": "Serous secretions are released into the lumen of the acinus and continue into the smaller of the intralobular ducts, the intercalated ducts. Intercalated ducts are initially lined by simple squamous epithelium which quickly becomes simple cuboidal. Intercalated ducts are smaller in diameter than the acini. The point where two acini empty into an intercalated duct is visible in this image. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-8.jpg'. Destaca a estrutura ou conceito 'Acinar lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Serous secretions are released into the lumen of the acinus and continue into the smaller of the intralobular ducts, the intercalated ducts. Intercalated ducts are initially lined by simple squamous epithelium which quickly becomes simple cuboidal. Intercalated ducts are smaller in diameter than the acini. The point where two acini empty into an intercalated duct is visible in this image. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Intercalated duct",
+      "explicacao_original": "The lining cells of Intercalated ducts add bicarbonate to the secretory product and absorb chloride ions from it. Because it is composed entirely of acini, the parotid has more numerous ducts than the other salivary glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-8.jpg'. Destaca a estrutura ou conceito 'Intercalated duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lining cells of Intercalated ducts add bicarbonate to the secretory product and absorb chloride ions from it. Because it is composed entirely of acini, the parotid has more numerous ducts than the other salivary glands.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Junction of acini with intercalated duct",
+      "explicacao_original": "The lining cells of Intercalated ducts add bicarbonate to the secretory product and absorb chloride ions from it. Because it is composed entirely of acini, the parotid has more numerous ducts than the other salivary glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-8.jpg'. Destaca a estrutura ou conceito 'Junction of acini with intercalated duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lining cells of Intercalated ducts add bicarbonate to the secretory product and absorb chloride ions from it. Because it is composed entirely of acini, the parotid has more numerous ducts than the other salivary glands.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secretory product",
+      "explicacao_original": "The lining cells of Intercalated ducts add bicarbonate to the secretory product and absorb chloride ions from it. Because it is composed entirely of acini, the parotid has more numerous ducts than the other salivary glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-8.jpg'. Destaca a estrutura ou conceito 'Secretory product' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lining cells of Intercalated ducts add bicarbonate to the secretory product and absorb chloride ions from it. Because it is composed entirely of acini, the parotid has more numerous ducts than the other salivary glands.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-8/, acesso em 2026-08-07."
+    }
+  ]
+}

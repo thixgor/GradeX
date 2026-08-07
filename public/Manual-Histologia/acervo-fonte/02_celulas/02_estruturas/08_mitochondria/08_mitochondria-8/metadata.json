@@ -1,0 +1,73 @@
+{
+  "id": 1815,
+  "titulo": "Mitochondria",
+  "titulo_wordpress": "Mitochondria 8",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Mitochondria",
+    "Mitochondria 8"
+  ],
+  "descricao_original": "The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8.jpg",
+      "arquivo": "imagens/base/C.S.Mito-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Mitochondria', no setor Células > Estruturas > Mitochondria > Mitochondria 8. Descricao original da pagina: The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-8-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-8.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 8. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tubular cristae",
+      "explicacao_original": "The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-8-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-8.jpg'. Destaca a estrutura ou conceito 'Tubular cristae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 8. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "SER",
+      "explicacao_original": "The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-8-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-8.jpg'. Destaca a estrutura ou conceito 'SER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 8. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Polysomes",
+      "explicacao_original": "The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-8-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-8.jpg'. Destaca a estrutura ou conceito 'Polysomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 8. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Illustration",
+      "explicacao_original": "The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Mito-8-5-ping.png",
+      "imagem_base": "imagens/base/C.S.Mito-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Mito-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Mitochondria'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Mito-8.jpg'. Destaca a estrutura ou conceito 'Illustration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mitochondria present in this electron micrograph possess tubular cristae rather than the flattened shelf-like cristae that are present in most cells. Mitochondria with tubular cristae are a common feature of most steroid-producing cells. 40,000x. Contexto setorial: Células > Estruturas > Mitochondria > Mitochondria 8. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/mitochondria-2/mitochondria-8/, acesso em 2026-08-07."
+    }
+  ]
+}

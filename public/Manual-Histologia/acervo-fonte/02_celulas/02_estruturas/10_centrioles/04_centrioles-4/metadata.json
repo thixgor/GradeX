@@ -1,0 +1,53 @@
+{
+  "id": 1976,
+  "titulo": "Diplosomes and MTOC",
+  "titulo_wordpress": "Centrioles 4",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Centrioles",
+    "Centrioles 4"
+  ],
+  "descricao_original": "In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/centrioles/centrioles-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Cent-4-NEW-fix.jpg",
+      "arquivo": "imagens/base/C.S.Cent-4-NEW-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Diplosomes and MTOC', no setor Células > Estruturas > Centrioles > Centrioles 4. Descricao original da pagina: In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/centrioles/centrioles-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Diplosome and MTOC",
+      "explicacao_original": "In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cent-4-1-new-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cent-4-1-new-ping.png",
+      "imagem_base": "imagens/base/C.S.Cent-4-NEW-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Cent-4-NEW-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diplosomes and MTOC'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cent-4-NEW-fix.jpg'. Destaca a estrutura ou conceito 'Diplosome and MTOC' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x. Contexto setorial: Células > Estruturas > Centrioles > Centrioles 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/centrioles/centrioles-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cent-4-2-new-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cent-4-2-new-ping.png",
+      "imagem_base": "imagens/base/C.S.Cent-4-NEW-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Cent-4-NEW-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diplosomes and MTOC'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cent-4-NEW-fix.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x. Contexto setorial: Células > Estruturas > Centrioles > Centrioles 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/centrioles/centrioles-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spindle fibers (microtubules)",
+      "explicacao_original": "In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Cent-4-3-new-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cent-4-3-new-ping.png",
+      "imagem_base": "imagens/base/C.S.Cent-4-NEW-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Cent-4-NEW-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Diplosomes and MTOC'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cent-4-NEW-fix.jpg'. Destaca a estrutura ou conceito 'Spindle fibers (microtubules)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In mitotic cells, diplosomes produce microtubules that form the spindle apparatus, which is responsible for segregating chromosomes into the daughter cells. Prior to mitosis, the diplosomes replicate and each pair migrates to opposite poles of the nucleus, establishing a MTOC (centrosome) at each pole. Microtubules extend from the centosome and contact the sister chromatids, while others serve to anchor the spindle apparatus. A third type overlap with microtubules from opposite centrosomes to push the poles apart. Whitefish blastula 1500x. Contexto setorial: Células > Estruturas > Centrioles > Centrioles 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/centrioles/centrioles-4/, acesso em 2026-08-07."
+    }
+  ]
+}

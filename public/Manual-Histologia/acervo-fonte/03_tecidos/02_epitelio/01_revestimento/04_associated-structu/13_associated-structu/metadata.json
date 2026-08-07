@@ -1,0 +1,104 @@
+{
+  "id": 3957,
+  "titulo": "Cilia",
+  "titulo_wordpress": "Associated structures 13",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 13"
+  ],
+  "descricao_original": "This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cilia', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Descricao original da pagina: This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cilia",
+      "explicacao_original": "This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Axoneme",
+      "explicacao_original": "This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Axoneme' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Outer microtubule doublet",
+      "explicacao_original": "This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Outer microtubule doublet' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Inner microtubule pair",
+      "explicacao_original": "This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Inner microtubule pair' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This higher magnification of cilia better reveals the microtubular structure of the axoneme. The axoneme consists of an outer cylinder formed by nine doublets of microtubules. These microtubules originate from the basal body. At the center of the axoneme is a pair of individual microtubules. The interactions between all of these tubules produce the whip-like motion of the cilium. 20,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "Basal bodies have the same structure as centrioles, namely, nine triplets of microtubules. However, they lack the central pair of microtubules present in the axoneme.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Basal bodies have the same structure as centrioles, namely, nine triplets of microtubules. However, they lack the central pair of microtubules present in the axoneme.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Microvilli",
+      "explicacao_original": "Also visible are shorter microvilli, which contain a core of microfilaments and are non-motile. The microfilaments are not resolved at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also visible are shorter microvilli, which contain a core of microfilaments and are non-motile. The microfilaments are not resolved at this magnification.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Junctional complex",
+      "explicacao_original": "Also visible are shorter microvilli, which contain a core of microfilaments and are non-motile. The microfilaments are not resolved at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Junctional complex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also visible are shorter microvilli, which contain a core of microfilaments and are non-motile. The microfilaments are not resolved at this magnification.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "Also visible are shorter microvilli, which contain a core of microfilaments and are non-motile. The microfilaments are not resolved at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13-8-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-13-8-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cilia'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-13.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Also visible are shorter microvilli, which contain a core of microfilaments and are non-motile. The microfilaments are not resolved at this magnification.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 13. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-13/, acesso em 2026-08-07."
+    }
+  ]
+}

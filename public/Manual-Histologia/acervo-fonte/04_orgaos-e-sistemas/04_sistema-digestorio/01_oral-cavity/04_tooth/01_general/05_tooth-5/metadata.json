@@ -1,0 +1,85 @@
+{
+  "id": 6777,
+  "titulo": "Tooth",
+  "titulo_wordpress": "Tooth 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "General",
+    "Tooth 5"
+  ],
+  "descricao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Descricao original da pagina: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Enamel",
+      "explicacao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-5-with-insert.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stria",
+      "explicacao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-5-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-5-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-5-with-insert.jpg'. Destaca a estrutura ou conceito 'Stria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dentin",
+      "explicacao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-5-with-insert.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dentinal tubules",
+      "explicacao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-5-with-insert.jpg'. Destaca a estrutura ou conceito 'Dentinal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dentino-enamel junction",
+      "explicacao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-5-with-insert.jpg'. Destaca a estrutura ou conceito 'Dentino-enamel junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Pulp cavity",
+      "explicacao_original": "A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-5-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-5-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-5-with-insert.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-5-with-insert.jpg'. Destaca a estrutura ou conceito 'Pulp cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A section of ground tooth shows the dentin and the dentinal tubules. Dentin is the most similar to bone of all the hard tissues of the tooth. The dentinal tubules, housing odontoblast processes, form S-shaped curves and extend from the pulp chamber, where the odontoblasts are located, to the dentino-enamel or the dentino-cementum junctions. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-5/, acesso em 2026-08-07."
+    }
+  ]
+}

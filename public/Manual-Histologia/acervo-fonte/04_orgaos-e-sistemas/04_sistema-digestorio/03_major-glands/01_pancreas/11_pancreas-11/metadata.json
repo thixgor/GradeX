@@ -1,0 +1,76 @@
+{
+  "id": 6980,
+  "titulo": "Pancreas 11",
+  "titulo_wordpress": "Pancreas 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Pancreas",
+    "Pancreas 11"
+  ],
+  "descricao_original": "An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pancreas 11', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 11. Descricao original da pagina: An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Islet of Langerhans",
+      "explicacao_original": "An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-11-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-11-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas 11'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-Mich-11.jpg'. Destaca a estrutura ou conceito 'Islet of Langerhans' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Capillaries with red blood cells",
+      "explicacao_original": "An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-11-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-11-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas 11'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-Mich-11.jpg'. Destaca a estrutura ou conceito 'Capillaries with red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endocrine cells",
+      "explicacao_original": "An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-11-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-11-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas 11'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-Mich-11.jpg'. Destaca a estrutura ou conceito 'Endocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Acini",
+      "explicacao_original": "An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-11-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-11-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas 11'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-Mich-11.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An islet of Langerhans, the endocrine portion of the pancreas, is surrounded by serous acini and intercalated ducts of the exocrine portion. Although individual endocrine cell types cannot be differentiated with this stain, numerous capillaries and the organization of cells in plates or cords adjacent to the capillaries, reflect the endocrine characteristics of the islet. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-Mich-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas 11'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-Mich-11.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-11/, acesso em 2026-08-07."
+    }
+  ]
+}

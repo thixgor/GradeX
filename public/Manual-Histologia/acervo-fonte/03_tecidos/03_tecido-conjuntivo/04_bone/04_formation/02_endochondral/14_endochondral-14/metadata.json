@@ -1,0 +1,65 @@
+{
+  "id": 10643,
+  "titulo": "Endochondral ossification",
+  "titulo_wordpress": "Endochondral 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Endochondral",
+    "Endochondral 14"
+  ],
+  "descricao_original": "A cross section though a long bone shows the periosteal collar encasing spicules that have a blue central core and a periphery of red tissue. Such staining qualities indicate that both cartilage and bone are present and that, therefore, either the zone of ossification or the zone of resorption or both are represented in this section. 40x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-NEW.jpg",
+      "arquivo": "imagens/base/Endo-14-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Endochondral ossification', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 14. Descricao original da pagina: A cross section though a long bone shows the periosteal collar encasing spicules that have a blue central core and a periphery of red tissue. Such staining qualities indicate that both cartilage and bone are present and that, therefore, either the zone of ossification or the zone of resorption or both are represented in this section. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Periosteal collar",
+      "explicacao_original": "A periosteal collar of woven bone forms the bony periphery. This bone, laid down by intramembranous bone formation, forms the diaphysis of this fetal, long bone. The periosteal collar was formed and is covered on its outer surface by a periosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-Band.png",
+      "arquivo": "imagens/marcadores/Endo-14-Band.png",
+      "imagem_base": "imagens/base/Endo-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-14-NEW.jpg'. Destaca a estrutura ou conceito 'Periosteal collar' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A periosteal collar of woven bone forms the bony periphery. This bone, laid down by intramembranous bone formation, forms the diaphysis of this fetal, long bone. The periosteal collar was formed and is covered on its outer surface by a periosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Periosteum",
+      "explicacao_original": "A periosteal collar of woven bone forms the bony periphery. This bone, laid down by intramembranous bone formation, forms the diaphysis of this fetal, long bone. The periosteal collar was formed and is covered on its outer surface by a periosteum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-Periosteum.png",
+      "arquivo": "imagens/marcadores/Endo-14-Periosteum.png",
+      "imagem_base": "imagens/base/Endo-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-14-NEW.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A periosteal collar of woven bone forms the bony periphery. This bone, laid down by intramembranous bone formation, forms the diaphysis of this fetal, long bone. The periosteal collar was formed and is covered on its outer surface by a periosteum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spicules",
+      "explicacao_original": "Spicules in this section consist of both calcified cartilage (green arrows) and bone (blue arrows). They are eventually resorbed by osteoclasts in the zone of resorption.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-Spicules.png",
+      "arquivo": "imagens/marcadores/Endo-14-Spicules.png",
+      "imagem_base": "imagens/base/Endo-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-14-NEW.jpg'. Destaca a estrutura ou conceito 'Spicules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spicules in this section consist of both calcified cartilage (green arrows) and bone (blue arrows). They are eventually resorbed by osteoclasts in the zone of resorption.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Red marrow",
+      "explicacao_original": "Hemopoietic red bone marrow occupies the spaces between the spicules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-Red-marrow.png",
+      "arquivo": "imagens/marcadores/Endo-14-Red-marrow.png",
+      "imagem_base": "imagens/base/Endo-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'Endo-14-NEW.jpg'. Destaca a estrutura ou conceito 'Red marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemopoietic red bone marrow occupies the spaces between the spicules.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-13/, acesso em 2026-08-07."
+    }
+  ]
+}

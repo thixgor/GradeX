@@ -1,0 +1,124 @@
+{
+  "id": 12336,
+  "titulo": "Ovary: secondary follicle",
+  "titulo_wordpress": "Ovary 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 10"
+  ],
+  "descricao_original": "A large secondary follicle, seen at two different magnifications, retains the same configuration seen in the previous image except that its size has increased. 100x, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary: secondary follicle', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Descricao original da pagina: A large secondary follicle, seen at two different magnifications, retains the same configuration seen in the previous image except that its size has increased. 100x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Primary oocyte",
+      "explicacao_original": "The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Primary oocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zona pellucida",
+      "explicacao_original": "The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Zona pellucida' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Corona radiata",
+      "explicacao_original": "The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Corona radiata' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cumulus oophorus",
+      "explicacao_original": "The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P04.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Cumulus oophorus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The primary oocyte, arrested in prophase of the first meiotic division, is surrounded by the zona pellucida. Stratum granulosal cells form a hillock surrounding the oocyte, termed the cumulus oophorus; the first row of cumulus cells outside the zona pellucida is the corona radiata. The cumulus oophorus, including the corona, accompanies the oocyte during ovulation.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Granulosal layer",
+      "explicacao_original": "The stratum (or membrana) granulosum surrounds the antrum. Under the influence of LH from the pituitary, the theca interna produces testosterone, which is transported to granulosa cells for chemical modification (aromatization) to form estrogen. Granulosa cells are stimulated by the action of FSH from the adenohypophysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P05.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Granulosal layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum (or membrana) granulosum surrounds the antrum. Under the influence of LH from the pituitary, the theca interna produces testosterone, which is transported to granulosa cells for chemical modification (aromatization) to form estrogen. Granulosa cells are stimulated by the action of FSH from the adenohypophysis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Theca interna",
+      "explicacao_original": "The stratum (or membrana) granulosum surrounds the antrum. Under the influence of LH from the pituitary, the theca interna produces testosterone, which is transported to granulosa cells for chemical modification (aromatization) to form estrogen. Granulosa cells are stimulated by the action of FSH from the adenohypophysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P06.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Theca interna' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum (or membrana) granulosum surrounds the antrum. Under the influence of LH from the pituitary, the theca interna produces testosterone, which is transported to granulosa cells for chemical modification (aromatization) to form estrogen. Granulosa cells are stimulated by the action of FSH from the adenohypophysis.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Theca externa",
+      "explicacao_original": "The theca externa surrounds the theca interna and serves as a reserve-cell source for the interna.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P07.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Theca externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The theca externa surrounds the theca interna and serves as a reserve-cell source for the interna.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Antrum",
+      "explicacao_original": "A single, large, fluid-filled antral space is indicative for a secondary follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P08.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Antrum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A single, large, fluid-filled antral space is indicative for a secondary follicle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Graphic: follicular phase",
+      "explicacao_original": "During the follicular phase of the ovarian cycle (Days 1-14), follicles housing oocytes are growing and secreting estrogen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.P09.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.P09.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Graphic: follicular phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the follicular phase of the ovarian cycle (Days 1-14), follicles housing oocytes are growing and secreting estrogen.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Ovulation",
+      "explicacao_original": "On Day 14 a surge of LH stimulates a secondary follicle to greatly enlarge and form a mature or Graafian follicle. Simultaneously, the primary oocyte completes the first meiotic division to form a secondary oocyte and the first polar body. At ovulation, the ovarian-follicular wall ruptures, releasing the secondary oocyte and its polar body, enclosed in the cumulus oophorus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.PO10.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.10.PO10.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OV_.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary: secondary follicle'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.10.jpg'. Destaca a estrutura ou conceito 'Ovulation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: On Day 14 a surge of LH stimulates a secondary follicle to greatly enlarge and form a mature or Graafian follicle. Simultaneously, the primary oocyte completes the first meiotic division to form a secondary oocyte and the first polar body. At ovulation, the ovarian-follicular wall ruptures, releasing the secondary oocyte and its polar body, enclosed in the cumulus oophorus.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-10/, acesso em 2026-08-07."
+    }
+  ]
+}

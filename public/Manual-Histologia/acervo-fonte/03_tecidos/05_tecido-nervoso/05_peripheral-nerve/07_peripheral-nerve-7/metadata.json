@@ -1,0 +1,83 @@
+{
+  "id": 3062,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 7",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 7"
+  ],
+  "descricao_original": "One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "arquivo": "imagens/base/T.N.PN-6A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Descricao original da pagina: One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axon",
+      "explicacao_original": "One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6A-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6A-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6A.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myelin sheath",
+      "explicacao_original": "One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6A-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6A-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6A.jpg'. Destaca a estrutura ou conceito 'Myelin sheath' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Schwann cell nucleus",
+      "explicacao_original": "One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6A-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6A-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6A.jpg'. Destaca a estrutura ou conceito 'Schwann cell nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: One Schwann cell forms a segment, called an internode, of a myelin sheath around a portion of an axon. The myelin sheath is formed by continuous, multiple wrappings of a Schwann cell plasma membrane, producing a lipid-rich insulation that increases conduction speed of nerve impulses. The space between adjacent internodes is the node of Ranvier. 15,000x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "External lamina",
+      "explicacao_original": "The external lamina is secreted by the Schwann cell and is similar in structure and composition to the basal lamina in epithelial tissues. The external lamina provides anchorage for the Schwann cell, particularly during the myelination process. The endoneurium is product of fibroblasts in the peripheral nerve and contains collagen fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6A-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6A-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6A.jpg'. Destaca a estrutura ou conceito 'External lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external lamina is secreted by the Schwann cell and is similar in structure and composition to the basal lamina in epithelial tissues. The external lamina provides anchorage for the Schwann cell, particularly during the myelination process. The endoneurium is product of fibroblasts in the peripheral nerve and contains collagen fibrils.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Endoneurium",
+      "explicacao_original": "The external lamina is secreted by the Schwann cell and is similar in structure and composition to the basal lamina in epithelial tissues. The external lamina provides anchorage for the Schwann cell, particularly during the myelination process. The endoneurium is product of fibroblasts in the peripheral nerve and contains collagen fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6A-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6A-5-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6A.jpg'. Destaca a estrutura ou conceito 'Endoneurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external lamina is secreted by the Schwann cell and is similar in structure and composition to the basal lamina in epithelial tissues. The external lamina provides anchorage for the Schwann cell, particularly during the myelination process. The endoneurium is product of fibroblasts in the peripheral nerve and contains collagen fibrils.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Unmyelinated axons",
+      "explicacao_original": "The external lamina is secreted by the Schwann cell and is similar in structure and composition to the basal lamina in epithelial tissues. The external lamina provides anchorage for the Schwann cell, particularly during the myelination process. The endoneurium is product of fibroblasts in the peripheral nerve and contains collagen fibrils.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6A-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6A-6-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-6A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-6A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-6A.jpg'. Destaca a estrutura ou conceito 'Unmyelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The external lamina is secreted by the Schwann cell and is similar in structure and composition to the basal lamina in epithelial tissues. The external lamina provides anchorage for the Schwann cell, particularly during the myelination process. The endoneurium is product of fibroblasts in the peripheral nerve and contains collagen fibrils.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 7. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-7/, acesso em 2026-08-07."
+    }
+  ]
+}

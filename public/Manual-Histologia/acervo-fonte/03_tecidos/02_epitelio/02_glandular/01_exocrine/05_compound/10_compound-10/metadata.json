@@ -1,0 +1,85 @@
+{
+  "id": 4557,
+  "titulo": "Compound acinar gland",
+  "titulo_wordpress": "Compound 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 10"
+  ],
+  "descricao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound acinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Descricao original da pagina: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acinus",
+      "explicacao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-9-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-9-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-9.jpg'. Destaca a estrutura ou conceito 'Acinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acinar cells",
+      "explicacao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-9-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-9-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-9.jpg'. Destaca a estrutura ou conceito 'Acinar cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei of acinar cells",
+      "explicacao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-9-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-9-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-9.jpg'. Destaca a estrutura ou conceito 'Nuclei of acinar cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "RER",
+      "explicacao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-9-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-9-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-9.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-9-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-9-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-9.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lumen of the acinus",
+      "explicacao_original": "Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Gl_.Ex_.Comp-9-6-NEW-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-9-6-NEW-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Comp-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-9.jpg'. Destaca a estrutura ou conceito 'Lumen of the acinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Exocrine cells are polarized to secrete toward an epithelial surface. Basal rough endoplasmic reticulum synthesizes proteins that are packaged as secretory granules located in the apex of each cell. Contents of secretory granules are released into the acinar lumen by the merocrine mode of secretion. Pancreas 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 10. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-10/, acesso em 2026-08-07."
+    }
+  ]
+}

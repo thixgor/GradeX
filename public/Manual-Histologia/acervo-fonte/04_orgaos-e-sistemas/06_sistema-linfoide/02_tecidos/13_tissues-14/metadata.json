@@ -1,0 +1,83 @@
+{
+  "id": 8529,
+  "titulo": "Aggregated lymphoid nodules: tonsils",
+  "titulo_wordpress": "Tissues 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 14"
+  ],
+  "descricao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Aggregated lymphoid nodules: tonsils', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Descricao original da pagina: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Crypt",
+      "explicacao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-14-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-14-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Aggregated lymphoid nodules: tonsils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-14.jpg'. Destaca a estrutura ou conceito 'Crypt' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Crypt epithelium",
+      "explicacao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-14-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-14-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Aggregated lymphoid nodules: tonsils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-14.jpg'. Destaca a estrutura ou conceito 'Crypt epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-14-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-14-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Aggregated lymphoid nodules: tonsils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-14.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Secondary nodules",
+      "explicacao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-14-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-14-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Aggregated lymphoid nodules: tonsils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-14.jpg'. Destaca a estrutura ou conceito 'Secondary nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Germinal centers",
+      "explicacao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-14-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-14-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Aggregated lymphoid nodules: tonsils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-14.jpg'. Destaca a estrutura ou conceito 'Germinal centers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Connective tissue capsule",
+      "explicacao_original": "The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-14-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-14-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ly_.Tiss-14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Aggregated lymphoid nodules: tonsils'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-14.jpg'. Destaca a estrutura ou conceito 'Connective tissue capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The palatine tonsil, located in lamina propria of the oropharynx, is composed of lymphoid nodules embedded in diffuse lymphoid tissue. This section of tonsil is located beneath the epithelium of a pharyngeal crypt and is partially encapsulated by dense connective tissue, separating it from the underlying connective tissue. Because tonsils are located in the lamina propria, they are part of MALT and filter tissue fluid. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-14/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": 8595,
+  "titulo": "Thymus: medulla",
+  "titulo_wordpress": "Thymus 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Thymus",
+    "Thymus 6"
+  ],
+  "descricao_original": "Though primarily composed of epithelial reticular cells, other cells types are present in the medulla. One population of epithelial reticular cells forms Hassall’s corpuscles, also called thymic corpuscles. Hassall’s corpuscles occur only in the medulla. Epithelial reticular cells are arranged as concentric flattened cells around a core of keratinzed material that may degenerate or become calcified. The exact function of Hassall’s corpuscles is unknown. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Or_.Thymus-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thymus: medulla', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 6. Descricao original da pagina: Though primarily composed of epithelial reticular cells, other cells types are present in the medulla. One population of epithelial reticular cells forms Hassall’s corpuscles, also called thymic corpuscles. Hassall’s corpuscles occur only in the medulla. Epithelial reticular cells are arranged as concentric flattened cells around a core of keratinzed material that may degenerate or become calcified. The exact function of Hassall’s corpuscles is unknown. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hassall's corpuscles",
+      "explicacao_original": "Though primarily composed of epithelial reticular cells, other cells types are present. One population of epithelial reticular cells forms Hassall’s corpuscles, also called thymic corpuscles. Hassall’s corpuscles occur only in the medulla. Epithelial reticular cells are arranged as concentric flattened cells around a core of keratinzed material that may degenerate or become calcified. The exact function of Hassall’s corpuscles is unknown. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-6.jpg'. Destaca a estrutura ou conceito 'Hassall's corpuscles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Though primarily composed of epithelial reticular cells, other cells types are present. One population of epithelial reticular cells forms Hassall’s corpuscles, also called thymic corpuscles. Hassall’s corpuscles occur only in the medulla. Epithelial reticular cells are arranged as concentric flattened cells around a core of keratinzed material that may degenerate or become calcified. The exact function of Hassall’s corpuscles is unknown. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Forming Hassall’s corpuscle",
+      "explicacao_original": "Though primarily composed of epithelial reticular cells, other cells types are present. One population of epithelial reticular cells forms Hassall’s corpuscles, also called thymic corpuscles. Hassall’s corpuscles occur only in the medulla. Epithelial reticular cells are arranged as concentric flattened cells around a core of keratinzed material that may degenerate or become calcified. The exact function of Hassall’s corpuscles is unknown. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-6.jpg'. Destaca a estrutura ou conceito 'Forming Hassall’s corpuscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Though primarily composed of epithelial reticular cells, other cells types are present. One population of epithelial reticular cells forms Hassall’s corpuscles, also called thymic corpuscles. Hassall’s corpuscles occur only in the medulla. Epithelial reticular cells are arranged as concentric flattened cells around a core of keratinzed material that may degenerate or become calcified. The exact function of Hassall’s corpuscles is unknown. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Keratohyalin granules",
+      "explicacao_original": "Within Hassall’s corpuscles, epithelial reticular cells clearly demonstrated basophilic keratohyalin granules and strongly eosinophilic keratin filaments. There may also be evidence of keratinization similar to that seen in the epidermis of the skin, reflecting the epithelial origin of these cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-6.jpg'. Destaca a estrutura ou conceito 'Keratohyalin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Within Hassall’s corpuscles, epithelial reticular cells clearly demonstrated basophilic keratohyalin granules and strongly eosinophilic keratin filaments. There may also be evidence of keratinization similar to that seen in the epidermis of the skin, reflecting the epithelial origin of these cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Keratin filaments",
+      "explicacao_original": "Within Hassall’s corpuscles, epithelial reticular cells clearly demonstrate basophilic keratohyalin granules and strongly eosinophilic keratin filaments. There may also be evidence of keratinization similar to that seen in the epidermis of the skin, reflecting the epithelial origin of these cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-6.jpg'. Destaca a estrutura ou conceito 'Keratin filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Within Hassall’s corpuscles, epithelial reticular cells clearly demonstrate basophilic keratohyalin granules and strongly eosinophilic keratin filaments. There may also be evidence of keratinization similar to that seen in the epidermis of the skin, reflecting the epithelial origin of these cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Epithelial reticular cells",
+      "explicacao_original": "Epithelial reticular cells have large, very euchromatic nuclei that closely resemble the nuclei of other epithelial reticular cells in the parenchyma of the medulla and cortex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Or_.Thymus-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Or_.Thymus-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Or_.Thymus-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thymus: medulla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Or_.Thymus-6.jpg'. Destaca a estrutura ou conceito 'Epithelial reticular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Epithelial reticular cells have large, very euchromatic nuclei that closely resemble the nuclei of other epithelial reticular cells in the parenchyma of the medulla and cortex.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Thymus > Thymus 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-6/, acesso em 2026-08-07."
+    }
+  ]
+}

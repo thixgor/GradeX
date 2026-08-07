@@ -1,0 +1,116 @@
+{
+  "id": 28052,
+  "titulo": "Esophagus",
+  "titulo_wordpress": "Esophagus 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Esophagus",
+    "Esophagus 1"
+  ],
+  "descricao_original": "The esophagus is a muscular tube transporting partially digested food from the pharynx to the stomach. The esophagus is composed of four tunics (layers): mucosa; submucosa; muscularis externa; and adventitia. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Esophagus', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Descricao original da pagina: The esophagus is a muscular tube transporting partially digested food from the pharynx to the stomach. The esophagus is composed of four tunics (layers): mucosa; submucosa; muscularis externa; and adventitia. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucosa of the esophagus is lined with stratified squamous moist epithelium to protect the organ from the partially digested food. Mucous glands are located in the lamina propria in some regions, particularly near the gastro-esophageal junction and sometimes in the upper third. The muscularis mucosae is limited or absent in the upper third, but forms a developed layer in the lower two-thirds of the esophagus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Submucosa",
+      "explicacao_original": "The submucosa is composed of dense, irregular connective tissue and possesses compound tubulo-acinar glands, called esophageal glands proper, scattered along the length of the esophagus. These glands, not present in this image, lubricate the esophagus during food transport.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The submucosa is composed of dense, irregular connective tissue and possesses compound tubulo-acinar glands, called esophageal glands proper, scattered along the length of the esophagus. These glands, not present in this image, lubricate the esophagus during food transport.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The muscularis externa is the dominant prominent main muscle layer and is formed of inner circular outer longitudinal layers. Because swallowing is a voluntary action, the muscularis externa in the upper one-third of the esophagus is composed of skeletal muscle. Both skeletal and smooth muscle are located in the muscularis externa in the middle third (shown here), and only smooth muscle is present in this tunic in the lower one-third. The myenteric plexus (Auerbach’s plexus), a component of the autonomic nervous system, is located between the muscle layers and innervates the muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis externa is the dominant prominent main muscle layer and is formed of inner circular outer longitudinal layers. Because swallowing is a voluntary action, the muscularis externa in the upper one-third of the esophagus is composed of skeletal muscle. Both skeletal and smooth muscle are located in the muscularis externa in the middle third (shown here), and only smooth muscle is present in this tunic in the lower one-third. The myenteric plexus (Auerbach’s plexus), a component of the autonomic nervous system, is located between the muscle layers and innervates the muscle.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Myenteric plexus",
+      "explicacao_original": "The muscularis externa is the dominant prominent main muscle layer and is formed of inner circular outer longitudinal layers. Because swallowing is a voluntary action, the muscularis externa in the upper one-third of the esophagus is composed of skeletal muscle. Both skeletal and smooth muscle are located in the muscularis externa in the middle third (shown here), and only smooth muscle is present in this tunic in the lower one-third. The myenteric plexus (Auerbach’s plexus), a component of the autonomic nervous system, is located between the muscle layers and innervates the muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Myenteric plexus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The muscularis externa is the dominant prominent main muscle layer and is formed of inner circular outer longitudinal layers. Because swallowing is a voluntary action, the muscularis externa in the upper one-third of the esophagus is composed of skeletal muscle. Both skeletal and smooth muscle are located in the muscularis externa in the middle third (shown here), and only smooth muscle is present in this tunic in the lower one-third. The myenteric plexus (Auerbach’s plexus), a component of the autonomic nervous system, is located between the muscle layers and innervates the muscle.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Adventitia",
+      "explicacao_original": "For most of its length, the esophagus is attached to the posterior body wall and does not protrude into the thoracic cavity. Thus the outer tunic is an adventitia of connective tissue. After entering the abdominal cavity, the esophagus is covered by a serousa of visceral peritoneum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-1A-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For most of its length, the esophagus is attached to the posterior body wall and does not protrude into the thoracic cavity. Thus the outer tunic is an adventitia of connective tissue. After entering the abdominal cavity, the esophagus is covered by a serousa of visceral peritoneum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/03/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-1A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/03/Or.Dig_.Tub_.Eso-1A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-1A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-1a/, acesso em 2026-08-07."
+    }
+  ]
+}

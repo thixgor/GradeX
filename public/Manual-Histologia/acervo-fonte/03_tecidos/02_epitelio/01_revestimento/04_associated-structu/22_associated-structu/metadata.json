@@ -1,0 +1,64 @@
+{
+  "id": 4151,
+  "titulo": "Surface specializations comparison",
+  "titulo_wordpress": "Associated structures 20",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 20"
+  ],
+  "descricao_original": "These images compare the appearance of epithelial cell surface specializations: microvilli (left), stereocilia (middle) and cilia (right). Microvilli are about 1 micron in length, non-motile and contain a core of microfilaments. Stereocilia are 20-50 microns in length, and like microvilli, are non-motile and contain a core of microfilaments. Cilia are 10 microns in length, are highly motile and contain a core of microtubules. All images are 1,200x magnification.",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-20/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS-20.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Surface specializations comparison', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 20. Descricao original da pagina: These images compare the appearance of epithelial cell surface specializations: microvilli (left), stereocilia (middle) and cilia (right). Microvilli are about 1 micron in length, non-motile and contain a core of microfilaments. Stereocilia are 20-50 microns in length, and like microvilli, are non-motile and contain a core of microfilaments. Cilia are 10 microns in length, are highly motile and contain a core of microtubules. All images are 1,200x magnification.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-20/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Microvilli",
+      "explicacao_original": "This image shows the lining epithelium of the intestine which possesses a dense accumulation of microvilli that collectively form a brush border. Microvilli significantly increase the surface area of the epithelium for absorption.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-20-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Surface specializations comparison'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-20.jpg'. Destaca a estrutura ou conceito 'Microvilli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the lining epithelium of the intestine which possesses a dense accumulation of microvilli that collectively form a brush border. Microvilli significantly increase the surface area of the epithelium for absorption.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 20. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stereocilia",
+      "explicacao_original": "This image shows the lining epithelium of the epididymis, a region of the male reproductive tract, with prominent stereocilia. Stereocilia are structurally and functionally similar to microvilli but are significantly taller. Stereocilia are not related to cilia.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-20-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Surface specializations comparison'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-20.jpg'. Destaca a estrutura ou conceito 'Stereocilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the lining epithelium of the epididymis, a region of the male reproductive tract, with prominent stereocilia. Stereocilia are structurally and functionally similar to microvilli but are significantly taller. Stereocilia are not related to cilia.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 20. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "This image shows the lining epithelium of the trachea with its prominent cilia. Cilia are highly motile and serve to move materials along the surface of the epithelium. In this example, the respiratory epithelium is overall much thinner than the other two examples of epithelia shown.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-20-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Surface specializations comparison'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-20.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows the lining epithelium of the trachea with its prominent cilia. Cilia are highly motile and serve to move materials along the surface of the epithelium. In this example, the respiratory epithelium is overall much thinner than the other two examples of epithelia shown.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 20. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Goblet cells",
+      "explicacao_original": "Goblet cells are goblet-shaped unicellular glands that secrete mucus. They are commonly seen in the epithelia of respiratory passages and intestines.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-20-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-20.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-20.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Surface specializations comparison'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-20.jpg'. Destaca a estrutura ou conceito 'Goblet cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Goblet cells are goblet-shaped unicellular glands that secrete mucus. They are commonly seen in the epithelia of respiratory passages and intestines.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 20. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-20/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": 2024,
+  "titulo": "Glycogen",
+  "titulo_wordpress": "Glycogen 6",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Glycogen",
+    "Glycogen 6"
+  ],
+  "descricao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "arquivo": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Glycogen', no setor Células > Estruturas > Glycogen > Glycogen 6. Descricao original da pagina: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glycogen aggregates",
+      "explicacao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6-1A-flip-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-6-1A-flip-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-6A-flip.jpg'. Destaca a estrutura ou conceito 'Glycogen aggregates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Contexto setorial: Células > Estruturas > Glycogen > Glycogen 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Glycogen granules",
+      "explicacao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6-6A-flip-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-6-6A-flip-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-6A-flip.jpg'. Destaca a estrutura ou conceito 'Glycogen granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Contexto setorial: Células > Estruturas > Glycogen > Glycogen 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclei",
+      "explicacao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6-2A-flip.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-6-2A-flip.png",
+      "imagem_base": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-6A-flip.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Contexto setorial: Células > Estruturas > Glycogen > Glycogen 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nucleoli",
+      "explicacao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6-3A-flip-ping-1.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-6-3A-flip-ping-1.png",
+      "imagem_base": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-6A-flip.jpg'. Destaca a estrutura ou conceito 'Nucleoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Contexto setorial: Células > Estruturas > Glycogen > Glycogen 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6-4A-flip-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-6-4A-flip-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-6A-flip.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Contexto setorial: Células > Estruturas > Glycogen > Glycogen 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "RER",
+      "explicacao_original": "These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6-5A-flip-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-6-5A-flip-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-6A-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/06/C.S.Gly-6A-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-6A-flip.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images compare the appearance of glycogen in hepatocytes by light microscopy (left, PAS stain) and electron microscopy (right). Individual glycogen granules, which measure 15 to 40 nm in diameter, are too small to be resolved by light microscopy. However, aggregates of these granules, which measure up to 300 nm in diameter, can be visualized. By electron microscopy, aggregates and their individual granules are clearly evident. 1000x (l); 7500x (r). Contexto setorial: Células > Estruturas > Glycogen > Glycogen 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-6/, acesso em 2026-08-07."
+    }
+  ]
+}

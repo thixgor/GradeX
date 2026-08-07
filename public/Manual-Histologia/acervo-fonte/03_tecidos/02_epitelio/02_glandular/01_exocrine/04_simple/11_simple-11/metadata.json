@@ -1,0 +1,75 @@
+{
+  "id": 4334,
+  "titulo": "Simple, branched acinar gland",
+  "titulo_wordpress": "Simple 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Simple",
+    "Simple 11"
+  ],
+  "descricao_original": "Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-11.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Simp-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple, branched acinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 11. Descricao original da pagina: Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Sebaceous gland",
+      "explicacao_original": "Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-11-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-11-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-11.jpg'. Destaca a estrutura ou conceito 'Sebaceous gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acini",
+      "explicacao_original": "Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-11-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-11-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-11.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Duct",
+      "explicacao_original": "Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-11-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-11-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-11.jpg'. Destaca a estrutura ou conceito 'Duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Sebum",
+      "explicacao_original": "Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-11-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-11-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-11.jpg'. Destaca a estrutura ou conceito 'Sebum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hair follicle",
+      "explicacao_original": "Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-11-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-11-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Gl_.Ex_.Simp-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, branched acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-11.jpg'. Destaca a estrutura ou conceito 'Hair follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another example of a simple branched acinar gland is the sebaceous gland. Multiple alveoli empty into a single, unbranched duct connected to the hair follicle. Sebaceous glands secrete sebum onto the hair shaft as well as onto the skin surface via the hair follicle. Sebum is an oily material that is released by the holocrine mode of secretion. Skin 200x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 11. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-11/, acesso em 2026-08-07."
+    }
+  ]
+}

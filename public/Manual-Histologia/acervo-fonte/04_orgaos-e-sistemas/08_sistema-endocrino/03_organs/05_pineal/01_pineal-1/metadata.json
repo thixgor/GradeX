@@ -1,0 +1,74 @@
+{
+  "id": 4854,
+  "titulo": "Pineal gland",
+  "titulo_wordpress": "Pineal 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pineal",
+    "Pineal 1"
+  ],
+  "descricao_original": "The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pin-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pineal gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 1. Descricao original da pagina: The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capsule",
+      "explicacao_original": "The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1-a-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-1-a-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-1.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Connective tissue septa",
+      "explicacao_original": "The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-1.jpg'. Destaca a estrutura ou conceito 'Connective tissue septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-1.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The conical-shaped pineal gland, or epiphysis cerebri, is attached by the pineal stalk to the roof of the diencephalon of the brain, from which it develops. The gland is surrounded by a capsule of pia mater and arachnoid elements; connective tissue septa penetrate the gland, subdividing it into indistinct lobules. The pineal secretes melatonin, which regulates circadian rhythms. 100x.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Corpus arenaceum",
+      "explicacao_original": "Corpora arenacea, or brain sand, are commonly found in the pineal gland. These structures consist of accumulations of calcium phosphates and carbonates. Because the pineal is a midline structure, these radio-opaque corpora arenacea are often used as indicators of midline deflection of the brain resulting from pathological conditions.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-1.jpg'. Destaca a estrutura ou conceito 'Corpus arenaceum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Corpora arenacea, or brain sand, are commonly found in the pineal gland. These structures consist of accumulations of calcium phosphates and carbonates. Because the pineal is a midline structure, these radio-opaque corpora arenacea are often used as indicators of midline deflection of the brain resulting from pathological conditions.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Pinealocytes",
+      "explicacao_original": "The major cell type of the pineal gland is the pinealocyte, a modified neuron. The main secretory product of pinealocytes is melatonin, which regulates light-dark cycles (circadian rhythms).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-1.jpg'. Destaca a estrutura ou conceito 'Pinealocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The major cell type of the pineal gland is the pinealocyte, a modified neuron. The main secretory product of pinealocytes is melatonin, which regulates light-dark cycles (circadian rhythms).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-1/, acesso em 2026-08-07."
+    }
+  ]
+}

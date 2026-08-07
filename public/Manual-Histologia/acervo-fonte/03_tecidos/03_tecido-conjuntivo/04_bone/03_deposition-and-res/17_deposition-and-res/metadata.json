@@ -1,0 +1,134 @@
+{
+  "id": 24067,
+  "titulo": "Resorption canal progression",
+  "titulo_wordpress": "Deposition and Resorption 17",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 17"
+  ],
+  "descricao_original": "This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripetal deposition of lamellae creates a new osteon.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "arquivo": "imagens/base/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Resorption canal progression', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Descricao original da pagina: This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripetal deposition of lamellae creates a new osteon.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Resorption canals",
+      "explicacao_original": "This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripal deposition of lamellae creates a new osteon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.07-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.RR_.07-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Resorption canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripal deposition of lamellae creates a new osteon.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripal deposition of lamellae creates a new osteon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.07-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.RR_.07-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripal deposition of lamellae creates a new osteon.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripal deposition of lamellae creates a new osteon.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.07-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.RR_.07-3-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This series of images shows stages in the life span of a bone remodeling unit (BRU), a two-stage process whereby cortical bone is remodeled from within. The first stage of a BRU begins with osteoclastic erosion of bone in a “resorption canal” that advances lengthwise within the bone, forming a tunnel. In the second stage, osteoblasts deposit bone, beginning at the origin of the resorption canal, which creates the “closing end” of the BRU. The continued centripal deposition of lamellae creates a new osteon.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Closing end",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-4A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-4A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Closing end' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-5A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Osteoid",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-6A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-6A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Osteoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "New Haversian system",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-7A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-7A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'New Haversian system' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Oldest lamella",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-8A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-8A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Oldest lamella' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Youngest lamella",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-9A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-9A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Youngest lamella' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Haversian canal with blood vessel",
+      "explicacao_original": "As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-10A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-10A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Haversian canal with blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As resorption advances, osteoblasts in the endosteum at the original site of resorption become active and begin to secrete osteoid onto the eroded surface. The deposited osteoid eventually mineralizes, forming the outermost lamella of a newly forming osteon. The process continues, lamella by lamella until an osteon is established. This centripetal growth establishes the oldest lamella of an osteon at the periphery, with the youngest located immediately surrounding the Haversian canal.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Cement line",
+      "explicacao_original": "The outer boundary of the newly formed osteon is marked by a cement line that appears as a basophilic ring around the osteon due to its higher concentration of ground substance.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.DR_.17-11A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.DR_.17-11A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.RR_.17.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.C.B.RR_.17.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Resorption canal progression'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.RR_.17.jpg'. Destaca a estrutura ou conceito 'Cement line' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer boundary of the newly formed osteon is marked by a cement line that appears as a basophilic ring around the osteon due to its higher concentration of ground substance.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 17. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-17/, acesso em 2026-08-07."
+    }
+  ]
+}

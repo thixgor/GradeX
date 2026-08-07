@@ -1,0 +1,104 @@
+{
+  "id": 11175,
+  "titulo": "Bone remodeling",
+  "titulo_wordpress": "Remodeling 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Remodeling",
+    "Remodeling 5"
+  ],
+  "descricao_original": "These images through the diaphysis of a long bone demonstrate the multiple processes occurring during bone growth and development. The image on the right is later in time during the remodeling process than is the image on the left. 400x, 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "arquivo": "imagens/base/T.C.B.R.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone remodeling', no setor Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Descricao original da pagina: These images through the diaphysis of a long bone demonstrate the multiple processes occurring during bone growth and development. The image on the right is later in time during the remodeling process than is the image on the left. 400x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Marrow space",
+      "explicacao_original": "These images, through the diaphysis of a long bone, demonstrate the multiple processes occurring during bone growth and development. The image on the right is later in time during the remodeling process than is the image on the left. 400x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P01-1.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P01-1.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Marrow space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images, through the diaphysis of a long bone, demonstrate the multiple processes occurring during bone growth and development. The image on the right is later in time during the remodeling process than is the image on the left. 400x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Periosteum",
+      "explicacao_original": "These images, through the diaphysis of a long bone, demonstrate the multiple processes occurring during bone growth and development. The image on the right is later in time during the remodeling process than is the image on the left. 400x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P02.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images, through the diaphysis of a long bone, demonstrate the multiple processes occurring during bone growth and development. The image on the right is later in time during the remodeling process than is the image on the left. 400x, 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Circumferential lamellae",
+      "explicacao_original": "Inner (1) and outer (2) circumferential lamellae can be seen on either surface of the bone, indicating an increase in the diameter of the bone. This increased diameter provides additional support as an individual grows in mass. Circumferential lamellae are deposited by intramembranous bone formation by the endosteal and periosteal membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P03.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Circumferential lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Inner (1) and outer (2) circumferential lamellae can be seen on either surface of the bone, indicating an increase in the diameter of the bone. This increased diameter provides additional support as an individual grows in mass. Circumferential lamellae are deposited by intramembranous bone formation by the endosteal and periosteal membranes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Calcified cartilage",
+      "explicacao_original": "Islands of acellular tissue are present between the two stacks of circumferential lamellae and in the spongy bone. These areas represent the calcified cartilage remnants from the epiphyseal plate. The presence of this calcified cartilage indicates that this central area was produced by endochondral ossification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P04.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Calcified cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Islands of acellular tissue are present between the two stacks of circumferential lamellae and in the spongy bone. These areas represent the calcified cartilage remnants from the epiphyseal plate. The presence of this calcified cartilage indicates that this central area was produced by endochondral ossification.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Woven bone",
+      "explicacao_original": "Immediately surrounding the calcified cartilage are small areas of woven bone, remnants of the zone of ossification. Because this bone is located in a space previously occupied by cartilage, this bone was formed by endochondral ossification. Both the calcified cartilage and the woven bone will be resorbed in time, to be replaced with lamellar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P05.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Immediately surrounding the calcified cartilage are small areas of woven bone, remnants of the zone of ossification. Because this bone is located in a space previously occupied by cartilage, this bone was formed by endochondral ossification. Both the calcified cartilage and the woven bone will be resorbed in time, to be replaced with lamellar bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "New lamellae",
+      "explicacao_original": "Lamellar deposition has begun around the periphery of several spaces, which were created by death of chondrocytes during endochondral ossification. Continued deposition will create osteons, converting this spongy woven bone to the compact bone seen in the center of the image on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P07.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P07.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'New lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar deposition has begun around the periphery of several spaces, which were created by death of chondrocytes during endochondral ossification. Continued deposition will create osteons, converting this spongy woven bone to the compact bone seen in the center of the image on the right.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Osteons",
+      "explicacao_original": "Lamellar deposition has begun around the periphery of several spaces, which were created by death of chondrocytes during endochondral ossification. Continued deposition will create osteons, converting this spongy woven bone to the compact bone seen in the center of the image on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P06.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P06.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar deposition has begun around the periphery of several spaces, which were created by death of chondrocytes during endochondral ossification. Continued deposition will create osteons, converting this spongy woven bone to the compact bone seen in the center of the image on the right.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Cement lines",
+      "explicacao_original": "Cement lines separate bone deposited at different time periods.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.P08.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.05.P08.png",
+      "imagem_base": "imagens/base/T.C.B.R.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.C.B.R.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.05.jpg'. Destaca a estrutura ou conceito 'Cement lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cement lines separate bone deposited at different time periods.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-5/, acesso em 2026-08-07."
+    }
+  ]
+}

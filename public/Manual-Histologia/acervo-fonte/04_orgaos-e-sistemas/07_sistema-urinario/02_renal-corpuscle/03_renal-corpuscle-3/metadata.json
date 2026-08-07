@@ -1,0 +1,143 @@
+{
+  "id": 10793,
+  "titulo": "Renal corpuscle",
+  "titulo_wordpress": "Renal corpuscle 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Renal Corpuscle",
+    "Renal corpuscle 3"
+  ],
+  "descricao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Renal corpuscle', no setor Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Descricao original da pagina: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glomerulus",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Glomerulus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Podocytes",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Podocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Parietal layer of Bowman's capsule",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Parietal layer of Bowman's capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bowman's space",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Bowman's space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Proximal convoluted tubules",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Proximal convoluted tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ascending thick limb",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.RC-3-6A-New-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-6A-New-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Ascending thick limb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Distal convoluted tubules",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.RC-3-6B-New-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-6B-New-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Distal convoluted tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Connecting tubule",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Connecting tubule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Juxtaglomerular apparatus",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-10-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Juxtaglomerular apparatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Afferent arteriole",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Afferent arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Macula densa",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Macula densa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.RC-3-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.RC-3-11-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Corp-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Corp-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal corpuscle'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Corp-3-use.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The glomerular tuft of capillaries is surrounded by the visceral layer of Bowman’s capsule, whose modified cells form podocytes. The parietal layer of Bowman’s capsule is composed of simple squamous epithelium. 10x, 400x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Renal Corpuscle > Renal corpuscle 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/renal-corpuscle/renal-corpuscle-3/, acesso em 2026-08-07."
+    }
+  ]
+}

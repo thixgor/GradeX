@@ -1,0 +1,73 @@
+{
+  "id": 1908,
+  "titulo": "Intermediate filaments and microtubules",
+  "titulo_wordpress": "Cytoskeleton 6",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Cytoskeleton",
+    "Cytoskeleton 6"
+  ],
+  "descricao_original": "This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6.jpg",
+      "arquivo": "imagens/base/C.S.Cyto-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Intermediate filaments and microtubules', no setor Células > Estruturas > Cytoskeleton > Cytoskeleton 6. Descricao original da pagina: This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Microtubules",
+      "explicacao_original": "Microtubules are have the largest diameter (20-25 nm) among the cytoskeletal elements and provide the tracks along which materials are transported within cells. Unlike microfilaments and intermediate filaments, which are rod-shaped, microtubules are hollow tubes formed primarily of tubulin proteins. Microtubules also provide some structural support.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-6-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments and microtubules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-6.jpg'. Destaca a estrutura ou conceito 'Microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules are have the largest diameter (20-25 nm) among the cytoskeletal elements and provide the tracks along which materials are transported within cells. Unlike microfilaments and intermediate filaments, which are rod-shaped, microtubules are hollow tubes formed primarily of tubulin proteins. Microtubules also provide some structural support.. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intermediate filaments",
+      "explicacao_original": "Intermediate filaments occur alongside microtubules in the axon and are called neurofilaments (red arrows). These filaments are rigid and very stable, providing support, particularly in longer, larger axons. Intermediate filaments are also present in supporting astrocytic glial cells; a group of these filaments is outlined in blue. These filaments, called glial filaments, also provide support. Neurofilaments and glial filaments are composed of different proteins.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-6-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments and microtubules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-6.jpg'. Destaca a estrutura ou conceito 'Intermediate filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intermediate filaments occur alongside microtubules in the axon and are called neurofilaments (red arrows). These filaments are rigid and very stable, providing support, particularly in longer, larger axons. Intermediate filaments are also present in supporting astrocytic glial cells; a group of these filaments is outlined in blue. These filaments, called glial filaments, also provide support. Neurofilaments and glial filaments are composed of different proteins.. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Axon",
+      "explicacao_original": "This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-6-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments and microtubules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-6.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Myelin",
+      "explicacao_original": "This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-6-4-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments and microtubules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-6.jpg'. Destaca a estrutura ou conceito 'Myelin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Cyto-6-5-ping.png",
+      "imagem_base": "imagens/base/C.S.Cyto-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Cyto-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Intermediate filaments and microtubules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Cyto-6.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows cross sections of myelinated axons, which possess a mixture of microtubules and intermediate filaments that both run lengthwise in the axon. Brain, 20,000x. Contexto setorial: Células > Estruturas > Cytoskeleton > Cytoskeleton 6. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/cytoskeleton/cytoskeleton-6/, acesso em 2026-08-07."
+    }
+  ]
+}

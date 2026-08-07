@@ -1,0 +1,104 @@
+{
+  "id": 6675,
+  "titulo": "Bone marrow: Fetal",
+  "titulo_wordpress": "Hemopoiesis 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 1"
+  ],
+  "descricao_original": "Short-lived blood cells are maintained in constant numbers by continuous replacement from sources outside the circulatory system. Blood cell formation, hemopoiesis, occurs in hemopoietic tissues or organs. Bone marrow, a major hemopoietic tissue in adults, produces erythrocytes, granular leukocytes, B lymphocytes, T cell precursors, monocytes, and platelets. 100x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone marrow: Fetal', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Descricao original da pagina: Short-lived blood cells are maintained in constant numbers by continuous replacement from sources outside the circulatory system. Blood cell formation, hemopoiesis, occurs in hemopoietic tissues or organs. Bone marrow, a major hemopoietic tissue in adults, produces erythrocytes, granular leukocytes, B lymphocytes, T cell precursors, monocytes, and platelets. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Bone",
+      "explicacao_original": "This cross-section of a fetal finger shows red bone marrow and spicules of bone and cartilage ringed by a shaft of bone. This diaphysis of spongy, woven bone is immature and growing rapidly. Hence, it shares few of the morphological characteristics typical of the compact, lamellar osseous tissue that will replace it in the adult.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This cross-section of a fetal finger shows red bone marrow and spicules of bone and cartilage ringed by a shaft of bone. This diaphysis of spongy, woven bone is immature and growing rapidly. Hence, it shares few of the morphological characteristics typical of the compact, lamellar osseous tissue that will replace it in the adult.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Diaphysis",
+      "explicacao_original": "This cross-section of a fetal finger shows red bone marrow and spicules of bone and cartilage ringed by a shaft of bone. This diaphysis of spongy, woven bone is immature and growing rapidly. Hence, it shares few of the morphological characteristics typical of the compact, lamellar osseous tissue that will replace it in the adult.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Diaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This cross-section of a fetal finger shows red bone marrow and spicules of bone and cartilage ringed by a shaft of bone. This diaphysis of spongy, woven bone is immature and growing rapidly. Hence, it shares few of the morphological characteristics typical of the compact, lamellar osseous tissue that will replace it in the adult.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spicules",
+      "explicacao_original": "Spicules of bone and cartilage are scattered throughout the marrow cavity in this very early stage of bone development. Woven bone, characterized by the haphazard arrangement of osteocytes, is deposited on a core of calcified cartilage. This calcified cartilage will either be resorbed or replaced by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Spicules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spicules of bone and cartilage are scattered throughout the marrow cavity in this very early stage of bone development. Woven bone, characterized by the haphazard arrangement of osteocytes, is deposited on a core of calcified cartilage. This calcified cartilage will either be resorbed or replaced by bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Calcified cartilage",
+      "explicacao_original": "Spicules of bone and cartilage are scattered throughout the marrow cavity in this very early stage of bone development. Woven bone, characterized by the haphazard arrangement of osteocytes, is deposited on a core of calcified cartilage. This calcified cartilage will either be resorbed or replaced by bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/Or.CV_.Hemo-1-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-8-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Calcified cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spicules of bone and cartilage are scattered throughout the marrow cavity in this very early stage of bone development. Woven bone, characterized by the haphazard arrangement of osteocytes, is deposited on a core of calcified cartilage. This calcified cartilage will either be resorbed or replaced by bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fetal red bone marrow",
+      "explicacao_original": "Red bone marrow is a complex mixture of hemopoietic tissue, adipocytes, reticular connective tissue stroma, and blood sinusoids. At low magnification, hemopoietic tissue appears as basophilic clusters of cells scattered among eosinophilic islands of sinusoids filled with blood. Hemopoietic tissue is basophilic due to its large numbers of nucleated red and white blood cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Fetal red bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red bone marrow is a complex mixture of hemopoietic tissue, adipocytes, reticular connective tissue stroma, and blood sinusoids. At low magnification, hemopoietic tissue appears as basophilic clusters of cells scattered among eosinophilic islands of sinusoids filled with blood. Hemopoietic tissue is basophilic due to its large numbers of nucleated red and white blood cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Hemopoietic tissue",
+      "explicacao_original": "Hemopoietic tissue consists of multipotential stem cells and their progeny that are formed as the stem cells self-duplicate, differentiate and divide to form mature blood cells and platelets. These processes maintain a constant number of hemopoietic cells in the marrow while simultaneously releasing millions of mature, or nearly mature, blood cells into the circulatory system each day.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Hemopoietic tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemopoietic tissue consists of multipotential stem cells and their progeny that are formed as the stem cells self-duplicate, differentiate and divide to form mature blood cells and platelets. These processes maintain a constant number of hemopoietic cells in the marrow while simultaneously releasing millions of mature, or nearly mature, blood cells into the circulatory system each day.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Sinsuoids",
+      "explicacao_original": "Newly formed erythrocytes, granulocytes, B lymphocytes, monocytes and platelets enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Sinusoids are eosinophilic due to their large proportion of mature erythrocytes that greatly outnumber white blood cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Sinsuoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Newly formed erythrocytes, granulocytes, B lymphocytes, monocytes and platelets enter the circulatory system by traversing thin-walled sinusoids (discontinuous capillaries) in the marrow. Sinusoids are eosinophilic due to their large proportion of mature erythrocytes that greatly outnumber white blood cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Artifactual space",
+      "explicacao_original": "This artifactual space was created during tissue processing when bone marrow shrank away from the bony shaft.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Hemo-1-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-1-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone marrow: Fetal'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo-1.jpg'. Destaca a estrutura ou conceito 'Artifactual space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This artifactual space was created during tissue processing when bone marrow shrank away from the bony shaft.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "id": 6166,
+  "titulo": "Sebaceous gland",
+  "titulo_wordpress": "Associated Structures 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Associated Structures",
+    "Associated Structures 7"
+  ],
+  "descricao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "arquivo": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sebaceous gland', no setor Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Descricao original da pagina: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pilosebaceous unit",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-1-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Pilosebaceous unit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sebaceous gland",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-2-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Sebaceous gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory acini",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-3-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Secretory acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Duct",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-11-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sebum",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-4-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Sebum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Hair follicle",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-5-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Hair follicle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Bulb",
+      "explicacao_original": "These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-6-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Bulb' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show a hair follicle with its associated sebaceous gland, collectively referred to as a pilosebaceous unit. Sebaceous glands are normally associated with hair follicles and their secretory product, called sebum, is released onto the hair shaft in follicle. 100x, 400x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Papilla",
+      "explicacao_original": "The base of the bulb is invaginated by the dermal papilla consisting of a tuft of vascularized loose connective tissue that maintains the follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-7-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Papilla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The base of the bulb is invaginated by the dermal papilla consisting of a tuft of vascularized loose connective tissue that maintains the follicle.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Follicle sheath",
+      "explicacao_original": "The follicle sheath is a multilayered sleeve that surrounds the hair shaft.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-8-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Follicle sheath' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The follicle sheath is a multilayered sleeve that surrounds the hair shaft.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Hair shaft",
+      "explicacao_original": "The follicle sheath is a multilayered sleeve that surrounds the hair shaft.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-9-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Hair shaft' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The follicle sheath is a multilayered sleeve that surrounds the hair shaft.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Arrector pili muscle",
+      "explicacao_original": "The arrector pili muscle is band of smooth muscle anchored at one end in the papillary layer of the dermis and attached to the hair follicle at the other, in a specialized stem-cell niche called the follicular bulge. Contraction of the arrector pili elevates the hair shaft and produces depressions on the skin surface called “goose flesh”.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/05/Or.Sk_.AS_.-7A-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-7A-10-ping.png",
+      "imagem_base": "imagens/base/Hair-follicle-composite-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/05/Hair-follicle-composite-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sebaceous gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Hair-follicle-composite-NEW.jpg'. Destaca a estrutura ou conceito 'Arrector pili muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The arrector pili muscle is band of smooth muscle anchored at one end in the papillary layer of the dermis and attached to the hair follicle at the other, in a specialized stem-cell niche called the follicular bulge. Contraction of the arrector pili elevates the hair shaft and produces depressions on the skin surface called “goose flesh”.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-7/, acesso em 2026-08-07."
+    }
+  ]
+}

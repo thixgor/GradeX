@@ -1,0 +1,54 @@
+{
+  "id": 12655,
+  "titulo": "Oviduct: isthmus",
+  "titulo_wordpress": "Oviduct 7",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Oviduct",
+    "Oviduct 7"
+  ],
+  "descricao_original": "The isthmus is a narrow portion of the oviduct between the ampulla and the uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.jpg",
+      "arquivo": "imagens/base/O.R.F.OD_.07.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oviduct: isthmus', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 7. Descricao original da pagina: The isthmus is a narrow portion of the oviduct between the ampulla and the uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The isthmus is a narrow portion of the oviduct between ampulla and uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.07.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: isthmus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.07.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The isthmus is a narrow portion of the oviduct between ampulla and uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The isthmus is a narrow portion of the oviduct between ampulla and uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.07.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: isthmus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.07.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The isthmus is a narrow portion of the oviduct between ampulla and uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The isthmus is a narrow portion of the oviduct between ampulla and uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.07.P03.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.07.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.07.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: isthmus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.07.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The isthmus is a narrow portion of the oviduct between ampulla and uterus. Folds and cilia decrease in the oviduct nearer the uterus, as secretory cells and smooth muscle increase. Therefore, the isthmus can be differentiated from the ampulla by the presence of fewer folds and thicker smooth muscle. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 7. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-7/, acesso em 2026-08-07."
+    }
+  ]
+}

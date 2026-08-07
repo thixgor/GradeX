@@ -1,0 +1,63 @@
+{
+  "id": 1687,
+  "titulo": "Secretory granules",
+  "titulo_wordpress": "Secretory granules 4",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Secretory Granules",
+    "Secretory granules 4"
+  ],
+  "descricao_original": "The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4.jpg",
+      "arquivo": "imagens/base/C.S.SG-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secretory granules', no setor Células > Estruturas > Secretory Granules > Secretory granules 4. Descricao original da pagina: The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.SG-4-1-ping.png",
+      "imagem_base": "imagens/base/C.S.SG-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory granules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.SG-4.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x. Contexto setorial: Células > Estruturas > Secretory Granules > Secretory granules 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Gland cell nuclei",
+      "explicacao_original": "The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.SG-4-2-ping.png",
+      "imagem_base": "imagens/base/C.S.SG-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory granules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.SG-4.jpg'. Destaca a estrutura ou conceito 'Gland cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x. Contexto setorial: Células > Estruturas > Secretory Granules > Secretory granules 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ducts",
+      "explicacao_original": "The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.SG-4-3-ping.png",
+      "imagem_base": "imagens/base/C.S.SG-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory granules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.SG-4.jpg'. Destaca a estrutura ou conceito 'Ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x. Contexto setorial: Células > Estruturas > Secretory Granules > Secretory granules 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Duct lumens",
+      "explicacao_original": "The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.SG-4-4-ping.png",
+      "imagem_base": "imagens/base/C.S.SG-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.SG-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secretory granules'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.SG-4.jpg'. Destaca a estrutura ou conceito 'Duct lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The staining properties of secretory granules depend on their contents. These secretory cells in a salivary gland contain basophilic secretory granules, indicating that their contents are negatively charged. Like the pancreas, these are enzyme-containing zymogen granules that will fuse with the plasma membrane, releasing their contents by exocytosis into the lumen of the acinus. Also visible are portions of the duct system that drains the gland. Submandibular gland, 1000x. Contexto setorial: Células > Estruturas > Secretory Granules > Secretory granules 4. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/secretory-granules/secretory-granules-4/, acesso em 2026-08-07."
+    }
+  ]
+}

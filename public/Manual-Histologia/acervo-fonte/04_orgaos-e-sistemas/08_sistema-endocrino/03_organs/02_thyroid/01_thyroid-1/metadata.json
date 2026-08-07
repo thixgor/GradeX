@@ -1,0 +1,74 @@
+{
+  "id": 4820,
+  "titulo": "Thyroid gland",
+  "titulo_wordpress": "Thyroid 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Thyroid",
+    "Thyroid 1"
+  ],
+  "descricao_original": "The thyroid, located in the anterior neck, consists of two major lobes connected by a thin isthmus. The thyroid regulates basal metabolic rate by secretion of thyroid hormones stored in thyroid follicles. Follicles consist of a simple epithelium surrounding a colloid-filled lumen. A second cell type, parafollicular cells, secretes calcitonin to regulate blood calcium levels. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-1.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Thy-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thyroid gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 1. Descricao original da pagina: The thyroid, located in the anterior neck, consists of two major lobes connected by a thin isthmus. The thyroid regulates basal metabolic rate by secretion of thyroid hormones stored in thyroid follicles. Follicles consist of a simple epithelium surrounding a colloid-filled lumen. A second cell type, parafollicular cells, secretes calcitonin to regulate blood calcium levels. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Thyroid follicles",
+      "explicacao_original": "Cells forming thyroid follicles are polarized to secrete thyroglobulin into the center of the follicle for storage, where it is referred to as colloid. Upon stimulation, thyroglobulin is taken up by follicular cells, broken down into triiodothyronine (T3) and tetraiodothyronine (thyroxine, T4), and released into the blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-1.jpg'. Destaca a estrutura ou conceito 'Thyroid follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells forming thyroid follicles are polarized to secrete thyroglobulin into the center of the follicle for storage, where it is referred to as colloid. Upon stimulation, thyroglobulin is taken up by follicular cells, broken down into triiodothyronine (T3) and tetraiodothyronine (thyroxine, T4), and released into the blood.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Follicular cells",
+      "explicacao_original": "Cells forming thyroid follicles are polarized to secrete thyroglobulin into the center of the follicle for storage, where it is referred to as colloid. Upon stimulation, thyroglobulin is taken up by follicular cells, broken down into triiodothyronine (T3) and tetraiodothyronine (thyroxine, T4), and released into the blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-1.jpg'. Destaca a estrutura ou conceito 'Follicular cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells forming thyroid follicles are polarized to secrete thyroglobulin into the center of the follicle for storage, where it is referred to as colloid. Upon stimulation, thyroglobulin is taken up by follicular cells, broken down into triiodothyronine (T3) and tetraiodothyronine (thyroxine, T4), and released into the blood.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Thyroglobulin",
+      "explicacao_original": "Cells forming thyroid follicles are polarized to secrete thyroglobulin into the center of the follicle for storage, where it is referred to as colloid. Upon stimulation, thyroglobulin is taken up by follicular cells, broken down into triiodothyronine (T3) and tetraiodothyronine (thyroxine, T4), and released into the blood.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-1.jpg'. Destaca a estrutura ou conceito 'Thyroglobulin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cells forming thyroid follicles are polarized to secrete thyroglobulin into the center of the follicle for storage, where it is referred to as colloid. Upon stimulation, thyroglobulin is taken up by follicular cells, broken down into triiodothyronine (T3) and tetraiodothyronine (thyroxine, T4), and released into the blood.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Stroma",
+      "explicacao_original": "The stroma is composed of loose connective tissue that surrounds and supports the endocrine elements and the blood vessels.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-1.jpg'. Destaca a estrutura ou conceito 'Stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stroma is composed of loose connective tissue that surrounds and supports the endocrine elements and the blood vessels.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "The stroma is composed of loose connective tissue that surrounds and supports the endocrine elements and the blood vessels.”",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-1.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stroma is composed of loose connective tissue that surrounds and supports the endocrine elements and the blood vessels.”. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-1/, acesso em 2026-08-07."
+    }
+  ]
+}

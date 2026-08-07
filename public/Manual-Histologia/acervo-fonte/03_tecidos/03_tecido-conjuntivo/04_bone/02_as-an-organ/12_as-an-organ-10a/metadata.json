@@ -1,0 +1,64 @@
+{
+  "id": 30294,
+  "titulo": "Bone: the organ – flat bones",
+  "titulo_wordpress": "As an organ 10A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 10A"
+  ],
+  "descricao_original": "Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top)",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-flat/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone.jpg",
+      "arquivo": "imagens/base/T.C.B.O.10-Flat-bone.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ – flat bones', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 10A. Descricao original da pagina: Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-flat/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Outer table",
+      "explicacao_original": "Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone-Outer-table-A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.10-Flat-bone-Outer-table-A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.O.10-Flat-bone.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ – flat bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.10-Flat-bone.jpg'. Destaca a estrutura ou conceito 'Outer table' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top). Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 10A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-flat/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Diploë",
+      "explicacao_original": "Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone-Diploe-A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.10-Flat-bone-Diploe-A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.O.10-Flat-bone.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ – flat bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.10-Flat-bone.jpg'. Destaca a estrutura ou conceito 'Diploë' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top). Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 10A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-flat/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Inner table",
+      "explicacao_original": "Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone-Inner-table-A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.10-Flat-bone-Inner-table-A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.O.10-Flat-bone.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ – flat bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.10-Flat-bone.jpg'. Destaca a estrutura ou conceito 'Inner table' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bones that form the cranial vault or calvarium (e.g., frontal and parietal bones) are classified as flat bones. Cranial bones consist of an inner diploë of spongy bone sandwiched between inner and outer tables of compact bone. This structure reflects the embryonic process (intramembranous ossification) by which these bones form. Additional flat bones include sternum, ribs, scapula and pelvis (e.g., ilium). These bones are formed by endochondral ossification. 10x (top). Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 10A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-flat/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Suture",
+      "explicacao_original": "Where cranial bones meet, they form suture joints, consisting of a thin layer of fibrous connective tissue between the bones. Suture (fibrous) joints are immobile or only slightly mobile. The connective tissue is not preserved in this dried specimen and so a gap is visible between the bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone-Suture-A-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.10-Flat-bone-Suture-A-ping.png",
+      "imagem_base": "imagens/base/T.C.B.O.10-Flat-bone.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/02/T.C.B.O.10-Flat-bone.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ – flat bones'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.10-Flat-bone.jpg'. Destaca a estrutura ou conceito 'Suture' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Where cranial bones meet, they form suture joints, consisting of a thin layer of fibrous connective tissue between the bones. Suture (fibrous) joints are immobile or only slightly mobile. The connective tissue is not preserved in this dried specimen and so a gap is visible between the bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 10A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-flat/, acesso em 2026-08-07."
+    }
+  ]
+}

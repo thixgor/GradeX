@@ -1,0 +1,53 @@
+{
+  "id": 8533,
+  "titulo": "High endothelial venules",
+  "titulo_wordpress": "Tissues 16",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 16"
+  ],
+  "descricao_original": "High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-16.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'High endothelial venules', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16. Descricao original da pagina: High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "High endothelial venules",
+      "explicacao_original": "High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-16-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'High endothelial venules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-16.jpg'. Destaca a estrutura ou conceito 'High endothelial venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Venules",
+      "explicacao_original": "High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-16-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'High endothelial venules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-16.jpg'. Destaca a estrutura ou conceito 'Venules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-16-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-16.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Tiss-16.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'High endothelial venules'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-16.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: High endothelial venules (HEVs) are modified, postcapillary venules lined by a simple cuboidal, rather than the simple squamous epithelium lining other venules. This modification allows lymphocytes to leave the blood through the HEVs and enter the lymphoid tissue. HEVs are located in the appendix, Peyer’s patch, tonsil (seen here) and lymph node. 600x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-16/, acesso em 2026-08-07."
+    }
+  ]
+}

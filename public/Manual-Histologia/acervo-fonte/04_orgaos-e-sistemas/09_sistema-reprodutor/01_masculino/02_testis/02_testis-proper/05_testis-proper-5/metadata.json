@@ -1,0 +1,65 @@
+{
+  "id": 16711,
+  "titulo": "Testis: spermatogenesis",
+  "titulo_wordpress": "Testis Proper 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Testis Proper",
+    "Testis Proper 5"
+  ],
+  "descricao_original": "Spermatogenesis, the formation of haploid spermatozoa from diploid spermatogonia, has four phases: spermatocytogenesis, meiosis, spermiogenesis and spermiation. Cytokinesis is incomplete throughout spermatogenesis, resulting in similar cells remaining attached to each other throughout the process.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.TP_.05-2.jpg",
+      "arquivo": "imagens/base/O.R.M.T.TP_.05-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Testis: spermatogenesis', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 5. Descricao original da pagina: Spermatogenesis, the formation of haploid spermatozoa from diploid spermatogonia, has four phases: spermatocytogenesis, meiosis, spermiogenesis and spermiation. Cytokinesis is incomplete throughout spermatogenesis, resulting in similar cells remaining attached to each other throughout the process.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spermatocytogenesis",
+      "explicacao_original": "Spermatogonia (red arrows) divide by mitosis (black arrow on right) to perpetuate themselves or form primary spermatocytes (blue arrows), a process called spermatocytogenesis. Primary spermatocytes are located first in the basal compartment, indicated by the blue fill area on the left (green arrows) and below the dotted line on the right, but migrate through the blood-testis barrier into the adluminal compartment.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/08/O.R.M.T.TP_.05.P01-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.05.P01-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.05-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.TP_.05-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis: spermatogenesis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.05-2.jpg'. Destaca a estrutura ou conceito 'Spermatocytogenesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogonia (red arrows) divide by mitosis (black arrow on right) to perpetuate themselves or form primary spermatocytes (blue arrows), a process called spermatocytogenesis. Primary spermatocytes are located first in the basal compartment, indicated by the blue fill area on the left (green arrows) and below the dotted line on the right, but migrate through the blood-testis barrier into the adluminal compartment.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Meiosis",
+      "explicacao_original": "Meiosis is a two-division process whereby diploid primary spermatocytes (blue arrows) divide by the first meiotic division (black arrow on right) into haploid secondary spermatocytes (red arrows). Secondary spermatocyes divide by the second meiotic division (green arrow on right) to form haploid spermatids (light blue arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.05.P02-2.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.05.P02-2.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.05-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.TP_.05-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis: spermatogenesis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.05-2.jpg'. Destaca a estrutura ou conceito 'Meiosis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Meiosis is a two-division process whereby diploid primary spermatocytes (blue arrows) divide by the first meiotic division (black arrow on right) into haploid secondary spermatocytes (red arrows). Secondary spermatocyes divide by the second meiotic division (green arrow on right) to form haploid spermatids (light blue arrows).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spermiogenesis",
+      "explicacao_original": "No cell division occurs during spermiogenesis. Rather, spermatids undergo cytodifferentiation where spherical spermatids (red arrows) are transformed into tadpole-shaped spermatids (blue arrows): nuclei elongate and become eccentrically located; a flagellum and an acrosome are formed; united cells are separated; and excess cytoplasm is shed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.05.P03-1.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.05.P03-1.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.05-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.TP_.05-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis: spermatogenesis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.05-2.jpg'. Destaca a estrutura ou conceito 'Spermiogenesis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: No cell division occurs during spermiogenesis. Rather, spermatids undergo cytodifferentiation where spherical spermatids (red arrows) are transformed into tadpole-shaped spermatids (blue arrows): nuclei elongate and become eccentrically located; a flagellum and an acrosome are formed; united cells are separated; and excess cytoplasm is shed.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Spermiation",
+      "explicacao_original": "Spermiation is the process of the release of mature spermatozoa (red arrows) from the Sertoli cell into the lumen of the convoluted portion of the seminiferous tubule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.T.TP_.05.P04.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP_.05.P04.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP_.05-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.T.TP_.05-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Testis: spermatogenesis'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP_.05-2.jpg'. Destaca a estrutura ou conceito 'Spermiation' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermiation is the process of the release of mature spermatozoa (red arrows) from the Sertoli cell into the lumen of the convoluted portion of the seminiferous tubule.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-5/, acesso em 2026-08-07."
+    }
+  ]
+}

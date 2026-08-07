@@ -1,0 +1,97 @@
+{
+  "id": 31284,
+  "titulo": "Alveolar ducts",
+  "titulo_wordpress": "Respiratory bronchiole 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Respiratory Bronchiole",
+    "Respiratory bronchiole 11"
+  ],
+  "descricao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the Loyola University collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "arquivo": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Alveolar ducts', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Descricao original da pagina: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Terminal bronchiole",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.06A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Terminal bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Respiratory bronchiole",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.06A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Respiratory bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Alveolar ducts",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.06A-8-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Alveolar ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Alveoli",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.06A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Knobs",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.06A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Knobs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Alveolar sacs",
+      "explicacao_original": "Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.06A-7-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Alveolar sacs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Respiratory bronchioles continue as alveolar ducts, elongated passageways whose walls consist almost entirely of alveoli. The opening of each alveolus is surrounded by a ring of smooth that appears like a “knob” in section. Alveolar ducts terminate as alveolar sacs, blind-ended pouches composed of clustered alveoli. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the Loyola University collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/Loyola-University-1.png",
+      "arquivo": "imagens/marcadores/Loyola-University-1.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.06A-USE.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.06A-USE.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolar ducts'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.06A-USE.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the Loyola University collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole-11/, acesso em 2026-08-07."
+    }
+  ]
+}

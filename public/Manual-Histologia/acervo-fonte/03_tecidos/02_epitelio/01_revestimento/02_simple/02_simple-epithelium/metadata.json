@@ -1,0 +1,64 @@
+{
+  "id": 3665,
+  "titulo": "Simple squamous epithelium",
+  "titulo_wordpress": "Simple epithelium 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 2"
+  ],
+  "descricao_original": "Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Sim_.-2.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Sim_.-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple squamous epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 2. Descricao original da pagina: Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple squamous epithelium",
+      "explicacao_original": "Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-2-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Sim_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Sim_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Sim_.-2.jpg'. Destaca a estrutura ou conceito 'Simple squamous epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-2-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Sim_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Sim_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Sim_.-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-2-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Sim_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Sim_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Sim_.-2.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Simple squamous epithelium forms the inner lining of blood vessels (seen here), lymphatics, and the heart. In these locations, this epithelium is given the proper name of endothelium. Blood vessels, 500x, 1000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Right image",
+      "explicacao_original": "The image on the right is an enlargement of the inner portion of a blood vessel wall similar to that in the left image. At this higher magnification, the squamous cell nuclei and the thin cytoplasm are readily visible.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-2-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-2-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Sim_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/T.E.Lin_.Sim_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple squamous epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Sim_.-2.jpg'. Destaca a estrutura ou conceito 'Right image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image on the right is an enlargement of the inner portion of a blood vessel wall similar to that in the left image. At this higher magnification, the squamous cell nuclei and the thin cytoplasm are readily visible.. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 2. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-2/, acesso em 2026-08-07."
+    }
+  ]
+}

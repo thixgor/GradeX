@@ -1,0 +1,93 @@
+{
+  "id": 2576,
+  "titulo": "Skeletal muscle",
+  "titulo_wordpress": "Skeletal 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 14"
+  ],
+  "descricao_original": "In the previous images, skeletal muscle fibers were shown in cross section. In this image, fibers are shown in longitudinal section. Skeletal muscle fibers are long, uniform cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Clearly seen in these sections are the prominent striations (cross banding), produced by the alignment and overlap of intracellular myofilaments. 400x (top), 1000x (bottom)",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "arquivo": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Skeletal muscle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Descricao original da pagina: In the previous images, skeletal muscle fibers were shown in cross section. In this image, fibers are shown in longitudinal section. Skeletal muscle fibers are long, uniform cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Clearly seen in these sections are the prominent striations (cross banding), produced by the alignment and overlap of intracellular myofilaments. 400x (top), 1000x (bottom). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle fibers",
+      "explicacao_original": "In the previous images, skeletal muscle fibers were shown in cross section. In this image, fibers are shown in longitudinal section. Skeletal muscle fibers are long, uniform cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Clearly seen in these sections are the prominent striations (cross banding), produced by the alignment and overlap of intracellular myofilaments. 400x (top), 1000x (bottom)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-1-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-1-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'Muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the previous images, skeletal muscle fibers were shown in cross section. In this image, fibers are shown in longitudinal section. Skeletal muscle fibers are long, uniform cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Clearly seen in these sections are the prominent striations (cross banding), produced by the alignment and overlap of intracellular myofilaments. 400x (top), 1000x (bottom). Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "In the previous images, skeletal muscle fibers were shown in cross section. In this image, fibers are shown in longitudinal section. Skeletal muscle fibers are long, uniform cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Clearly seen in these sections are the prominent striations (cross banding), produced by the alignment and overlap of intracellular myofilaments. 400x (top), 1000x (bottom)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-2-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-2-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the previous images, skeletal muscle fibers were shown in cross section. In this image, fibers are shown in longitudinal section. Skeletal muscle fibers are long, uniform cylindrical tubes with multiple nuclei that are peripherally located in the fiber, just beneath the plasma membrane (sarcolemma). Clearly seen in these sections are the prominent striations (cross banding), produced by the alignment and overlap of intracellular myofilaments. 400x (top), 1000x (bottom). Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Striations",
+      "explicacao_original": "The striations of skeletal muscle show a regular alternating dark and light pattern. Both skeletal and cardiac muscle fibers are classified as striated and the banding pattern in cardiac muscle is similar. However, the striations are much more prominent in skeletal muscle fibers. The major bands are the A band, I band and Z line.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-3-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-3-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'Striations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The striations of skeletal muscle show a regular alternating dark and light pattern. Both skeletal and cardiac muscle fibers are classified as striated and the banding pattern in cardiac muscle is similar. However, the striations are much more prominent in skeletal muscle fibers. The major bands are the A band, I band and Z line.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "A bands",
+      "explicacao_original": "The A band is the dark striation. In the lower image, a pale zone is visible in the center of the A band. This region is called the H band.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-4-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-4-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'A bands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The A band is the dark striation. In the lower image, a pale zone is visible in the center of the A band. This region is called the H band.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "I bands",
+      "explicacao_original": "The I band is the light striation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-5-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-5-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'I bands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The I band is the light striation.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Z lines",
+      "explicacao_original": "The Z line is a thin band in the center of the I band. Z lines are are not visible in the upper, lower magnification image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-6-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-6-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'Z lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Z line is a thin band in the center of the I band. Z lines are are not visible in the upper, lower magnification image.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Sarcomeres",
+      "explicacao_original": "The sarcomere is the region between adjacent Z lines and represents the contractile unit of striated muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk14-NEW-7-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk14-NEW-7-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-14-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/07/T.M.Sk-14-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Skeletal muscle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-14-NEW.jpg'. Destaca a estrutura ou conceito 'Sarcomeres' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sarcomere is the region between adjacent Z lines and represents the contractile unit of striated muscle.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 14. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-14/, acesso em 2026-08-07."
+    }
+  ]
+}

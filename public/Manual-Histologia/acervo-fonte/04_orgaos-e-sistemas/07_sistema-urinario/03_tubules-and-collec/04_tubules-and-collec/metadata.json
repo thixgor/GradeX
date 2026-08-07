@@ -1,0 +1,63 @@
+{
+  "id": 10813,
+  "titulo": "Cortex: Convoluted portion",
+  "titulo_wordpress": "Tubules and collecting system 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Tubules and Collecting System",
+    "Tubules and collecting system 4"
+  ],
+  "descricao_original": "The histological appearances of proximal and distal tubules are contrasted in this image. 600x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-4.jpg",
+      "arquivo": "imagens/base/Or.Ur_.Tub-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cortex: Convoluted portion', no setor Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 4. Descricao original da pagina: The histological appearances of proximal and distal tubules are contrasted in this image. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Proximal tubules",
+      "explicacao_original": "Proximal tubules are larger in diameter and have a taller, simple cuboidal epithelium than do distal tubules. The presence of a prominent brush border (composed of microvilli) also helps to distinguish the proximal tubules. At the light microscopic level, convoluted and straight portions of proximal tubules are similar but can be distinguished by their location.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-4.jpg'. Destaca a estrutura ou conceito 'Proximal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal tubules are larger in diameter and have a taller, simple cuboidal epithelium than do distal tubules. The presence of a prominent brush border (composed of microvilli) also helps to distinguish the proximal tubules. At the light microscopic level, convoluted and straight portions of proximal tubules are similar but can be distinguished by their location.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Brush border",
+      "explicacao_original": "Proximal tubules are larger in diameter and have a taller, simple cuboidal epithelium than do distal tubules. The presence of a prominent brush border (composed of microvilli) also helps to distinguish the proximal tubules. At the light microscopic level, convoluted and straight portions of proximal tubules are similar but can be distinguished by their location.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-4.jpg'. Destaca a estrutura ou conceito 'Brush border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Proximal tubules are larger in diameter and have a taller, simple cuboidal epithelium than do distal tubules. The presence of a prominent brush border (composed of microvilli) also helps to distinguish the proximal tubules. At the light microscopic level, convoluted and straight portions of proximal tubules are similar but can be distinguished by their location.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Distal tubules",
+      "explicacao_original": "Distal tubules, ascending thick limb (blue arrows) and distal convoluted tubules (red arrows) are also lined by a simple cuboidal epithelium. The epithelium lacks a brush border and varies in height depending on the tubule type, with the convoluted tubule have a shorter epithelium. Additionally, epithelial nuclei are often irregularly spaced around and frequently bulge into the lumen, particularly when the epithelium is short.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/08/Or.Ur_.Tub-4-3-NEW-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-4-3-NEW-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-4.jpg'. Destaca a estrutura ou conceito 'Distal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Distal tubules, ascending thick limb (blue arrows) and distal convoluted tubules (red arrows) are also lined by a simple cuboidal epithelium. The epithelium lacks a brush border and varies in height depending on the tubule type, with the convoluted tubule have a shorter epithelium. Additionally, epithelial nuclei are often irregularly spaced around and frequently bulge into the lumen, particularly when the epithelium is short.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Peritubular capillaries",
+      "explicacao_original": "Peritubular capillaries surround the tubules of the nephron and are supplied by the efferent arteriole.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.Tub-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.Tub-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.Tub-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.Tub-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex: Convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.Tub-4.jpg'. Destaca a estrutura ou conceito 'Peritubular capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peritubular capillaries surround the tubules of the nephron and are supplied by the efferent arteriole.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Tubules and Collecting System > Tubules and collecting system 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/tubules-and-collecting-system/tubules-and-collecting-system-4/, acesso em 2026-08-07."
+    }
+  ]
+}

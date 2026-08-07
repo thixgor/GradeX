@@ -1,0 +1,84 @@
+{
+  "id": 5324,
+  "titulo": "Fenestrated capillaries",
+  "titulo_wordpress": "Capillaries and Sinusoids 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 14"
+  ],
+  "descricao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Fenestrated capillaries', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Descricao original da pagina: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capillary lumens",
+      "explicacao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-13-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-13-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-13.jpg'. Destaca a estrutura ou conceito 'Capillary lumens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Red blood cell",
+      "explicacao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-13-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-13-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-13.jpg'. Destaca a estrutura ou conceito 'Red blood cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-13-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-13-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-13.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal lamina of endothelial cells",
+      "explicacao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-13-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-13-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-13.jpg'. Destaca a estrutura ou conceito 'Basal lamina of endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fenestrae",
+      "explicacao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-13-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-13-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-13.jpg'. Destaca a estrutura ou conceito 'Fenestrae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Diaphragms",
+      "explicacao_original": "Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-13-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-13-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.Caps-13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fenestrated capillaries'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-13.jpg'. Destaca a estrutura ou conceito 'Diaphragms' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fenestrations perforating the endothelial cells are generally spanned by diaphragms, as seen here. The diaphragm is derived from the glycocalyx and is thinner than two apposed plasma membranes. Pores facilitate transport across the endothelium in organs where abundant and rapid transport is required. 60,000x (both). Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-14/, acesso em 2026-08-07."
+    }
+  ]
+}

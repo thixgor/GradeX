@@ -1,0 +1,4 @@
+public/Manual-Histologia/acervo-fonte/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+public/Manual-Histologia/acervo-fonte/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+public/Manual-Histologia/acervo-fonte/**/*.png filter=lfs diff=lfs merge=lfs -text
+public/Manual-Histologia/acervo-fonte/**/*.h5p filter=lfs diff=lfs merge=lfs -text

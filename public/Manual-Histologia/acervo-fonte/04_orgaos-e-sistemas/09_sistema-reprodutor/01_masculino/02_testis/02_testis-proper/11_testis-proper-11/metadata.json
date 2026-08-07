@@ -1,0 +1,107 @@
+{
+  "id": 27800,
+  "titulo": "Seminiferous tubules - convoluted portion",
+  "titulo_wordpress": "Testis Proper 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Testis",
+    "Testis Proper",
+    "Testis Proper 11"
+  ],
+  "descricao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/",
+  "creditos_identificados": [
+    "Image source: Image taken of a slide in the University of New England College of Osteopathic Medicine collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "arquivo": "imagens/base/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Seminiferous tubules - convoluted portion', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Descricao original da pagina: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spermatogonia",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-1-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Spermatogonia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Primary spermatocytes",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-2-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Primary spermatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Spermatids (early)",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-3-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Spermatids (early)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Spermatids (late)",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-4-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Spermatids (late)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Spermatozoa",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-5-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Spermatozoa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Flagella",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-6-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Flagella' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Sertoli cells",
+      "explicacao_original": "Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-7-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Sertoli cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spermatogenesis has four phases: spermatocytogenesis (mitotic division of spermatogonia to primary spermatocytes); meiosis (a two-step division of primary spermatocytes to secondary spermatocytes to spermatids); spermiogenesis (cytodifferentiation of spermatids into mature spermatozoa); and spermiation (the release of sperm from Sertoli cells). 600X. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "Image taken of a slide in the University of New England College of Osteopathic Medicine collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11-8-ping.png",
+      "arquivo": "imagens/marcadores/O.R.M.T.TP-11-8-ping.png",
+      "imagem_base": "imagens/base/O.R.M.T.TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/11/O.R.M.T.TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Seminiferous tubules - convoluted portion'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.T.TP-11.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image taken of a slide in the University of New England College of Osteopathic Medicine collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Testis > Testis Proper > Testis Proper 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/testis/testis-proper/testis-proper-11-2/, acesso em 2026-08-07."
+    }
+  ]
+}

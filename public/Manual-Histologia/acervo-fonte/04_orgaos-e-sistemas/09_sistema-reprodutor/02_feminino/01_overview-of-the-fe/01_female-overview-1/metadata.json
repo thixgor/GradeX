@@ -1,0 +1,104 @@
+{
+  "id": 12245,
+  "titulo": "Overview",
+  "titulo_wordpress": "Female Overview 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Overview of the female reproductive system",
+    "Female Overview 1"
+  ],
+  "descricao_original": "The drawing illustrates the internal organs of the female reproductive system: paired ovaries, paired oviducts (Fallopian tubes), uterus and vagina.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "arquivo": "imagens/base/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Descricao original da pagina: The drawing illustrates the internal organs of the female reproductive system: paired ovaries, paired oviducts (Fallopian tubes), uterus and vagina.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ovaries",
+      "explicacao_original": "The paired ovaries ovulate a female germ cell (exocrine function) approximately once each month. The endocrine function of the ovary is the secretion of the hormone estrogen during the first half of the ovarian cycle and the hormones progesterone and estrogen during the second half. These hormones regulate the activity of the other organs of the female reproductive system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P01.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Ovaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paired ovaries ovulate a female germ cell (exocrine function) approximately once each month. The endocrine function of the ovary is the secretion of the hormone estrogen during the first half of the ovarian cycle and the hormones progesterone and estrogen during the second half. These hormones regulate the activity of the other organs of the female reproductive system.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Oviducts",
+      "explicacao_original": "Each oviduct (Fallopian tube) interconnects the ovary and the uterus and is divided into four segments: infundibulum (black), ampulla (green), isthmus (red) and intramural (blue) portions. The ampulla, near its junction with the isthmus, serves as the site of fertilization. The oviducts, therefore, transport sperm and oocyte to the site of fertilization and transport the embryo from this site into the uterus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P02.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Oviducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each oviduct (Fallopian tube) interconnects the ovary and the uterus and is divided into four segments: infundibulum (black), ampulla (green), isthmus (red) and intramural (blue) portions. The ampulla, near its junction with the isthmus, serves as the site of fertilization. The oviducts, therefore, transport sperm and oocyte to the site of fertilization and transport the embryo from this site into the uterus.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Uterus",
+      "explicacao_original": "The embryo implants into the uterus about day 21 of the menstrual cycle. The mucosal lining (endometrium) of the uterus forms the maternal portion of the placenta that surrounds and nourishes the embryo/fetus for the 40 weeks of pregnancy. The smooth muscle of the uterus expels the fetus at parturition.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P03.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Uterus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The embryo implants into the uterus about day 21 of the menstrual cycle. The mucosal lining (endometrium) of the uterus forms the maternal portion of the placenta that surrounds and nourishes the embryo/fetus for the 40 weeks of pregnancy. The smooth muscle of the uterus expels the fetus at parturition.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fundus",
+      "explicacao_original": "The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P04.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Fundus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Body",
+      "explicacao_original": "The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P05.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Isthmus",
+      "explicacao_original": "The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P06.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Isthmus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Cervix",
+      "explicacao_original": "The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P07.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Cervix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fundus of the uterus extends above the opening of the oviducts. The body forms the main mass of the uterus. The isthmus is the narrowing between the body and the cervix. The most inferior portion of the uterus, the cervix, projects into the vagina.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Vagina",
+      "explicacao_original": "The vagina serves as the depository for sperm and forms part of the birth canal at parturition.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.P08.png",
+      "arquivo": "imagens/marcadores/O.R.F.ORV_.01.P08.png",
+      "imagem_base": "imagens/base/O.R.F.ORV_.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.ORV_.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.ORV_.01.jpg'. Destaca a estrutura ou conceito 'Vagina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vagina serves as the depository for sperm and forms part of the birth canal at parturition.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Overview of the female reproductive system > Female Overview 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/overview-female-reproductive/female-overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

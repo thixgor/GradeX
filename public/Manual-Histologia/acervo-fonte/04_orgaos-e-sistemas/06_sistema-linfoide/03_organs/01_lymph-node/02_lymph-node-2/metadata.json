@@ -1,0 +1,114 @@
+{
+  "id": 8545,
+  "titulo": "Lymph node",
+  "titulo_wordpress": "Lymph node 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Organs",
+    "Lymph Node",
+    "Lymph node 2"
+  ],
+  "descricao_original": "A low power micrograph of the lymph node displays the components illustrated in the preceding drawing. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymph node', no setor Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Descricao original da pagina: A low power micrograph of the lymph node displays the components illustrated in the preceding drawing. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Overlay",
+      "explicacao_original": "A low power micrograph of the lymph node displays the components illustrated in the preceding drawing. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Overlay' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A low power micrograph of the lymph node displays the components illustrated in the preceding drawing. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hilum",
+      "explicacao_original": "The hilum is the indented portion of lymph nodes where the efferent lymphatics and venules exit and where arterioles enter.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Hilum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The hilum is the indented portion of lymph nodes where the efferent lymphatics and venules exit and where arterioles enter.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Capsule",
+      "explicacao_original": "Each lymph node is surrounded by a dense connective tissue capsule. Afferent lymphatics pierce the capsule to enter the subcapsular sinus lying beneath it. The subcapsular sinus drains into trabecular (intermediate) sinuses that traverse the cortex to connect with medullary sinuses. Medullary sinuses anastomose to form the efferent lymphatic that exits at the hilum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each lymph node is surrounded by a dense connective tissue capsule. Afferent lymphatics pierce the capsule to enter the subcapsular sinus lying beneath it. The subcapsular sinus drains into trabecular (intermediate) sinuses that traverse the cortex to connect with medullary sinuses. Medullary sinuses anastomose to form the efferent lymphatic that exits at the hilum.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Subcapsular sinus",
+      "explicacao_original": "Each lymph node is surrounded by a dense connective tissue capsule. Afferent lymphatics pierce the capsule to enter the subcapsular sinus lying beneath it. The subcapsular sinus drains into trabecular (intermediate) sinuses that traverse the cortex to connect with medullary sinuses. Medullary sinuses anastomose to form the efferent lymphatic that exits at the hilum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Subcapsular sinus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each lymph node is surrounded by a dense connective tissue capsule. Afferent lymphatics pierce the capsule to enter the subcapsular sinus lying beneath it. The subcapsular sinus drains into trabecular (intermediate) sinuses that traverse the cortex to connect with medullary sinuses. Medullary sinuses anastomose to form the efferent lymphatic that exits at the hilum.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Trabecular sinuses",
+      "explicacao_original": "Each lymph node is surrounded by a dense connective tissue capsule. Afferent lymphatics pierce the capsule to enter the subcapsular sinus lying beneath it. The subcapsular sinus drains into trabecular (intermediate) sinuses that traverse the cortex to connect with medullary sinuses. Medullary sinuses anastomose to form the efferent lymphatic that exits at the hilum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Trabecular sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each lymph node is surrounded by a dense connective tissue capsule. Afferent lymphatics pierce the capsule to enter the subcapsular sinus lying beneath it. The subcapsular sinus drains into trabecular (intermediate) sinuses that traverse the cortex to connect with medullary sinuses. Medullary sinuses anastomose to form the efferent lymphatic that exits at the hilum.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Outer cortex",
+      "explicacao_original": "The outer cortex is composed primarily of lymphoid nodules and is a B-dependent area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Outer cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer cortex is composed primarily of lymphoid nodules and is a B-dependent area.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Paracortex",
+      "explicacao_original": "The paracortex is composed of tissue resembling diffuse lymphoid tissue and is a thymus-dependent (T-dependent) area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Paracortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paracortex is composed of tissue resembling diffuse lymphoid tissue and is a thymus-dependent (T-dependent) area.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Medullary cords",
+      "explicacao_original": "Medullary cords are finger-like projections of B-dependent, lymphoid tissue, containing plasma cells and memory B cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-8-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Medullary cords' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medullary cords are finger-like projections of B-dependent, lymphoid tissue, containing plasma cells and memory B cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Medullary sinuses",
+      "explicacao_original": "Lymph drains from the subcapsular sinus into the cortical (trabecular or intermediate) sinuses and from there into the medullary sinuses. Eventually, all lymph exits at the hilum via efferent lymphatics, carrying antibodies and activated B cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Node-2-9-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Node-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/11/Or.Ly_.Node-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymph node'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Node-2.jpg'. Destaca a estrutura ou conceito 'Medullary sinuses' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymph drains from the subcapsular sinus into the cortical (trabecular or intermediate) sinuses and from there into the medullary sinuses. Eventually, all lymph exits at the hilum via efferent lymphatics, carrying antibodies and activated B cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Organs > Lymph Node > Lymph node 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/organs/lymph-node/lymph-node-2/, acesso em 2026-08-07."
+    }
+  ]
+}

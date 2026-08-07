@@ -1,0 +1,73 @@
+{
+  "id": 1025,
+  "titulo": "Cell shapes: squamous",
+  "titulo_wordpress": "Cell shapes 4",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 4"
+  ],
+  "descricao_original": "This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh_.-4.jpg",
+      "arquivo": "imagens/base/C.B.Sh_.-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: squamous', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 4. Descricao original da pagina: This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-4-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-4-1-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh_.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-4.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 4. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleus",
+      "explicacao_original": "This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-4-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-4-2-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh_.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-4.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 4. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-4-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-4-3-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh_.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-4.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 4. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cell junction",
+      "explicacao_original": "This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-4-5-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-4-5-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh_.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-4.jpg'. Destaca a estrutura ou conceito 'Cell junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 4. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Collagen fibrils",
+      "explicacao_original": "This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.Sh-4-6-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-4-6-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.Sh_.-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-4.jpg'. Destaca a estrutura ou conceito 'Collagen fibrils' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows an electron micrograph of a squamous cell that lines body cavities. The cell has very little cytoplasm; note how the nucleus conforms to the shape of the cell. At its thinnest point, this cell is only 0.5 microns thick. Serous membrane 15,000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 4. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-4/, acesso em 2026-08-07."
+    }
+  ]
+}

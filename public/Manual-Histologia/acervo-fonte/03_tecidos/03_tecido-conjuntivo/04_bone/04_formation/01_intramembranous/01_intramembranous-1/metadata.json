@@ -1,0 +1,95 @@
+{
+  "id": 10512,
+  "titulo": "Bone: intramembranous formation",
+  "titulo_wordpress": "Intramembranous 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Intramembranous",
+    "Intramembranous 1"
+  ],
+  "descricao_original": "Periosteum, endosteum or embryonic CT (mesenchyme) forms bone by intramembranous ossification. This formation is created de novo, rather than replacing a cartilagenous template of future bone, as does endochondral formation. The embryonic flat bone (fetal skull) shown here is composed of spongy, woven bone and was formed by mesenchymal cells differentiating into osteoblasts. 10x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "arquivo": "imagens/base/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: intramembranous formation', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Descricao original da pagina: Periosteum, endosteum or embryonic CT (mesenchyme) forms bone by intramembranous ossification. This formation is created de novo, rather than replacing a cartilagenous template of future bone, as does endochondral formation. The embryonic flat bone (fetal skull) shown here is composed of spongy, woven bone and was formed by mesenchymal cells differentiating into osteoblasts. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Spongy, woven bone",
+      "explicacao_original": "At future primary centers of ossification, mesenchymal, multipotential cells become osteoblasts by aggregating, rounding up and beginning to secrete bony matrix. The spongy woven bone these osteoblasts form is the beginning of intramembranous ossification in the fetus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-1-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Spongy, woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At future primary centers of ossification, mesenchymal, multipotential cells become osteoblasts by aggregating, rounding up and beginning to secrete bony matrix. The spongy woven bone these osteoblasts form is the beginning of intramembranous ossification in the fetus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endosteum",
+      "explicacao_original": "The surface of the spicule is covered by a single layer of cells. In areas where bone is being deposited, osteoblasts (black arrows) are present. In areas where neither deposition or resorption is occurring, the spicule is covered by flattenend lining cells (endosteal cells).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-2-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Endosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The surface of the spicule is covered by a single layer of cells. In areas where bone is being deposited, osteoblasts (black arrows) are present. In areas where neither deposition or resorption is occurring, the spicule is covered by flattenend lining cells (endosteal cells).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Periosteum",
+      "explicacao_original": "Periosteum surrounding flat bones appears before formation of the inner and outer tables lying adjacent to them. The periosteum will contribute to the formation of the tables. Periosteum on the outer surface of flat bones will be called pericranium (blue arrows) while that on the inner surface contributes to dura mater (black arrows). The brain lies immediately beneath this image",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-3-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Periosteum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Periosteum surrounding flat bones appears before formation of the inner and outer tables lying adjacent to them. The periosteum will contribute to the formation of the tables. Periosteum on the outer surface of flat bones will be called pericranium (blue arrows) while that on the inner surface contributes to dura mater (black arrows). The brain lies immediately beneath this image. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Skin",
+      "explicacao_original": "The developing skin with associated hair follicles is visible in the upper portion of the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-4-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The developing skin with associated hair follicles is visible in the upper portion of the image.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hair follicles",
+      "explicacao_original": "The developing skin with associated hair follicles is visible in the upper portion of the image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-5-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-5-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Hair follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The developing skin with associated hair follicles is visible in the upper portion of the image.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Skeletal muscle",
+      "explicacao_original": "A thin layer of embryonic skeletal muscle underlies the skin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-6-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-6-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Skeletal muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A thin layer of embryonic skeletal muscle underlies the skin.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area in the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I.01A-7-ping.png",
+      "arquivo": "imagens/marcadores/T.C.B.F.I.01A-7-ping.png",
+      "imagem_base": "imagens/base/T.C.B.F.I-01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.F.I-01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: intramembranous formation'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.F.I-01A.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area in the rectangle.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Intramembranous > Intramembranous 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/intramembranous/intramembranous-1/, acesso em 2026-08-07."
+    }
+  ]
+}

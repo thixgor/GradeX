@@ -1,0 +1,74 @@
+{
+  "id": 6753,
+  "titulo": "Tongue",
+  "titulo_wordpress": "Tongue 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tongue",
+    "Tongue 1"
+  ],
+  "descricao_original": "The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-1.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tongue', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 1. Descricao original da pagina: The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dorsum of the tongue",
+      "explicacao_original": "The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-1.jpg'. Destaca a estrutura ou conceito 'Dorsum of the tongue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ventral surface",
+      "explicacao_original": "The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-1.jpg'. Destaca a estrutura ou conceito 'Ventral surface' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Filiform papillae",
+      "explicacao_original": "The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-1.jpg'. Destaca a estrutura ou conceito 'Filiform papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fungiform papillae",
+      "explicacao_original": "The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-1-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-1-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-1.jpg'. Destaca a estrutura ou conceito 'Fungiform papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dorsum of the tongue is covered by a stratified squamous keratinized epithelium with filiform, fungiform, and circumvallate (not seen here) papillae. The ventral surface of the tongue is covered by a stratified squamous moist epithelium (lining mucosa). The core of the tongue contains intrinsic and extrinsic skeletal muscles and connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Skeletal muscle",
+      "explicacao_original": "Motility of the tongue is controlled by extrinsic and intrinsic skeletal muscles. The intrinsic muscles, seen here, originate within and insert into the tongue; they change the shape of the tongue. Muscle fibers are arranged in criss-crossing fascicles, seen in longitudinal (arrows) and cross section (X’s).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-1-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-1-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-1.jpg'. Destaca a estrutura ou conceito 'Skeletal muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Motility of the tongue is controlled by extrinsic and intrinsic skeletal muscles. The intrinsic muscles, seen here, originate within and insert into the tongue; they change the shape of the tongue. Muscle fibers are arranged in criss-crossing fascicles, seen in longitudinal (arrows) and cross section (X’s).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-1/, acesso em 2026-08-07."
+    }
+  ]
+}

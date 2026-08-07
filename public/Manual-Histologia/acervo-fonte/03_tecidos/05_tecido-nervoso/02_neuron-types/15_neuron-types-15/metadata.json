@@ -1,0 +1,75 @@
+{
+  "id": 2999,
+  "titulo": "Pseudounipolar neuron",
+  "titulo_wordpress": "Neuron types 15",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 15"
+  ],
+  "descricao_original": "Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/",
+  "creditos_identificados": [
+    "Image source: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-NEW.jpg",
+      "arquivo": "imagens/base/T.N.Type-15-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pseudounipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 15. Descricao original da pagina: Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Neuronal cell bodies",
+      "explicacao_original": "Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-New-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-15-New-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-15-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-15-NEW.jpg'. Destaca a estrutura ou conceito 'Neuronal cell bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stem process",
+      "explicacao_original": "Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-New-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-15-New-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-15-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-15-NEW.jpg'. Destaca a estrutura ou conceito 'Stem process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Glomerulus",
+      "explicacao_original": "Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-New-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-15-New-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-15-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-15-NEW.jpg'. Destaca a estrutura ou conceito 'Glomerulus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Axons",
+      "explicacao_original": "Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-New-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-15-New-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-15-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-15-NEW.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons extend a single stem process that initially forms a twisted glomerulus-like structure. Thereafter, it branches into central and peripheral processes, which are both functionally and structurally axonal. This branching is not visible in this image. Silver stain, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/Calvo.png",
+      "arquivo": "imagens/marcadores/Calvo.png",
+      "imagem_base": "imagens/base/T.N.Type-15-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-15-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pseudounipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-15-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is owned by Dr. Jose Luis Calvo and is used under a royalty-free agreement.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 15. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-15/, acesso em 2026-08-07."
+    }
+  ]
+}

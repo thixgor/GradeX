@@ -1,0 +1,84 @@
+{
+  "id": 3028,
+  "titulo": "Schwann cells",
+  "titulo_wordpress": "Supporting cells PNS 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Peripheral Nervous System",
+    "Supporting cells PNS 6"
+  ],
+  "descricao_original": "This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "arquivo": "imagens/base/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Schwann cells', no setor Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Descricao original da pagina: This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axons",
+      "explicacao_original": "This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-6.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myelin sheaths",
+      "explicacao_original": "This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-6.jpg'. Destaca a estrutura ou conceito 'Myelin sheaths' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Schwann cell cytoplasm",
+      "explicacao_original": "This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6-2a-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-6.jpg'. Destaca a estrutura ou conceito 'Schwann cell cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows cross sections of numerous myelinated axons within a peripheral nerve. Axons larger than one micron in diameter are usually myelinated and the diameter of the axon is proportional to the number of wrappings. 6000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endoneurium",
+      "explicacao_original": "The endoneurium consists of collagen fibrils interspersed between the Schwann cell-axon units and fibroblasts. Each Schwann cell also secretes its own external lamina, that cannot be seen at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-6.jpg'. Destaca a estrutura ou conceito 'Endoneurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium consists of collagen fibrils interspersed between the Schwann cell-axon units and fibroblasts. Each Schwann cell also secretes its own external lamina, that cannot be seen at this magnification.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Fibroblast process",
+      "explicacao_original": "The endoneurium consists of collagen fibrils interspersed between the Schwann cell-axon units and fibroblasts. Each Schwann cell also secretes its own external lamina, that cannot be seen at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-6.jpg'. Destaca a estrutura ou conceito 'Fibroblast process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium consists of collagen fibrils interspersed between the Schwann cell-axon units and fibroblasts. Each Schwann cell also secretes its own external lamina, that cannot be seen at this magnification.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Capillary",
+      "explicacao_original": "The endoneurium consists of collagen fibrils interspersed between the Schwann cell-axon units and fibroblasts. Each Schwann cell also secretes its own external lamina, that cannot be seen at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-6-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cells'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-6.jpg'. Destaca a estrutura ou conceito 'Capillary' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium consists of collagen fibrils interspersed between the Schwann cell-axon units and fibroblasts. Each Schwann cell also secretes its own external lamina, that cannot be seen at this magnification.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-6/, acesso em 2026-08-07."
+    }
+  ]
+}

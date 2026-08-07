@@ -1,0 +1,44 @@
+{
+  "id": 12751,
+  "titulo": "Uterus: secretory phase (Days 14-26)",
+  "titulo_wordpress": "Uterus 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 10"
+  ],
+  "descricao_original": "The image on the left was taken late during the secretory portion of the cycle, probably around day 25, just before ischemia begins. The image on the right is from an area similar to that enclosed by the rectangle. 400x 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.R.U.10A.jpg",
+      "arquivo": "imagens/base/O.R.R.U.10A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: secretory phase (Days 14-26)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 10. Descricao original da pagina: The image on the left was taken late during the secretory portion of the cycle, probably around day 25, just before ischemia begins. The image on the right is from an area similar to that enclosed by the rectangle. 400x 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "(pre)Decidual cells",
+      "explicacao_original": "About day 24, multipotential stromal cells differentiate into cells called predecidual cells (non-gravid cycle) or decidual cells, if implantation occurs. These cells appear first around the spiral arteries and beneath the surface epithelium, as shown here. If fertilization and implantation occur, the decidual cells provide nutrition for the implanting blastocyst and form the maternal placenta (decidua).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.R.U.10A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.R.U.10A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.R.U.10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.R.U.10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.R.U.10A.jpg'. Destaca a estrutura ou conceito '(pre)Decidual cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: About day 24, multipotential stromal cells differentiate into cells called predecidual cells (non-gravid cycle) or decidual cells, if implantation occurs. These cells appear first around the spiral arteries and beneath the surface epithelium, as shown here. If fertilization and implantation occur, the decidual cells provide nutrition for the implanting blastocyst and form the maternal placenta (decidua).. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Graphic: Secretory phase",
+      "explicacao_original": "Uterus: secretory phase (days 14-26) — The corpus luteum is active for 12 days, until day 26. During this time progesterone and estrogen cause: the functional zone to reach maximal thickness; spiral arteries to highly coil, making them visible; glands to widen, sacculate and secrete; and cells to appear (Day 24) that could form the maternal placenta. The ovary is in the luteal phase at this time.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.10.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.10.P02.png",
+      "imagem_base": "imagens/base/O.R.R.U.10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.R.U.10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: secretory phase (Days 14-26)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.R.U.10A.jpg'. Destaca a estrutura ou conceito 'Graphic: Secretory phase' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Uterus: secretory phase (days 14-26) — The corpus luteum is active for 12 days, until day 26. During this time progesterone and estrogen cause: the functional zone to reach maximal thickness; spiral arteries to highly coil, making them visible; glands to widen, sacculate and secrete; and cells to appear (Day 24) that could form the maternal placenta. The ovary is in the luteal phase at this time.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-10/, acesso em 2026-08-07."
+    }
+  ]
+}

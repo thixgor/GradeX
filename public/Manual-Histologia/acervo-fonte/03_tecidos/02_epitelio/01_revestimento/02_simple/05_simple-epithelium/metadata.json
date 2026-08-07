@@ -1,0 +1,54 @@
+{
+  "id": 3671,
+  "titulo": "Simple cuboidal epithelium",
+  "titulo_wordpress": "Simple epithelium 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Simple",
+    "Simple epithelium 5"
+  ],
+  "descricao_original": "In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-NEW.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.Simp-5-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple cuboidal epithelium', no setor Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 5. Descricao original da pagina: In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Simple cuboidal epithelium",
+      "explicacao_original": "In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-5-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple cuboidal epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-5-NEW.jpg'. Destaca a estrutura ou conceito 'Simple cuboidal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Brush border",
+      "explicacao_original": "In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-5-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple cuboidal epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-5-NEW.jpg'. Destaca a estrutura ou conceito 'Brush border' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Simple squamous epithelium",
+      "explicacao_original": "In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.Simp-5-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.Simp-5-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.Simp-5-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple cuboidal epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.Simp-5-NEW.jpg'. Destaca a estrutura ou conceito 'Simple squamous epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In most cases, simple cuboidal epithelia line tubules, multiple examples of which are seen in this image. The cells in each can vary from nearly cube-shaped to rectangular. Some cells also have a prominent brush border on their free surfaces which is composed of microvilli. Due to the plane of section, the nuclei of some cells are not visible. Kidney, 400x. Contexto setorial: Tecidos > Epitélio > Revestimento > Simple > Simple epithelium 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/simple/simple-epithelium-5/, acesso em 2026-08-07."
+    }
+  ]
+}

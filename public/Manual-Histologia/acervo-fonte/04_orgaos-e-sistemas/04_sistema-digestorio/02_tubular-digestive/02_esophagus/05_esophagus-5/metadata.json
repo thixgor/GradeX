@@ -1,0 +1,104 @@
+{
+  "id": 6837,
+  "titulo": "Esophagus",
+  "titulo_wordpress": "Esophagus 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Esophagus",
+    "Esophagus 5"
+  ],
+  "descricao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "arquivo": "imagens/base/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Esophagus', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Descricao original da pagina: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Mucosa-5A.png",
+      "arquivo": "imagens/marcadores/Mucosa-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Epithelium-5A.png",
+      "arquivo": "imagens/marcadores/Epithelium-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Lamina-propria-5A.png",
+      "arquivo": "imagens/marcadores/Lamina-propria-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lymphoid nodule",
+      "explicacao_original": "- Lymphoid nodule",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Nodule-5A.png",
+      "arquivo": "imagens/marcadores/Nodule-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Lymphoid nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: - Lymphoid nodule. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Muscularis-mucosae-5A.png",
+      "arquivo": "imagens/marcadores/Muscularis-mucosae-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Submucosa",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Submucosa-5A.png",
+      "arquivo": "imagens/marcadores/Submucosa-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Esophageal glands proper",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Glands-5A.png",
+      "arquivo": "imagens/marcadores/Glands-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Esophageal glands proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Ducts of glands",
+      "explicacao_original": "A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ducts-5A.png",
+      "arquivo": "imagens/marcadores/Ducts-5A.png",
+      "imagem_base": "imagens/base/New-trichrome-5A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/New-trichrome-5A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus'. Deve ser sobreposta, sem redimensionamento independente, a 'New-trichrome-5A-fix.jpg'. Destaca a estrutura ou conceito 'Ducts of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A trichrome stain of the mucosa and submucosa of the esophagus emphasizes the different tissues present. In this region the muscularis mucosae is incomplete, consisting of islands of smooth muscle, rather than a continuous layer. The longitudinal fold, with a core of submucosa, would flatten during expansion of the esophagus during food transport. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-5/, acesso em 2026-08-07."
+    }
+  ]
+}

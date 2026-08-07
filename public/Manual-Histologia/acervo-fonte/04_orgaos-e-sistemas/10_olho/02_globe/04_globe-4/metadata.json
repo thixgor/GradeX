@@ -1,0 +1,185 @@
+{
+  "id": 9198,
+  "titulo": "Globe: Limbus",
+  "titulo_wordpress": "Globe 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Olho",
+    "Globe",
+    "Globe 4"
+  ],
+  "descricao_original": "The transparent cornea is continuous with the sclera, which together constitute the corneoscleral or fibrous layer of the eye. The region of this junction is called the limbus.",
+  "url_origem": "https://digitalhistology.org/organs-systems/eye/globe/globe-4/",
+  "creditos_identificados": [
+    "Image sources: The main image was taken of a slide from the University of Iowa collection. The inset eye section is taken of a slide from the University of New England College of Osteopathic Medicine. The image of the anterior view of the eye is from Stephen Balaban."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "arquivo": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Globe: Limbus', no setor Órgãos e Sistemas > Olho > Globe > Globe 4. Descricao original da pagina: The transparent cornea is continuous with the sclera, which together constitute the corneoscleral or fibrous layer of the eye. The region of this junction is called the limbus.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cornea",
+      "explicacao_original": "The cornea, the major refractile part of the eye, is part of the outer tunic along with the sclera. The transparency of the cornea results from the regular arrangement of collagen fibers in its stroma. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva, which covers the sclera.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Cornea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cornea, the major refractile part of the eye, is part of the outer tunic along with the sclera. The transparency of the cornea results from the regular arrangement of collagen fibers in its stroma. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva, which covers the sclera.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Corneal epithelium",
+      "explicacao_original": "The cornea, the major refractile part of the eye, is part of the outer tunic along with the sclera. The transparency of the cornea results from the regular arrangement of collagen fibers in its stroma. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva which covers the sclera.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Corneal epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cornea, the major refractile part of the eye, is part of the outer tunic along with the sclera. The transparency of the cornea results from the regular arrangement of collagen fibers in its stroma. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva which covers the sclera.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Bulbar conjunctiva",
+      "explicacao_original": "The cornea, the major refractile part of the eye, is part of the outer tunic along with the sclera. The transparency of the cornea results from the regular arrangement of collagen fibers in its stroma. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva which covers the sclera.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Bulbar conjunctiva' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cornea, the major refractile part of the eye, is part of the outer tunic along with the sclera. The transparency of the cornea results from the regular arrangement of collagen fibers in its stroma. The cornea is surfaced by the corneal epithelium that transitions to the bulbar conjunctiva which covers the sclera.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Sclera",
+      "explicacao_original": "The second component of the fibrous tunic is the sclera which is opaque and forms the “white of the eye.” Its collagen fibers are much less regularly arranged than in the cornea, resulting in its opacity. The sclera is present in the posterior four-fifths of the eye.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Sclera' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The second component of the fibrous tunic is the sclera which is opaque and forms the “white of the eye.” Its collagen fibers are much less regularly arranged than in the cornea, resulting in its opacity. The sclera is present in the posterior four-fifths of the eye.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Limbus",
+      "explicacao_original": "The limbus is the region where the transparent cornea meets the opaque sclera. It contains the canal of Schlemm and the trabecular meshwork, two structures involved in the removal of aqueous humor from the anterior chamber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Limbus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The limbus is the region where the transparent cornea meets the opaque sclera. It contains the canal of Schlemm and the trabecular meshwork, two structures involved in the removal of aqueous humor from the anterior chamber.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Trabecular network",
+      "explicacao_original": "The trabecular meshwork, located in the limbus, is a series of endothelium-lined channels that drain aqueous humor from the anterior chamber of the eye. Aqueous humor flows from the trabecular meshwork into the larger canal of Schlemm, which connects with the venous system external to the eye.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Trabecular network' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trabecular meshwork, located in the limbus, is a series of endothelium-lined channels that drain aqueous humor from the anterior chamber of the eye. Aqueous humor flows from the trabecular meshwork into the larger canal of Schlemm, which connects with the venous system external to the eye.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Canal of Schlemm",
+      "explicacao_original": "The trabecular meshwork, located in the limbus, is a series of endothelium-lined channels that drain aqueous humor from the anterior chamber of the eye. Aqueous humor flows from the trabecular meshwork into the larger canal of Schlemm, which connects with the venous system external to the eye.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-7-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Canal of Schlemm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The trabecular meshwork, located in the limbus, is a series of endothelium-lined channels that drain aqueous humor from the anterior chamber of the eye. Aqueous humor flows from the trabecular meshwork into the larger canal of Schlemm, which connects with the venous system external to the eye.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Iris",
+      "explicacao_original": "The iris is a donut-shaped structure with a central aperture, the pupil. The iris separates the anterior from the posterior chamber. A heavily pigmented, two-layered epithelium forms the posterior boundary of the iris, preventing light from entering the posterior chamber. The iris and the ciliary body are components of the middle tunic or uveal tract.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-8-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Iris' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The iris is a donut-shaped structure with a central aperture, the pupil. The iris separates the anterior from the posterior chamber. A heavily pigmented, two-layered epithelium forms the posterior boundary of the iris, preventing light from entering the posterior chamber. The iris and the ciliary body are components of the middle tunic or uveal tract.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Pupil",
+      "explicacao_original": "The iris is a donut-shaped structure with a central aperture, the pupil. The iris separates the anterior from the posterior chamber. A heavily pigmented, two-layered epithelium forms the posterior boundary of the iris, preventing light from entering the posterior chamber. The region where the iris meets the sclera is called the iridoscleral angle. The iris and the ciliary body are components of the middle tunic or uveal tract.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-10-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Pupil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The iris is a donut-shaped structure with a central aperture, the pupil. The iris separates the anterior from the posterior chamber. A heavily pigmented, two-layered epithelium forms the posterior boundary of the iris, preventing light from entering the posterior chamber. The region where the iris meets the sclera is called the iridoscleral angle. The iris and the ciliary body are components of the middle tunic or uveal tract.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Ciliary body",
+      "explicacao_original": "The ciliary body is a ring-shaped structure that appears triangular in cross section with a pleated surface formed by the ciliary processes. Thin fibers, zonule fibers, extend from the processes to suspend the lens. The ciliary body contains ciliary muscles, contraction of which decreases tension on the lens via the zonule fibers. Epithelial cells lining the ciliary body and processes produce the aqueous humor.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-11-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Ciliary body' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ciliary body is a ring-shaped structure that appears triangular in cross section with a pleated surface formed by the ciliary processes. Thin fibers, zonule fibers, extend from the processes to suspend the lens. The ciliary body contains ciliary muscles, contraction of which decreases tension on the lens via the zonule fibers. Epithelial cells lining the ciliary body and processes produce the aqueous humor.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Posterior chamber",
+      "explicacao_original": "The posterior chamber is filled with aqueous humor produced by the ciliary epithelium. Aqueous humor flows from the posterior chamber, between the iris and the lens and into the anterior chamber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-12-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Posterior chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The posterior chamber is filled with aqueous humor produced by the ciliary epithelium. Aqueous humor flows from the posterior chamber, between the iris and the lens and into the anterior chamber.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Anterior chamber",
+      "explicacao_original": "The posterior chamber is filled with aqueous humor produced by the ciliary epithelium. Aqueous humor flows from the posterior chamber, between the iris and the lens and into the anterior chamber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-13-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Anterior chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The posterior chamber is filled with aqueous humor produced by the ciliary epithelium. Aqueous humor flows from the posterior chamber, between the iris and the lens and into the anterior chamber.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Vitreous chamber",
+      "explicacao_original": "The posterior chamber is filled with aqueous humor produced by the ciliary epithelium. Aqueous humor flows from the posterior chamber, between the iris and the lens and into the anterior chamber.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-14-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-14-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Vitreous chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The posterior chamber is filled with aqueous humor produced by the ciliary epithelium. Aqueous humor flows from the posterior chamber, between the iris and the lens and into the anterior chamber.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Lens",
+      "explicacao_original": "The lens is a transparent, biconvex disc suspended behind the iris by suspensory zonule fibers attached to the ciliary body. Due to its crystalline structure, the lens often shows significant artifactual damage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-15-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-15-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Lens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lens is a transparent, biconvex disc suspended behind the iris by suspensory zonule fibers attached to the ciliary body. Due to its crystalline structure, the lens often shows significant artifactual damage.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "This area is shown at higher magnification in the next image.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4-16-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-16-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This area is shown at higher magnification in the next image.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 16,
+      "rotulo": "Image sources",
+      "explicacao_original": "The main image was taken of a slide from the University of Iowa collection. The inset eye section is taken of a slide from the University of New England College of Osteopathic Medicine. The image of the anterior view of the eye is from Stephen Balaban.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Eye_.Globe-4-17-ping.png",
+      "arquivo": "imagens/marcadores/Or.Eye_.Globe-4-17-ping.png",
+      "imagem_base": "imagens/base/Or.Eye_.Globe-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/12/Or.Eye_.Globe-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Globe: Limbus'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Eye_.Globe-4.jpg'. Destaca a estrutura ou conceito 'Image sources' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The main image was taken of a slide from the University of Iowa collection. The inset eye section is taken of a slide from the University of New England College of Osteopathic Medicine. The image of the anterior view of the eye is from Stephen Balaban.. Contexto setorial: Órgãos e Sistemas > Olho > Globe > Globe 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/eye/globe/globe-4/, acesso em 2026-08-07."
+    }
+  ]
+}

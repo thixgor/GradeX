@@ -1,0 +1,105 @@
+{
+  "id": 11843,
+  "titulo": "Serosal membrane",
+  "titulo_wordpress": "Membranes 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Membranas",
+    "Membranes 5"
+  ],
+  "descricao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide from the University of Michigan collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Serosal membrane', no setor Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Descricao original da pagina: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serosa",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium (mesothelium)",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Epithelium (mesothelium)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue of serosa",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Connective tissue of serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Peritoneal space",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-5-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Peritoneal space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Mucosa of the intestine",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-6-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Mucosa of the intestine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lumen of the intestine",
+      "explicacao_original": "A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-5-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-5-7-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Lumen of the intestine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serosal membrane (serosa) lines internal body cavities, forming a parietal layer around the cavity’s inner wall and a visceral layer over organs protruding into the cavity. A serosa is composed of simple squamous epithelium (mesothelium) overlying a layer of connective tissue. Examples of serosal membranes are pleural, pericardial and peritoneal membranes identified in gross anatomy. 200x, 1000x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide from the University of Michigan collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Membr-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Serosal membrane'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-5A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide from the University of Michigan collection.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-5/, acesso em 2026-08-07."
+    }
+  ]
+}

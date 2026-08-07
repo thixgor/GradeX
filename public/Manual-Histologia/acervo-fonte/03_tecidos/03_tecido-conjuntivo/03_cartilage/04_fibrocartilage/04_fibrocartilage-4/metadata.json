@@ -1,0 +1,64 @@
+{
+  "id": 11963,
+  "titulo": "Fibrocartilage",
+  "titulo_wordpress": "Fibrocartilage 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Fibrocartilage",
+    "Fibrocartilage 4"
+  ],
+  "descricao_original": "Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.jpg",
+      "arquivo": "imagens/base/T.C.C.F.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Fibrocartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 4. Descricao original da pagina: Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.P01.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.04.P01.png",
+      "imagem_base": "imagens/base/T.C.C.F.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.04.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.P02.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.04.P02.png",
+      "imagem_base": "imagens/base/T.C.C.F.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.04.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen bundles",
+      "explicacao_original": "Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.P03.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.04.P03.png",
+      "imagem_base": "imagens/base/T.C.C.F.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.04.jpg'. Destaca a estrutura ou conceito 'Collagen bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Fibroblasts",
+      "explicacao_original": "Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.P04.png",
+      "arquivo": "imagens/marcadores/T.C.C.F.04.P04.png",
+      "imagem_base": "imagens/base/T.C.C.F.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/T.C.C.F.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fibrocartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.F.04.jpg'. Destaca a estrutura ou conceito 'Fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fibrocartilage, with its irregularly arranged fibers, is difficult to differentiate from dense irregular connective tissue. Rounded chondrocytes, frequently with visible cytoplasm and lacunae, differentiate fibrocartilage from connective tissue proper. Fibroblasts are distinguished by their flattened, heterochromatic nuclei and lack of visible cytoplasm and lacunae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Fibrocartilage > Fibrocartilage 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/fibrocartilage/fibrocartilage-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 10324,
+  "titulo": "Bone: deposition",
+  "titulo_wordpress": "Deposition and Resorption 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 5"
+  ],
+  "descricao_original": "The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.jpg",
+      "arquivo": "imagens/base/T.C.B.D.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: deposition', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 5. Descricao original da pagina: The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteons",
+      "explicacao_original": "The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.05.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.05.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.05.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.05.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteocyte lacunae",
+      "explicacao_original": "The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.05.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.05.jpg'. Destaca a estrutura ou conceito 'Osteocyte lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Canaliculi",
+      "explicacao_original": "The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.05.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.05.jpg'. Destaca a estrutura ou conceito 'Canaliculi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The concentric lamellae of osteons, cut in cross section here, can be more easily visualized in a ground bone preparation. Each osteon is a columnar-shaped structure whose long axis runs parallel to the long axis of the bone, thus providing great strength to a long bone. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 5. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-5/, acesso em 2026-08-07."
+    }
+  ]
+}

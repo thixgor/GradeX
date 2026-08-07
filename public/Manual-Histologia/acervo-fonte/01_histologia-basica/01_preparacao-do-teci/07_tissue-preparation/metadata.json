@@ -1,0 +1,152 @@
+{
+  "id": 27158,
+  "titulo": "Types of stains",
+  "titulo_wordpress": "Tissue preparation 7",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 7"
+  ],
+  "descricao_original": "Many different types of stains are routinely used for light and electron microscopy. Stains are grouped into four major categories, conventional, histochemical, enzyme histochemical and immunohistochemical.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "arquivo": "imagens/base/HB-TP-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Types of stains', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 7. Descricao original da pagina: Many different types of stains are routinely used for light and electron microscopy. Stains are grouped into four major categories, conventional, histochemical, enzyme histochemical and immunohistochemical.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Conventional stains",
+      "explicacao_original": "Conventional stains bind to tissue elements primarily based on charge interactions between the stain molecule and the tissue structure. Basic dyes bind to negatively-charged elements, e.g., nucleic acids while acidic dyes bind to positively-charged elements, e.g., collagen fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Conventional stains' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Conventional stains bind to tissue elements primarily based on charge interactions between the stain molecule and the tissue structure. Basic dyes bind to negatively-charged elements, e.g., nucleic acids while acidic dyes bind to positively-charged elements, e.g., collagen fibers.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Light microscopy",
+      "explicacao_original": "The image shows the most commonly used conventional stains for light microscopy, hematoxylin and eosin. Hematoxylin is a basic dye and imparts a blue color. Eosin is an acidic dye and imparts a pinkish-orange color.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Light microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image shows the most commonly used conventional stains for light microscopy, hematoxylin and eosin. Hematoxylin is a basic dye and imparts a blue color. Eosin is an acidic dye and imparts a pinkish-orange color.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hematoxylin",
+      "explicacao_original": "The image shows the most commonly used conventional stains for light microscopy, hematoxylin and eosin. Hematoxylin is a basic dye and imparts a blue color. Eosin is an acidic dye and imparts a pinkish-orange color.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Hematoxylin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image shows the most commonly used conventional stains for light microscopy, hematoxylin and eosin. Hematoxylin is a basic dye and imparts a blue color. Eosin is an acidic dye and imparts a pinkish-orange color.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Eosin",
+      "explicacao_original": "The image shows the most commonly used conventional stains for light microscopy, hematoxylin and eosin. Hematoxylin is a basic dye and imparts a blue color. Eosin is an acidic dye and imparts a pinkish-orange color.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-4-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-4-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Eosin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image shows the most commonly used conventional stains for light microscopy, hematoxylin and eosin. Hematoxylin is a basic dye and imparts a blue color. Eosin is an acidic dye and imparts a pinkish-orange color.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Electron microscopy",
+      "explicacao_original": "Conventional stains for electron microscopy employ heavy metals that impart contrast to the tissue by blocking the passage of electrons through the tissue. Like conventional chromatophilic dyes, the heavy metals bind to tissue elements based primarily on charge interactions and the resultant image appears in gray tones only. Dark areas are referred to as electron dense; lighter areas, as electron lucent.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-5-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-5-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Electron microscopy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Conventional stains for electron microscopy employ heavy metals that impart contrast to the tissue by blocking the passage of electrons through the tissue. Like conventional chromatophilic dyes, the heavy metals bind to tissue elements based primarily on charge interactions and the resultant image appears in gray tones only. Dark areas are referred to as electron dense; lighter areas, as electron lucent.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Electron dense",
+      "explicacao_original": "The dark areas result from the electrons being blocked by the heavy metals that bind to the tissue elements during staining.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-6-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-6-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Electron dense' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The dark areas result from the electrons being blocked by the heavy metals that bind to the tissue elements during staining.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Electron lucent",
+      "explicacao_original": "The light areas result when electrons do not encounter the metals and thus pass through the section.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-7-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-7-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Electron lucent' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The light areas result when electrons do not encounter the metals and thus pass through the section.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Histochemical stains",
+      "explicacao_original": "Histochemical staining involves a chemical reaction between the tissue element and the staining reagents. This type of staining is more specific than conventional staining and is often used to detect specific chemical groups, e.g., glycogen as seen here, using the periodic acid Schiff (PAS) stain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-8-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-8-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Histochemical stains' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Histochemical staining involves a chemical reaction between the tissue element and the staining reagents. This type of staining is more specific than conventional staining and is often used to detect specific chemical groups, e.g., glycogen as seen here, using the periodic acid Schiff (PAS) stain.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Glycogen",
+      "explicacao_original": "Histochemical staining involves a chemical reaction between the tissue element and the staining reagents. This type of staining is more specific than conventional staining and is often used to detect specific chemical groups, e.g., glycogen as seen here using the periodic acid Schiff (PAS) stain.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-9-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-9-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Histochemical staining involves a chemical reaction between the tissue element and the staining reagents. This type of staining is more specific than conventional staining and is often used to detect specific chemical groups, e.g., glycogen as seen here using the periodic acid Schiff (PAS) stain.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Enzyme histochemistry",
+      "explicacao_original": "Enzyme histochemistry detects the presence of a specific enzyme in tissue, e.g., acid phosphatase, by reacting with its substrate. These methods often employ substrate analogs that produce a visible reaction product.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-10-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-10-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Enzyme histochemistry' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enzyme histochemistry detects the presence of a specific enzyme in tissue, e.g., acid phosphatase, by reacting with its substrate. These methods often employ substrate analogs that produce a visible reaction product.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Enzymatic activity",
+      "explicacao_original": "Enzyme histochemistry detects the presence of a specific enzyme in tissue, e.g., acid phosphatase, by reacting with its substrate. These methods often employ substrate analogs that produce a visible reaction product.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-11-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-11-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Enzymatic activity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enzyme histochemistry detects the presence of a specific enzyme in tissue, e.g., acid phosphatase, by reacting with its substrate. These methods often employ substrate analogs that produce a visible reaction product.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Immunocytochemistry",
+      "explicacao_original": "Immunocytochemistry employs antibodies that specifically bind to unique proteins, e.g., actin. Sites of antibody binding are detected by fluorescent dyes that are conjugated to the antibodies.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-12-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-12-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Immunocytochemistry' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Immunocytochemistry employs antibodies that specifically bind to unique proteins, e.g., actin. Sites of antibody binding are detected by fluorescent dyes that are conjugated to the antibodies.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Immunofluorescent stain",
+      "explicacao_original": "Immunocytochemistry employs antibodies that specifically bind to unique proteins, e.g., actin. Sites of antibody binding are detected by fluorescent dyes that are conjugated to the antibodies.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6-13-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-6-13-ping.png",
+      "imagem_base": "imagens/base/HB-TP-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Types of stains'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-6.jpg'. Destaca a estrutura ou conceito 'Immunofluorescent stain' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Immunocytochemistry employs antibodies that specifically bind to unique proteins, e.g., actin. Sites of antibody binding are detected by fluorescent dyes that are conjugated to the antibodies.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 7. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-7/, acesso em 2026-08-07."
+    }
+  ]
+}

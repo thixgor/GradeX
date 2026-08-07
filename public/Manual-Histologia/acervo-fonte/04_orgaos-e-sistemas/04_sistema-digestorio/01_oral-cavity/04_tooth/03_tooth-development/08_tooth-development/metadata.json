@@ -1,0 +1,105 @@
+{
+  "id": 29368,
+  "titulo": "Late bell stage of tooth development",
+  "titulo_wordpress": "Tooth development 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth development",
+    "Tooth development 8"
+  ],
+  "descricao_original": "This high magnification image of the developing crown of the tooth at the late bell stage shows the differentiating cells of the enamel organ and the dental papilla. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "arquivo": "imagens/base/Image-8B-final.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Late bell stage of tooth development', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Descricao original da pagina: This high magnification image of the developing crown of the tooth at the late bell stage shows the differentiating cells of the enamel organ and the dental papilla. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Outer enamel epithelium",
+      "explicacao_original": "The outer enamel epithelium consists of cuboidal ectodermal cells that form the outer surface of the enamel organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Outer-enamel-epi-9.png",
+      "arquivo": "imagens/marcadores/Outer-enamel-epi-9.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Outer enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The outer enamel epithelium consists of cuboidal ectodermal cells that form the outer surface of the enamel organ.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Inner enamel epithelium",
+      "explicacao_original": "The inner enamel epithelium consists of columnar ectodermal cells that form the inner surface of the enamel organ. They are in close proximity to the ectomesenchymal cells of the papilla. During the late bell stage, these cells first differentiate into pre-ameloblasts and then into fully differentiated ameloblasts, capable of depositing enamel. In this micrograph, pre-ameloblasts are indistinguishable from the cells of the inner enamel epithelium. Final differentiation into ameloblasts has not yet occurred.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Inner-enamel-epithelium.png",
+      "arquivo": "imagens/marcadores/Inner-enamel-epithelium.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Inner enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner enamel epithelium consists of columnar ectodermal cells that form the inner surface of the enamel organ. They are in close proximity to the ectomesenchymal cells of the papilla. During the late bell stage, these cells first differentiate into pre-ameloblasts and then into fully differentiated ameloblasts, capable of depositing enamel. In this micrograph, pre-ameloblasts are indistinguishable from the cells of the inner enamel epithelium. Final differentiation into ameloblasts has not yet occurred.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Stratum intermedium",
+      "explicacao_original": "The stratum intermedium consists of a transient population of 2 to 3 layers of cells located between the inner enamel epithelium and the stellate reticulum. These cells are derived from the inner enamel epithelium and play a critical role in the differentiation of ameloblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Stratum-intermedium-9.png",
+      "arquivo": "imagens/marcadores/Stratum-intermedium-9.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Stratum intermedium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stratum intermedium consists of a transient population of 2 to 3 layers of cells located between the inner enamel epithelium and the stellate reticulum. These cells are derived from the inner enamel epithelium and play a critical role in the differentiation of ameloblasts.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Reduced enamel epithelium",
+      "explicacao_original": "Starting at the cusp of the tooth, the cell layers of the enamel organ condense into the reduced enamel epithelium. It consists of the inner enamel epithelium (pre-ameloblasts, ameloblasts), the stratum intermedium, cellular remnants of the stellate reticulum, and the outer enamel epithelium. The reduced enamel epithelium allows nutrient transfer to the pre-ameloblasts and ameloblasts once enamel formation begins and also aids in tooth eruption.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Reduced-enamel-epi-9.png",
+      "arquivo": "imagens/marcadores/Reduced-enamel-epi-9.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Reduced enamel epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Starting at the cusp of the tooth, the cell layers of the enamel organ condense into the reduced enamel epithelium. It consists of the inner enamel epithelium (pre-ameloblasts, ameloblasts), the stratum intermedium, cellular remnants of the stellate reticulum, and the outer enamel epithelium. The reduced enamel epithelium allows nutrient transfer to the pre-ameloblasts and ameloblasts once enamel formation begins and also aids in tooth eruption.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Stellate reticulum",
+      "explicacao_original": "The ectodermal cells within the enamel organ secrete glycosaminoglycans that draw water into the tissue, causing the cells in the stellate reticulum to look star-shaped. The large stellate reticulum allows for the morphodifferentiation of the crown of the tooth. At the cusp of this tooth, the stellate reticulum is condensed with the other layers of the enamel organ.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Stellate-reticulum-9-1.png",
+      "arquivo": "imagens/marcadores/Stellate-reticulum-9-1.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Stellate reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ectodermal cells within the enamel organ secrete glycosaminoglycans that draw water into the tissue, causing the cells in the stellate reticulum to look star-shaped. The large stellate reticulum allows for the morphodifferentiation of the crown of the tooth. At the cusp of this tooth, the stellate reticulum is condensed with the other layers of the enamel organ.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Pre-odontoblasts",
+      "explicacao_original": "During the bell stage, the ectomesenchymal stem cells adjacent to the inner enamel epithelium differentiate into columnar-shaped pre-odontoblasts and eventually odontoblasts. During this process, the basement membrane of the pre-ameloblasts is degraded allowing for the reciprocal signaling necessary for the development of odontoblasts and ameloblasts. Odontoblasts will secrete predentin, the organic matrix of dentin that will eventually become mineralized. The remainder of the dental papilla forms the dental pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Pre-odontoblasts-9.png",
+      "arquivo": "imagens/marcadores/Pre-odontoblasts-9.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Pre-odontoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the bell stage, the ectomesenchymal stem cells adjacent to the inner enamel epithelium differentiate into columnar-shaped pre-odontoblasts and eventually odontoblasts. During this process, the basement membrane of the pre-ameloblasts is degraded allowing for the reciprocal signaling necessary for the development of odontoblasts and ameloblasts. Odontoblasts will secrete predentin, the organic matrix of dentin that will eventually become mineralized. The remainder of the dental papilla forms the dental pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Basement membrane",
+      "explicacao_original": "The apparent basement membrane of the inner enamel epithelium initially separates it from the dental papillary cells (pre-odontoblasts). This membrane is degraded at the late bell stage.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Predentin-9.png",
+      "arquivo": "imagens/marcadores/Predentin-9.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Basement membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The apparent basement membrane of the inner enamel epithelium initially separates it from the dental papillary cells (pre-odontoblasts). This membrane is degraded at the late bell stage.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Dental papilla",
+      "explicacao_original": "During the bell stage, the ectomesenchymal stem cells adjacent to the inner enamel epithelium differentiate into columnar-shaped pre-odontoblasts and eventually odontoblasts. During this process, the basement membrane of the pre-ameloblasts is degraded allowing for the reciprocal signaling necessary for the development of odontoblasts and ameloblasts. Odontoblasts secrete pre-dentin, the organic matrix of dentin that will eventually become mineralized. The remainder of the dental papilla forms the dental pulp.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/03/Dental-papilla-9.png",
+      "arquivo": "imagens/marcadores/Dental-papilla-9.png",
+      "imagem_base": "imagens/base/Image-8B-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/03/Image-8B-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Late bell stage of tooth development'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-8B-final.jpg'. Destaca a estrutura ou conceito 'Dental papilla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During the bell stage, the ectomesenchymal stem cells adjacent to the inner enamel epithelium differentiate into columnar-shaped pre-odontoblasts and eventually odontoblasts. During this process, the basement membrane of the pre-ameloblasts is degraded allowing for the reciprocal signaling necessary for the development of odontoblasts and ameloblasts. Odontoblasts secrete pre-dentin, the organic matrix of dentin that will eventually become mineralized. The remainder of the dental papilla forms the dental pulp.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth development > Tooth development 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/tooth-development/tooth-development-9/, acesso em 2026-08-07."
+    }
+  ]
+}

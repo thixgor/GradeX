@@ -1,0 +1,44 @@
+{
+  "id": 12645,
+  "titulo": "Oviduct: ampulla",
+  "titulo_wordpress": "Oviduct 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Oviduct",
+    "Oviduct 2"
+  ],
+  "descricao_original": "At ovulation the secondary oocyte enters the infundibulum, a funnel-shaped region of the oviduct opening into the peritoneal space adjacent to the ovary; the infundibulum possesses fimbria, finger-like projections that envelope the ovary for uptake of the secondary oocyte. From the infundibulum, the oocyte enters the ampulla, shown here. 100x.",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.02.jpg",
+      "arquivo": "imagens/base/O.R.F.OD_.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Oviduct: ampulla', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 2. Descricao original da pagina: At ovulation the secondary oocyte enters the infundibulum, a funnel-shaped region of the oviduct opening into the peritoneal space adjacent to the ovary; the infundibulum possesses fimbria, finger-like projections that envelope the ovary for uptake of the secondary oocyte. From the infundibulum, the oocyte enters the ampulla, shown here. 100x.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "The lumen of the ampulla is subdivided by branching mucosal folds. No muscularis mucosae is present in the mucosa, so a connective tissue layer composed of lamina propria and submucosa extends between the epithelium and the muscularis externa. The boundary line between the connective tissue and muscular layers is difficult to distinguish, especially at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.02.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.02.P01.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: ampulla'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.02.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lumen of the ampulla is subdivided by branching mucosal folds. No muscularis mucosae is present in the mucosa, so a connective tissue layer composed of lamina propria and submucosa extends between the epithelium and the muscularis externa. The boundary line between the connective tissue and muscular layers is difficult to distinguish, especially at this magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The lumen of the ampulla is subdivided by branching mucosal folds. No muscularis mucosae is present in the mucosa, so a connective tissue layer composed of lamina propria and submucosa extends between the epithelium and the muscularis externa. The boundary line between the connective tissue and muscular layers is difficult to distinguish, especially at this magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.02.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.OD_.02.P02.png",
+      "imagem_base": "imagens/base/O.R.F.OD_.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.OD_.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Oviduct: ampulla'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OD_.02.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lumen of the ampulla is subdivided by branching mucosal folds. No muscularis mucosae is present in the mucosa, so a connective tissue layer composed of lamina propria and submucosa extends between the epithelium and the muscularis externa. The boundary line between the connective tissue and muscular layers is difficult to distinguish, especially at this magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Oviduct > Oviduct 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/oviduct/oviduct-2/, acesso em 2026-08-07."
+    }
+  ]
+}

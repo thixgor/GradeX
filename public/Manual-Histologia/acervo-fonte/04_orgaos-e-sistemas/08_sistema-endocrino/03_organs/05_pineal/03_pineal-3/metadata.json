@@ -1,0 +1,64 @@
+{
+  "id": 4858,
+  "titulo": "Pineal gland",
+  "titulo_wordpress": "Pineal 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Pineal",
+    "Pineal 3"
+  ],
+  "descricao_original": "A high magnification shows connective tissue septa dividing the pineal gland into lobules. More than 90% of the cells in the pineal are pinealocytes that secrete the hormone melatonin. The remaining cell population consists of interstitial cells, which are modified astrocytes similar to pituicytes in the neurohypophysis. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pin-3.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Pin-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pineal gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 3. Descricao original da pagina: A high magnification shows connective tissue septa dividing the pineal gland into lobules. More than 90% of the cells in the pineal are pinealocytes that secrete the hormone melatonin. The remaining cell population consists of interstitial cells, which are modified astrocytes similar to pituicytes in the neurohypophysis. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pinealocytes",
+      "explicacao_original": "The nucleus of a pinealocyte is euchromatic with a prominent nucleolus. The cytoplasm is not evident with conventional stains; however, the cell generally has two or more extensions similar to neuronal processes. The main secretory product of pinealocytes is melatonin, which regulates light-dark cycles (circadian rhythms).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pin-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-3.jpg'. Destaca a estrutura ou conceito 'Pinealocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nucleus of a pinealocyte is euchromatic with a prominent nucleolus. The cytoplasm is not evident with conventional stains; however, the cell generally has two or more extensions similar to neuronal processes. The main secretory product of pinealocytes is melatonin, which regulates light-dark cycles (circadian rhythms).. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interstitial cells",
+      "explicacao_original": "Interstitial cells, the minor cell type in the pineal, are modified astrocytes similar to pituicytes in the neurohypophysis. These cells are located within groups of pinealocytes and in the connective tissue septa. The nuclei of interstitial cells are more elongated and heterochromatic than those of pinealocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pin-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-3.jpg'. Destaca a estrutura ou conceito 'Interstitial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interstitial cells, the minor cell type in the pineal, are modified astrocytes similar to pituicytes in the neurohypophysis. These cells are located within groups of pinealocytes and in the connective tissue septa. The nuclei of interstitial cells are more elongated and heterochromatic than those of pinealocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue septa",
+      "explicacao_original": "Connective tissue septa originate from the pia and project into the gland, carrying with them blood vessels and sympathetic nerve fibers. Capillaries in the pineal are fenestrated, like those found in other endocrine organs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pin-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-3.jpg'. Destaca a estrutura ou conceito 'Connective tissue septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissue septa originate from the pia and project into the gland, carrying with them blood vessels and sympathetic nerve fibers. Capillaries in the pineal are fenestrated, like those found in other endocrine organs.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Connective tissue septa originate from the pia and project into the gland, carrying with them blood vessels and sympathetic nerve fibers. Capillaries in the pineal are fenestrated, like those found in other endocrine organs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Pin-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Pin-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Pin-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Pin-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pineal gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Pin-3.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Connective tissue septa originate from the pia and project into the gland, carrying with them blood vessels and sympathetic nerve fibers. Capillaries in the pineal are fenestrated, like those found in other endocrine organs.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Pineal > Pineal 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/pineal/pineal-3/, acesso em 2026-08-07."
+    }
+  ]
+}

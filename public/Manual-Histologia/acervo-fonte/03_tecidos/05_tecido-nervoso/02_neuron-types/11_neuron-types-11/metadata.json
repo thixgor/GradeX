@@ -1,0 +1,95 @@
+{
+  "id": 2991,
+  "titulo": "Multipolar neuron",
+  "titulo_wordpress": "Neuron types 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Neuron Types",
+    "Neuron types 11"
+  ],
+  "descricao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide from the University of Virginia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "arquivo": "imagens/base/T.N.Type-10A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Multipolar neuron', no setor Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Descricao original da pagina: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Autonomic ganglion",
+      "explicacao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-10A-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Autonomic ganglion' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Multipolar neurons",
+      "explicacao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-10A-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Multipolar neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Eccentric nuclei",
+      "explicacao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-10A-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Eccentric nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dendrites",
+      "explicacao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-10A-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Dendrites' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Axons",
+      "explicacao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-10A-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Schwann cells",
+      "explicacao_original": "These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/04/T.N.Type-10A-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Type-10A-6-ping.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Schwann cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These multipolar neurons are located in an autonomic ganglion in the sympathetic division of the autonomic nervous system. Sympathetic ganglia are generally located at some distance from the organs they innervate and contain large numbers of both incoming preganglionic axons as well as exiting, efferent postganglionic axons from the multipolar neurons. The neuron cell bodies are widely dispersed and extend numerous dendrites. Eccentrically-located nuclei are common. Satellite Schwann cells surround each neuron in the ganglion; their cytoplasmic processes forming a capsule around the cell body. 100x, 1000x. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide from the University of Virginia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/11/UVa-source-ping-plural.png",
+      "arquivo": "imagens/marcadores/UVa-source-ping-plural.png",
+      "imagem_base": "imagens/base/T.N.Type-10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/11/T.N.Type-10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Multipolar neuron'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Type-10A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide from the University of Virginia collection.. Contexto setorial: Tecidos > Tecido Nervoso > Neuron Types > Neuron types 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/neuron-types/neuron-types-11/, acesso em 2026-08-07."
+    }
+  ]
+}

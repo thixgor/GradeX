@@ -1,0 +1,53 @@
+{
+  "id": 2016,
+  "titulo": "Glycogen",
+  "titulo_wordpress": "Glycogen 2",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Glycogen",
+    "Glycogen 2"
+  ],
+  "descricao_original": "Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/glycogen/glycogen-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2.jpg",
+      "arquivo": "imagens/base/C.S.Gly-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Glycogen', no setor Células > Estruturas > Glycogen > Glycogen 2. Descricao original da pagina: Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Glycogen",
+      "explicacao_original": "Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-2-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-2.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x. Contexto setorial: Células > Estruturas > Glycogen > Glycogen 2. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-2-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-2.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x. Contexto setorial: Células > Estruturas > Glycogen > Glycogen 2. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleoli",
+      "explicacao_original": "Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Gly-2-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Gly-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Gly-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Glycogen'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Gly-2.jpg'. Destaca a estrutura ou conceito 'Nucleoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Glycogen can be specifically labeled in histological sections using the periodic acid-Schiff (PAS) histochemical method, which reacts with carbohydrates producing a magenta color. Here, this stain shows accumulations of glycogen granules in the cytoplasm of liver cells (hepatocytes). Individual granules cannot be resolved with the light microscope. Liver, 1000x. Contexto setorial: Células > Estruturas > Glycogen > Glycogen 2. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/glycogen/glycogen-2/, acesso em 2026-08-07."
+    }
+  ]
+}

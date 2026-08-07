@@ -1,0 +1,93 @@
+{
+  "id": 10781,
+  "titulo": "Renal cortex",
+  "titulo_wordpress": "Overview 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Overview of the urinary system",
+    "Overview 3"
+  ],
+  "descricao_original": "The subdivisions of the cortex (convoluted portions and medullary rays), the cortical vasculature and the cortical lobules can be seen better at this higher magnification. 100x, 20x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "arquivo": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Renal cortex', no setor Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Descricao original da pagina: The subdivisions of the cortex (convoluted portions and medullary rays), the cortical vasculature and the cortical lobules can be seen better at this higher magnification. 100x, 20x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Convoluted portions",
+      "explicacao_original": "The convoluted portions of the cortex consist of spherical renal corpuscles and the intervening convoluted portions of the proximal and distal tubules. They also contain the beginnings of the collecting ducts, called connecting tubules.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Convoluted portions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted portions of the cortex consist of spherical renal corpuscles and the intervening convoluted portions of the proximal and distal tubules. They also contain the beginnings of the collecting ducts, called connecting tubules.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Renal corpuscles",
+      "explicacao_original": "Each renal corpuscle is composed of a central capillary tuft, the glomerulus, surrounded by a double-walled capsule called Bowman’s capsule. Although the walls of this capsule cannot be discerned at this magnification, the space between the walls is visible around the capillary tuft.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Renal corpuscles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each renal corpuscle is composed of a central capillary tuft, the glomerulus, surrounded by a double-walled capsule called Bowman’s capsule. Although the walls of this capsule cannot be discerned at this magnification, the space between the walls is visible around the capillary tuft.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Renal tubules",
+      "explicacao_original": "The convoluted portions of the proximal and distal regions of the nephron, as well as the initial segment of the collecting duct (the connecting tubule), are present in the regions between the renal corpuscles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Renal tubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The convoluted portions of the proximal and distal regions of the nephron, as well as the initial segment of the collecting duct (the connecting tubule), are present in the regions between the renal corpuscles.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interlobular arteries",
+      "explicacao_original": "Interlobular arteries branch at right angles from the arcuate arteries to enter the cortex, traveling through the center of each convoluted region.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Interlobular arteries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interlobular arteries branch at right angles from the arcuate arteries to enter the cortex, traveling through the center of each convoluted region.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Medullary rays",
+      "explicacao_original": "Medullary rays, the second portion of the renal cortex, consist of medullary tissue located in the cortex: straight portions of the proximal and distal tubules, as well as portions of the collecting ducts. The longitudinal orientation of tubules in the medullary rays is similar to and continuous with the same tubules in the medullary pyramids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Medullary rays' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Medullary rays, the second portion of the renal cortex, consist of medullary tissue located in the cortex: straight portions of the proximal and distal tubules, as well as portions of the collecting ducts. The longitudinal orientation of tubules in the medullary rays is similar to and continuous with the same tubules in the medullary pyramids.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Afferent arterioles",
+      "explicacao_original": "Afferent arterioles branch from the interlobular arteries to supply the capillary tuft called the glomerulus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Afferent arterioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Afferent arterioles branch from the interlobular arteries to supply the capillary tuft called the glomerulus.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Renal lobule",
+      "explicacao_original": "A renal lobule, a cylindrical cortical area bounded by interlobular arteries, has a medullary ray at its center. Each medullary ray is surrounded by the adjacent convoluted regions extending to the interlobular arteries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/Or.Ur_.OV-3-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.OV-3-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.OV-3-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Ur_.OV-3-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Renal cortex'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.OV-3-use.jpg'. Destaca a estrutura ou conceito 'Renal lobule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A renal lobule, a cylindrical cortical area bounded by interlobular arteries, has a medullary ray at its center. Each medullary ray is surrounded by the adjacent convoluted regions extending to the interlobular arteries.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Overview of the urinary system > Overview 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/overview-urinary/overview-3/, acesso em 2026-08-07."
+    }
+  ]
+}

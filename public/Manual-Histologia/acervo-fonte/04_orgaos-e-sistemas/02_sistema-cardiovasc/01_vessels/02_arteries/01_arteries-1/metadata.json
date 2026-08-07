@@ -1,0 +1,54 @@
+{
+  "id": 5252,
+  "titulo": "Elastic artery",
+  "titulo_wordpress": "Arteries 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 1"
+  ],
+  "descricao_original": "Elastic arteries, including the aorta and its major branches, are composed of the three basic tunics. The diagnostic characteristic of elastic arteries is the presence of numerous, fenestrated elastic sheets in the tunica media. Elastic arteries have a large lumen with a relatively thin wall compared with other arteries. Panel on the right shows the aortic wall at higher magnification. 15x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A.-1.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A.-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic artery', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 1. Descricao original da pagina: Elastic arteries, including the aorta and its major branches, are composed of the three basic tunics. The diagnostic characteristic of elastic arteries is the presence of numerous, fenestrated elastic sheets in the tunica media. Elastic arteries have a large lumen with a relatively thin wall compared with other arteries. Panel on the right shows the aortic wall at higher magnification. 15x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "The tunica intima faces the blood. This layer is very thin compared to the thickness of the arterial wall and consists of an endothelium and underlying connective tissue. The tunica intima can only be distinguished at the higher magnification on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/02/Or.CV_.V.A.-1-1A-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A.-1-1A-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A.-1.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima faces the blood. This layer is very thin compared to the thickness of the arterial wall and consists of an endothelium and underlying connective tissue. The tunica intima can only be distinguished at the higher magnification on the right.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tunica media",
+      "explicacao_original": "The tunica media is the thickest layer in elastic arteries and is composed of smooth muscle and fenestrated elastic sheets, which are formed by the smooth muscle cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A.-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A.-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A.-1.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica media is the thickest layer in elastic arteries and is composed of smooth muscle and fenestrated elastic sheets, which are formed by the smooth muscle cells.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "Tunica adventitia is the outermost tunic and is composed of connective tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A.-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A.-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A.-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A.-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A.-1.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tunica adventitia is the outermost tunic and is composed of connective tissue.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-1/, acesso em 2026-08-07."
+    }
+  ]
+}

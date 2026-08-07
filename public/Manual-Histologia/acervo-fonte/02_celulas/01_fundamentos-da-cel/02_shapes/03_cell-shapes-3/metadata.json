@@ -1,0 +1,63 @@
+{
+  "id": 1023,
+  "titulo": "Cell shapes: squamous",
+  "titulo_wordpress": "Cell shapes 3",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 3"
+  ],
+  "descricao_original": "Squamous cells are highly flattened such that their width is much greater than their height. These images show a single layer of squamous cells surrounding the glomerulus of the kidney (left) and forming the lining of a small blood vessel (right). Single layers of squamous cells are often found at surfaces where rapid exchange of gases or solutes is required. 1000x, 1000x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3A.jpg",
+      "arquivo": "imagens/base/C.B.Sh-3A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: squamous', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 3. Descricao original da pagina: Squamous cells are highly flattened such that their width is much greater than their height. These images show a single layer of squamous cells surrounding the glomerulus of the kidney (left) and forming the lining of a small blood vessel (right). Single layers of squamous cells are often found at surfaces where rapid exchange of gases or solutes is required. 1000x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Squamous cell nuclei",
+      "explicacao_original": "With the light microscope, it is not always possible to distinguish the cell outline, however, the shape of the nucleus often predicts cell shape, since it conforms to the dimensions of the cell. Squamous cells are often so flattened that the cytoplasm is reduced to a very thin layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3-1A-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-3-1A-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-3A.jpg'. Destaca a estrutura ou conceito 'Squamous cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With the light microscope, it is not always possible to distinguish the cell outline, however, the shape of the nucleus often predicts cell shape, since it conforms to the dimensions of the cell. Squamous cells are often so flattened that the cytoplasm is reduced to a very thin layer.. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Squamous cell cytoplasm",
+      "explicacao_original": "With the light microscope, it is not always possible to distinguish the cell outline, however, the shape of the nucleus often predicts cell shape, since it conforms to the dimensions of the cell. Squamous cells are often so flattened that the cytoplasm is reduced to a very thin layer.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3-2A-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-3-2A-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-3A.jpg'. Destaca a estrutura ou conceito 'Squamous cell cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With the light microscope, it is not always possible to distinguish the cell outline, however, the shape of the nucleus often predicts cell shape, since it conforms to the dimensions of the cell. Squamous cells are often so flattened that the cytoplasm is reduced to a very thin layer.. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "Squamous cells are highly flattened such that their width is much greater than their height. These images show a single layer of squamous cells surrounding the glomerulus of the kidney (left) and forming the lining of a small blood vessel (right). Single layers of squamous cells are often found at surfaces where rapid exchange of gases or solutes is required. 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3-3A-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-3-3A-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-3A.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Squamous cells are highly flattened such that their width is much greater than their height. These images show a single layer of squamous cells surrounding the glomerulus of the kidney (left) and forming the lining of a small blood vessel (right). Single layers of squamous cells are often found at surfaces where rapid exchange of gases or solutes is required. 1000x, 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glomerulus",
+      "explicacao_original": "Squamous cells are highly flattened such that their width is much greater than their height. These images show a single layer of squamous cells surrounding the glomerulus of the kidney (left) and forming the lining of a small blood vessel (right). Single layers of squamous cells are often found at surfaces where rapid exchange of gases or solutes is required. 1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3-glomerulus-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-3-glomerulus-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh-3A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/05/C.B.Sh-3A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: squamous'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh-3A.jpg'. Destaca a estrutura ou conceito 'Glomerulus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Squamous cells are highly flattened such that their width is much greater than their height. These images show a single layer of squamous cells surrounding the glomerulus of the kidney (left) and forming the lining of a small blood vessel (right). Single layers of squamous cells are often found at surfaces where rapid exchange of gases or solutes is required. 1000x, 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 3. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-3/, acesso em 2026-08-07."
+    }
+  ]
+}

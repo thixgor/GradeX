@@ -1,0 +1,74 @@
+{
+  "id": 11590,
+  "titulo": "Hyaline cartilage",
+  "titulo_wordpress": "Hyaline 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 1"
+  ],
+  "descricao_original": "Hyaline cartilage is the most prevalent type, forming articular cartilages and the framework for parts of the nose, larynx, and trachea. This image shows a cross section of a cartilage ring that supports the trachea and maintains the openness (patency) of the airway. The lumen of the trachea is at the bottom. 100x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-NEW.jpg",
+      "arquivo": "imagens/base/T.C.C.H.01-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hyaline cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 1. Descricao original da pagina: Hyaline cartilage is the most prevalent type, forming articular cartilages and the framework for parts of the nose, larynx, and trachea. This image shows a cross section of a cartilage ring that supports the trachea and maintains the openness (patency) of the airway. The lumen of the trachea is at the bottom. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hyaline cartilage",
+      "explicacao_original": "Visible in this low magnification image of hyaline cartilage, are numerous cells embedded in the matrix. Many of the cells are in isogenous units. Hyaline cartilage undergoes regressive changes, a process that is visible in the center of the cartilage. Surrounding the cartilage, is a border of connective tissue called the perichondrium. This two-layered covering serves as protection for the cartilage and is a source of the chondroblasts that lie on the cartilage surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.01-1-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.01-NEW.jpg'. Destaca a estrutura ou conceito 'Hyaline cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visible in this low magnification image of hyaline cartilage, are numerous cells embedded in the matrix. Many of the cells are in isogenous units. Hyaline cartilage undergoes regressive changes, a process that is visible in the center of the cartilage. Surrounding the cartilage, is a border of connective tissue called the perichondrium. This two-layered covering serves as protection for the cartilage and is a source of the chondroblasts that lie on the cartilage surface.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Perichondrium",
+      "explicacao_original": "Visible in this low magnification image of hyaline cartilage, are numerous cells embedded in the matrix. Many of the cells are in isogenous units. Hyaline cartilage undergoes regressive changes, a process that is visible in the center of the cartilage. Surrounding the cartilage, is a border of connective tissue called the perichondrium. This two-layered covering serves as protection for the cartilage and is a source of the chondroblasts that lie on the cartilage surface.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.01-2-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.01-NEW.jpg'. Destaca a estrutura ou conceito 'Perichondrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visible in this low magnification image of hyaline cartilage, are numerous cells embedded in the matrix. Many of the cells are in isogenous units. Hyaline cartilage undergoes regressive changes, a process that is visible in the center of the cartilage. Surrounding the cartilage, is a border of connective tissue called the perichondrium. This two-layered covering serves as protection for the cartilage and is a source of the chondroblasts that lie on the cartilage surface.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Epithelium",
+      "explicacao_original": "As are all spaces in the body, the lumen of the trachea is lined by an epithelium that forms a distinct border facing the lumen. Loose connective tissue containing glands underlies the epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-4-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.01-4-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.01-NEW.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As are all spaces in the body, the lumen of the trachea is lined by an epithelium that forms a distinct border facing the lumen. Loose connective tissue containing glands underlies the epithelium.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Connective tissue proper",
+      "explicacao_original": "As are all spaces in the body, the lumen of the trachea is lined by an epithelium that forms a distinct border facing the lumen. Loose connective tissue containing glands underlies the epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.01-3-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.01-NEW.jpg'. Destaca a estrutura ou conceito 'Connective tissue proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As are all spaces in the body, the lumen of the trachea is lined by an epithelium that forms a distinct border facing the lumen. Loose connective tissue containing glands underlies the epithelium.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Next Image",
+      "explicacao_original": "The next image is similar to that outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-5-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.01-5-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.01-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.C.C.H.01-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hyaline cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.01-NEW.jpg'. Destaca a estrutura ou conceito 'Next Image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that outlined by the rectangle.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-1/, acesso em 2026-08-07."
+    }
+  ]
+}

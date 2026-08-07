@@ -1,0 +1,134 @@
+{
+  "id": 16835,
+  "titulo": "Plasma cell",
+  "titulo_wordpress": "Cells 20",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 20"
+  ],
+  "descricao_original": "Plasma cells differentiate from migratory B lymphocytes and reside in connective tissues. When located in mucosal connective tissue (lamina propria), as seen in this image, plasma cells mostly secrete IgA antibodies. In other regions of the body, plasma cells secrete IgG antibodies. Plasma cells are considered to have limited migratory ability. 400x, 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Plasma cell', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Descricao original da pagina: Plasma cells differentiate from migratory B lymphocytes and reside in connective tissues. When located in mucosal connective tissue (lamina propria), as seen in this image, plasma cells mostly secrete IgA antibodies. In other regions of the body, plasma cells secrete IgG antibodies. Plasma cells are considered to have limited migratory ability. 400x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Left panel",
+      "explicacao_original": "An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Left panel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Plasma cells",
+      "explicacao_original": "An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Plasma cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Negative Golgi image",
+      "explicacao_original": "An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Negative Golgi image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mast cell",
+      "explicacao_original": "An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Mast cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-5-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An accumulation of plasma cells demonstrates two diagnostic features that help identify plasma cells. Heterochromatin frequently clumps around the periphery of the nucleus, forming a “clock face” appearance. Additionally, a pale-staining region in the cytoplasm adjacent to the nucleus indicates the position of the large Golgi apparatus. This region, referred to as a “negative Golgi” image, is surrounded by the more chromophilic, blue-staining, rough endoplasmic reticulum.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Right panel",
+      "explicacao_original": "A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-6-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Right panel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Plasma cells",
+      "explicacao_original": "A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-7-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-7-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Plasma cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Rough endoplasmic reticulum",
+      "explicacao_original": "A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-8-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-8-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Negative Golgi image",
+      "explicacao_original": "A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-9-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-9-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Negative Golgi image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Mast cell",
+      "explicacao_original": "A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-10-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-10-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Mast cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Eosinophil",
+      "explicacao_original": "A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19-11-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-19-11-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/06/T.CT_.CTP_.Cells-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Plasma cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-19.jpg'. Destaca a estrutura ou conceito 'Eosinophil' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A typical plasma cell is ovoid and has an eccentric nucleus with heterochromatin frequently arranged to form a clock face. A peripheral rim of cytoplasm stains purple with hematoxylin, due to the presence of rough endoplasmic reticulum. A “negative Golgi” image lies adjacent to the nucleus. These organelles indicate production of protein, antibodies in this case, for release by the cells. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 20. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-20/, acesso em 2026-08-07."
+    }
+  ]
+}

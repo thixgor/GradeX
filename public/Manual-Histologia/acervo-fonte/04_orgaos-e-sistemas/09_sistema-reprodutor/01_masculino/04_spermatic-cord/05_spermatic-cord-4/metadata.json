@@ -1,0 +1,54 @@
+{
+  "id": 15787,
+  "titulo": "Spermatic cord",
+  "titulo_wordpress": "Spermatic cord 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Masculino",
+    "Spermatic Cord",
+    "Spermatic cord 4"
+  ],
+  "descricao_original": "Surrounding the ductus deferens is a sheath of connective tissue housing the testicular artery, the pampiniform plexus of veins and small peripheral nerves. The venous plexus serves as a heat exchanger to reduce the temperature of the incoming blood in the testicular artery. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/male/spermatic-cord/spermatic-cord-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SC_.04.jpg",
+      "arquivo": "imagens/base/O.R.M.SC_.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Spermatic cord', no setor Órgãos e Sistemas > Sistema Reprodutor > Masculino > Spermatic Cord > Spermatic cord 4. Descricao original da pagina: Surrounding the ductus deferens is a sheath of connective tissue housing the testicular artery, the pampiniform plexus of veins and small peripheral nerves. The venous plexus serves as a heat exchanger to reduce the temperature of the incoming blood in the testicular artery. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/spermatic-cord/spermatic-cord-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Venous plexus",
+      "explicacao_original": "Surrounding the ductus deferens is a sheath of connective tissue housing the testicular artery, the pampiniform plexus of veins and small peripheral nerves. The venous plexus serves as a heat exchanger to reduce the temperature of the incoming blood in the testicular artery. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.SC_.04.P01.png",
+      "arquivo": "imagens/marcadores/O.R.M.SC_.04.P01.png",
+      "imagem_base": "imagens/base/O.R.M.SC_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SC_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spermatic cord'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SC_.04.jpg'. Destaca a estrutura ou conceito 'Venous plexus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Surrounding the ductus deferens is a sheath of connective tissue housing the testicular artery, the pampiniform plexus of veins and small peripheral nerves. The venous plexus serves as a heat exchanger to reduce the temperature of the incoming blood in the testicular artery. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Spermatic Cord > Spermatic cord 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/spermatic-cord/spermatic-cord-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nerves",
+      "explicacao_original": "Surrounding the ductus deferens is a sheath of connective tissue housing the testicular artery, the pampiniform plexus of veins and small peripheral nerves. The venous plexus serves as a heat exchanger to reduce the temperature of the incoming blood in the testicular artery. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.SC_.04.P02.png",
+      "arquivo": "imagens/marcadores/O.R.M.SC_.04.P02.png",
+      "imagem_base": "imagens/base/O.R.M.SC_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SC_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spermatic cord'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SC_.04.jpg'. Destaca a estrutura ou conceito 'Nerves' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Surrounding the ductus deferens is a sheath of connective tissue housing the testicular artery, the pampiniform plexus of veins and small peripheral nerves. The venous plexus serves as a heat exchanger to reduce the temperature of the incoming blood in the testicular artery. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Spermatic Cord > Spermatic cord 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/spermatic-cord/spermatic-cord-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Testicular artery",
+      "explicacao_original": "The testicular artery can be differentiated from the pampiniform veins by its thick tunica media of smooth muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/O.R.M.SC_.04.P03.png",
+      "arquivo": "imagens/marcadores/O.R.M.SC_.04.P03.png",
+      "imagem_base": "imagens/base/O.R.M.SC_.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.M.SC_.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Spermatic cord'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.M.SC_.04.jpg'. Destaca a estrutura ou conceito 'Testicular artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The testicular artery can be differentiated from the pampiniform veins by its thick tunica media of smooth muscle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Masculino > Spermatic Cord > Spermatic cord 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/male/spermatic-cord/spermatic-cord-4/, acesso em 2026-08-07."
+    }
+  ]
+}

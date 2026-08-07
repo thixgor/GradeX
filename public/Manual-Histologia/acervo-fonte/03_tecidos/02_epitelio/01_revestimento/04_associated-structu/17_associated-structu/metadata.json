@@ -1,0 +1,94 @@
+{
+  "id": 23630,
+  "titulo": "Junctional complex",
+  "titulo_wordpress": "Associated structures 21",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 21"
+  ],
+  "descricao_original": "This image is similar to the previous one and will be used to illustrate the molecular components of the junctional complex. Small intestine 35,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Junctional complex', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Descricao original da pagina: This image is similar to the previous one and will be used to illustrate the molecular components of the junctional complex. Small intestine 35,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Junctional complex",
+      "explicacao_original": "This image is similar to previous one and will be used to illustrate the molecular components of the junctional complex. Small intestine 35,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-A-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-A-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Junctional complex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is similar to previous one and will be used to illustrate the molecular components of the junctional complex. Small intestine 35,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Illustration",
+      "explicacao_original": "In this illustration, most of the cell on the left side of the junctional complex has been removed, leaving only a view of the inner surface of its plasma membrane (arrows) and microvilli. The complexity, composition and extent of the components of the junctional complex will be illustrated using this figure as a foundation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Illustration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this illustration, most of the cell on the left side of the junctional complex has been removed, leaving only a view of the inner surface of its plasma membrane (arrows) and microvilli. The complexity, composition and extent of the components of the junctional complex will be illustrated using this figure as a foundation.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Zonula occludens",
+      "explicacao_original": "The zonula occludens, or tight junction, forms a band encircling the apical portion of the cell. Transmembrane proteins in the cell membranes of adjacent cells contact each other in the intercellular space (red arrows). These proteins are distributed in the membrane as an interlacing meshwork around the perimeter of the cells (blue arrows) that effectively seal the membranes, prohibiting passage of material from the lumen to the intercellular space. These contacts do not provide cell adhesion.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Zonula occludens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The zonula occludens, or tight junction, forms a band encircling the apical portion of the cell. Transmembrane proteins in the cell membranes of adjacent cells contact each other in the intercellular space (red arrows). These proteins are distributed in the membrane as an interlacing meshwork around the perimeter of the cells (blue arrows) that effectively seal the membranes, prohibiting passage of material from the lumen to the intercellular space. These contacts do not provide cell adhesion.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Zonula adherens",
+      "explicacao_original": "The zonula adherens is a belt-like structure that provides adhesion for adjacent cells and integrity of the epithelium. The zonula adherens consists of protein complexes (red arrow) on the cytoplasmic side of adjacent plasma membranes. Transmembrane proteins in the complexes extend into the intercellular space (black arrow) to provide adhesion. Microfilaments (green arrows) extend from the plaque into the cytoplasm to provide stability.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Zonula adherens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The zonula adherens is a belt-like structure that provides adhesion for adjacent cells and integrity of the epithelium. The zonula adherens consists of protein complexes (red arrow) on the cytoplasmic side of adjacent plasma membranes. Transmembrane proteins in the complexes extend into the intercellular space (black arrow) to provide adhesion. Microfilaments (green arrows) extend from the plaque into the cytoplasm to provide stability.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Desmosome",
+      "explicacao_original": "The desmosome, or macula adherens, is a spot-like weld between cells that occurs in junctional complexes and throughout the cell. Desmosomes provide adhesion and consist of attachment plaques (black arrows) with membrane proteins (blue arrow) extending into the intercellular space. Intracellularly, these plaques also serve as attachment sites for intermediate filaments (red arrows) that extend into the cytoplasm for stability.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Desmosome' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The desmosome, or macula adherens, is a spot-like weld between cells that occurs in junctional complexes and throughout the cell. Desmosomes provide adhesion and consist of attachment plaques (black arrows) with membrane proteins (blue arrow) extending into the intercellular space. Intracellularly, these plaques also serve as attachment sites for intermediate filaments (red arrows) that extend into the cytoplasm for stability.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Microfilaments",
+      "explicacao_original": "Microfilaments are important components of the cell apex. They form an integral part of the zonula adherens (black arrows) and extend from this band into the cell cytoplasm. Microfilaments form the structural support for microvilli (red arrows) and are anchored in the terminal web (green arrows), a meshwork of microfilaments just beneath the apical plasma membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Microfilaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microfilaments are important components of the cell apex. They form an integral part of the zonula adherens (black arrows) and extend from this band into the cell cytoplasm. Microfilaments form the structural support for microvilli (red arrows) and are anchored in the terminal web (green arrows), a meshwork of microfilaments just beneath the apical plasma membrane.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Begin again",
+      "explicacao_original": "This image is similar to previous one and will be used to illustrate the molecular components of the junctional complex. Small intestine 35,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a-A-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15a-A-ping-2.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.15a.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Lin_.AS_.15a.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.15a.jpg'. Destaca a estrutura ou conceito 'Begin again' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is similar to previous one and will be used to illustrate the molecular components of the junctional complex. Small intestine 35,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 21. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-21/, acesso em 2026-08-07."
+    }
+  ]
+}

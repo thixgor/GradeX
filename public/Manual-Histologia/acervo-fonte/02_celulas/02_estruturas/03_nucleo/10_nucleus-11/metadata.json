@@ -1,0 +1,93 @@
+{
+  "id": 1249,
+  "titulo": "Nuclear envelope",
+  "titulo_wordpress": "Nucleus 11",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Núcleo",
+    "Nucleus 11"
+  ],
+  "descricao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "arquivo": "imagens/base/C.S.N.-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Nuclear envelope', no setor Células > Estruturas > Núcleo > Nucleus 11. Descricao original da pagina: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-1-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-6-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-6-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Outer nuclear membrane",
+      "explicacao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-2-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'Outer nuclear membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Inner nuclear membrane",
+      "explicacao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-3-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'Inner nuclear membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Perinuclear space",
+      "explicacao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-4-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-4-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'Perinuclear space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "RER",
+      "explicacao_original": "The yellow arrow indicates where the rough endoplasmic reticulum (RER) is continuous with the perinuclear space and outer nuclear envelope. The red arrows indicated cisterns of RER in the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-5-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-5-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'RER' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The yellow arrow indicates where the rough endoplasmic reticulum (RER) is continuous with the perinuclear space and outer nuclear envelope. The red arrows indicated cisterns of RER in the cytoplasm.. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lipid droplets",
+      "explicacao_original": "The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.N-11-7-ping.png",
+      "arquivo": "imagens/marcadores/C.S.N-11-7-ping.png",
+      "imagem_base": "imagens/base/C.S.N.-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.N.-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Nuclear envelope'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.N.-11.jpg'. Destaca a estrutura ou conceito 'Lipid droplets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The nuclear envelope consists of two membranes, an inner and an outer nuclear membrane, which are separated by the perinuclear space. The perinuclear space and outer nuclear envelope are continuous with the RER. The nuclear envelope has periodic openings called nuclear pores and perinuclear heterochromatin lies just beneath the inner nuclear membrane. 10,000x. Contexto setorial: Células > Estruturas > Núcleo > Nucleus 11. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/nucleus/nucleus-11/, acesso em 2026-08-07."
+    }
+  ]
+}

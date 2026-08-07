@@ -1,0 +1,124 @@
+{
+  "id": 27528,
+  "titulo": "Large vein (vena cava)",
+  "titulo_wordpress": "Veins 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Veins",
+    "Veins 15"
+  ],
+  "descricao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Large vein (vena cava)', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Descricao original da pagina: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelium",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Endothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Smooth muscle fibers",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Internal elastic lamina",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Internal elastic lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica media",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Smooth muscle fibers",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Smooth muscle fibers",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-8-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-9-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.V-15A-10-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.V-15A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/10/Or.CV_.V.V-15A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Large vein (vena cava)'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.V-15A.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because this large vein is sectioned longitudinally, the orientation of the smooth muscle fibers is reversed from that shown in the previous cross sections. In this orientation, longitudinally-oriented smooth muscle fibers in tunicae intima and adventitia are seen in longitudinal section, and the circularly arranged smooth muscle in the tunica media is seen in cross section. This section was stained for elastic fibers, thus an internal elastic lamina, which is present in larger veins, is prominent. 100x, 250x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Veins > Veins 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/veins/veins-o/, acesso em 2026-08-07."
+    }
+  ]
+}

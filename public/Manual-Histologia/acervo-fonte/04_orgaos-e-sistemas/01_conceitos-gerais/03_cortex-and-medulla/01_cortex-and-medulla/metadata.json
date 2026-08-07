@@ -1,0 +1,55 @@
+{
+  "id": 11847,
+  "titulo": "Cortex and medullla",
+  "titulo_wordpress": "Cortex and medulla 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Cortex and Medulla",
+    "Cortex and medulla 2"
+  ],
+  "descricao_original": "Some organs are organized with an outer cortical region and more centrally located medullary region. In this image of a lymph node, the darker staining of the cortex and paler staining of the medulla reflect differences in their components and functions. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/cortex-and-medulla/cortex-and-medulla-2/",
+  "creditos_identificados": [
+    "Image source: This image was taken from a slide in the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.CtxMed-2.jpg",
+      "arquivo": "imagens/base/Or.Concepts.CtxMed-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cortex and medullla', no setor Órgãos e Sistemas > Conceitos Gerais > Cortex and Medulla > Cortex and medulla 2. Descricao original da pagina: Some organs are organized with an outer cortical region and more centrally located medullary region. In this image of a lymph node, the darker staining of the cortex and paler staining of the medulla reflect differences in their components and functions. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/cortex-and-medulla/cortex-and-medulla-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cortex",
+      "explicacao_original": "Some organs are organized with an outer cortical region and more centrally located medullary region. In this image of a lymph node, the darker staining of the cortex and paler staining of the medulla reflect differences in their components and functions. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.CtxMed-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.CtxMed-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.CtxMed-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.CtxMed-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex and medullla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.CtxMed-2.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Some organs are organized with an outer cortical region and more centrally located medullary region. In this image of a lymph node, the darker staining of the cortex and paler staining of the medulla reflect differences in their components and functions. 10x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Cortex and Medulla > Cortex and medulla 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/cortex-and-medulla/cortex-and-medulla-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Medulla",
+      "explicacao_original": "Some organs are organized with an outer cortical region and more centrally located medullary region. In this image of a lymph node, the darker staining of the cortex and paler staining of the medulla reflect differences in their components and functions. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.CtxMed-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.CtxMed-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.CtxMed-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.CtxMed-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex and medullla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.CtxMed-2.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Some organs are organized with an outer cortical region and more centrally located medullary region. In this image of a lymph node, the darker staining of the cortex and paler staining of the medulla reflect differences in their components and functions. 10x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Cortex and Medulla > Cortex and medulla 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/cortex-and-medulla/cortex-and-medulla-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken from a slide in the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Concepts.CtxMed-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.CtxMed-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cortex and medullla'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.CtxMed-2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken from a slide in the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Cortex and Medulla > Cortex and medulla 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/cortex-and-medulla/cortex-and-medulla-2/, acesso em 2026-08-07."
+    }
+  ]
+}

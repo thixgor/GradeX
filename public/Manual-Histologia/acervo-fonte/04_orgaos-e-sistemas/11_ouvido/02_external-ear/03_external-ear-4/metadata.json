@@ -1,0 +1,83 @@
+{
+  "id": 13578,
+  "titulo": "External ear: External auditory meatus",
+  "titulo_wordpress": "External ear 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "External Ear",
+    "External ear 4"
+  ],
+  "descricao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "arquivo": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'External ear: External auditory meatus', no setor Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Descricao original da pagina: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "External auditory meatus",
+      "explicacao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ext-meatus.png",
+      "arquivo": "imagens/marcadores/Ext-meatus.png",
+      "imagem_base": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.04A-FINAL.jpg'. Destaca a estrutura ou conceito 'External auditory meatus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Temporal bone",
+      "explicacao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Temporal-bone.png",
+      "arquivo": "imagens/marcadores/Temporal-bone.png",
+      "imagem_base": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.04A-FINAL.jpg'. Destaca a estrutura ou conceito 'Temporal bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Elastic cartilage",
+      "explicacao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Cartilage.png",
+      "arquivo": "imagens/marcadores/Cartilage.png",
+      "imagem_base": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.04A-FINAL.jpg'. Destaca a estrutura ou conceito 'Elastic cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Hair follicles",
+      "explicacao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Hair-follicles.png",
+      "arquivo": "imagens/marcadores/Hair-follicles.png",
+      "imagem_base": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.04A-FINAL.jpg'. Destaca a estrutura ou conceito 'Hair follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Sebaceous glands",
+      "explicacao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Sebaceous-glands.png",
+      "arquivo": "imagens/marcadores/Sebaceous-glands.png",
+      "imagem_base": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.04A-FINAL.jpg'. Destaca a estrutura ou conceito 'Sebaceous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Ceruminous glands",
+      "explicacao_original": "Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Ceruminous-glands.png",
+      "arquivo": "imagens/marcadores/Ceruminous-glands.png",
+      "imagem_base": "imagens/base/O.E.EE_.04A-FINAL.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/04/O.E.EE_.04A-FINAL.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'External ear: External auditory meatus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.EE_.04A-FINAL.jpg'. Destaca a estrutura ou conceito 'Ceruminous glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage, continuous with that of the auricle, supports the auditory meatus in its outer third, while the support of the inner two-thirds is provided by the temporal bone. Typical thin skin, possessing many hairs, sebaceous and ceruminous glands, lines the external auditory meatus. 40x. Contexto setorial: Órgãos e Sistemas > Ouvido > External Ear > External ear 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/external-ear/external-ear-4/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": 3032,
+  "titulo": "Schwann cell",
+  "titulo_wordpress": "Supporting cells PNS 8",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Supporting Cells",
+    "Peripheral Nervous System",
+    "Supporting cells PNS 8"
+  ],
+  "descricao_original": "A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8.jpg",
+      "arquivo": "imagens/base/T.N.SuppPNS-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Schwann cell', no setor Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 8. Descricao original da pagina: A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Axon",
+      "explicacao_original": "A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-8-1-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-8.jpg'. Destaca a estrutura ou conceito 'Axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Myelin sheath",
+      "explicacao_original": "A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-8-2-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-8.jpg'. Destaca a estrutura ou conceito 'Myelin sheath' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myelin lamellae",
+      "explicacao_original": "A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-8-3-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-8.jpg'. Destaca a estrutura ou conceito 'Myelin lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Neurofilaments and microtubles",
+      "explicacao_original": "A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-8-4-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-8.jpg'. Destaca a estrutura ou conceito 'Neurofilaments and microtubles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A freeze fracture electron micrograph shows an axon and its myelin sheath, fractured transversely. This axon is surrounded by 10-15 wrappings of myelin derived from Schwann cell plasma membrane. Visible in the axon are numerous small bumps representing microtubules. Portions of uncompacted Schwann cell cytoplasm are also visible. 60,000x. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Schwann cell cytoplasm",
+      "explicacao_original": "During myelination, the axon lies in a longitudinal groove of plasma membrane indented into the Schwann cell surface. One edge of the groove wraps around the axon forming concentric membrane layers, called myelin. As membranes compact, intervening cytoplasm is eliminated. Cytoplasm is retained between membranes adjacent to the axon and at the periphery of the myelin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.SuppPNS-8-5-ping.png",
+      "imagem_base": "imagens/base/T.N.SuppPNS-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.SuppPNS-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Schwann cell'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.SuppPNS-8.jpg'. Destaca a estrutura ou conceito 'Schwann cell cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During myelination, the axon lies in a longitudinal groove of plasma membrane indented into the Schwann cell surface. One edge of the groove wraps around the axon forming concentric membrane layers, called myelin. As membranes compact, intervening cytoplasm is eliminated. Cytoplasm is retained between membranes adjacent to the axon and at the periphery of the myelin.. Contexto setorial: Tecidos > Tecido Nervoso > Supporting Cells > Peripheral Nervous System > Supporting cells PNS 8. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/supporting-cells/peripheral-nervous-system/supporting-cells-pns-8/, acesso em 2026-08-07."
+    }
+  ]
+}

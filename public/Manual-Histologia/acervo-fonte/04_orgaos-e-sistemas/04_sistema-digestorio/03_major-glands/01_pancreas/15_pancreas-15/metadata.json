@@ -1,0 +1,114 @@
+{
+  "id": 6988,
+  "titulo": "Pancreas",
+  "titulo_wordpress": "Pancreas 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Pancreas",
+    "Pancreas 15"
+  ],
+  "descricao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pancreas', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Descricao original da pagina: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory cell",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Secretory cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal lamina of endocrine cell",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Basal lamina of endocrine cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Capillary lumen",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Capillary lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fenestrations",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Fenestrations' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Endothelial cell",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Endothelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Basal lamina of endothelial cell",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Basal lamina of endothelial cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Pericyte process",
+      "explicacao_original": "Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Pan-15-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Pan-15-9-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Pan-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Pan-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pancreas'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Pan-15.jpg'. Destaca a estrutura ou conceito 'Pericyte process' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Because the islets of Langerhans are endocrine cell clusters, they are supplied by fenestrated capillaries. A fenestrated capillary lies adjacent to an endocrine secretory cell. 10,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Pancreas > Pancreas 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/pancreas/pancreas-15/, acesso em 2026-08-07."
+    }
+  ]
+}

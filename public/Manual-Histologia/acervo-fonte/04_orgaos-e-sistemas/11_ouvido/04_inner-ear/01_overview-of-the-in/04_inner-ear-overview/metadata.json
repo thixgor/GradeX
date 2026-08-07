@@ -1,0 +1,74 @@
+{
+  "id": 13680,
+  "titulo": "Overview: Cranial nerve VIII",
+  "titulo_wordpress": "Inner ear overview 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Overview of the inner ear",
+    "Inner ear overview 4"
+  ],
+  "descricao_original": "Cranial nerve VIII, the vestibulocochlear, innervates the receptors in the membranous labyrinth. The cochlear division of the nerve supplies the organ of Corti in the cochlear duct. The vestibular division supplies the macula in the utricle and in the saccule, as well as the crista ampullaris in the ampulla of each of the three semicircular ducts.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.jpg",
+      "arquivo": "imagens/base/O.E.IE_.O.04.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Overview: Cranial nerve VIII', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 4. Descricao original da pagina: Cranial nerve VIII, the vestibulocochlear, innervates the receptors in the membranous labyrinth. The cochlear division of the nerve supplies the organ of Corti in the cochlear duct. The vestibular division supplies the macula in the utricle and in the saccule, as well as the crista ampullaris in the ampulla of each of the three semicircular ducts.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cochlear division",
+      "explicacao_original": "Cranial nerve VIII, the vestibulocochlear, innervates the receptors in the membranous labyrinth. The cochlear division of the nerve supplies the organ of Corti in the cochlear duct. The vestibular division supplies the macula in the utricle and in the saccule, as well as the crista ampullaris in the ampulla of each of the three semicircular ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.O.04.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.O.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cranial nerve VIII'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.O.04.jpg'. Destaca a estrutura ou conceito 'Cochlear division' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cranial nerve VIII, the vestibulocochlear, innervates the receptors in the membranous labyrinth. The cochlear division of the nerve supplies the organ of Corti in the cochlear duct. The vestibular division supplies the macula in the utricle and in the saccule, as well as the crista ampullaris in the ampulla of each of the three semicircular ducts.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Vestibular division",
+      "explicacao_original": "Cranial nerve VIII, the vestibulocochlear, innervates the receptors in the membranous labyrinth. The cochlear division of the nerve supplies the organ of Corti in the cochlear duct. The vestibular division supplies the macula in the utricle and in the saccule, as well as the crista ampullaris in the ampulla of each of the three semicircular ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.O.04.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.O.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cranial nerve VIII'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.O.04.jpg'. Destaca a estrutura ou conceito 'Vestibular division' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cranial nerve VIII, the vestibulocochlear, innervates the receptors in the membranous labyrinth. The cochlear division of the nerve supplies the organ of Corti in the cochlear duct. The vestibular division supplies the macula in the utricle and in the saccule, as well as the crista ampullaris in the ampulla of each of the three semicircular ducts.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Organ of Corti",
+      "explicacao_original": "The organ of Corti, the receptor for sound, is located in the cochlear duct (arrows) of the membranous labyrinth. The cochlear duct is suspended in the middle of the tubular osseous cochlea.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.O.04.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.O.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cranial nerve VIII'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.O.04.jpg'. Destaca a estrutura ou conceito 'Organ of Corti' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The organ of Corti, the receptor for sound, is located in the cochlear duct (arrows) of the membranous labyrinth. The cochlear duct is suspended in the middle of the tubular osseous cochlea.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Maculae",
+      "explicacao_original": "The receptor called the macula is a thickening in the wall of both the utricle and the saccule that responds to changes in linear acceleration and the force of gravity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.O.04.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.O.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cranial nerve VIII'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.O.04.jpg'. Destaca a estrutura ou conceito 'Maculae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The receptor called the macula is a thickening in the wall of both the utricle and the saccule that responds to changes in linear acceleration and the force of gravity.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cristae ampullares",
+      "explicacao_original": "The receptor called the crista ampullaris (black arrows) is a ridge-like structure located in the ampullary enlargement of each semicircular duct. A gelatinous cupula (red arrow) extends from each crista to the opposite wall of the ampulla. Each crista lies perpendicular to the long axis of each duct and responds to angular acceleration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.O.04.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.O.04.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.O.04.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.O.04.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Overview: Cranial nerve VIII'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.O.04.jpg'. Destaca a estrutura ou conceito 'Cristae ampullares' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The receptor called the crista ampullaris (black arrows) is a ridge-like structure located in the ampullary enlargement of each semicircular duct. A gelatinous cupula (red arrow) extends from each crista to the opposite wall of the ampulla. Each crista lies perpendicular to the long axis of each duct and responds to angular acceleration.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Overview of the inner ear > Inner ear overview 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/overview-inner-ear/inner-ear-overview-4/, acesso em 2026-08-07."
+    }
+  ]
+}

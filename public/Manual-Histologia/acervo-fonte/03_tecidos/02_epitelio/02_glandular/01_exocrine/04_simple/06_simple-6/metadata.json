@@ -1,0 +1,85 @@
+{
+  "id": 4324,
+  "titulo": "Simple, coiled tubular gland",
+  "titulo_wordpress": "Simple 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Simple",
+    "Simple 6"
+  ],
+  "descricao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Simple, coiled tubular gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Descricao original da pagina: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory portions",
+      "explicacao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-6-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, coiled tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-6.jpg'. Destaca a estrutura ou conceito 'Secretory portions' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Ducts",
+      "explicacao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-6-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, coiled tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-6.jpg'. Destaca a estrutura ou conceito 'Ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Epidermis of skin",
+      "explicacao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-6-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, coiled tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-6.jpg'. Destaca a estrutura ou conceito 'Epidermis of skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dermis of skin",
+      "explicacao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-6-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, coiled tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-6.jpg'. Destaca a estrutura ou conceito 'Dermis of skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Hypodermis",
+      "explicacao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-6-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, coiled tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-6.jpg'. Destaca a estrutura ou conceito 'Hypodermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Simp-6-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Simp-6-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Simp-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/01/T.E.Gl_.Ex_.Simp-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Simple, coiled tubular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Simp-6.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Another simple gland is the simple, coiled tubular gland. These glands consist of a very long, unbranched duct that is continuous with the coiled secretory portion. An example of this gland is this eccrine sweat gland in skin. The connection between these ducts and their glandular portions is out of the plane of section. Skin 100x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Simple > Simple 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/simple/simple-6/, acesso em 2026-08-07."
+    }
+  ]
+}

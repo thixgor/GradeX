@@ -1,0 +1,84 @@
+{
+  "id": 6845,
+  "titulo": "Esophagogastric junction",
+  "titulo_wordpress": "Esophagus 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Esophagus",
+    "Esophagus 9"
+  ],
+  "descricao_original": "A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Esophagogastric junction', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Descricao original da pagina: A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Esophagus",
+      "explicacao_original": "A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagogastric junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-9.jpg'. Destaca a estrutura ou conceito 'Esophagus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cardiac stomach",
+      "explicacao_original": "A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-9-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-9-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagogastric junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-9.jpg'. Destaca a estrutura ou conceito 'Cardiac stomach' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Esophagogastric junction",
+      "explicacao_original": "A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-9-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-9-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagogastric junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-9.jpg'. Destaca a estrutura ou conceito 'Esophagogastric junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Opening of gastric pits",
+      "explicacao_original": "A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-9-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-9-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagogastric junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-9.jpg'. Destaca a estrutura ou conceito 'Opening of gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-9-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-9-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagogastric junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-9.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A sharp transition in the mucosal epithelium, from stratified squamous moist (esophagus, right) to simple columnar (cardiac stomach, left), marks the transition of these two organs. Additional features of the stomach include the presence of gastric pits extending from the surface into the gastric glands in the lamina propria. This region is also referred to as the gastro-esophageal junction. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cardiac glands",
+      "explicacao_original": "Gastric glands in this region of the stomach are called cardiac glands (blue arrows), which occupy the region beneath the yellow line.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-9-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-9-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-9.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-9.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagogastric junction'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-9.jpg'. Destaca a estrutura ou conceito 'Cardiac glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric glands in this region of the stomach are called cardiac glands (blue arrows), which occupy the region beneath the yellow line.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-9/, acesso em 2026-08-07."
+    }
+  ]
+}

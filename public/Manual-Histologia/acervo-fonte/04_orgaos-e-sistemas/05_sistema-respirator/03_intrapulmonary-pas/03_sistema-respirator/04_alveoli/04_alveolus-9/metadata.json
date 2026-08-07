@@ -1,0 +1,85 @@
+{
+  "id": 31455,
+  "titulo": "Alveolus",
+  "titulo_wordpress": "Alveolus 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Alveoli",
+    "Alveolus 9"
+  ],
+  "descricao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "arquivo": "imagens/base/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Alveolus', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Descricao original da pagina: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Alveolar duct",
+      "explicacao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A-1-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.04A-1-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.04A.jpg'. Destaca a estrutura ou conceito 'Alveolar duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Alveolar lumen",
+      "explicacao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.04A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.04A.jpg'. Destaca a estrutura ou conceito 'Alveolar lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interalveolar septa",
+      "explicacao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.04A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.04A.jpg'. Destaca a estrutura ou conceito 'Interalveolar septa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Smooth muscle knobs",
+      "explicacao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.04A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.04A.jpg'. Destaca a estrutura ou conceito 'Smooth muscle knobs' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Capillaries",
+      "explicacao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.04A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.04A.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Air-blood barrier",
+      "explicacao_original": "This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.A.04A-6-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.A.04A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.A.04A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Alveolus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.A.04A.jpg'. Destaca a estrutura ou conceito 'Air-blood barrier' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows another alveolus attached to an alveolar duct, as indicated by the presence of smooth muscle knobs. Note the large numbers of capillaries in the septum that bulge into the alveolar space. The alveolus is lined by a thin epithelium of Type I cells which, along with the endothelium of the capillaries, form the air-blood barrier. Toluidine blue, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Alveoli > Alveolus 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/alveoli/alveolus-9/, acesso em 2026-08-07."
+    }
+  ]
+}

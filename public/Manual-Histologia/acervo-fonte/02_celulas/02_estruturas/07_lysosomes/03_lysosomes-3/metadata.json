@@ -1,0 +1,53 @@
+{
+  "id": 1774,
+  "titulo": "Lysosomes",
+  "titulo_wordpress": "Lysosomes 3",
+  "caminho_setorial": [
+    "Células",
+    "Estruturas",
+    "Lysosomes",
+    "Lysosomes 3"
+  ],
+  "descricao_original": "Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x",
+  "url_origem": "https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-3.jpg",
+      "arquivo": "imagens/base/C.S.Ly-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lysosomes', no setor Células > Estruturas > Lysosomes > Lysosomes 3. Descricao original da pagina: Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lysosomes",
+      "explicacao_original": "Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-3-1-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Ly-3-1-ping.png",
+      "imagem_base": "imagens/base/C.S.Ly-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-3.jpg'. Destaca a estrutura ou conceito 'Lysosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 3. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-3-2-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Ly-3-2-ping.png",
+      "imagem_base": "imagens/base/C.S.Ly-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-3.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 3. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cristae",
+      "explicacao_original": "Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.S.Ly-3-3-ping.png",
+      "arquivo": "imagens/marcadores/C.S.Ly-3-3-ping.png",
+      "imagem_base": "imagens/base/C.S.Ly-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.S.Ly-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lysosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'C.S.Ly-3.jpg'. Destaca a estrutura ou conceito 'Cristae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lysosomes are organelles that contain hydrolytic enzymes and are surrounded by a single unit membrane. The contents of a lysosome can appear highly heterogeneous depending on the type of material being degraded. Lysosomes form by the fusion of Golgi-derived vesicles containing acid hydrolase enzymes (pre-lysosomes) with either internalized materials or autophagosomes. 30,000x. Contexto setorial: Células > Estruturas > Lysosomes > Lysosomes 3. Origem: Digital Histology, https://digitalhistology.org/cells/structures-2/lysosomes/lysosomes-3/, acesso em 2026-08-07."
+    }
+  ]
+}

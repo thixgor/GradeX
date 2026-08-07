@@ -1,0 +1,74 @@
+{
+  "id": 30053,
+  "titulo": "Bone: the organ - components",
+  "titulo_wordpress": "As an organ 3A",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As an Organ",
+    "As an organ 3A"
+  ],
+  "descricao_original": "Bone tissue has two different appearances: compact and spongy. Compact (cortical) bone appears as a solid mass to the naked eye. This bone comprises the shafts of long bones and forms a peripheral layer over all bones, except in regions of articular cartilages. Spongy (cancellous) bone is found in the interior and resembles a sponge to the naked eye. It consists of a network of bony spicules or trabeculae, enclosing small marrow spaces. Spongy bone is present in the epiphyses and lining the interior of the diaphysis. 1x, 10x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.03-fix.jpg",
+      "arquivo": "imagens/base/T.C.B.O.03-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: the organ - components', no setor Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 3A. Descricao original da pagina: Bone tissue has two different appearances: compact and spongy. Compact (cortical) bone appears as a solid mass to the naked eye. This bone comprises the shafts of long bones and forms a peripheral layer over all bones, except in regions of articular cartilages. Spongy (cancellous) bone is found in the interior and resembles a sponge to the naked eye. It consists of a network of bony spicules or trabeculae, enclosing small marrow spaces. Spongy bone is present in the epiphyses and lining the interior of the diaphysis. 1x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Compact bone",
+      "explicacao_original": "Grossly, the bone tissue has two different appearances: compact and spongy. Compact (cortical) bone appears as a solid mass to the naked eye. This bone comprises the shafts of long bones and forms a peripheral layer over all bones, except in regions of articular cartilages. Spongy (cancellous) bone is found in the interior and resembles a sponge to the naked eye. It consists of a network of bony spicules or trabeculae, enclosing small marrow spaces. Spongy bone is present in the epiphyses and lining the interior of the diaphysis. 1x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.3-NEW-Compact.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.3-NEW-Compact.png",
+      "imagem_base": "imagens/base/T.C.B.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Compact bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Grossly, the bone tissue has two different appearances: compact and spongy. Compact (cortical) bone appears as a solid mass to the naked eye. This bone comprises the shafts of long bones and forms a peripheral layer over all bones, except in regions of articular cartilages. Spongy (cancellous) bone is found in the interior and resembles a sponge to the naked eye. It consists of a network of bony spicules or trabeculae, enclosing small marrow spaces. Spongy bone is present in the epiphyses and lining the interior of the diaphysis. 1x, 10x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 3A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Spongy bone",
+      "explicacao_original": "Grossly, the bone tissue has two different appearances: compact and spongy. Compact (cortical) bone appears as a solid mass to the naked eye. This bone comprises the shafts of long bones and forms a peripheral layer over all bones, except in regions of articular cartilages. Spongy (cancellous) bone is found in the interior and resembles a sponge to the naked eye. It consists of a network of bony spicules or trabeculae, enclosing small marrow spaces. Spongy bone is present in the epiphyses and lining the interior of the diaphysis. 1x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.3-NEW-Spongy.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.3-NEW-Spongy.png",
+      "imagem_base": "imagens/base/T.C.B.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Spongy bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Grossly, the bone tissue has two different appearances: compact and spongy. Compact (cortical) bone appears as a solid mass to the naked eye. This bone comprises the shafts of long bones and forms a peripheral layer over all bones, except in regions of articular cartilages. Spongy (cancellous) bone is found in the interior and resembles a sponge to the naked eye. It consists of a network of bony spicules or trabeculae, enclosing small marrow spaces. Spongy bone is present in the epiphyses and lining the interior of the diaphysis. 1x, 10x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 3A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Epiphyseal plate",
+      "explicacao_original": "Long bones grow in length from a plate of hyaline cartilage, called the epiphyseal plate, located between the epiphysis and the metaphysis. The plate is indicated in the decalcified section on the right; its located is indicated in the dried bone on the left.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.3-NEW-Physis.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.3-NEW-Physis.png",
+      "imagem_base": "imagens/base/T.C.B.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Epiphyseal plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Long bones grow in length from a plate of hyaline cartilage, called the epiphyseal plate, located between the epiphysis and the metaphysis. The plate is indicated in the decalcified section on the right; its located is indicated in the dried bone on the left.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 3A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Red bone marrow",
+      "explicacao_original": "Red marrow fills the spaces between spicules of spongy bone in the epiphyses of adults and is also present in the marrow cavity of younger individuals, as shown here. Red marrow consists of myeloid, (hemopoietic) tissue that produces red and white blood cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.3-NEW-Red-marrow.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.3-NEW-Red-marrow.png",
+      "imagem_base": "imagens/base/T.C.B.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Red bone marrow' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Red marrow fills the spaces between spicules of spongy bone in the epiphyses of adults and is also present in the marrow cavity of younger individuals, as shown here. Red marrow consists of myeloid, (hemopoietic) tissue that produces red and white blood cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 3A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Marrow cavity",
+      "explicacao_original": "The shaft of the diaphysis contains a marrow cavity, occupied by bone marrow. By age 25, red marrow is replaced by yellow marrow, consisting of adipose connective tissue with limited myeloid tissue.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/07/T.C.B.O.3-NEW-Marow-cavity.png",
+      "arquivo": "imagens/marcadores/T.C.B.O.3-NEW-Marow-cavity.png",
+      "imagem_base": "imagens/base/T.C.B.O.03-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.O.03-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: the organ - components'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.O.03-fix.jpg'. Destaca a estrutura ou conceito 'Marrow cavity' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The shaft of the diaphysis contains a marrow cavity, occupied by bone marrow. By age 25, red marrow is replaced by yellow marrow, consisting of adipose connective tissue with limited myeloid tissue.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As an Organ > As an organ 3A. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-an-organ/as-an-organ-3a/, acesso em 2026-08-07."
+    }
+  ]
+}

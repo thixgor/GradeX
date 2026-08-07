@@ -1,0 +1,97 @@
+{
+  "id": 502,
+  "titulo": "Transition of terminal to respiratory bronchiole",
+  "titulo_wordpress": "Respiratory bronchiole 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Sistema Respiratório",
+    "Respiratory Bronchiole",
+    "Respiratory bronchiole 1"
+  ],
+  "descricao_original": "This passageway shows the transition of a terminal bronchiole (conducting portion) as it branches into two respiratory bronchioles (respiratory portion). Respiratory bronchioles, like terminal bronchioles, are lined by a simple cuboidal epithelium containing ciliated and club cells. However, respiratory bronchioles possess alveoli as components of their wall and thus the epithelium appears interrupted. Respiratory bronchioles are the initial passageways of the respiratory portion of the respiratory system. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from University of Iowa collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "arquivo": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Transition of terminal to respiratory bronchiole', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Descricao original da pagina: This passageway shows the transition of a terminal bronchiole (conducting portion) as it branches into two respiratory bronchioles (respiratory portion). Respiratory bronchioles, like terminal bronchioles, are lined by a simple cuboidal epithelium containing ciliated and club cells. However, respiratory bronchioles possess alveoli as components of their wall and thus the epithelium appears interrupted. Respiratory bronchioles are the initial passageways of the respiratory portion of the respiratory system. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Terminal bronchiole",
+      "explicacao_original": "A terminal bronchiole is the terminal part of the conducting portion of the respiratory system. It is lined by simple, ciliated columnar epithelium with club cells. No alveoli are present.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01-1-flip-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.01-1-flip-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Terminal bronchiole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A terminal bronchiole is the terminal part of the conducting portion of the respiratory system. It is lined by simple, ciliated columnar epithelium with club cells. No alveoli are present.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Respiratory bronchioles",
+      "explicacao_original": "The respiratory bronchiole possesses alveoli as part of its wall. The lumens of the alveoli are directly continuous with that of the respiratory bronchiole and thus the respiratory bronchiole is capable of gas exchange. This bronchiole is lined by a cuboidal epithelium with cilia and club cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01-2-flip-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.01-2-flip-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Respiratory bronchioles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The respiratory bronchiole possesses alveoli as part of its wall. The lumens of the alveoli are directly continuous with that of the respiratory bronchiole and thus the respiratory bronchiole is capable of gas exchange. This bronchiole is lined by a cuboidal epithelium with cilia and club cells.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Associated alveoli",
+      "explicacao_original": "These alveoli are components of the wall of the respiratory bronchiole. The lumen of the bronchiole is continuous with that of the alveoli.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-3AA-flip-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.01A-3AA-flip-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Associated alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These alveoli are components of the wall of the respiratory bronchiole. The lumen of the bronchiole is continuous with that of the alveoli.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Non-associated alveoli",
+      "explicacao_original": "Numerous alveoli surround the respiratory bronchiole, however, they belong to other respiratory bronchioles, alveolar ducts or alveolar sacs.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-4A-flip-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.01A-4A-flip-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Non-associated alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Numerous alveoli surround the respiratory bronchiole, however, they belong to other respiratory bronchioles, alveolar ducts or alveolar sacs.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Pulmonary arteries",
+      "explicacao_original": "These vessels accompany the bronchiole and carries deoxygenated blood to the alveoli for gas exchange.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-5A-flip-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.01A-5A-flip-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Pulmonary arteries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These vessels accompany the bronchiole and carries deoxygenated blood to the alveoli for gas exchange.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image show the region within the rectangle at higher magnification.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.I.R.RB_.01A-6-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image show the region within the rectangle at higher magnification.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from University of Iowa collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Iowa-source-ping.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping.png",
+      "imagem_base": "imagens/base/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.I.R.RB_.01A-Fix-flip.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Transition of terminal to respiratory bronchiole'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.R.RB_.01A-Fix-flip.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from University of Iowa collection.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Sistema Respiratório > Respiratory Bronchiole > Respiratory bronchiole 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/respiratory/respiratory-bronchiale/respiratory-bronchiole/, acesso em 2026-08-07."
+    }
+  ]
+}

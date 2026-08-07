@@ -1,0 +1,87 @@
+{
+  "id": 6783,
+  "titulo": "Tooth",
+  "titulo_wordpress": "Tooth 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "General",
+    "Tooth 8"
+  ],
+  "descricao_original": "This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/",
+  "creditos_identificados": [
+    "Image source: The image was taken of slide in the University of Iowa collection"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Descricao original da pagina: This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dentin",
+      "explicacao_original": "This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-8A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-8A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-8-NEW2.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Cementum",
+      "explicacao_original": "This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-8A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-8A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-8-NEW2.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cellular cementum",
+      "explicacao_original": "This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-8A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-8A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-8-NEW2.jpg'. Destaca a estrutura ou conceito 'Cellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Acellular cementum",
+      "explicacao_original": "This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-8A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-8A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-8-NEW2.jpg'. Destaca a estrutura ou conceito 'Acellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Dentino-cementum junction",
+      "explicacao_original": "This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-8A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-8A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-8-NEW2.jpg'. Destaca a estrutura ou conceito 'Dentino-cementum junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This ground tooth shows cementum, the outermost covering of the root. A thin layer of cementum begins at the cementoenamel junction and continues to the apex of the tooth, thickening as it does so. Cementum contains cementocytes, resembling osteocytes. The periodontal ligament (not present in this image) extends from cementum to adjacent alveolar bone. 10x, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "The image was taken of slide in the University of Iowa collection",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Iowa-source-ping.png",
+      "arquivo": "imagens/marcadores/Iowa-source-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/09/Or.Dig_.OC_.Tooth_.-8-NEW2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-8-NEW2.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image was taken of slide in the University of Iowa collection. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-8/, acesso em 2026-08-07."
+    }
+  ]
+}

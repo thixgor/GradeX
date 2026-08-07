@@ -1,0 +1,92 @@
+{
+  "id": 27121,
+  "titulo": "Sectioning – Light microscopy",
+  "titulo_wordpress": "Tissue preparation 3",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 3"
+  ],
+  "descricao_original": "After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "arquivo": "imagens/base/HB-TP-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sectioning – Light microscopy', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 3. Descricao original da pagina: After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tissue",
+      "explicacao_original": "After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Paraffin",
+      "explicacao_original": "After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Paraffin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tissue block holder",
+      "explicacao_original": "After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Tissue block holder' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After fixation and embedding, tissues are sectioned. For paraffin-embedded tissue, sectioning is usually performed on a rotary microtome, such as those pictured here. Tissue embedded in paraffin, referred to as the tissue block, is secured in a holder attached to a moveable arm of the microtome. For LM, section thickness is generally between 5 to 20 microns.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Knife blade",
+      "explicacao_original": "The metal knife is secured in the knife holder in front of the tissue block.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-4-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-4-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Knife blade' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The metal knife is secured in the knife holder in front of the tissue block.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Handwheel",
+      "explicacao_original": "The operator rotates the handwheel, which moves the tissue block up and down past the metal knife edge. With each successive rotation of the handwheel, the tissue advances toward the blade by a distance set by the operator.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-5-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-5-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Handwheel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The operator rotates the handwheel, which moves the tissue block up and down past the metal knife edge. With each successive rotation of the handwheel, the tissue advances toward the blade by a distance set by the operator.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Section thickness adjustment",
+      "explicacao_original": "The operator rotates the handwheel, which moves the tissue block up and down past the metal knife edge. With each successive rotation of the handwheel, the tissue advances toward the blade by a distance set by the operator.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-6-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-6-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Section thickness adjustment' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The operator rotates the handwheel, which moves the tissue block up and down past the metal knife edge. With each successive rotation of the handwheel, the tissue advances toward the blade by a distance set by the operator.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Sections",
+      "explicacao_original": "As sections are generated, they form a ribbon. Sections are then collected and placed on glass slides for staining.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3-7-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-3-7-ping.png",
+      "imagem_base": "imagens/base/HB-TP-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Light microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-3.jpg'. Destaca a estrutura ou conceito 'Sections' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As sections are generated, they form a ribbon. Sections are then collected and placed on glass slides for staining.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-3/, acesso em 2026-08-07."
+    }
+  ]
+}

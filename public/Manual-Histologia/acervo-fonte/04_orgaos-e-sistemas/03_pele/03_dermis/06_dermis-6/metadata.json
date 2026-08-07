@@ -1,0 +1,103 @@
+{
+  "id": 6136,
+  "titulo": "Dermis",
+  "titulo_wordpress": "Dermis 6",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Dermis",
+    "Dermis 6"
+  ],
+  "descricao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Dermis', no setor Órgãos e Sistemas > Pele > Dermis > Dermis 6. Descricao original da pagina: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epidermis",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Epidermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dermis",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Papillary layer",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Papillary layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Reticular layer",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Reticular layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Collagen bundles",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Collagen bundles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Arteriole",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-7-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Fibroblast nuclei",
+      "explicacao_original": "The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Derm-6-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Derm-6-8-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Derm-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Derm-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Dermis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Derm-6.jpg'. Destaca a estrutura ou conceito 'Fibroblast nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The narrow papillary layer of the dermis is highly vascular and contains finer caliber collagen fibers and more cells than the reticular layer. Thicker collagen bundles predominate in the reticular layer. The darkly-stained elastic fibers interlace with the collagen; together they provide the dermis with elasticity and strength, respectively. Toluidine blue stain, 1000x. Contexto setorial: Órgãos e Sistemas > Pele > Dermis > Dermis 6. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/dermis/dermis-6/, acesso em 2026-08-07."
+    }
+  ]
+}

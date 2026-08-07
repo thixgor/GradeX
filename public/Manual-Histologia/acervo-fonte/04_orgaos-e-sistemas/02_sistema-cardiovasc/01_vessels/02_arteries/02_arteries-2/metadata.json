@@ -1,0 +1,74 @@
+{
+  "id": 5254,
+  "titulo": "Elastic artery",
+  "titulo_wordpress": "Arteries 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 2"
+  ],
+  "descricao_original": "The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic artery', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 2. Descricao original da pagina: The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tunica intima",
+      "explicacao_original": "The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-2.jpg'. Destaca a estrutura ou conceito 'Tunica intima' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tunica media",
+      "explicacao_original": "The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-2.jpg'. Destaca a estrutura ou conceito 'Tunica media' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Elastic lamellae",
+      "explicacao_original": "The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-2.jpg'. Destaca a estrutura ou conceito 'Elastic lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-2.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tunica adventitia",
+      "explicacao_original": "The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-2.jpg'. Destaca a estrutura ou conceito 'Tunica adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica intima of an elastic artery consists of an endothelium and underlying connective tissue. An internal elastic lamina is not readily visible, because it blends with the elastic lamellae in tunica media. The thickest layer is tunica media, composed of circularly arranged smooth muscle cells, alternating with fenestrated elastic lamellae. The tunica adventitia is composed of connective tissue. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-2/, acesso em 2026-08-07."
+    }
+  ]
+}

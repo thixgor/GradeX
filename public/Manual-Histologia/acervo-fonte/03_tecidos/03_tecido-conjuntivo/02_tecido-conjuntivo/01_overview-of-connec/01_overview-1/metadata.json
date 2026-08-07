@@ -1,0 +1,124 @@
+{
+  "id": 16793,
+  "titulo": "Connective tissue proper overview",
+  "titulo_wordpress": "Overview 1",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Overview of connective tissue proper",
+    "Overview 1"
+  ],
+  "descricao_original": "Connective tissue proper is composed of cells and an extracellular matrix, consisting of fibers and ground substance. Cells of connective tissue produce matrix, store fat, phagocytose, or provide immunological defense. Fibers provide strength and elasticity. Cells and fibers are surrounded by a gelatinous ground substance that provides padding and allows diffusion. The functional and physical characteristics of a connective tissue depend on the composition and arrangement of these elements.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "arquivo": "imagens/base/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Connective tissue proper overview', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Descricao original da pagina: Connective tissue proper is composed of cells and an extracellular matrix, consisting of fibers and ground substance. Cells of connective tissue produce matrix, store fat, phagocytose, or provide immunological defense. Fibers provide strength and elasticity. Cells and fibers are surrounded by a gelatinous ground substance that provides padding and allows diffusion. The functional and physical characteristics of a connective tissue depend on the composition and arrangement of these elements.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cells",
+      "explicacao_original": "A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells, along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-1-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells, along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fibroblast",
+      "explicacao_original": "A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-2-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Fibroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Macrophage",
+      "explicacao_original": "A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-3-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Macrophage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Plasma cell",
+      "explicacao_original": "A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-4-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Plasma cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mast cell",
+      "explicacao_original": "A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-5-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-5-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Mast cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A wide variety of cells are present in connective tissue proper. Fibroblasts produce extracellular matrix (ground substance and fibers). Macrophages phagocytose foreign matter. Plasma cells and mast cells along with several other cell types, provide immunologic defense. Other cells, such as adipocytes (not illustrated), store fat.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Extracellular matrix",
+      "explicacao_original": "The extracellular matrix of connective tissue proper is composed of a gelatinous ground substance (X) and collagen, elastic and reticular fibers (arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-6-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-6-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Extracellular matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The extracellular matrix of connective tissue proper is composed of a gelatinous ground substance (X) and collagen, elastic and reticular fibers (arrows).. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Ground substance",
+      "explicacao_original": "The ground substance of connective tissue proper is composed mostly of proteoglycans and abundant tissue fluid. In this image, the ground substance is the pink background surrounding the cells and fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-7-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-7-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Ground substance' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ground substance of connective tissue proper is composed mostly of proteoglycans and abundant tissue fluid. In this image, the ground substance is the pink background surrounding the cells and fibers.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Three fiber types are present in connective tissue proper: collagen fibers providing tensile strength; elastic fibers allowing stretch; and reticular fibers providing light support.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-8-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-8-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three fiber types are present in connective tissue proper: collagen fibers providing tensile strength; elastic fibers allowing stretch; and reticular fibers providing light support.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Three fiber types are present in connective tissue proper: collagen fibers providing tensile strength; elastic fibers allowing stretch; and reticular fibers providing light support.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-9-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-9-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three fiber types are present in connective tissue proper: collagen fibers providing tensile strength; elastic fibers allowing stretch; and reticular fibers providing light support.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Reticular fibers",
+      "explicacao_original": "Three fiber types are present in connective tissue proper: collagen fibers providing tensile strength; elastic fibers allowing stretch; and reticular fibers providing light support.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.OV-1-10-ping.png",
+      "arquivo": "imagens/marcadores/T.CTP_.OV-1-10-ping.png",
+      "imagem_base": "imagens/base/T.CTP_.Ov-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CTP_.Ov-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Connective tissue proper overview'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CTP_.Ov-1.jpg'. Destaca a estrutura ou conceito 'Reticular fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Three fiber types are present in connective tissue proper: collagen fibers providing tensile strength; elastic fibers allowing stretch; and reticular fibers providing light support.. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Overview of connective tissue proper > Overview 1. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/overview-connective-proper/overview-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": 5260,
+  "titulo": "Elastic artery",
+  "titulo_wordpress": "Arteries 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Arteries",
+    "Arteries 5"
+  ],
+  "descricao_original": "The tunica media of an elastic artery is composed of 40-70 concentrically-arranged, fenestrated, elastic lamellae and smooth muscle cells. These smooth muscle cells produce the lamellae and are located between them. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-5.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.A-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic artery', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 5. Descricao original da pagina: The tunica media of an elastic artery is composed of 40-70 concentrically-arranged, fenestrated, elastic lamellae and smooth muscle cells. These smooth muscle cells produce the lamellae and are located between them. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Elastic lamellae",
+      "explicacao_original": "The tunica media of an elastic artery is composed of 40-70 concentrically-arranged, fenestrated, elastic lamellae and smooth muscle cells. These smooth muscle cells produce the lamellae and are located between them. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-5.jpg'. Destaca a estrutura ou conceito 'Elastic lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica media of an elastic artery is composed of 40-70 concentrically-arranged, fenestrated, elastic lamellae and smooth muscle cells. These smooth muscle cells produce the lamellae and are located between them. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Smooth muscle cells",
+      "explicacao_original": "The tunica media of an elastic artery is composed of 40-70 concentrically-arranged, fenestrated, elastic lamellae and smooth muscle cells. These smooth muscle cells produce the lamellae and are located between them. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.A-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.A-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.A-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.V.A-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic artery'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.A-5.jpg'. Destaca a estrutura ou conceito 'Smooth muscle cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The tunica media of an elastic artery is composed of 40-70 concentrically-arranged, fenestrated, elastic lamellae and smooth muscle cells. These smooth muscle cells produce the lamellae and are located between them. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Arteries > Arteries 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/arteries/arteries-5/, acesso em 2026-08-07."
+    }
+  ]
+}

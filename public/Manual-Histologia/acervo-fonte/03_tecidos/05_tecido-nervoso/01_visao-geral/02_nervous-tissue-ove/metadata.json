@@ -1,0 +1,53 @@
+{
+  "id": 2955,
+  "titulo": "Neurons",
+  "titulo_wordpress": "Nervous tissue overview 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Visão Geral",
+    "Nervous tissue overview 2"
+  ],
+  "descricao_original": "Neurons are the major functional cells of the nervous system. They receive and transmit environmental stimuli (sensory neurons), process this information (association neurons) and trigger a response via muscles, glands or other neurons (motor neurons). Neurons are named according to the arrangement of their processes: multipolar, pseudounipolar and bipolar.",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2.jpg",
+      "arquivo": "imagens/base/T.N.Ov-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Neurons', no setor Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 2. Descricao original da pagina: Neurons are the major functional cells of the nervous system. They receive and transmit environmental stimuli (sensory neurons), process this information (association neurons) and trigger a response via muscles, glands or other neurons (motor neurons). Neurons are named according to the arrangement of their processes: multipolar, pseudounipolar and bipolar.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Multipolar neuron",
+      "explicacao_original": "Multipolar neurons are the most common neuron type and constitute the most structurally diverse group of neurons. Multipolar neurons have multiple dendrites and a single axon. They are found in both the central and peripheral subdivisions of the nervous system and perform associative and motor functions.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-2-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-2.jpg'. Destaca a estrutura ou conceito 'Multipolar neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Multipolar neurons are the most common neuron type and constitute the most structurally diverse group of neurons. Multipolar neurons have multiple dendrites and a single axon. They are found in both the central and peripheral subdivisions of the nervous system and perform associative and motor functions.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pseudounipolar neuron",
+      "explicacao_original": "Pseudounipolar neurons are found almost exclusively in the peripheral nervous system, located in sensory ganglia of both cranial and spinal nerves. They have a single process exiting from the cell body that branches into two, with one process connecting with a peripheral receptor and the other extending into the central nervous system, conveying the sensory information.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-2-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-2.jpg'. Destaca a estrutura ou conceito 'Pseudounipolar neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pseudounipolar neurons are found almost exclusively in the peripheral nervous system, located in sensory ganglia of both cranial and spinal nerves. They have a single process exiting from the cell body that branches into two, with one process connecting with a peripheral receptor and the other extending into the central nervous system, conveying the sensory information.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Bipolar neuron",
+      "explicacao_original": "Bipolar neurons, located in the peripheral nervous system, have two processes, a single dendrite leads into the cell body and a single axon leads away from the cell body. Bipolar neurons are located in ganglia and sensory structures that receive and relay information of special sense (audition, balance, vision and olfaction) into the central nervous system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Ov-2-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Neurons'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Ov-2.jpg'. Destaca a estrutura ou conceito 'Bipolar neuron' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bipolar neurons, located in the peripheral nervous system, have two processes, a single dendrite leads into the cell body and a single axon leads away from the cell body. Bipolar neurons are located in ganglia and sensory structures that receive and relay information of special sense (audition, balance, vision and olfaction) into the central nervous system.. Contexto setorial: Tecidos > Tecido Nervoso > Visão Geral > Nervous tissue overview 2. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/overview/nervous-tissue-overview-2/, acesso em 2026-08-07."
+    }
+  ]
+}

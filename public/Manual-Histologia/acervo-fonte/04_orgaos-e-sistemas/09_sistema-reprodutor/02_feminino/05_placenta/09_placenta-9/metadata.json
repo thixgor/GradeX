@@ -1,0 +1,54 @@
+{
+  "id": 13109,
+  "titulo": "Umbilical cord",
+  "titulo_wordpress": "Placenta 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Placenta",
+    "Placenta 9"
+  ],
+  "descricao_original": "Fetal blood in carried from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.jpg",
+      "arquivo": "imagens/base/O.R.F.P.09.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Umbilical cord', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 9. Descricao original da pagina: Fetal blood in carried from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Umbilical arteries",
+      "explicacao_original": "Fetal blood in carried from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.09.P01.png",
+      "imagem_base": "imagens/base/O.R.F.P.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Umbilical cord'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.09.jpg'. Destaca a estrutura ou conceito 'Umbilical arteries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fetal blood in carried from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Umbilical vein",
+      "explicacao_original": "Fetal blood in carried from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.09.P02.png",
+      "imagem_base": "imagens/base/O.R.F.P.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Umbilical cord'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.09.jpg'. Destaca a estrutura ou conceito 'Umbilical vein' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fetal blood in carried from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucous connective tissue",
+      "explicacao_original": "Fetal blood is conveyed from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.P.09.P03.png",
+      "imagem_base": "imagens/base/O.R.F.P.09.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.P.09.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Umbilical cord'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.P.09.jpg'. Destaca a estrutura ou conceito 'Mucous connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fetal blood is conveyed from the fetus to the placenta via two umbilical arteries in the umbilical cord. This blood is primarily deoxygenated blood that is high in wastes. A single umbilical vein returns oxygenated blood, high in nutrients, from the placenta to the fetus. The vessels are surrounded by mucous connective tissue, a multipotential fetal connective tissue. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Placenta > Placenta 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/placenta/placenta-9/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": 29946,
+  "titulo": "Bone matrix: remodeling (compact bone)",
+  "titulo_wordpress": "As a tissue 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 14"
+  ],
+  "descricao_original": "This tissue, composed of both woven and lamellar compact bone, represents a later stage in bone formation. During bone formation, the first bone produced is woven bone that is gradually remodeled into lamellar bone. As a result, some areas will be composed of both woven and lamellar bone, as seen here. Similar events occur during adult remodeling and repair following a fracture. 600x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "arquivo": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone matrix: remodeling (compact bone)', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Descricao original da pagina: This tissue, composed of both woven and lamellar compact bone, represents a later stage in bone formation. During bone formation, the first bone produced is woven bone that is gradually remodeled into lamellar bone. As a result, some areas will be composed of both woven and lamellar bone, as seen here. Similar events occur during adult remodeling and repair following a fracture. 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "This tissue, composed of both woven and lamellar bone, represents a later stage in bone formation. During bone formation, the first bone produced is woven bone that is gradually remodeled into lamellar bone. As a result, some areas will be composed of both woven and lamellar bone, as seen here. Similar events occur during adult remodeling and repair following a fracture. 600x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-Osteocytes.png",
+      "imagem_base": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.14-Woven-lamellar-final.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This tissue, composed of both woven and lamellar bone, represents a later stage in bone formation. During bone formation, the first bone produced is woven bone that is gradually remodeled into lamellar bone. As a result, some areas will be composed of both woven and lamellar bone, as seen here. Similar events occur during adult remodeling and repair following a fracture. 600x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Woven bone",
+      "explicacao_original": "In woven (immature) bone, osteocyte lacunae are irregularly arranged within the matrix which lacks lamellae. Lacunae are rounder than are those in mature bone and the matrix has a more bluish tint due to the proteoglycans in the matrix and reduced collagen fiber content. Woven bone is not as strong as lamellar bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-bone.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-Woven-bone.png",
+      "imagem_base": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.14-Woven-lamellar-final.jpg'. Destaca a estrutura ou conceito 'Woven bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In woven (immature) bone, osteocyte lacunae are irregularly arranged within the matrix which lacks lamellae. Lacunae are rounder than are those in mature bone and the matrix has a more bluish tint due to the proteoglycans in the matrix and reduced collagen fiber content. Woven bone is not as strong as lamellar bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamellar bone",
+      "explicacao_original": "Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Lamellar-bone.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-Lamellar-bone.png",
+      "imagem_base": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.14-Woven-lamellar-final.jpg'. Destaca a estrutura ou conceito 'Lamellar bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteons",
+      "explicacao_original": "Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Osteons.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-Osteons.png",
+      "imagem_base": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.14-Woven-lamellar-final.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Haversian canals",
+      "explicacao_original": "Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Haversian-canals.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-Haversian-canals.png",
+      "imagem_base": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.14-Woven-lamellar-final.jpg'. Destaca a estrutura ou conceito 'Haversian canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Blood-vessels.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.14-Blood-vessels.png",
+      "imagem_base": "imagens/base/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.14-Woven-lamellar-final.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone matrix: remodeling (compact bone)'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.14-Woven-lamellar-final.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar (mature) bone is organized in lamellae with orderly arranged, flattened lacunae between them. This organization gives lamellar bone more strength. In the bone shown here, the lamellae are arranged as cylindrical structures called Haversian systems or osteons with a central Haversian canal. This canal is lined by an endosteum and contains one or more blood vessels. On the surface of bones, lamellae are arranged as flattened plates.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/woven-lamellar-14/, acesso em 2026-08-07."
+    }
+  ]
+}

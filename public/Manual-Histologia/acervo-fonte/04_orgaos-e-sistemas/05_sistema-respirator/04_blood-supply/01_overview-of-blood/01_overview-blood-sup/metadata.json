@@ -1,0 +1,64 @@
+{
+  "id": 18920,
+  "titulo": "Blood supply",
+  "titulo_wordpress": "Overview (blood supply) 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Blood Supply",
+    "Overview of blood supply",
+    "Overview (blood supply) 1"
+  ],
+  "descricao_original": "The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/blood-supply/overview-blood-supply/overview-blood-supply-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.jpg",
+      "arquivo": "imagens/base/O.R.BS_.O.01.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Blood supply', no setor Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Overview of blood supply > Overview (blood supply) 1. Descricao original da pagina: The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/overview-blood-supply/overview-blood-supply-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Pulmonary artery",
+      "explicacao_original": "The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.P01.png",
+      "arquivo": "imagens/marcadores/O.R.BS_.O.01.P01.png",
+      "imagem_base": "imagens/base/O.R.BS_.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.BS_.O.01.jpg'. Destaca a estrutura ou conceito 'Pulmonary artery' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Overview of blood supply > Overview (blood supply) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/overview-blood-supply/overview-blood-supply-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Pulmonary capillaries",
+      "explicacao_original": "The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.P02.png",
+      "arquivo": "imagens/marcadores/O.R.BS_.O.01.P02.png",
+      "imagem_base": "imagens/base/O.R.BS_.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.BS_.O.01.jpg'. Destaca a estrutura ou conceito 'Pulmonary capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Overview of blood supply > Overview (blood supply) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/overview-blood-supply/overview-blood-supply-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Pulmonary veins",
+      "explicacao_original": "The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.P03.png",
+      "arquivo": "imagens/marcadores/O.R.BS_.O.01.P03.png",
+      "imagem_base": "imagens/base/O.R.BS_.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.BS_.O.01.jpg'. Destaca a estrutura ou conceito 'Pulmonary veins' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Overview of blood supply > Overview (blood supply) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/overview-blood-supply/overview-blood-supply-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Bronchiolar vessels",
+      "explicacao_original": "The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.P04.png",
+      "arquivo": "imagens/marcadores/O.R.BS_.O.01.P04.png",
+      "imagem_base": "imagens/base/O.R.BS_.O.01.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.R.BS_.O.01.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood supply'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.BS_.O.01.jpg'. Destaca a estrutura ou conceito 'Bronchiolar vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lungs have a dual blood supply. The pulmonary artery supplies deoxygenated blood to the alveolar capillaries where gas exchange occurs. The pulmonary vein, carrying oxygenated blood, drains the pulmonary capillaries. Bronchial arteries, lying in the walls of the passageways, supply oxygenated blood to respiratory passages.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Blood Supply > Overview of blood supply > Overview (blood supply) 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/blood-supply/overview-blood-supply/overview-blood-supply-1/, acesso em 2026-08-07."
+    }
+  ]
+}

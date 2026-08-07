@@ -1,0 +1,95 @@
+{
+  "id": 2586,
+  "titulo": "Muscle spindle",
+  "titulo_wordpress": "Skeletal 19",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Muscular",
+    "Skeletal",
+    "Skeletal 19"
+  ],
+  "descricao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x",
+  "url_origem": "https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/",
+  "creditos_identificados": [
+    "Image source: Image from the Virtual Histology Laboratory website."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "arquivo": "imagens/base/T.M.Sk-18A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Muscle spindle', no setor Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Descricao original da pagina: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nuclear bag fibers",
+      "explicacao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-1A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Nuclear bag fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear chain fibers",
+      "explicacao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-2A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Nuclear chain fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Sensory nerve endings",
+      "explicacao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-3A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-3A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Sensory nerve endings' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Inner capsule",
+      "explicacao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-6A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-6A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Inner capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Outer capsule",
+      "explicacao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-5A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Outer capsule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated stretch receptors in skeletal muscles that regulate muscle contraction and detect changes in muscle length. Muscle spindles are composed of intrafusal fibers which are modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Spiraling sensory nerve endings surround the nuclear bag fibers. Intrafusal fibers also receive efferent innervation. A fluid-filled space separates the internal capsule from an outer external capsule. 800x. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Extrafusal muscle fibers",
+      "explicacao_original": "The bulk of a skeletal muscle is composed of muscle fibers called extrafusal to differentiate them from the intrafusal fibers that form muscle spindles. As seen here, they surround the muscle spindles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-4A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-4A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Extrafusal muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of a skeletal muscle is composed of muscle fibers called extrafusal to differentiate them from the intrafusal fibers that form muscle spindles. As seen here, they surround the muscle spindles.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "Image from the Virtual Histology Laboratory website.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-7A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-7A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Muscle spindle'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Image from the Virtual Histology Laboratory website.. Contexto setorial: Tecidos > Tecido Muscular > Skeletal > Skeletal 19. Origem: Digital Histology, https://digitalhistology.org/tissues/muscle/skeletal/skeletal-19/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 16815,
+  "titulo": "Adipocyte",
+  "titulo_wordpress": "Cells 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Tecido Conjuntivo Propriamente Dito",
+    "Células",
+    "Cells 10"
+  ],
+  "descricao_original": "Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10.jpg",
+      "arquivo": "imagens/base/T.CT_.CTP_.Cells-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Adipocyte', no setor Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 10. Descricao original da pagina: Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Adipocytes",
+      "explicacao_original": "Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10-1-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-10-1-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-10.jpg'. Destaca a estrutura ou conceito 'Adipocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Adipocyte nuclei",
+      "explicacao_original": "Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10-2-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-10-2-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-10.jpg'. Destaca a estrutura ou conceito 'Adipocyte nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10-3-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-10-3-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-10.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glandular tissue",
+      "explicacao_original": "Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10-4-ping.png",
+      "arquivo": "imagens/marcadores/T.CT_.CTP_.Cells-10-4-ping.png",
+      "imagem_base": "imagens/base/T.CT_.CTP_.Cells-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/05/T.CT_.CTP_.Cells-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Adipocyte'. Deve ser sobreposta, sem redimensionamento independente, a 'T.CT_.CTP_.Cells-10.jpg'. Destaca a estrutura ou conceito 'Glandular tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Adipocytes, or fat cells, are non-motile resident cells filled with stored lipid. This centrally located lipid compresses the remaining cytoplasm to a thin, outer rim. Each heterochromatic nucleus is visible as a crescent on one side of the cell. These adipocytes, as well as adjacent glands, are surrounded by a loose connective tissue. 300x. Contexto setorial: Tecidos > Tecido Conjuntivo > Tecido Conjuntivo Propriamente Dito > Células > Cells 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/connective-tissue-proper/cells/cells-10/, acesso em 2026-08-07."
+    }
+  ]
+}

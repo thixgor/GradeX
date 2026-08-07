@@ -1,0 +1,84 @@
+{
+  "id": 7012,
+  "titulo": "Liver",
+  "titulo_wordpress": "Liver 12",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Major Glands",
+    "Liver",
+    "Liver 12"
+  ],
+  "descricao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "arquivo": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Liver', no setor Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Descricao original da pagina: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hepatocytes",
+      "explicacao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-12-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-12-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-12.jpg'. Destaca a estrutura ou conceito 'Hepatocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hepatocyte nuclei",
+      "explicacao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-12-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-12-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-12.jpg'. Destaca a estrutura ou conceito 'Hepatocyte nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Glycogen",
+      "explicacao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-12-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-12-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-12.jpg'. Destaca a estrutura ou conceito 'Glycogen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-12-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-12-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-12.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Rough endoplasmic reticulum",
+      "explicacao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-12-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-12-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-12.jpg'. Destaca a estrutura ou conceito 'Rough endoplasmic reticulum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Sinusoids",
+      "explicacao_original": "The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.MajGl_.Liv-12-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.MajGl_.Liv-12-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.MajGl_.Liv-12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.MajGl_.Liv-12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Liver'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.MajGl_.Liv-12.jpg'. Destaca a estrutura ou conceito 'Sinusoids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The liver functions in glycogen storage and mobilization. These images compare the light microscopic appearance of glycogen in a PAS-stained section (left) with that seen by electron microscopy (right). About 75% of the blood that enters the liver does so via the hepatic portal vein, which directly drains the organs of the digestive tract. Thus, the liver is the first organ to receive absorbed nutrients. 1000x, 15,000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Major Glands > Liver > Liver 12. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/major-glands/liver/liver-12/, acesso em 2026-08-07."
+    }
+  ]
+}

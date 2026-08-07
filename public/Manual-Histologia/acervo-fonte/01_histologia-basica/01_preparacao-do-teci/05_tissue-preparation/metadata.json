@@ -1,0 +1,72 @@
+{
+  "id": 27249,
+  "titulo": "Section planes",
+  "titulo_wordpress": "Tissue preparation 5",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 5"
+  ],
+  "descricao_original": "Histological sections are two-dimensional slices of a three-dimensional piece of tissue. Thus, in the microscope, the appearance of a tissue and its component structures will depend on the angle of the section plane. This image shows skeletal muscle cells, which are long, uniformly cylindrical structures, sectioned in cross and longitudinal planes. 400x",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11.jpg",
+      "arquivo": "imagens/base/HB-TP-11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Section planes', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 5. Descricao original da pagina: Histological sections are two-dimensional slices of a three-dimensional piece of tissue. Thus, in the microscope, the appearance of a tissue and its component structures will depend on the angle of the section plane. This image shows skeletal muscle cells, which are long, uniformly cylindrical structures, sectioned in cross and longitudinal planes. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cross sections",
+      "explicacao_original": "Cross sections, also called transverse sections, pass in a plane that is perpendicular to the long axis of a structure. Examples of skeletal muscle fibers cut in cross section are indicated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11-1-NEW-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-11-1-NEW-ping.png",
+      "imagem_base": "imagens/base/HB-TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Section planes'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-11.jpg'. Destaca a estrutura ou conceito 'Cross sections' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cross sections, also called transverse sections, pass in a plane that is perpendicular to the long axis of a structure. Examples of skeletal muscle fibers cut in cross section are indicated.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Longitudinal sections",
+      "explicacao_original": "Longitudinal sections pass in a plane that is parallel to the long axis of a structure. Examples of skeletal muscle fibers cut in longitudinal section are indicated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11-2-NEW-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-11-2-NEW-ping.png",
+      "imagem_base": "imagens/base/HB-TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Section planes'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-11.jpg'. Destaca a estrutura ou conceito 'Longitudinal sections' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Longitudinal sections pass in a plane that is parallel to the long axis of a structure. Examples of skeletal muscle fibers cut in longitudinal section are indicated.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Additional section planes",
+      "explicacao_original": "While structures are often depicted in either cross or longitudinal section, most tissue components are sectioned either obliquely or tangentially, thus complicating the interpretation of their three-dimensional shape.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11-2A-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-11-2A-ping.png",
+      "imagem_base": "imagens/base/HB-TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Section planes'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-11.jpg'. Destaca a estrutura ou conceito 'Additional section planes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: While structures are often depicted in either cross or longitudinal section, most tissue components are sectioned either obliquely or tangentially, thus complicating the interpretation of their three-dimensional shape.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Oblique section",
+      "explicacao_original": "An oblique section is a slice through a structure in a plane that is other than parallel or perpendicular to the longest axis of the structure. In this example, a cylindrical structure will appear oval in section. Examples of obliquely-sectioned skeletal muscle fibers are indicated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-11-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Section planes'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-11.jpg'. Destaca a estrutura ou conceito 'Oblique section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An oblique section is a slice through a structure in a plane that is other than parallel or perpendicular to the longest axis of the structure. In this example, a cylindrical structure will appear oval in section. Examples of obliquely-sectioned skeletal muscle fibers are indicated.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tangential section",
+      "explicacao_original": "A tangential section is a slice that only superficially cuts through the surface of a structure. In this example, a broad cylindrical structure will appear much thinner in section. Examples of tangentially-sectioned skeletal muscle fibers are indicated.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11-4-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-11-4-ping.png",
+      "imagem_base": "imagens/base/HB-TP-11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Section planes'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-11.jpg'. Destaca a estrutura ou conceito 'Tangential section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A tangential section is a slice that only superficially cuts through the surface of a structure. In this example, a broad cylindrical structure will appear much thinner in section. Examples of tangentially-sectioned skeletal muscle fibers are indicated.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 5. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-5/, acesso em 2026-08-07."
+    }
+  ]
+}

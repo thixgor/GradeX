@@ -1,0 +1,105 @@
+{
+  "id": 6868,
+  "titulo": "Stomach: fundus and body",
+  "titulo_wordpress": "Regions 4",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 4"
+  ],
+  "descricao_original": "Fundic glands are simple, branched tubular, with the branch point occurring in the neck region of the gland near its junction with the gastric pit. The light-staining loose connective tissue of the lamina propria is evident between the glands. Different cell types in the glands tend to be localized at different levels of the glands. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: fundus and body', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Descricao original da pagina: Fundic glands are simple, branched tubular, with the branch point occurring in the neck region of the gland near its junction with the gastric pit. The light-staining loose connective tissue of the lamina propria is evident between the glands. Different cell types in the glands tend to be localized at different levels of the glands. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Fundic glands",
+      "explicacao_original": "Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Fundic glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Necks of glands",
+      "explicacao_original": "Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Necks of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Branching glands",
+      "explicacao_original": "Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Branching glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Gastric pits, short in the body and fundus, extend from the surface epithelium to attach to the neck of the glands, where branching occurs. Gastric glands, including the fundic glands, extend from the gastric pits through the lamina propria to the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Parietal cells",
+      "explicacao_original": "Parietal cells are more numerous at the beginning of the glands. Chief and enteroendocrine cells (part of the diffuse neuroendocrine system or DNES) are located deep in the glands, nearer the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Parietal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parietal cells are more numerous at the beginning of the glands. Chief and enteroendocrine cells (part of the diffuse neuroendocrine system or DNES) are located deep in the glands, nearer the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Chief cells",
+      "explicacao_original": "Parietal cells are more numerous at the beginning of the glands. Chief and enteroendocrine cells (part of the diffuse neuroendocrine system or DNES) are located deep in the glands, nearer the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Chief cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parietal cells are more numerous at the beginning of the glands. Chief and enteroendocrine cells (part of the diffuse neuroendocrine system or DNES) are located deep in the glands, nearer the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Enteroendocrine cells",
+      "explicacao_original": "Parietal cells are more numerous at the beginning of the glands. Chief and enteroendocrine cells (part of the diffuse neuroendocrine system or DNES) are located deep in the glands, nearer the muscularis mucosae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-4-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-4-8-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-4.jpg'. Destaca a estrutura ou conceito 'Enteroendocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parietal cells are more numerous at the beginning of the glands. Chief and enteroendocrine cells (part of the diffuse neuroendocrine system or DNES) are located deep in the glands, nearer the muscularis mucosae.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 4. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-4/, acesso em 2026-08-07."
+    }
+  ]
+}

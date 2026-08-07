@@ -1,0 +1,55 @@
+{
+  "id": 10633,
+  "titulo": "Endochondral ossification",
+  "titulo_wordpress": "Endochondral 9",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Formation",
+    "Endochondral",
+    "Endochondral 9"
+  ],
+  "descricao_original": "More of the epiphyseal zones are illustrated: the zone of maturation-hypertrophy-calcification lies near the top of the image; the zone of degeneration occupies the middle division; and the zone of ossification is at the bottom. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/TJ.C.B.F.E.08-1.jpg",
+      "arquivo": "imagens/base/TJ.C.B.F.E.08-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Endochondral ossification', no setor Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 9. Descricao original da pagina: More of the epiphyseal zones are illustrated: the zone of maturation-hypertrophy-calcification lies near the top of the image; the zone of degeneration occupies the middle division; and the zone of ossification is at the bottom. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Zones of M-H-C",
+      "explicacao_original": "In the zone of maturation-hypertrophy-calcification (arrow) [M-H-C], chondrocytes begin to mature, hypertrophy and secrete alkaline phosphatase into the matrix. An alkaline environment encourages the calcification of the cartilage matrix, thus prohibiting diffusion of nutrients to the chondrocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-9-MHC.png",
+      "arquivo": "imagens/marcadores/Endo-9-MHC.png",
+      "imagem_base": "imagens/base/TJ.C.B.F.E.08-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/TJ.C.B.F.E.08-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'TJ.C.B.F.E.08-1.jpg'. Destaca a estrutura ou conceito 'Zones of M-H-C' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the zone of maturation-hypertrophy-calcification (arrow) [M-H-C], chondrocytes begin to mature, hypertrophy and secrete alkaline phosphatase into the matrix. An alkaline environment encourages the calcification of the cartilage matrix, thus prohibiting diffusion of nutrients to the chondrocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Zone of degeneration",
+      "explicacao_original": "Having been deprived of nutrients and oxygen, chondrocytes die, leaving behind their empty lacunae. The vertical spicules of calcified cartilage (blue arrows) separate the empty lacunae and comprise the zone of degeneration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-9-Deg.png",
+      "arquivo": "imagens/marcadores/Endo-9-Deg.png",
+      "imagem_base": "imagens/base/TJ.C.B.F.E.08-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/TJ.C.B.F.E.08-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'TJ.C.B.F.E.08-1.jpg'. Destaca a estrutura ou conceito 'Zone of degeneration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Having been deprived of nutrients and oxygen, chondrocytes die, leaving behind their empty lacunae. The vertical spicules of calcified cartilage (blue arrows) separate the empty lacunae and comprise the zone of degeneration.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Zone of ossification",
+      "explicacao_original": "In this zone, red-staining bone (single arrows) is deposited by osteoblasts onto calcified cartilage spicules. The calcified cartilage appears purplish-blue. Osteoblasts are carried into the marrow space along with the periosteal bud (an artery). Bone and calcified cartilage tissues are readily distinguished by their staining affinities with hematoxylin and eosin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/04/Endo-9-Oss.png",
+      "arquivo": "imagens/marcadores/Endo-9-Oss.png",
+      "imagem_base": "imagens/base/TJ.C.B.F.E.08-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/TJ.C.B.F.E.08-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Endochondral ossification'. Deve ser sobreposta, sem redimensionamento independente, a 'TJ.C.B.F.E.08-1.jpg'. Destaca a estrutura ou conceito 'Zone of ossification' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this zone, red-staining bone (single arrows) is deposited by osteoblasts onto calcified cartilage spicules. The calcified cartilage appears purplish-blue. Osteoblasts are carried into the marrow space along with the periosteal bud (an artery). Bone and calcified cartilage tissues are readily distinguished by their staining affinities with hematoxylin and eosin.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Formation > Endochondral > Endochondral 9. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/formation/endochondral/endochondral-8/, acesso em 2026-08-07."
+    }
+  ]
+}

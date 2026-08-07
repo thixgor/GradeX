@@ -1,0 +1,85 @@
+{
+  "id": 3009,
+  "titulo": "Receptors",
+  "titulo_wordpress": "Receptors and terminals 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Receptors and Terminals",
+    "Receptors and terminals 3"
+  ],
+  "descricao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated sensory receptors that monitor muscle tension, thus aiding in maintaining posture and coordinating complex motor activities. Muscle spindles are composed of intrafusal fibers, modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Changes in skeletal muscle length are detected by concurrent changes in intrafusal fibers that relay these sensations to the CNS by axons of sensory, pseudounipolar neurons. 800x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/",
+  "creditos_identificados": [
+    "Image source: The lower two images were taken from a section on the Virtual Microscopy Laboratory website (www.histologyguide.com)."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "arquivo": "imagens/base/T.M.Sk-18A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Receptors', no setor Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Descricao original da pagina: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated sensory receptors that monitor muscle tension, thus aiding in maintaining posture and coordinating complex motor activities. Muscle spindles are composed of intrafusal fibers, modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Changes in skeletal muscle length are detected by concurrent changes in intrafusal fibers that relay these sensations to the CNS by axons of sensory, pseudounipolar neurons. 800x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Muscle spindles",
+      "explicacao_original": "Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated sensory receptors that monitor muscle tension, thus aiding in maintaining posture and coordinating complex motor activities. Muscle spindles are composed of intrafusal fibers, modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Changes in skeletal muscle length are detected by concurrent changes in intrafusal fibers that relay these sensations to the CNS by axons of sensory, pseudounipolar neurons. 800x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.N.Rec-3-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-3-1A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Muscle spindles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Muscle spindles, seen here in longitudinal (top) and cross sections (bottom), are encapsulated sensory receptors that monitor muscle tension, thus aiding in maintaining posture and coordinating complex motor activities. Muscle spindles are composed of intrafusal fibers, modified skeletal muscle fibers of two types, nuclear bag and nuclear chain fibers. Changes in skeletal muscle length are detected by concurrent changes in intrafusal fibers that relay these sensations to the CNS by axons of sensory, pseudounipolar neurons. 800x. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclear chain fibers",
+      "explicacao_original": "Intrafusal fibers are multinucleated with nuclei occupying the central regions of the cell. Nuclear chain fibers are slender and have nuclei arranged end-to-end in a chain-like fashion. Nuclear bag fibers are larger and their nuclei cluster centrally, giving the mid-region a swollen appearance.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-2A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Nuclear chain fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intrafusal fibers are multinucleated with nuclei occupying the central regions of the cell. Nuclear chain fibers are slender and have nuclei arranged end-to-end in a chain-like fashion. Nuclear bag fibers are larger and their nuclei cluster centrally, giving the mid-region a swollen appearance.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclear bag fibers",
+      "explicacao_original": "Intrafusal fibers are multinucleated with nuclei occupying the central regions of the cell. Nuclear chain fibers are slender and have nuclei arranged end-to-end in a chain-like fashion. Nuclear bag fibers are larger and their nuclei cluster centrally, giving the mid-region a swollen appearance.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-1A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Nuclear bag fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Intrafusal fibers are multinucleated with nuclei occupying the central regions of the cell. Nuclear chain fibers are slender and have nuclei arranged end-to-end in a chain-like fashion. Nuclear bag fibers are larger and their nuclei cluster centrally, giving the mid-region a swollen appearance.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Sensory axon",
+      "explicacao_original": "Spiraling nerve endings of pseudounipolar neurons surrounds the nuclear bag fibers and detect changes in tension in these fibers.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-3A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-3A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Sensory axon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spiraling nerve endings of pseudounipolar neurons surrounds the nuclear bag fibers and detect changes in tension in these fibers.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Extrafusal muscle fibers",
+      "explicacao_original": "The bulk of a skeletal muscle is composed of muscle fibers called extrafusal to differentiate them from the intrafusal fibers that form muscle spindles. As seen in the lower images, they surround the muscle spindles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-4A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-4A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Extrafusal muscle fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bulk of a skeletal muscle is composed of muscle fibers called extrafusal to differentiate them from the intrafusal fibers that form muscle spindles. As seen in the lower images, they surround the muscle spindles.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Image source",
+      "explicacao_original": "The lower two images were taken from a section on the Virtual Microscopy Laboratory website (www.histologyguide.com).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/07/T.M.Sk18-7A-ping.png",
+      "arquivo": "imagens/marcadores/T.M.Sk18-7A-ping.png",
+      "imagem_base": "imagens/base/T.M.Sk-18A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.M.Sk-18A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Receptors'. Deve ser sobreposta, sem redimensionamento independente, a 'T.M.Sk-18A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The lower two images were taken from a section on the Virtual Microscopy Laboratory website (www.histologyguide.com).. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 3. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-3/, acesso em 2026-08-07."
+    }
+  ]
+}

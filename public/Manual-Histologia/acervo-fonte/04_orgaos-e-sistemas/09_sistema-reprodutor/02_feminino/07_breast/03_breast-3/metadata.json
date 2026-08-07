@@ -1,0 +1,64 @@
+{
+  "id": 13294,
+  "titulo": "Breast: pregnancy",
+  "titulo_wordpress": "Breast 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Breast",
+    "Breast 3"
+  ],
+  "descricao_original": "During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.jpg",
+      "arquivo": "imagens/base/O.R.F.B.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Breast: pregnancy', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 3. Descricao original da pagina: During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lobule",
+      "explicacao_original": "During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.03.P01.png",
+      "imagem_base": "imagens/base/O.R.F.B.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.03.jpg'. Destaca a estrutura ou conceito 'Lobule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.03.P02.png",
+      "imagem_base": "imagens/base/O.R.F.B.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.03.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interlobular connective tissue",
+      "explicacao_original": "During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.03.P03.png",
+      "imagem_base": "imagens/base/O.R.F.B.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.03.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interlobular duct",
+      "explicacao_original": "During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.03.P04.png",
+      "imagem_base": "imagens/base/O.R.F.B.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.03.jpg'. Destaca a estrutura ou conceito 'Interlobular duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During pregnancy, the glandular tissue increases in size both by growth and branching of the ducts (estrogen stimulation), as well as by the formation of acini from the ducts (progesterone stimulation). With the branching of the ducts and the appearance of acini, the functional mammary gland now justifies its classification as a compound, tubuloacinar gland. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-3/, acesso em 2026-08-07."
+    }
+  ]
+}

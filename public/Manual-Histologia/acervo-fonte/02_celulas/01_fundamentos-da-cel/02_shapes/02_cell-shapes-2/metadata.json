@@ -1,0 +1,73 @@
+{
+  "id": 1021,
+  "titulo": "Cell shapes: spherical",
+  "titulo_wordpress": "Cell shapes 2",
+  "caminho_setorial": [
+    "Células",
+    "Fundamentos da Célula",
+    "Shapes",
+    "Cell shapes 2"
+  ],
+  "descricao_original": "Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x",
+  "url_origem": "https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh_.-2-New.jpg",
+      "arquivo": "imagens/base/C.B.Sh_.-2-New.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell shapes: spherical', no setor Células > Fundamentos da Célula > Shapes > Cell shapes 2. Descricao original da pagina: Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "DRG neurons",
+      "explicacao_original": "Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh-2-New-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-2-New-1-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-2-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh_.-2-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-2-New.jpg'. Destaca a estrutura ou conceito 'DRG neurons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 2. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei",
+      "explicacao_original": "Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh-2-New-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-2-New-2-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-2-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh_.-2-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-2-New.jpg'. Destaca a estrutura ou conceito 'Nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 2. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleoli",
+      "explicacao_original": "Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh-2-New-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-2-New-3-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-2-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh_.-2-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-2-New.jpg'. Destaca a estrutura ou conceito 'Nucleoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 2. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cytoplasm",
+      "explicacao_original": "Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh-2-New-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-2-New-4-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-2-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh_.-2-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-2-New.jpg'. Destaca a estrutura ou conceito 'Cytoplasm' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 2. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Supporting cells",
+      "explicacao_original": "Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh-2-New-5-ping.png",
+      "arquivo": "imagens/marcadores/C.B.Sh-2-New-5-ping.png",
+      "imagem_base": "imagens/base/C.B.Sh_.-2-New.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/C.B.Sh_.-2-New.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell shapes: spherical'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.Sh_.-2-New.jpg'. Destaca a estrutura ou conceito 'Supporting cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Spherical cells are also present in tissues. This image shows dorsal root ganglion (DRG) neurons, which are highly specialized to conduct sensory signals into the brain and spinal cord. Each cell possesses a well-defined nucleus and nucleolus within a spherical cell body. DRG neurons are surrounded by small supporting cells (Schwann cells). Dorsal root ganglion 1000x. Contexto setorial: Células > Fundamentos da Célula > Shapes > Cell shapes 2. Origem: Digital Histology, https://digitalhistology.org/cells/basics/shapes/cell-shapes-2/, acesso em 2026-08-07."
+    }
+  ]
+}

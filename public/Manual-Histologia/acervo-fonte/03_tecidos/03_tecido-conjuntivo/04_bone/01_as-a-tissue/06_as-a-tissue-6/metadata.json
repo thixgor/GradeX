@@ -1,0 +1,74 @@
+{
+  "id": 29904,
+  "titulo": "Bone cells: osteoblasts",
+  "titulo_wordpress": "As a tissue 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "As a Tissue",
+    "As a tissue 6"
+  ],
+  "descricao_original": "Osteoblasts are large, plump cells that lie on bony surfaces and secrete the organic components of the extracellular matrix, ground substance and collagen fibers. They occur in the endosteum and are also located on the external surfaces of bone associated with the innermost layer of the periosteum. 600x, 600x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.jpg",
+      "arquivo": "imagens/base/T.C.B.T.6-Osteoblasts.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone cells: osteoblasts', no setor Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 6. Descricao original da pagina: Osteoblasts are large, plump cells that lie on bony surfaces and secrete the organic components of the extracellular matrix, ground substance and collagen fibers. They occur in the endosteum and are also located on the external surfaces of bone associated with the innermost layer of the periosteum. 600x, 600x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "Osteoblasts secrete osteoid, eventually surrounding themselves in the process. Once entirely enclosed by matrix, these cells are called osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.6-Osteoblasts.png",
+      "imagem_base": "imagens/base/T.C.B.T.6-Osteoblasts.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoblasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.6-Osteoblasts.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts secrete osteoid, eventually surrounding themselves in the process. Once entirely enclosed by matrix, these cells are called osteocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteoblasts becoming osteocytes",
+      "explicacao_original": "Osteoblasts secrete osteoid, eventually surrounding themselves in the process. Once entirely enclosed by matrix, these cells are called osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-osteocytes-to-blasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.6-osteocytes-to-blasts.png",
+      "imagem_base": "imagens/base/T.C.B.T.6-Osteoblasts.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoblasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.6-Osteoblasts.jpg'. Destaca a estrutura ou conceito 'Osteoblasts becoming osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts secrete osteoid, eventually surrounding themselves in the process. Once entirely enclosed by matrix, these cells are called osteocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteoid",
+      "explicacao_original": "Osteoid is composed of ground substance (mostly proteoglycans) and collagen fibers. It appears as a pale band lying on the bone surface beneath the osteoblasts. Osteoid rapidly becomes mineralized with calcium phosphate (hydroxyapatite).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoid.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.6-Osteoid.png",
+      "imagem_base": "imagens/base/T.C.B.T.6-Osteoblasts.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoblasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.6-Osteoblasts.jpg'. Destaca a estrutura ou conceito 'Osteoid' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoid is composed of ground substance (mostly proteoglycans) and collagen fibers. It appears as a pale band lying on the bone surface beneath the osteoblasts. Osteoid rapidly becomes mineralized with calcium phosphate (hydroxyapatite).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteocytes",
+      "explicacao_original": "Osteocytes maintain the matrix and are located in small spaces in the matrix called lacunae.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteocytes.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.6-Osteocytes.png",
+      "imagem_base": "imagens/base/T.C.B.T.6-Osteoblasts.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoblasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.6-Osteoblasts.jpg'. Destaca a estrutura ou conceito 'Osteocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteocytes maintain the matrix and are located in small spaces in the matrix called lacunae.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Bone lining cells",
+      "explicacao_original": "Bone lining cells are present on the surface of bone where no active growth or resorption is occurring.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Lining-cells.png",
+      "arquivo": "imagens/marcadores/T.C.B.T.6-Lining-cells.png",
+      "imagem_base": "imagens/base/T.C.B.T.6-Osteoblasts.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/05/T.C.B.T.6-Osteoblasts.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone cells: osteoblasts'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.T.6-Osteoblasts.jpg'. Destaca a estrutura ou conceito 'Bone lining cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone lining cells are present on the surface of bone where no active growth or resorption is occurring.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > As a Tissue > As a tissue 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/as-a-tissue/tissue-5-osteoblasts/, acesso em 2026-08-07."
+    }
+  ]
+}

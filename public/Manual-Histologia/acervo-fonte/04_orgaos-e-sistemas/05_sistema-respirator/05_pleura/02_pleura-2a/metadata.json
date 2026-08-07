@@ -1,0 +1,83 @@
+{
+  "id": 31681,
+  "titulo": "Pleura",
+  "titulo_wordpress": "Pleura 2A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Pleura",
+    "Pleura 2A"
+  ],
+  "descricao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying layer of connective tissue containing elastic fibers and blood vessels. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "arquivo": "imagens/base/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Pleura', no setor Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Descricao original da pagina: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying layer of connective tissue containing elastic fibers and blood vessels. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Visceral pleura",
+      "explicacao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-1A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.02A-1A-ping.png",
+      "imagem_base": "imagens/base/O.R.P.02A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.02A-fix.jpg'. Destaca a estrutura ou conceito 'Visceral pleura' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mesothelium",
+      "explicacao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-2A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.02A-2A-ping.png",
+      "imagem_base": "imagens/base/O.R.P.02A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.02A-fix.jpg'. Destaca a estrutura ou conceito 'Mesothelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue layer",
+      "explicacao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-3A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.02A-3A-ping.png",
+      "imagem_base": "imagens/base/O.R.P.02A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.02A-fix.jpg'. Destaca a estrutura ou conceito 'Connective tissue layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-4A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.02A-4A-ping.png",
+      "imagem_base": "imagens/base/O.R.P.02A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.02A-fix.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Pleural space",
+      "explicacao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-5A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.02A-5A-ping.png",
+      "imagem_base": "imagens/base/O.R.P.02A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.02A-fix.jpg'. Destaca a estrutura ou conceito 'Pleural space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Alveoli",
+      "explicacao_original": "Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-6A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.P.02A-6A-ping.png",
+      "imagem_base": "imagens/base/O.R.P.02A-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/05/O.R.P.02A-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Pleura'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.P.02A-fix.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Visceral pleura covers the exterior of the lung and is composed of a mesothelium (simple squamous epithelium) and an underlying connective tissue containing elastic fibers and blood vessels. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Pleura > Pleura 2A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/pleura/pleura-2a/, acesso em 2026-08-07."
+    }
+  ]
+}

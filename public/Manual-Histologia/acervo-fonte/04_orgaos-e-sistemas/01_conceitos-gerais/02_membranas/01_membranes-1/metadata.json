@@ -1,0 +1,53 @@
+{
+  "id": 11827,
+  "titulo": "Membranes",
+  "titulo_wordpress": "Membranes 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Membranas",
+    "Membranes 1"
+  ],
+  "descricao_original": "All surfaces of the body are covered and protected by a membrane, usually consisting of an epithelium and an underlying connective tissue. This diagrammatic cross section through the abdomen illustrates the location of the three types of body membranes: cutaneous, mucous and serous.",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-1.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Membr-1-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Membranes', no setor Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 1. Descricao original da pagina: All surfaces of the body are covered and protected by a membrane, usually consisting of an epithelium and an underlying connective tissue. This diagrammatic cross section through the abdomen illustrates the location of the three types of body membranes: cutaneous, mucous and serous.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cutaneous membrane",
+      "explicacao_original": "The cutaneous membrane, or skin, covers the exterior of the body and is composed of a stratified squamous keratinized epithelium, called the epidermis, and a connective tissue layer, the dermis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-1-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-1-1-ping-1.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-1-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-1-1.jpg'. Destaca a estrutura ou conceito 'Cutaneous membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cutaneous membrane, or skin, covers the exterior of the body and is composed of a stratified squamous keratinized epithelium, called the epidermis, and a connective tissue layer, the dermis.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucous membrane",
+      "explicacao_original": "The mucous membrane, or mucosa, lines the lumens of all organs opening directly or indirectly to the exterior of the body, such as the stomach, intestines, trachea, and ureter. Typically, the mucosa is composed of three layers: an epithelium, a connective tissue layer called the lamina propria, and a muscularis mucosae (literally, “muscle of the mucosa”) of smooth muscle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-2-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-1-2-ping-1.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-1-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-1-1.jpg'. Destaca a estrutura ou conceito 'Mucous membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mucous membrane, or mucosa, lines the lumens of all organs opening directly or indirectly to the exterior of the body, such as the stomach, intestines, trachea, and ureter. Typically, the mucosa is composed of three layers: an epithelium, a connective tissue layer called the lamina propria, and a muscularis mucosae (literally, “muscle of the mucosa”) of smooth muscle.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Serous membrane",
+      "explicacao_original": "A serous membrane, or serosa, lines the three internal cavities that do not open to the exterior: pleural, pericardial, and peritoneal cavities. This membrane is composed of simple squamous epithelium (mesothelium) and an underlying connective tissue. During development, at least one organ protrudes into each cavity, pushing serosa ahead of itself as it does so, similar to shoving a fist into the wall of a balloon. Consequently, the serosa lines the outer perimeter of each cavity, as well as being reflected over the outside of the organ protruding into the cavity.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-3-ping-1.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Membr-1-3-ping-1.png",
+      "imagem_base": "imagens/base/Or.Concepts.Membr-1-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Membr-1-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Membranes'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Membr-1-1.jpg'. Destaca a estrutura ou conceito 'Serous membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A serous membrane, or serosa, lines the three internal cavities that do not open to the exterior: pleural, pericardial, and peritoneal cavities. This membrane is composed of simple squamous epithelium (mesothelium) and an underlying connective tissue. During development, at least one organ protrudes into each cavity, pushing serosa ahead of itself as it does so, similar to shoving a fist into the wall of a balloon. Consequently, the serosa lines the outer perimeter of each cavity, as well as being reflected over the outside of the organ protruding into the cavity.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Membranas > Membranes 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/membranes/membranes-1/, acesso em 2026-08-07."
+    }
+  ]
+}

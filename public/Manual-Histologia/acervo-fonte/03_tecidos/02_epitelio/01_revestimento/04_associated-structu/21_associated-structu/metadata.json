@@ -1,0 +1,94 @@
+{
+  "id": 3969,
+  "titulo": "Hemidesmosomes",
+  "titulo_wordpress": "Associated structures 19",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 19"
+  ],
+  "descricao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hemidesmosomes', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Descricao original da pagina: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epidermal cell",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Epidermal cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-7-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-7-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Hemidesmosomes",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Hemidesmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Attachment plaques",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Attachment plaques' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Keratin filaments",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Keratin filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Plasma membrane",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Plasma membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Lamina densa of basal lamina",
+      "explicacao_original": "Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-19-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS-19.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-19.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemidesmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS-19.jpg'. Destaca a estrutura ou conceito 'Lamina densa of basal lamina' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemidesmosomes are prominent in the basal layer of the epidermis. Structurally, they consist of one-half of a desmosome and serve to anchor an epithelium to its underlying basal lamina. The associated keratin intermediate filaments insert into the attachment plaques. Transmembrane proteins extend from the plaque into the basal lamina to provide attachment. 30,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 19. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-19/, acesso em 2026-08-07."
+    }
+  ]
+}

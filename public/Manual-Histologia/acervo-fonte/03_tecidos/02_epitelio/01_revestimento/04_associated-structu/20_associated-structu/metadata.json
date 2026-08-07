@@ -1,0 +1,74 @@
+{
+  "id": 3967,
+  "titulo": "Desmosomes",
+  "titulo_wordpress": "Associated structures 18",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 18"
+  ],
+  "descricao_original": "This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-18.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-18.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Desmosomes', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 18. Descricao original da pagina: This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Desmosomes",
+      "explicacao_original": "This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-18-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-18-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Desmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-18.jpg'. Destaca a estrutura ou conceito 'Desmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 18. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Attachment plaques",
+      "explicacao_original": "This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-18-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-18-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Desmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-18.jpg'. Destaca a estrutura ou conceito 'Attachment plaques' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 18. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Keratin filaments",
+      "explicacao_original": "This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-18-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-18-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Desmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-18.jpg'. Destaca a estrutura ou conceito 'Keratin filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 18. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Intercellular space",
+      "explicacao_original": "This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-18-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-18-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Desmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-18.jpg'. Destaca a estrutura ou conceito 'Intercellular space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 18. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Plasma membranes",
+      "explicacao_original": "This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS-18-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS-18-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-18.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-18.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Desmosomes'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-18.jpg'. Destaca a estrutura ou conceito 'Plasma membranes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification electron micrograph shows desmosomes in human epidermis. Desmosomes consist of a dense attachment plaque into which keratin filaments (intermediate filaments) insert. Adhesion proteins extend from the plaque into the intercellular space, where they overlap to provide attachment between the cells. 70,000x. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 18. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-18/, acesso em 2026-08-07."
+    }
+  ]
+}

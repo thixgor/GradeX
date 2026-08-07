@@ -1,0 +1,85 @@
+{
+  "id": 4348,
+  "titulo": "Unicellular gland",
+  "titulo_wordpress": "Unicellular 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Unicellular",
+    "Unicellular 5"
+  ],
+  "descricao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Unicellular gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Descricao original da pagina: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Goblet cell",
+      "explicacao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-5-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-5-sharp.jpg'. Destaca a estrutura ou conceito 'Goblet cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Mucin granules",
+      "explicacao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-5-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-5-sharp.jpg'. Destaca a estrutura ou conceito 'Mucin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mucus",
+      "explicacao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-5-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-5-sharp.jpg'. Destaca a estrutura ou conceito 'Mucus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cilia",
+      "explicacao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-5-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-5-sharp.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-5-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-5-sharp.jpg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Mitochondria",
+      "explicacao_original": "This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-6-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-5-6-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-5-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-5-sharp.jpg'. Destaca a estrutura ou conceito 'Mitochondria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the apex of a goblet cell filled with mucin granules. The goblet cell is flanked by non-secretory, ciliated cells of the respiratory epithelium. The mucin granules contain highly glycosylated proteins which become hydrated after release, thereby forming mucus. 14,000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 5. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-5/, acesso em 2026-08-07."
+    }
+  ]
+}

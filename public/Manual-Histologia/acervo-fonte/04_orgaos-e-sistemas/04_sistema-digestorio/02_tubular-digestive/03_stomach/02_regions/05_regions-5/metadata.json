@@ -1,0 +1,75 @@
+{
+  "id": 6870,
+  "titulo": "Stomach: fundus and body",
+  "titulo_wordpress": "Regions 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 5"
+  ],
+  "descricao_original": "The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: fundus and body', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 5. Descricao original da pagina: The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Gastric pits",
+      "explicacao_original": "The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-5-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-5-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-5.jpg'. Destaca a estrutura ou conceito 'Gastric pits' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Necks of glands",
+      "explicacao_original": "The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-5-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-5-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-5.jpg'. Destaca a estrutura ou conceito 'Necks of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Bodies of glands",
+      "explicacao_original": "The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-5-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-5-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-5.jpg'. Destaca a estrutura ou conceito 'Bodies of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mucous neck cells",
+      "explicacao_original": "The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-5-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-5-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-5.jpg'. Destaca a estrutura ou conceito 'Mucous neck cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Parietal cells",
+      "explicacao_original": "The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-5-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-5-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-5.jpg'. Destaca a estrutura ou conceito 'Parietal cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The neck, the first part of fundic glands, contains mucous neck cells (darkly staining cells) and parietal cells. Mucous neck cells secrete a mucus different from that of the surface mucous cells. Parietal (oxyntic) cells, large, spherical and eosinophilic, are responsible for the HCl production in the stomach and also secrete gastric intrinsic factor. 400x, 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-5/, acesso em 2026-08-07."
+    }
+  ]
+}

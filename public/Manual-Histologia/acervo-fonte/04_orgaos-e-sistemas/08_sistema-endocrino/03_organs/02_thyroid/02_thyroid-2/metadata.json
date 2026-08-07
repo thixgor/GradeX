@@ -1,0 +1,64 @@
+{
+  "id": 4822,
+  "titulo": "Thyroid gland",
+  "titulo_wordpress": "Thyroid 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Endócrino",
+    "Organs",
+    "Thyroid",
+    "Thyroid 2"
+  ],
+  "descricao_original": "The thyroid consists of two functionally distinct components: follicle cells and parafollicular cells. Follicle cells secrete the thyroid hormones, T3 and T4, and parafollicular cells secrete calcitonin. Each of these cell types has a unique embryological origin and mode of regulation. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-2.jpg",
+      "arquivo": "imagens/base/Or.Endo_.Thy-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Thyroid gland', no setor Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 2. Descricao original da pagina: The thyroid consists of two functionally distinct components: follicle cells and parafollicular cells. Follicle cells secrete the thyroid hormones, T3 and T4, and parafollicular cells secrete calcitonin. Each of these cell types has a unique embryological origin and mode of regulation. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Follicles",
+      "explicacao_original": "The thyroid gland is an unusual endocrine organ in that it stores a precursor (thyroglobulin) of its hormones as colloid and then breaks down the thyroglobulin to form T3 and T4 for release into the blood. Thyroid hormones regulate basal metabolic rate. The follicle is formed by a simple epithelium of follicle cells that rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-2.jpg'. Destaca a estrutura ou conceito 'Follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thyroid gland is an unusual endocrine organ in that it stores a precursor (thyroglobulin) of its hormones as colloid and then breaks down the thyroglobulin to form T3 and T4 for release into the blood. Thyroid hormones regulate basal metabolic rate. The follicle is formed by a simple epithelium of follicle cells that rest on a basement membrane.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Thyroglobulin",
+      "explicacao_original": "The thyroid gland is an unusual endocrine organ in that it stores a precursor (thyroglobulin) of its hormones as colloid and then breaks down the thyroglobulin to form T3 and T4 for release into the blood. Thyroid hormones regulate basal metabolic rate. The follicle is formed by a simple epithelium of follicle cells that rest on a basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-2.jpg'. Destaca a estrutura ou conceito 'Thyroglobulin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The thyroid gland is an unusual endocrine organ in that it stores a precursor (thyroglobulin) of its hormones as colloid and then breaks down the thyroglobulin to form T3 and T4 for release into the blood. Thyroid hormones regulate basal metabolic rate. The follicle is formed by a simple epithelium of follicle cells that rest on a basement membrane.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Follicle (principal) cells",
+      "explicacao_original": "The activity of follicle cells, also referred to as principal cells, is controlled by thyroid stimulating hormone (TSH) secreted by thyrotropes in the adenophypophysis. Active follicle cells have a columnar shape (yellow arrows); inactive cells are squamous (white arrows); intermediate- activity cells are cuboidal (black arrows). Follicle cell activity varies, even within the same follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-2.jpg'. Destaca a estrutura ou conceito 'Follicle (principal) cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The activity of follicle cells, also referred to as principal cells, is controlled by thyroid stimulating hormone (TSH) secreted by thyrotropes in the adenophypophysis. Active follicle cells have a columnar shape (yellow arrows); inactive cells are squamous (white arrows); intermediate- activity cells are cuboidal (black arrows). Follicle cell activity varies, even within the same follicle.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Parafollicular (clear) cells",
+      "explicacao_original": "Parafollicular cells are also referred to as clear cells as the staining of their cytoplasm contrasts with that of the more basophilic-staining cytoplasm of the follicle cells. Parafollicular cells’ secretion of calcitonin is both regulated and controlled by blood calcium levels. Parafolllicular cells are found in the follicular epithelium as well as in small clusters in the connective tissue between follicles.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.Endo_.Thy-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Endo_.Thy-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Endo_.Thy-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Endo_.Thy-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Thyroid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Endo_.Thy-2.jpg'. Destaca a estrutura ou conceito 'Parafollicular (clear) cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Parafollicular cells are also referred to as clear cells as the staining of their cytoplasm contrasts with that of the more basophilic-staining cytoplasm of the follicle cells. Parafollicular cells’ secretion of calcitonin is both regulated and controlled by blood calcium levels. Parafolllicular cells are found in the follicular epithelium as well as in small clusters in the connective tissue between follicles.. Contexto setorial: Órgãos e Sistemas > Sistema Endócrino > Organs > Thyroid > Thyroid 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/endocrine/organs/thyroid/thyroid-2/, acesso em 2026-08-07."
+    }
+  ]
+}

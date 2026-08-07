@@ -1,0 +1,95 @@
+{
+  "id": 6876,
+  "titulo": "Stomach: fundus and body",
+  "titulo_wordpress": "Regions 8",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Stomach",
+    "Regions",
+    "Regions 8"
+  ],
+  "descricao_original": "Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stomach: fundus and body', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Descricao original da pagina: Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fundic glands",
+      "explicacao_original": "Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Fundic glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lumens of glands",
+      "explicacao_original": "Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Lumens of glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bases of gastric glands in the fundic region of the stomach demonstrate several cell types. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Parietal cell",
+      "explicacao_original": "Although more numerous closer to the lumen of the stomach, parietal cells are also seen deep in the glands. They secrete HCl, which aids in digestion, converts pepsinogen into the active pepsin, and is bacteriostatic. Parietal cells resemble fried eggs, with abundant eosinophilic cytoplasm and a centrally located nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Parietal cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Although more numerous closer to the lumen of the stomach, parietal cells are also seen deep in the glands. They secrete HCl, which aids in digestion, converts pepsinogen into the active pepsin, and is bacteriostatic. Parietal cells resemble fried eggs, with abundant eosinophilic cytoplasm and a centrally located nucleus.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Chief cells",
+      "explicacao_original": "Chief cells secrete the enzyme precursor pepsinogen and, therefore, as protein-secreting exocrine cells, have basally located rough endoplasmic reticulum and apically located secretory granules. These cells are most numerous in the bases of the fundic glands, as seen here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Chief cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Chief cells secrete the enzyme precursor pepsinogen and, therefore, as protein-secreting exocrine cells, have basally located rough endoplasmic reticulum and apically located secretory granules. These cells are most numerous in the bases of the fundic glands, as seen here.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Enteroendocrine cells",
+      "explicacao_original": "Enteroendocrine cells are hormone-secreting cells in the digestive system and are a subset of cells of the diffuse neuroendocrine system (DNES). They do not secrete their hormones into the lumens of the glands, but instead secrete into the surrounding connective tissue. Therefore, these cells are located at the periphery of the glands with their granules positioned away from the lumen and adjacent to the basement membrane.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Enteroendocrine cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enteroendocrine cells are hormone-secreting cells in the digestive system and are a subset of cells of the diffuse neuroendocrine system (DNES). They do not secrete their hormones into the lumens of the glands, but instead secrete into the surrounding connective tissue. Therefore, these cells are located at the periphery of the glands with their granules positioned away from the lumen and adjacent to the basement membrane.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "Secretory granules of chief cells (yellow arrows) lie adjacent to the glandular lumens into which they are released (exocrine secretion). Conversely, the secretory granules (blue arrows) of enteroendocrine cells are located adjacent to the basement membrane of fundic glands, because their secretory product is released into the lamina propria (endocrine or paracrine secretion).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Stom_.Reg-8-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Stom_.Reg-8-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Stom_.Reg-8.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stomach: fundus and body'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Stom_.Reg-8.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Secretory granules of chief cells (yellow arrows) lie adjacent to the glandular lumens into which they are released (exocrine secretion). Conversely, the secretory granules (blue arrows) of enteroendocrine cells are located adjacent to the basement membrane of fundic glands, because their secretory product is released into the lamina propria (endocrine or paracrine secretion).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Stomach > Regions > Regions 8. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/stomach/regions/regions-8/, acesso em 2026-08-07."
+    }
+  ]
+}

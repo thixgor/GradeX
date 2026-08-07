@@ -1,0 +1,94 @@
+{
+  "id": 3961,
+  "titulo": "Junctional complex",
+  "titulo_wordpress": "Associated structures 15",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Revestimento",
+    "Associated Structures",
+    "Associated structures 15"
+  ],
+  "descricao_original": "Located at the apical-lateral surface of adjacent epithelial cells, junctional complexes are sites of membrane sealing (zonula occludens) and cell attachment (zonula adherens, desmosomes). These structures can be resolved individually at the EM level; however, with the LM they appear as a single, tiny bar or dot called the terminal bar. Small intestine (electron micrograph) 35,000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "arquivo": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Junctional complex', no setor Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Descricao original da pagina: Located at the apical-lateral surface of adjacent epithelial cells, junctional complexes are sites of membrane sealing (zonula occludens) and cell attachment (zonula adherens, desmosomes). These structures can be resolved individually at the EM level; however, with the LM they appear as a single, tiny bar or dot called the terminal bar. Small intestine (electron micrograph) 35,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Terminal bar",
+      "explicacao_original": "The light micrograph illustrates the single, tiny dot, called the terminal bar (arrows), which is the light microscopic appearance of the junctional complex. The three parts of the junctional complex are only visible with the electron microscope. The complex is visible by light microscopy due to the large accumulation of various proteins that comprise the complex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-1a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-1a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Terminal bar' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The light micrograph illustrates the single, tiny dot, called the terminal bar (arrows), which is the light microscopic appearance of the junctional complex. The three parts of the junctional complex are only visible with the electron microscope. The complex is visible by light microscopy due to the large accumulation of various proteins that comprise the complex.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Junctional complex",
+      "explicacao_original": "A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-2a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-2a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Junctional complex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Zonula occludens",
+      "explicacao_original": "A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-3a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-3a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Zonula occludens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Zonula adherens",
+      "explicacao_original": "A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-4a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-4a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Zonula adherens' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Desmosome",
+      "explicacao_original": "A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-5a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-5a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Desmosome' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A junctional complex consists of three components. A zonula occludens, or tight junction, encircles the cell apex, providing a barrier between the lumen and the intercellular space. Zonula adherens, also belt-like, is located below the zonula occludens, providing attachment and stability between adjacent cells. The desmosome or macula adherens functions like a “spot-weld” to attach and anchor adjacent cells.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Microvilli and stereocilia",
+      "explicacao_original": "Microvilli (red arrows) extend from the surface of the small intestine cells shown in the electron micrograph, while stereocilia (long microvilli, black arrows) are associated with the epididymis in the light micrograph. Both structures increase surface area of the organs on which they are located.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-6a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-6a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Microvilli and stereocilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microvilli (red arrows) extend from the surface of the small intestine cells shown in the electron micrograph, while stereocilia (long microvilli, black arrows) are associated with the epididymis in the light micrograph. Both structures increase surface area of the organs on which they are located.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Microfilaments and terminal web",
+      "explicacao_original": "Microfilaments (red arrows) form a central core for the microvilli, providing support and form. The filaments are anchored into a horizontal web of microfilaments, the terminal web (red box), located in the apical region of each cell.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.15-7a-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Lin_.AS_.15-7a-ping.png",
+      "imagem_base": "imagens/base/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Lin_.AS_.-16-crop-USE-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Junctional complex'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Lin_.AS_.-16-crop-USE-2.jpg'. Destaca a estrutura ou conceito 'Microfilaments and terminal web' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microfilaments (red arrows) form a central core for the microvilli, providing support and form. The filaments are anchored into a horizontal web of microfilaments, the terminal web (red box), located in the apical region of each cell.. Contexto setorial: Tecidos > Epitélio > Revestimento > Associated Structures > Associated structures 15. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/lining-and-covering/associated-structures/associated-structures-15/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": 20828,
+  "titulo": "Urinary bladder",
+  "titulo_wordpress": "Excretory passageways 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Urinário",
+    "Excretory passageways",
+    "Excretory passageways 5"
+  ],
+  "descricao_original": "The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3.jpg",
+      "arquivo": "imagens/base/Or.Ur_.UB-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Urinary bladder', no setor Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 5. Descricao original da pagina: The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen",
+      "explicacao_original": "The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-3.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Transitional epithelium",
+      "explicacao_original": "The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-3.jpg'. Destaca a estrutura ou conceito 'Transitional epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-3.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-3.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The bladder is lined by transitional epithelium. The underlying lamina is composed of a thinner, highly cellular portion adjacent to the epithelium and a thicker region of dense connective tissue closer to muscularis externa. The muscularis externa is composed of three ill-defined layers of smooth muscle (inner and outer longitudinal and middle circular layers). An adventitia is present beyond the muscularis externa. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Adventitia/serosa",
+      "explicacao_original": "The fibrous adventitia contains adipose tissue, blood vessels and nerves. The superior and lateral portions of the bladder are covered by reflections of the peritoneum, forming a serosa, as present here.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ur_.UB-3-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ur_.UB-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/12/Or.Ur_.UB-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Urinary bladder'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ur_.UB-3.jpg'. Destaca a estrutura ou conceito 'Adventitia/serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fibrous adventitia contains adipose tissue, blood vessels and nerves. The superior and lateral portions of the bladder are covered by reflections of the peritoneum, forming a serosa, as present here.. Contexto setorial: Órgãos e Sistemas > Sistema Urinário > Excretory passageways > Excretory passageways 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/urinary/ureter-and-bladder/excretory-passageways-5/, acesso em 2026-08-07."
+    }
+  ]
+}

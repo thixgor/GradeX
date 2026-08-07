@@ -1,0 +1,83 @@
+{
+  "id": 3058,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 5",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 5"
+  ],
+  "descricao_original": "The endoneurium surrounds Schwann cells and the axons they ensheath. This peripheral nerve contains both myelinated and unmyelinated axons, which are surrounded by a perineurium to form a fascicle. This tissue was fixed with osmium to preserve lipid and, thus, the myelin sheaths are well preserved. 1500x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "arquivo": "imagens/base/T.N.PN-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Descricao original da pagina: The endoneurium surrounds Schwann cells and the axons they ensheath. This peripheral nerve contains both myelinated and unmyelinated axons, which are surrounded by a perineurium to form a fascicle. This tissue was fixed with osmium to preserve lipid and, thus, the myelin sheaths are well preserved. 1500x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Myelinated axons",
+      "explicacao_original": "Axons in the peripheral nervous system that possess a myelin sheath are usually larger than one micron in diameter. The thickness of the myelin sheath is proportional to the diameter of the axon. Myelin is composed of concentric wrappings of the Schwann cell plasma membrane. Each Schwann cell associates with one axon to produce a single internodal segment of myelin.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-5-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-5.jpg'. Destaca a estrutura ou conceito 'Myelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Axons in the peripheral nervous system that possess a myelin sheath are usually larger than one micron in diameter. The thickness of the myelin sheath is proportional to the diameter of the axon. Myelin is composed of concentric wrappings of the Schwann cell plasma membrane. Each Schwann cell associates with one axon to produce a single internodal segment of myelin.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Unmyelinated axons",
+      "explicacao_original": "Unmyelinated axons are generally less than one micron in diameter. Unlike myelinated axons, multiple axons are associated with a single Schwann cell (circled in red); each axon is embedded in a longitudinal indentation of the Schwann cell surface. Each of the numerous unmyelinated axons, resembling a white dot, is just resolvable at this magnification within the outlines.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-5-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-5.jpg'. Destaca a estrutura ou conceito 'Unmyelinated axons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Unmyelinated axons are generally less than one micron in diameter. Unlike myelinated axons, multiple axons are associated with a single Schwann cell (circled in red); each axon is embedded in a longitudinal indentation of the Schwann cell surface. Each of the numerous unmyelinated axons, resembling a white dot, is just resolvable at this magnification within the outlines.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Schwann cell nuclei",
+      "explicacao_original": "The Schwann cell nuclei are seen in association with individual myelinated axons (red arrows), as well as clusters of unmyelinated axons (green arrows). Each myelin-forming Schwann cell forms a single internode of myelin around one axon, whereas one non-myelinating Schwann cell envelopes multiple, small-caliber axons. Each Schwann cell also secretes its own external lamina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-5-5-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-5.jpg'. Destaca a estrutura ou conceito 'Schwann cell nuclei' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Schwann cell nuclei are seen in association with individual myelinated axons (red arrows), as well as clusters of unmyelinated axons (green arrows). Each myelin-forming Schwann cell forms a single internode of myelin around one axon, whereas one non-myelinating Schwann cell envelopes multiple, small-caliber axons. Each Schwann cell also secretes its own external lamina.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Endoneurium",
+      "explicacao_original": "The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-5-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-5.jpg'. Destaca a estrutura ou conceito 'Endoneurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The endoneurium is composed of fibroblasts and collagen fibrils interspersed between the Schwann cells and the axons they ensheath.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Perineurium",
+      "explicacao_original": "The perinerium consists of one or more layers of squamous cells which form the protective blood-nerve barrier. These highly unique cells exhibit epithelial features, e.g., basal laminae and tight junctions; however, they are also contractile, possessing large numbers of actin filaments, and synthesize collagen, thus resembling smooth muscle cells and fibroblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-5-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-5.jpg'. Destaca a estrutura ou conceito 'Perineurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The perinerium consists of one or more layers of squamous cells which form the protective blood-nerve barrier. These highly unique cells exhibit epithelial features, e.g., basal laminae and tight junctions; however, they are also contractile, possessing large numbers of actin filaments, and synthesize collagen, thus resembling smooth muscle cells and fibroblasts.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Fibroblast",
+      "explicacao_original": "The Schwann cell nuclei are seen in association with individual myelinated axons (red arrows), as well as clusters of unmyelinated axons (green arrows). Each myelin-forming Schwann cell forms a single internode of myelin around one axon, whereas one non-myelinating Schwann cell envelopes multiple, small-caliber axons. Each Schwann cell also secretes its own external lamina.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-5-6-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-5.jpg'. Destaca a estrutura ou conceito 'Fibroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The Schwann cell nuclei are seen in association with individual myelinated axons (red arrows), as well as clusters of unmyelinated axons (green arrows). Each myelin-forming Schwann cell forms a single internode of myelin around one axon, whereas one non-myelinating Schwann cell envelopes multiple, small-caliber axons. Each Schwann cell also secretes its own external lamina.. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 5. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-5/, acesso em 2026-08-07."
+    }
+  ]
+}

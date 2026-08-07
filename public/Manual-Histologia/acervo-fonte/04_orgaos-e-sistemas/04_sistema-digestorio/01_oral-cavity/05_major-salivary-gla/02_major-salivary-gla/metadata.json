@@ -1,0 +1,64 @@
+{
+  "id": 6787,
+  "titulo": "Parotid gland",
+  "titulo_wordpress": "Major salivary glands 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Major Salivary Glands",
+    "Major salivary glands 2"
+  ],
+  "descricao_original": "The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Sal-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Parotid gland', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 2. Descricao original da pagina: The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lobules",
+      "explicacao_original": "The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-2.jpg'. Destaca a estrutura ou conceito 'Lobules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-2.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-2.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interlobular connective tissue",
+      "explicacao_original": "The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Sal-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Sal-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Sal-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Sal-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Parotid gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Sal-2.jpg'. Destaca a estrutura ou conceito 'Interlobular connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The paired parotid glands are compound acinar glands and, thus, contribute only serous products to saliva. Because of the presence of acini, the parotids have abundant striated ducts and the most intercalated ducts of the salivary glands. The parotid lies anterior to the ear, and its main duct empties into the vestibule opposite the upper second molar tooth. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Major Salivary Glands > Major salivary glands 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/major-salivary-glands/major-salivary-glands-2/, acesso em 2026-08-07."
+    }
+  ]
+}

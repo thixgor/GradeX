@@ -1,0 +1,73 @@
+{
+  "id": 3070,
+  "titulo": "Peripheral nerve",
+  "titulo_wordpress": "Peripheral nerve 11",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Peripheral Nerve",
+    "Peripheral nerve 11"
+  ],
+  "descricao_original": "Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10.jpg",
+      "arquivo": "imagens/base/T.N.PN-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Peripheral nerve', no setor Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 11. Descricao original da pagina: Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Peripheral nerves",
+      "explicacao_original": "Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-10-1-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-10.jpg'. Destaca a estrutura ou conceito 'Peripheral nerves' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Perineurium",
+      "explicacao_original": "Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-10-2-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-10.jpg'. Destaca a estrutura ou conceito 'Perineurium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessel",
+      "explicacao_original": "Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-10-3-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-10.jpg'. Destaca a estrutura ou conceito 'Blood vessel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Smooth muscle fascicles",
+      "explicacao_original": "Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-10-4-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-10.jpg'. Destaca a estrutura ou conceito 'Smooth muscle fascicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Connective tissue",
+      "explicacao_original": "Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.PN-10-5-ping.png",
+      "imagem_base": "imagens/base/T.N.PN-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.PN-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Peripheral nerve'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.PN-10.jpg'. Destaca a estrutura ou conceito 'Connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Peripheral nerves can be found coursing through tissues of the body. Generally, nerves appear well demarcated from surrounding tissue due to the presence of the perineurium. Nerves do not have a lumen and often have a wavy appearance in longitudinal section. These two characteristics distinguish nerves from blood vessels or the ducts of glands. 400x. Contexto setorial: Tecidos > Tecido Nervoso > Peripheral Nerve > Peripheral nerve 11. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/peripheral-nerve/peripheral-nerve-11/, acesso em 2026-08-07."
+    }
+  ]
+}

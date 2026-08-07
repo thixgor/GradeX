@@ -1,0 +1,104 @@
+{
+  "id": 2326,
+  "titulo": "Metaphase",
+  "titulo_wordpress": "Mitosis overview 6",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 6"
+  ],
+  "descricao_original": "During metaphase, sister chromatids align at the metaphase plate (equatorial plate), midway between the poles. Formation of the mitotic spindle is completed.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Metaphase', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Descricao original da pagina: During metaphase, sister chromatids align at the metaphase plate (equatorial plate), midway between the poles. Formation of the mitotic spindle is completed.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Metaphase plate",
+      "explicacao_original": "During metaphase, sister chromatids align at the metaphase plate (equatorial plate), midway between the poles. Formation of the mitotic spindle is completed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/C.CD_.MIT-5-5-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-5-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Metaphase plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align at the metaphase plate (equatorial plate), midway between the poles. Formation of the mitotic spindle is completed.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sister chromatids",
+      "explicacao_original": "During metaphase, sister chromatids align at the metaphase plate (equatorial plate), midway between the poles. Formation of the mitotic spindle is completed.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-5-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Sister chromatids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: During metaphase, sister chromatids align at the metaphase plate (equatorial plate), midway between the poles. Formation of the mitotic spindle is completed.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Centromeres",
+      "explicacao_original": "The centromere is a highly condensed region of DNA which forms the junction point for the two sister chromatids. A protein complex located on the centromere, the kinetochore, provides the attachment point for microtubules of the spindle apparatus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-5-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Centromeres' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The centromere is a highly condensed region of DNA which forms the junction point for the two sister chromatids. A protein complex located on the centromere, the kinetochore, provides the attachment point for microtubules of the spindle apparatus.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mitotic spindle",
+      "explicacao_original": "Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.CD_.MIT-5-3A-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-3A-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Mitotic spindle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Kinetochore microtubules",
+      "explicacao_original": "Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.CD_.MIT-5-6-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-6-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Kinetochore microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Polar microtubules",
+      "explicacao_original": "Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.CD_.MIT-5-7-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-7-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Polar microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Astral microtubules",
+      "explicacao_original": "Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/06/C.CD_.MIT-5-8-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-8-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Astral microtubules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-5-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-5-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-5.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-5.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-5.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Microtubules of the spindle apparatus extend from the diplosome of the centrosome and consists of three types. Kinetochore microtubules, attach to the kinetochore of the chromatids. Polar microtubules overlap with each in the center of the spindle, interacting with each other to push the spindle poles apart. Astral microtubules extend away from the spindle to provide anchorage for the spindle.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 6. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-6/, acesso em 2026-08-07."
+    }
+  ]
+}

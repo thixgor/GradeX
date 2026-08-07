@@ -1,0 +1,54 @@
+{
+  "id": 2320,
+  "titulo": "Cell cycle",
+  "titulo_wordpress": "Mitosis overview 3",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Mitose",
+    "Overview of mitosis",
+    "Mitosis overview 3"
+  ],
+  "descricao_original": "The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-2.jpg",
+      "arquivo": "imagens/base/C.CD_.Mit_.Ov-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cell cycle', no setor Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 3. Descricao original da pagina: The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Illustration",
+      "explicacao_original": "The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-2-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-2-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Illustration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Micrograph",
+      "explicacao_original": "The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-2-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-2-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Micrograph' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cell cycle series",
+      "explicacao_original": "The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.MIT-2-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.MIT-2-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mit_.Ov-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mit_.Ov-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cell cycle'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mit_.Ov-2.jpg'. Destaca a estrutura ou conceito 'Cell cycle series' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The following series of images shows illustrations of individual stages of the cell cycle paired with those stages as seen through the light microscope. Additionally, the series of cell stages appears across the top of each image for reference. For diagrammatic purposes, only a single pair of homologous chromosomes is represented in each illustration.. Contexto setorial: Células > Divisão Celular > Mitose > Overview of mitosis > Mitosis overview 3. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/mitosis/overview-mitosis/mitosis-3/, acesso em 2026-08-07."
+    }
+  ]
+}

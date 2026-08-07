@@ -1,0 +1,62 @@
+{
+  "id": 648,
+  "titulo": "Metal stains for electron microscopy (EM)",
+  "titulo_wordpress": "Stains 3",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Corantes",
+    "Stains 3"
+  ],
+  "descricao_original": "Images from the transmission electron microscope are produced by passing a beam of electrons though the tissue, which has been stained with salts of heavy metals, usually lead and uranium. These metals block the passage of the electrons though the section, thus casting a shadow that results in dark and light areas in the image. Like hematoxylin and eosin, heavy metal staining is a conventional stain. 15,000x",
+  "url_origem": "https://digitalhistology.org/histology-basics/stains/stains-3-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-3.jpg",
+      "arquivo": "imagens/base/C.B.St-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Metal stains for electron microscopy (EM)', no setor Histologia Básica > Corantes > Stains 3. Descricao original da pagina: Images from the transmission electron microscope are produced by passing a beam of electrons though the tissue, which has been stained with salts of heavy metals, usually lead and uranium. These metals block the passage of the electrons though the section, thus casting a shadow that results in dark and light areas in the image. Like hematoxylin and eosin, heavy metal staining is a conventional stain. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-3-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Electron dense",
+      "explicacao_original": "Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-3-1-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-3-1-ping.png",
+      "imagem_base": "imagens/base/C.B.St-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metal stains for electron microscopy (EM)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-3.jpg'. Destaca a estrutura ou conceito 'Electron dense' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.. Contexto setorial: Histologia Básica > Corantes > Stains 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-3-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Electron lucent",
+      "explicacao_original": "Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-3-2-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-3-2-ping.png",
+      "imagem_base": "imagens/base/C.B.St-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metal stains for electron microscopy (EM)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-3.jpg'. Destaca a estrutura ou conceito 'Electron lucent' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.. Contexto setorial: Histologia Básica > Corantes > Stains 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-3-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nuclear envelope",
+      "explicacao_original": "Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-3-3-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-3-3-ping.png",
+      "imagem_base": "imagens/base/C.B.St-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metal stains for electron microscopy (EM)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-3.jpg'. Destaca a estrutura ou conceito 'Nuclear envelope' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.. Contexto setorial: Histologia Básica > Corantes > Stains 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-3-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nucleolus",
+      "explicacao_original": "Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.B.St-3-4-ping.png",
+      "arquivo": "imagens/marcadores/C.B.St-3-4-ping.png",
+      "imagem_base": "imagens/base/C.B.St-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/C.B.St-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Metal stains for electron microscopy (EM)'. Deve ser sobreposta, sem redimensionamento independente, a 'C.B.St-3.jpg'. Destaca a estrutura ou conceito 'Nucleolus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Areas that bind the metal appear dark and are referred to as electron dense. Where very little of the metal binds, the electrons pass freely through the section, producing a light, or electron lucent area.. Contexto setorial: Histologia Básica > Corantes > Stains 3. Origem: Digital Histology, https://digitalhistology.org/histology-basics/stains/stains-3-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": 5300,
+  "titulo": "Continuous capillary",
+  "titulo_wordpress": "Capillaries and Sinusoids 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Cardiovascular",
+    "Vessels",
+    "Capillaries and Sinusoids",
+    "Capillaries and Sinusoids 2"
+  ],
+  "descricao_original": "Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2.jpg",
+      "arquivo": "imagens/base/Or.CV_.V.Caps-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Continuous capillary', no setor Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 2. Descricao original da pagina: Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Capillaries",
+      "explicacao_original": "Tissues with high metabolic requirements like heart muscle shown on the left, have a large number of capillaries. In contrast, tissues with low activity, like the connective tissue seen on the right, have fewer capillaries.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-2.jpg'. Destaca a estrutura ou conceito 'Capillaries' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissues with high metabolic requirements like heart muscle shown on the left, have a large number of capillaries. In contrast, tissues with low activity, like the connective tissue seen on the right, have fewer capillaries.. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Endothelial cells",
+      "explicacao_original": "Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-2.jpg'. Destaca a estrutura ou conceito 'Endothelial cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Arteriole",
+      "explicacao_original": "Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-2.jpg'. Destaca a estrutura ou conceito 'Arteriole' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Venule",
+      "explicacao_original": "Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-2.jpg'. Destaca a estrutura ou conceito 'Venule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Nerve",
+      "explicacao_original": "Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.V.Caps-2-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.V.Caps-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/07/Or.CV_.V.Caps-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Continuous capillary'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.V.Caps-2.jpg'. Destaca a estrutura ou conceito 'Nerve' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Capillaries are the smallest blood vessels and are composed of a single layer of endothelial cells and their basal laminae. Connective tissue cells with contractile proteins, called pericytes, may surround a capillary. Tissues with high metabolic requirements like heart muscle have a large number of capillaries. Capillaries are so narrow that blood cells must pass through in single file.1000x, 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Cardiovascular > Vessels > Capillaries and Sinusoids > Capillaries and Sinusoids 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/cardiovascular/vessels/capillaries-and-sinusoids/capillaries-and-sinusoids-2/, acesso em 2026-08-07."
+    }
+  ]
+}

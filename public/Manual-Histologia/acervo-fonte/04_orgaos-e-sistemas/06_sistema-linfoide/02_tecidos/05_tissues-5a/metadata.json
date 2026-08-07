@@ -1,0 +1,105 @@
+{
+  "id": 30459,
+  "titulo": "Secondary lymphoid nodule",
+  "titulo_wordpress": "Tissues 5A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 5A"
+  ],
+  "descricao_original": "With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secondary lymphoid nodule', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Descricao original da pagina: With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secondary nodule",
+      "explicacao_original": "With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Secondary nodule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Germinal center",
+      "explicacao_original": "Germinal centers develop from proliferating lymphocytes after antigen stimulation. These large, pale-staining cells are called immunoblasts, whose progeny differentiate into plasma cells and B memory cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Germinal center' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Germinal centers develop from proliferating lymphocytes after antigen stimulation. These large, pale-staining cells are called immunoblasts, whose progeny differentiate into plasma cells and B memory cells.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mantle zone",
+      "explicacao_original": "The mantle zone surrounds the germinal center and consists mostly of B cells that have not been stimulated by antigen.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Mantle zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mantle zone surrounds the germinal center and consists mostly of B cells that have not been stimulated by antigen.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mucosa",
+      "explicacao_original": "With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-6-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Submucosa",
+      "explicacao_original": "With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-5A-7-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: With antigenic stimulation, primary nodules increase in size and develop a pale-staining central region called the germinal center. These are now referred to as secondary nodules. Germinal centers are a morphological indication of lymphoid tissue response to antigen and represent a cascade of events including activation and proliferation of lymphocytes, and generation of plasma cells and memory B cells. Colon, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Michigan-source-ping-2.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-5A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-5A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-5A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 5A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-5a/, acesso em 2026-08-07."
+    }
+  ]
+}

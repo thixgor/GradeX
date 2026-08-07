@@ -1,0 +1,115 @@
+{
+  "id": 4549,
+  "titulo": "Compound acinar gland",
+  "titulo_wordpress": "Compound 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Compound",
+    "Compound 6"
+  ],
+  "descricao_original": "A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Compound acinar gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Descricao original da pagina: A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Acini",
+      "explicacao_original": "A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-5-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nuclei of secretory (acinar) cells",
+      "explicacao_original": "A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-5-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Nuclei of secretory (acinar) cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secretory granules",
+      "explicacao_original": "A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-5-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Secretory granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Lumens of acini",
+      "explicacao_original": "A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-5-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Lumens of acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Comp-5-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A compound acinar gland is composed entirely of acinar (alveolar) secretory units. Each spherical acinus is composed of cells with prominent, spherical nuclei and numerous secretory granules. The lumen of each acinus is very narrow, appropriate for the thin, watery secretion of the acinar cells. Numerous intralobular ducts are also visible. Parotid gland 400x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Structure of compound acinar gland",
+      "explicacao_original": "The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Gl_.Ex_.Comp-5-6-Grapes-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-6-Grapes-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Structure of compound acinar gland' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Acini",
+      "explicacao_original": "The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Gl_.Ex_.Comp-5-7-Grapes-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-7-Grapes-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Acini' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Intralobular ducts",
+      "explicacao_original": "The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Gl_.Ex_.Comp-5-8-Grapes-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-8-Grapes-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Intralobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Interlobular ducts",
+      "explicacao_original": "The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.E.Gl_.Ex_.Comp-5-9-Grapes-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Comp-5-9-Grapes-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/T.E.Gl_.Ex_.Comp-5-fix.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Compound acinar gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Comp-5-fix.jpg'. Destaca a estrutura ou conceito 'Interlobular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The structure of a compound acinar gland is analogous to the organization of a bunch of grapes. Each bunch represents a lobule with individual grapes corresponding to acini. Smaller stems connecting to the grapes denote intralobular ducts with the larger stems representing the interlobular duct. It’s helpful to keep this similarity in mind when interpreting tissue sections of compound glands.. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Compound > Compound 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/compound/compound-6/, acesso em 2026-08-07."
+    }
+  ]
+}

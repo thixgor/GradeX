@@ -1,0 +1,84 @@
+{
+  "id": 12753,
+  "titulo": "Uterus: pre-menstrual phase (Days 26-28)",
+  "titulo_wordpress": "Uterus 11",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 11"
+  ],
+  "descricao_original": "The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "arquivo": "imagens/base/O.R.F.U.11.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: pre-menstrual phase (Days 26-28)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Descricao original da pagina: The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Functional zone",
+      "explicacao_original": "The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.11.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.11.jpg'. Destaca a estrutura ou conceito 'Functional zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Basal zone",
+      "explicacao_original": "The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.11.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.11.jpg'. Destaca a estrutura ou conceito 'Basal zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Myometrium",
+      "explicacao_original": "The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.11.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.11.jpg'. Destaca a estrutura ou conceito 'Myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glands",
+      "explicacao_original": "The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.11.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.11.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Degeneration",
+      "explicacao_original": "The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.11.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.11.jpg'. Destaca a estrutura ou conceito 'Degeneration' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The corpus luteum decreases hormone production, causing the endometrium to shrink, becoming less edematous. Alternate contraction and relaxation of spiral arteries results in ischemia and degeneration of endometrial tissue supplied by these vessels. This phase is also called the ischemic portion of the secretory phase. 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to the area outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.11.P06.png",
+      "imagem_base": "imagens/base/O.R.F.U.11.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.U.11.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: pre-menstrual phase (Days 26-28)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.11.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to the area outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 11. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-11/, acesso em 2026-08-07."
+    }
+  ]
+}

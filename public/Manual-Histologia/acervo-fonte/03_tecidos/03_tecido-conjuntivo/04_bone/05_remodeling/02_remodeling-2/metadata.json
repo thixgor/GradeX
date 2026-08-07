@@ -1,0 +1,54 @@
+{
+  "id": 11169,
+  "titulo": "Bone remodeling",
+  "titulo_wordpress": "Remodeling 2",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Remodeling",
+    "Remodeling 2"
+  ],
+  "descricao_original": "This schematic shows the original bone superimposed on the bone it is to become. In this way, the various processes occurring during bone growth can be analyzed. Notice that the epiphyseal plate has continued to move farther away from the location of the primary center of ossification, near line A.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.jpg",
+      "arquivo": "imagens/base/T.C.B.R.02.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone remodeling', no setor Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 2. Descricao original da pagina: This schematic shows the original bone superimposed on the bone it is to become. In this way, the various processes occurring during bone growth can be analyzed. Notice that the epiphyseal plate has continued to move farther away from the location of the primary center of ossification, near line A.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Diaphysis",
+      "explicacao_original": "In this example, the yellow diaphysis increases in diameter by deposition of bone (in red) around its periphery (1). The marrow space of the yellow bone also increases in diameter (2) by resorption of bone around the inner circumference of the diaphysis. Thus, growth and resorption are tightly coupled to maintain an appropriate thickness of the diaphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.02.P01.png",
+      "imagem_base": "imagens/base/T.C.B.R.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.02.jpg'. Destaca a estrutura ou conceito 'Diaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In this example, the yellow diaphysis increases in diameter by deposition of bone (in red) around its periphery (1). The marrow space of the yellow bone also increases in diameter (2) by resorption of bone around the inner circumference of the diaphysis. Thus, growth and resorption are tightly coupled to maintain an appropriate thickness of the diaphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Metaphysis",
+      "explicacao_original": "Conversely, in the region of the metaphysis, yellow bone must be resorbed, rather than deposited, around the periphery (3). At the same time, bone located in the original metaphysis (surrounding the yellow dot at B, for example) must be converted from spongy to compact bone to form the diaphysis of the new, larger red bone.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.02.P02.png",
+      "imagem_base": "imagens/base/T.C.B.R.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.02.jpg'. Destaca a estrutura ou conceito 'Metaphysis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Conversely, in the region of the metaphysis, yellow bone must be resorbed, rather than deposited, around the periphery (3). At the same time, bone located in the original metaphysis (surrounding the yellow dot at B, for example) must be converted from spongy to compact bone to form the diaphysis of the new, larger red bone.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image shows how the former, yellow, spongy bone, located in the area labeled “B,” becomes converted to compact bone (red) of the new diaphysis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.R.02.P03.png",
+      "imagem_base": "imagens/base/T.C.B.R.02.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.R.02.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone remodeling'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.R.02.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image shows how the former, yellow, spongy bone, located in the area labeled “B,” becomes converted to compact bone (red) of the new diaphysis.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Remodeling > Remodeling 2. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/remodeling/remodeling-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": 10349,
+  "titulo": "Bone: Interstitial lamellae",
+  "titulo_wordpress": "Deposition and Resorption 13",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 13"
+  ],
+  "descricao_original": "Bone resorption does not follow the course of existing osteons but assumes a random path. Osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons behind. In this image, if resorption were to stop now and an osteon replace this resorption canal, partial osteons would remain, forming interstitial lamellae. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-13/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.jpg",
+      "arquivo": "imagens/base/T.C.B.D.13.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: Interstitial lamellae', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 13. Descricao original da pagina: Bone resorption does not follow the course of existing osteons but assumes a random path. Osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons behind. In this image, if resorption were to stop now and an osteon replace this resorption canal, partial osteons would remain, forming interstitial lamellae. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-13/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Resorption canal",
+      "explicacao_original": "Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.13.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.13.jpg'. Destaca a estrutura ou conceito 'Resorption canal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Osteoclasts",
+      "explicacao_original": "Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.13.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.13.jpg'. Destaca a estrutura ou conceito 'Osteoclasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.13.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.13.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-13/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Interstitial lamellae",
+      "explicacao_original": "Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.P04.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.13.P04.png",
+      "imagem_base": "imagens/base/T.C.B.D.13.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.13.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: Interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.13.jpg'. Destaca a estrutura ou conceito 'Interstitial lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bone resorption does not follow the course of existing osteons. Rather, osteoclasts erode through portions of multiple osteons as they progress, leaving remnants of osteons as they do so. If resorption were to stop now and an osteon replace this resorption canal, these partial osteons would remain, forming interstitial lamellae. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 13. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-13/, acesso em 2026-08-07."
+    }
+  ]
+}

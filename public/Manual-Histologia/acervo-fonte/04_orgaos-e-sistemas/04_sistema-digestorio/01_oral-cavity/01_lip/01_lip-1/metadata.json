@@ -1,0 +1,96 @@
+{
+  "id": 6735,
+  "titulo": "Lip",
+  "titulo_wordpress": "Lip 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Lip",
+    "Lip 1"
+  ],
+  "descricao_original": "This image shows a sagittal section of the lip. The external surface of the lip is covered by skin with a thin, stratified squamous keratinized epithelium and hair follicles (on right). The skin transitions to the vermillion zone (red margin) which forms the red portion of the lip, followed by the oral mucosa which lines the inner portion of the lip. Beneath the oral mucosa are numerous minor salivary glands (labial glands). The orbicularis oris muscle (skeletal) occupies the central core of the lip. (Iron hematoxylin/alcian blue stain) 100x, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide from the University of Virginia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lip', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Descricao original da pagina: This image shows a sagittal section of the lip. The external surface of the lip is covered by skin with a thin, stratified squamous keratinized epithelium and hair follicles (on right). The skin transitions to the vermillion zone (red margin) which forms the red portion of the lip, followed by the oral mucosa which lines the inner portion of the lip. Beneath the oral mucosa are numerous minor salivary glands (labial glands). The orbicularis oris muscle (skeletal) occupies the central core of the lip. (Iron hematoxylin/alcian blue stain) 100x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Skin",
+      "explicacao_original": "This image shows a sagittal section of the lip. The external surface of the lip is covered by skin with a thin, stratified squamous keratinized epithelium and hair follicles (on right). The skin transitions to the vermillion zone (red margin) which forms the red portion of the lip, followed by the oral mucosa which lines the inner portion of the lip. Beneath the oral mucosa are numerous minor salivary glands (labial glands). The orbicularis oris muscle (skeletal) occupies the central core of the lip. (Iron hematoxylin/alcian blue stain) 100x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Skin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a sagittal section of the lip. The external surface of the lip is covered by skin with a thin, stratified squamous keratinized epithelium and hair follicles (on right). The skin transitions to the vermillion zone (red margin) which forms the red portion of the lip, followed by the oral mucosa which lines the inner portion of the lip. Beneath the oral mucosa are numerous minor salivary glands (labial glands). The orbicularis oris muscle (skeletal) occupies the central core of the lip. (Iron hematoxylin/alcian blue stain) 100x, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Hair follicles",
+      "explicacao_original": "This image shows a sagittal section of the lip. The external surface of the lip is covered by skin with a thin, stratified squamous keratinized epithelium and hair follicles (on right). The skin transitions to the vermillion zone (red margin) which forms the red portion of the lip, followed by the oral mucosa which lines the inner portion of the lip. Beneath the oral mucosa are numerous minor salivary glands (labial glands). The orbicularis oris muscle (skeletal) occupies the central core of the lip. (Iron hematoxylin/alcian blue stain) 100x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Hair follicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image shows a sagittal section of the lip. The external surface of the lip is covered by skin with a thin, stratified squamous keratinized epithelium and hair follicles (on right). The skin transitions to the vermillion zone (red margin) which forms the red portion of the lip, followed by the oral mucosa which lines the inner portion of the lip. Beneath the oral mucosa are numerous minor salivary glands (labial glands). The orbicularis oris muscle (skeletal) occupies the central core of the lip. (Iron hematoxylin/alcian blue stain) 100x, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Vermillion zone",
+      "explicacao_original": "The vermilion zone, the red portion of the lip, is covered by a keratinized stratified squamous epithelium that lacks hair follicles. The epithelium in this region is thicker than the epithelium of the skin and a stratum granulosum is present, indicating that the epithelium is keratinized.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Vermillion zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vermilion zone, the red portion of the lip, is covered by a keratinized stratified squamous epithelium that lacks hair follicles. The epithelium in this region is thicker than the epithelium of the skin and a stratum granulosum is present, indicating that the epithelium is keratinized.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Oral (lining) mucosa",
+      "explicacao_original": "The inner portion of the lip is lined by oral mucosa with a thick stratified squamous moist epithelium and prominent dermal papillae. The epithelium of the lining mucosa lacks a stratum granulosum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Oral (lining) mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The inner portion of the lip is lined by oral mucosa with a thick stratified squamous moist epithelium and prominent dermal papillae. The epithelium of the lining mucosa lacks a stratum granulosum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Labial glands",
+      "explicacao_original": "Minor salivary glands, called labial glands, are muco-serous glands present in the submucosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Labial glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Minor salivary glands, called labial glands, are muco-serous glands present in the submucosa.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Orbicularis oris (skeletal muscle)",
+      "explicacao_original": "The central core of the lip is formed by the orbicularis oris muscle (skeletal muscle). Contraction of this muscle causes puckering of the lips.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-6-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Orbicularis oris (skeletal muscle)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The central core of the lip is formed by the orbicularis oris muscle (skeletal muscle). Contraction of this muscle causes puckering of the lips.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide from the University of Virginia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1A-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Lip-1A-7-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Dig_.OC_.Lip-1-NEW.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lip'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Lip-1-NEW.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide from the University of Virginia collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Lip > Lip 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/lip/lip-1/, acesso em 2026-08-07."
+    }
+  ]
+}

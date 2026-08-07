@@ -1,0 +1,63 @@
+{
+  "id": 2174,
+  "titulo": "Meiosis II: Anaphase",
+  "titulo_wordpress": "Meiosis 10",
+  "caminho_setorial": [
+    "Células",
+    "Divisão Celular",
+    "Meiose",
+    "Meiosis 10"
+  ],
+  "descricao_original": "Anaphase begins abruptly as sister chromatids separate and each is drawn towards an opposite pole of the cell. The movement of the chromatids occurs by the shortening of the spindle fibers and movement of the spindle poles. The end of anaphase is marked by the segregation of a single set of chromosomes to each spindle pole.",
+  "url_origem": "https://digitalhistology.org/cells/cell-division/meiosis/meiosis-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10.jpg",
+      "arquivo": "imagens/base/C.CD_.Mei-10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Meiosis II: Anaphase', no setor Células > Divisão Celular > Meiose > Meiosis 10. Descricao original da pagina: Anaphase begins abruptly as sister chromatids separate and each is drawn towards an opposite pole of the cell. The movement of the chromatids occurs by the shortening of the spindle fibers and movement of the spindle poles. The end of anaphase is marked by the segregation of a single set of chromosomes to each spindle pole.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Chromosomes",
+      "explicacao_original": "Sister chromatids are separated from each other following the breakdown of cohesive proteins holding them together at the centromere. Chromatids are then drawn to opposite poles by the pulling force of the kinetochore microtubules. Once separated, chromatids are referred to as chromosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10-1-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-10-1-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis II: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-10.jpg'. Destaca a estrutura ou conceito 'Chromosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sister chromatids are separated from each other following the breakdown of cohesive proteins holding them together at the centromere. Chromatids are then drawn to opposite poles by the pulling force of the kinetochore microtubules. Once separated, chromatids are referred to as chromosomes.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Centrosomes",
+      "explicacao_original": "Sister chromatids are separated from each other following the breakdown of cohesive proteins holding them together at the centromere. Chromatids are then drawn to opposite poles by the pulling force of the kinetochore microtubules. Once separated, chromatids are referred to as chromosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10-3-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-10-3-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis II: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-10.jpg'. Destaca a estrutura ou conceito 'Centrosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sister chromatids are separated from each other following the breakdown of cohesive proteins holding them together at the centromere. Chromatids are then drawn to opposite poles by the pulling force of the kinetochore microtubules. Once separated, chromatids are referred to as chromosomes.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Centromeres",
+      "explicacao_original": "Sister chromatids are separated from each other following the breakdown of cohesive proteins holding them together at the centromere. Chromatids are then drawn to opposite poles by the pulling force of the kinetochore microtubules. Once separated, chromatids are referred to as chromosomes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10-2-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-10-2-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis II: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-10.jpg'. Destaca a estrutura ou conceito 'Centromeres' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sister chromatids are separated from each other following the breakdown of cohesive proteins holding them together at the centromere. Chromatids are then drawn to opposite poles by the pulling force of the kinetochore microtubules. Once separated, chromatids are referred to as chromosomes.. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mitotic spindles",
+      "explicacao_original": "The mitotic spindle consists of two types of microtubules. Kinetochore microtubules (blue arrows) attach to chromatids, drawing them toward the spindle pole. Non-kinetochore microtubules are of two types. One set overlaps opposing microtubules to push the spindle poles away from the midline (red arrows); the second extends radially from the spindle apparatus (black arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10-4-ping.png",
+      "arquivo": "imagens/marcadores/C.CD_.Mei-10-4-ping.png",
+      "imagem_base": "imagens/base/C.CD_.Mei-10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/C.CD_.Mei-10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Meiosis II: Anaphase'. Deve ser sobreposta, sem redimensionamento independente, a 'C.CD_.Mei-10.jpg'. Destaca a estrutura ou conceito 'Mitotic spindles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The mitotic spindle consists of two types of microtubules. Kinetochore microtubules (blue arrows) attach to chromatids, drawing them toward the spindle pole. Non-kinetochore microtubules are of two types. One set overlaps opposing microtubules to push the spindle poles away from the midline (red arrows); the second extends radially from the spindle apparatus (black arrows).. Contexto setorial: Células > Divisão Celular > Meiose > Meiosis 10. Origem: Digital Histology, https://digitalhistology.org/cells/cell-division/meiosis/meiosis-10/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "id": 27136,
+  "titulo": "Sectioning – Electron microscopy",
+  "titulo_wordpress": "Tissue preparation 4",
+  "caminho_setorial": [
+    "Histologia Básica",
+    "Preparação do Tecido",
+    "Tissue preparation 4"
+  ],
+  "descricao_original": "The sectioning process for electron microscopy is analogous to that for light microscopy. Sectioning is performed on a highly precise rotary microtome called an ultramicrotome, pictured here, which is capable of producing the ultrathin sections, generally 30 to 60 nm thick, required for electron microscopy.",
+  "url_origem": "https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/",
+  "creditos_identificados": [
+    "Image sources: Upper right panel: Image used with permission from the Center for Nanophase Materials Sciences, Oak Ridge National Laboratories. Upper right panel inset: Image used with permission from BiteSize Bio (https://bitesizebio.com/)."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "arquivo": "imagens/base/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Sectioning – Electron microscopy', no setor Histologia Básica > Preparação do Tecido > Tissue preparation 4. Descricao original da pagina: The sectioning process for electron microscopy is analogous to that for light microscopy. Sectioning is performed on a highly precise rotary microtome called an ultramicrotome, pictured here, which is capable of producing the ultrathin sections, generally 30 to 60 nm thick, required for electron microscopy.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Inset area",
+      "explicacao_original": "The sectioning process for electron microscopy is analogous to that for light microscopy. Sectioning is performed on a highly precise rotary microtome called an ultramicrotome, pictured here, which is capable of producing the ultrathin sections, generally 30 to 60 nm thick, required for electron microscopy.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-10-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-10-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Inset area' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The sectioning process for electron microscopy is analogous to that for light microscopy. Sectioning is performed on a highly precise rotary microtome called an ultramicrotome, pictured here, which is capable of producing the ultrathin sections, generally 30 to 60 nm thick, required for electron microscopy.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tissue block",
+      "explicacao_original": "Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-1-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-1-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Tissue block' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Tissue",
+      "explicacao_original": "Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-2-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-2-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Epoxy resin",
+      "explicacao_original": "Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-3-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-3-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Epoxy resin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Tissue block holder",
+      "explicacao_original": "Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-4-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-4-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Tissue block holder' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Handwheel",
+      "explicacao_original": "Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-5-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-5-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Handwheel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Tissue is routinely embedded in epoxy resin which provides the additional support needed for producing thin sections. Tissue samples for electron microscopy are much smaller in size than those used for light microscopy. The tissue block, is secured to the moveable arm of the ultramicrotome that moves past the knife with each successive rotation of the handwheel. For an ultramicrotome, the handwheel is generally motor-driven.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Diamond knife",
+      "explicacao_original": "For routine electron microscopy, the knife is an industrial diamond that has been sharpened to an extremely fine edge. The knife assembly contains a water reservoir for collecting the sections.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-6-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-6-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Diamond knife' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: For routine electron microscopy, the knife is an industrial diamond that has been sharpened to an extremely fine edge. The knife assembly contains a water reservoir for collecting the sections.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Sections",
+      "explicacao_original": "As sections are generated, they float onto the water contained in the knife holder reservoir and collected onto circular copper mesh grids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-7-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-7-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Sections' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As sections are generated, they float onto the water contained in the knife holder reservoir and collected onto circular copper mesh grids.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Copper grids",
+      "explicacao_original": "As sections are generated, they float onto the water contained in the knife holder reservoir and collected onto circular copper mesh grids.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-8-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-8-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Copper grids' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As sections are generated, they float onto the water contained in the knife holder reservoir and collected onto circular copper mesh grids.. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Image sources",
+      "explicacao_original": "Upper right panel: Image used with permission from the Center for Nanophase Materials Sciences, Oak Ridge National Laboratories. Upper right panel inset: Image used with permission from BiteSize Bio (https://bitesizebio.com/).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/HB-TP-4-9-ping.png",
+      "arquivo": "imagens/marcadores/HB-TP-4-9-ping.png",
+      "imagem_base": "imagens/base/HB-TP-4-white-half.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2024/07/HB-TP-4-white-half.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Sectioning – Electron microscopy'. Deve ser sobreposta, sem redimensionamento independente, a 'HB-TP-4-white-half.jpg'. Destaca a estrutura ou conceito 'Image sources' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Upper right panel: Image used with permission from the Center for Nanophase Materials Sciences, Oak Ridge National Laboratories. Upper right panel inset: Image used with permission from BiteSize Bio (https://bitesizebio.com/).. Contexto setorial: Histologia Básica > Preparação do Tecido > Tissue preparation 4. Origem: Digital Histology, https://digitalhistology.org/histology-basics/tissue-preparation/tissue-4/, acesso em 2026-08-07."
+    }
+  ]
+}

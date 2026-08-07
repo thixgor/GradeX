@@ -1,0 +1,66 @@
+{
+  "id": 6757,
+  "titulo": "Tongue: Fungiform papillae",
+  "titulo_wordpress": "Tongue 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tongue",
+    "Tongue 3"
+  ],
+  "descricao_original": "Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-3/",
+  "creditos_identificados": [
+    "Image source: These images were taken of slides from the University of Mississippi and University of Michigan and collections."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-3.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.T.-3.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tongue: Fungiform papillae', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 3. Descricao original da pagina: Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Fungiform papillae",
+      "explicacao_original": "Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Fungiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-3.jpg'. Destaca a estrutura ou conceito 'Fungiform papillae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Keratinized epithelium",
+      "explicacao_original": "Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Fungiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-3.jpg'. Destaca a estrutura ou conceito 'Keratinized epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Connective tissue core",
+      "explicacao_original": "Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Fungiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-3.jpg'. Destaca a estrutura ou conceito 'Connective tissue core' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Fungiform papillae (mushroom-shaped) are rounded and reddish in appearance, because their relatively thin epithelium overlies a rich capillary network in the connective tissue core. A few, scattered taste buds may be present on the dorsum of these papillae, but none are visible in this section. Fungiform papillae are irregularly dispersed among the filiform papillae. 100x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of slides from the University of Mississippi and University of Michigan and collections.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.T-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.T.-3.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.T.-3.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tongue: Fungiform papillae'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.T.-3.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of slides from the University of Mississippi and University of Michigan and collections.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tongue > Tongue 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tongue/tongue-3/, acesso em 2026-08-07."
+    }
+  ]
+}

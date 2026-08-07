@@ -1,0 +1,154 @@
+{
+  "id": 6685,
+  "titulo": "Hemopoiesis",
+  "titulo_wordpress": "Hemopoiesis 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Hemopoiesis",
+    "Hemopoiesis 6"
+  ],
+  "descricao_original": "This chart details the various cell types leading to adult erythrocyte and granulocytes, including neutrophils, eosinophils and basophils. The cell types leading to adult monocytes and megakaryocytes are not included in this chart.",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "arquivo": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Hemopoiesis', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Descricao original da pagina: This chart details the various cell types leading to adult erythrocyte and granulocytes, including neutrophils, eosinophils and basophils. The cell types leading to adult monocytes and megakaryocytes are not included in this chart.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Proerythroblast",
+      "explicacao_original": "The process of red blood production is called erythropoiesis.The first microscopically recognizable precursor cell in this lineage is the proerythroblast. Proerythroblasts proceed through a number of differentiation stages marked by reduction in size, production of hemoglobin, decrease in ribosomes and other organelles, and eventual shrinking and exclusion of the nucleus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Proerythroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The process of red blood production is called erythropoiesis.The first microscopically recognizable precursor cell in this lineage is the proerythroblast. Proerythroblasts proceed through a number of differentiation stages marked by reduction in size, production of hemoglobin, decrease in ribosomes and other organelles, and eventual shrinking and exclusion of the nucleus.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Basophilic erythroblast",
+      "explicacao_original": "The basophilic erythroblast is the first stage of erythropoiesis that is easily identifiable. The cytoplasm is intensely basophilic due to the presence of ribosomal RNA. The large nucleus typically possesses a “checker-board” chromatin pattern that is typical of differentiating erythroblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Basophilic erythroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basophilic erythroblast is the first stage of erythropoiesis that is easily identifiable. The cytoplasm is intensely basophilic due to the presence of ribosomal RNA. The large nucleus typically possesses a “checker-board” chromatin pattern that is typical of differentiating erythroblasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Polychromatophilic erythroblast",
+      "explicacao_original": "The polychromatophilic erythroblast is smaller than the basophilic erythroblast and possesses a grayish-stained cytoplasm, due to the recent synthesis of hemoglobin. A “checker-board” chromatin pattern is still apparent.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Polychromatophilic erythroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The polychromatophilic erythroblast is smaller than the basophilic erythroblast and possesses a grayish-stained cytoplasm, due to the recent synthesis of hemoglobin. A “checker-board” chromatin pattern is still apparent.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Orthochromatophilic erythroblast",
+      "explicacao_original": "The orthochromatophilic erythroblast represents the smallest stage. This cell possesses eosinophilic cytoplasm due to the loss of ribosomal RNA and the additional accumulation of hemoglobin. The nucleus is small, round and very heterochromatic.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Orthochromatophilic erythroblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The orthochromatophilic erythroblast represents the smallest stage. This cell possesses eosinophilic cytoplasm due to the loss of ribosomal RNA and the additional accumulation of hemoglobin. The nucleus is small, round and very heterochromatic.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Reticulocyte",
+      "explicacao_original": "The orthochromatophilic erythroblast extrudes its nucleus to become a reticulocyte; so called because of the reticular network of clumped polyribosomes. Its biconcave shape causes the thicker peripheral cytoplasm to stain more intensely than the attenuated central region. This nearly mature stage enters the circulation, accounting for about 1% of circulating red cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-5-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Reticulocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The orthochromatophilic erythroblast extrudes its nucleus to become a reticulocyte; so called because of the reticular network of clumped polyribosomes. Its biconcave shape causes the thicker peripheral cytoplasm to stain more intensely than the attenuated central region. This nearly mature stage enters the circulation, accounting for about 1% of circulating red cells.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Erythrocyte",
+      "explicacao_original": "After release, the reticulocyte loses its few remaining cytoplasmic organelles to become a mature erythrocyte.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-6-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Erythrocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: After release, the reticulocyte loses its few remaining cytoplasmic organelles to become a mature erythrocyte.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Myeloblast",
+      "explicacao_original": "Hemopoietic stem cells also give rise to granulocytes, a process called granulopoiesis. The initial cell in this series is the myeloblast which differentiates in a series of stages into mature granulocytes. During this process cells become smaller, specific and nonspecific cytoplasmic granules increase, and the nucleus lobulates and becomes more heterochromatic.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-7-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Myeloblast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Hemopoietic stem cells also give rise to granulocytes, a process called granulopoiesis. The initial cell in this series is the myeloblast which differentiates in a series of stages into mature granulocytes. During this process cells become smaller, specific and nonspecific cytoplasmic granules increase, and the nucleus lobulates and becomes more heterochromatic.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Promyelocyte",
+      "explicacao_original": "Promyeloblasts are the earliest, easily identifiable stage of granulopoiesis. Promyelocytes are characterized by large, euchromatic nuclei, prominent nucleoli and basophilic cytoplasm containing nonspecific, azurophilic granules (lysosomes).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-8-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Promyelocyte' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Promyeloblasts are the earliest, easily identifiable stage of granulopoiesis. Promyelocytes are characterized by large, euchromatic nuclei, prominent nucleoli and basophilic cytoplasm containing nonspecific, azurophilic granules (lysosomes).. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Myelocytes",
+      "explicacao_original": "Specific granules first appear in the myelocytic stage of neutrophils, eosinophils and basophils. Thus, the cytoplasm of these cells contains both this new granule type as well as the azurophilic granules synthesized in the previous stage. The differential staining properties of these specific granules are used to distinguish among the types of mature granulocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-9-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Myelocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Specific granules first appear in the myelocytic stage of neutrophils, eosinophils and basophils. Thus, the cytoplasm of these cells contains both this new granule type as well as the azurophilic granules synthesized in the previous stage. The differential staining properties of these specific granules are used to distinguish among the types of mature granulocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Azurophilic and specific granules",
+      "explicacao_original": "Azurophilic granules, lysosomes, are a nonspecific, generic type of granule that is present in all granulocytes, monocytes and platelets; whereas, specific granules are unique to a single cell line. Thus, neutrophilic myelocytes possess specific granules that are only present in neutrophils. Eosinophils and basophils also have their own unique specific granules. Azurophilic granules are only produced by promyelocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Hemo-6-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-10-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Azurophilic and specific granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Azurophilic granules, lysosomes, are a nonspecific, generic type of granule that is present in all granulocytes, monocytes and platelets; whereas, specific granules are unique to a single cell line. Thus, neutrophilic myelocytes possess specific granules that are only present in neutrophils. Eosinophils and basophils also have their own unique specific granules. Azurophilic granules are only produced by promyelocytes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Metamyelocytes",
+      "explicacao_original": "Beginning with the metamyelocyte stage of neutrophils, eosinophils and basophils, the morphological events allowing the identification and staging of granulocytes occur in the nucleus. Nuclear indentation first appears in metamyelocytes. Whether metamyelocytes are neutrophilic, eosinophilic or basophilic depends on the type of specific granule present in the cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-11-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-11-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Metamyelocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Beginning with the metamyelocyte stage of neutrophils, eosinophils and basophils, the morphological events allowing the identification and staging of granulocytes occur in the nucleus. Nuclear indentation first appears in metamyelocytes. Whether metamyelocytes are neutrophilic, eosinophilic or basophilic depends on the type of specific granule present in the cytoplasm.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Band cells",
+      "explicacao_original": "In the band stage, cells display a nuclear indentation that creates a horseshoe-shaped or band-shaped nucleus. Morphological changes in the cytoplasm are subtle. The band cell stage is most apparent in the neutrophil cell line and rarely, if ever, seen in the eosinophil and basophil lines.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-12-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-12-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Band cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the band stage, cells display a nuclear indentation that creates a horseshoe-shaped or band-shaped nucleus. Morphological changes in the cytoplasm are subtle. The band cell stage is most apparent in the neutrophil cell line and rarely, if ever, seen in the eosinophil and basophil lines.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Mature granulocytes",
+      "explicacao_original": "Mature neutrophils, eosinophils and basophils are characterized by lobulation of the nucleus. Specific granules unique to each cell type are prominent.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/01/Or.CV_.Hemo-6-13-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Hemo-6-13-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Hemo_.-6B.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/Or.CV_.Hemo_.-6B.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Hemopoiesis'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Hemo_.-6B.jpg'. Destaca a estrutura ou conceito 'Mature granulocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Mature neutrophils, eosinophils and basophils are characterized by lobulation of the nucleus. Specific granules unique to each cell type are prominent.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Hemopoiesis > Hemopoiesis 6. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/hemopoiesis/hemopoiesis-6/, acesso em 2026-08-07."
+    }
+  ]
+}

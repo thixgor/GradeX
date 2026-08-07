@@ -1,0 +1,114 @@
+{
+  "id": 13735,
+  "titulo": "Vestibule",
+  "titulo_wordpress": "Vestibule 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Vestibule",
+    "Vestibule 2"
+  ],
+  "descricao_original": "This vestibule, with associated semicircular canals and cochlea, is from a non-human source. Within the vestibule are the utricle and the saccule, portions of the membranous labyrinth. Vestibular functions, giving a sense of body position, are provided by receptors in the utricle, saccule, and semicircular ducts. The vestibular portion of cranial nerve VIII innervates these receptors. 30x",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "arquivo": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Vestibule', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Descricao original da pagina: This vestibule, with associated semicircular canals and cochlea, is from a non-human source. Within the vestibule are the utricle and the saccule, portions of the membranous labyrinth. Vestibular functions, giving a sense of body position, are provided by receptors in the utricle, saccule, and semicircular ducts. The vestibular portion of cranial nerve VIII innervates these receptors. 30x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Plane of section",
+      "explicacao_original": "This vestibule, with associated semicircular canals, is from a non-human source. Within the vestibule are the utricle and the saccule, portions of the membranous labyrinth. Vestibular functions, giving a sense of body position, are provided by receptors in the utricle, saccule, and semicircular ducts. The vestibular portion of cranial nerve VIII innervates these receptors. 30x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.02.P01.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P01.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Plane of section' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This vestibule, with associated semicircular canals, is from a non-human source. Within the vestibule are the utricle and the saccule, portions of the membranous labyrinth. Vestibular functions, giving a sense of body position, are provided by receptors in the utricle, saccule, and semicircular ducts. The vestibular portion of cranial nerve VIII innervates these receptors. 30x. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Temporal bone",
+      "explicacao_original": "The petrous portion of the temporal bone outlines the spaces of the inner ear that form the osseous labyrinth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.V.02.P02.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P02.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Temporal bone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The petrous portion of the temporal bone outlines the spaces of the inner ear that form the osseous labyrinth.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The vestibule is the large perilymph-filled space of the osseous labyrinth. The vestibule contains two components of the membranous labyrinth, the utricle and the saccule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02.P03.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P03.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The vestibule is the large perilymph-filled space of the osseous labyrinth. The vestibule contains two components of the membranous labyrinth, the utricle and the saccule.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Utricle and saccule",
+      "explicacao_original": "The utricle (blue arrow and outline) is the larger of the two membranous structures in the vestibule. The smaller portion of the membranous labyrinth is the saccule (black arrows). Each structure possesses a macula, a thickening in its floor that is a neuroepithelial receptor serving vestibular functions.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Utricle and saccule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The utricle (blue arrow and outline) is the larger of the two membranous structures in the vestibule. The smaller portion of the membranous labyrinth is the saccule (black arrows). Each structure possesses a macula, a thickening in its floor that is a neuroepithelial receptor serving vestibular functions.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Maculae",
+      "explicacao_original": "Each macula (black arrows) contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the top of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Maculae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Each macula (black arrows) contains hair cells that possess stereocilia and a cilium, embedded in a gelatinous layer. Otoliths are suspended at the top of the gel. Changes in gravity and linear motion displace the otoliths, which deflect the stereocilia and cilium, thereby initiating an impulse in CN VIII.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Semicircular canals",
+      "explicacao_original": "Portions of the three semicircular canals, components of the osseous labyrinth, indicate their ring shapes and their attachments to the vestibule. The attachment of one tube is shown with its enlargement, the ampulla (blue arrows). A section of a second canal (black arrows) is visible, and the third canal (green arrows) is shown just at its attachment with the vestibule.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/O.E.IE_.V.02.P06new.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P06new.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Semicircular canals' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Portions of the three semicircular canals, components of the osseous labyrinth, indicate their ring shapes and their attachments to the vestibule. The attachment of one tube is shown with its enlargement, the ampulla (blue arrows). A section of a second canal (black arrows) is visible, and the third canal (green arrows) is shown just at its attachment with the vestibule.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Semicircular ducts",
+      "explicacao_original": "Semicircular ducts (black arrows), are portions of the membranous labyrinth that are suspended in each semicircular canal and that are attached to the utricle. An enlargement at one attachment of each duct forms the ampulla (blue arrow and line). The crista ampullaris (red arrow) is the receptor located in each ampulla.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02.P07new.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P07new.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Semicircular ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Semicircular ducts (black arrows), are portions of the membranous labyrinth that are suspended in each semicircular canal and that are attached to the utricle. An enlargement at one attachment of each duct forms the ampulla (blue arrow and line). The crista ampullaris (red arrow) is the receptor located in each ampulla.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The cochlea (blue outlines), a portion of the osseous labyrinth, is attached to the vestibular portion of the inner ear. The cochlear duct (black arrows and outlines), a portion of the membranous labyrinth, divides the cochlea into thirds and houses the organ of Corti, the receptor for hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02.P08new.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P08new.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea (blue outlines), a portion of the osseous labyrinth, is attached to the vestibular portion of the inner ear. The cochlear duct (black arrows and outlines), a portion of the membranous labyrinth, divides the cochlea into thirds and houses the organ of Corti, the receptor for hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Middle ear and brain",
+      "explicacao_original": "The cavity of the middle ear is indicated by the “X.” A section of brain is also visible (Y).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02.P09new.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.V.02.P09new.png",
+      "imagem_base": "imagens/base/O.E.IE_.V.02-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/07/O.E.IE_.V.02-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Vestibule'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.V.02-1.jpg'. Destaca a estrutura ou conceito 'Middle ear and brain' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cavity of the middle ear is indicated by the “X.” A section of brain is also visible (Y).. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Vestibule > Vestibule 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/vestibule/vestibule-2/, acesso em 2026-08-07."
+    }
+  ]
+}

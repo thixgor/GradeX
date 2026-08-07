@@ -1,0 +1,53 @@
+{
+  "id": 11823,
+  "titulo": "Lumen",
+  "titulo_wordpress": "Lumen 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Lumen",
+    "Lumen 1"
+  ],
+  "descricao_original": "A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/lumen/lumen-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Lum-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lumen', no setor Órgãos e Sistemas > Conceitos Gerais > Lumen > Lumen 1. Descricao original da pagina: A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/lumen/lumen-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Lumen of trachea",
+      "explicacao_original": "A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Lum-1-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Lum-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lumen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Lum-1.jpg'. Destaca a estrutura ou conceito 'Lumen of trachea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Lumen > Lumen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/lumen/lumen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lumen of esophagus",
+      "explicacao_original": "A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Lum-1-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Lum-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lumen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Lum-1.jpg'. Destaca a estrutura ou conceito 'Lumen of esophagus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Lumen > Lumen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/lumen/lumen-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lumen of small intestine",
+      "explicacao_original": "A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Lum-1-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Lum-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/Or.Concepts.Lum-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lumen'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Lum-1.jpg'. Destaca a estrutura ou conceito 'Lumen of small intestine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A lumen is the cavity or channel within a hollow organ. A lumen may have a smooth periphery or may be undulating or infolded, depending on the configuration of the wall of the organ to which it belongs. 4x, 10x. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Lumen > Lumen 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/lumen/lumen-1/, acesso em 2026-08-07."
+    }
+  ]
+}

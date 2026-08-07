@@ -1,0 +1,114 @@
+{
+  "id": 14376,
+  "titulo": "Audition",
+  "titulo_wordpress": "Cochlea 10",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 10"
+  ],
+  "descricao_original": "Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "arquivo": "imagens/base/O.E.O.10.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Audition', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Descricao original da pagina: Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tympanic membrane",
+      "explicacao_original": "Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P01.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P01.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Tympanic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Auditory ossicles",
+      "explicacao_original": "Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P02.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P02.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Auditory ossicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Oval window",
+      "explicacao_original": "Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P03.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P03.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Oval window' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Vestibule",
+      "explicacao_original": "Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P04.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P04.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Sound waves impinge on the tympanic membrane and are transmitted across the auditory ossicles. Movement of the footplate of the stapes in the oval window produces pressure changes in the perilymph of the vestibular portion of the osseous labyrinth. These pressure changes continue into the scala vestibuli, causing deformation of the vestibular and basilar membranes.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Scala vestibuli",
+      "explicacao_original": "Pressure waves move from the vestibule into the perilymph of scala vestibuli, deflecting the vestibular membrane, the endolymph of the cochlear duct and the basilar membrane. Deflection of the basilar membrane causes a shearing action between the hair cells in the organ of Corti and the tectorial membrane, initiating a neural response.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P05.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P05.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Scala vestibuli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Pressure waves move from the vestibule into the perilymph of scala vestibuli, deflecting the vestibular membrane, the endolymph of the cochlear duct and the basilar membrane. Deflection of the basilar membrane causes a shearing action between the hair cells in the organ of Corti and the tectorial membrane, initiating a neural response.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Basilar membrane",
+      "explicacao_original": "The basilar membrane, which forms the floor of the cochlear duct, is narrower at the base of the cochlea and wider at its apex. Maximal vibration, therefore, occurs at particular regions of the basilar membrane depending on sound wave frequency, i.e., the basilar membrane is tuned to particular frequencies, high at the cochlear base, low at its apex.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P06.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P06.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Basilar membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The basilar membrane, which forms the floor of the cochlear duct, is narrower at the base of the cochlea and wider at its apex. Maximal vibration, therefore, occurs at particular regions of the basilar membrane depending on sound wave frequency, i.e., the basilar membrane is tuned to particular frequencies, high at the cochlear base, low at its apex.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Scala tympani",
+      "explicacao_original": "The pressure continues through the scala tympani to the round window, which bulges into the middle ear to cushion the pressure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P07.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P07.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Scala tympani' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pressure continues through the scala tympani to the round window, which bulges into the middle ear to cushion the pressure.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Round window",
+      "explicacao_original": "The pressure continues through the scala tympani to the round window, which bulges into the middle ear to cushion the pressure.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P08.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P08.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Round window' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pressure continues through the scala tympani to the round window, which bulges into the middle ear to cushion the pressure.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Helicotrema",
+      "explicacao_original": "The helicotrema is an opening at the apex of the cochlea where the scala vestibulli and communicates with the scala tympani.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.P09.png",
+      "arquivo": "imagens/marcadores/O.E.O.10.P09.png",
+      "imagem_base": "imagens/base/O.E.O.10.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.O.10.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Audition'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.O.10.jpg'. Destaca a estrutura ou conceito 'Helicotrema' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The helicotrema is an opening at the apex of the cochlea where the scala vestibulli and communicates with the scala tympani.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 10. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-10/, acesso em 2026-08-07."
+    }
+  ]
+}

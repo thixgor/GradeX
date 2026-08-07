@@ -1,0 +1,53 @@
+{
+  "id": 6112,
+  "titulo": "Stratum spinosum: Langerhans cell",
+  "titulo_wordpress": "Epidermis 14",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 14"
+  ],
+  "descricao_original": "Langerhans cells are migratory macrophages that are involved in skin immunosurveillance, antimicrobial immunity, and the induction phase of contact hypersensitivity. They have an irregular nucleus, a clear cytoplasm and numerous tendril-like dendritic processes. After phagocytosing antigens, Langerhans cells migrate out of the epidermis, eventually reaching lymph nodes to initiate an immune response. Langerhans cells are most commonly seen in the stratum spinosum. 15,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-14/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-13A.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-13A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum spinosum: Langerhans cell', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 14. Descricao original da pagina: Langerhans cells are migratory macrophages that are involved in skin immunosurveillance, antimicrobial immunity, and the induction phase of contact hypersensitivity. They have an irregular nucleus, a clear cytoplasm and numerous tendril-like dendritic processes. After phagocytosing antigens, Langerhans cells migrate out of the epidermis, eventually reaching lymph nodes to initiate an immune response. Langerhans cells are most commonly seen in the stratum spinosum. 15,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Langerhans cell",
+      "explicacao_original": "Langerhans cells are migratory macrophages that are involved in skin immunosurveillance, antimicrobial immunity, and the induction phase of contact hypersensitivity. They have an irregular nucleus, a clear cytoplasm and numerous tendril-like dendritic processes. After phagocytosing antigens, Langerhans cells migrate out of the epidermis, eventually reaching lymph nodes to initiate an immune response. Langerhans cells are most commonly seen in the stratum spinosum. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-13A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-13A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum: Langerhans cell'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-13A.jpg'. Destaca a estrutura ou conceito 'Langerhans cell' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Langerhans cells are migratory macrophages that are involved in skin immunosurveillance, antimicrobial immunity, and the induction phase of contact hypersensitivity. They have an irregular nucleus, a clear cytoplasm and numerous tendril-like dendritic processes. After phagocytosing antigens, Langerhans cells migrate out of the epidermis, eventually reaching lymph nodes to initiate an immune response. Langerhans cells are most commonly seen in the stratum spinosum. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dendritic processes",
+      "explicacao_original": "Langerhans cells are migratory macrophages that are involved in skin immunosurveillance, antimicrobial immunity, and the induction phase of contact hypersensitivity. They have an irregular nucleus, a clear cytoplasm and numerous tendril-like dendritic processes. After phagocytosing antigens, Langerhans cells migrate out of the epidermis, eventually reaching lymph nodes to initiate an immune response. Langerhans cells are most commonly seen in the stratum spinosum. 15,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-13A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-13A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum: Langerhans cell'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-13A.jpg'. Destaca a estrutura ou conceito 'Dendritic processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Langerhans cells are migratory macrophages that are involved in skin immunosurveillance, antimicrobial immunity, and the induction phase of contact hypersensitivity. They have an irregular nucleus, a clear cytoplasm and numerous tendril-like dendritic processes. After phagocytosing antigens, Langerhans cells migrate out of the epidermis, eventually reaching lymph nodes to initiate an immune response. Langerhans cells are most commonly seen in the stratum spinosum. 15,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nucleus",
+      "explicacao_original": "The irregular, indented nucleus reflects the monocyte/macrophage lineage of Langerhans cells.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.Epi-13A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-13A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-13A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-13A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum spinosum: Langerhans cell'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-13A.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The irregular, indented nucleus reflects the monocyte/macrophage lineage of Langerhans cells.. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 14. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-14/, acesso em 2026-08-07."
+    }
+  ]
+}

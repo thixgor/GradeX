@@ -1,0 +1,66 @@
+{
+  "id": 11608,
+  "titulo": "Regressing cartilage",
+  "titulo_wordpress": "Hyaline 10",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Hyaline",
+    "Hyaline 10"
+  ],
+  "descricao_original": "Cartilage undergoes regressive changes in response to physiological alterations in the cartilage matrix. These regressive changes occur normally during endochondral bone formation and in aging cartilage. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-10/",
+  "creditos_identificados": [
+    "Image source: This image was taken of slide from the University of California, San Francisco slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A.jpg",
+      "arquivo": "imagens/base/T.C.C.H.10A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Regressing cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 10. Descricao original da pagina: Cartilage undergoes regressive changes in response to physiological alterations in the cartilage matrix. These regressive changes occur normally during endochondral bone formation and in aging cartilage. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-10/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Hypertrophy",
+      "explicacao_original": "Degenerating cartilage cells enlarge (hypertrophy), mature, and secrete alkaline phosphatase, which facilitates calcification of the matrix. A calcified matrix prohibits diffusion of nutrients, so chondrocytes die, leaving empty lacunae surrounded by a calcified cartilage matrix. These regressive stages occur in the aging process as well as in the epiphyseal plates of growing long bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A-1-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.10A-1-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Regressing cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.10A.jpg'. Destaca a estrutura ou conceito 'Hypertrophy' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Degenerating cartilage cells enlarge (hypertrophy), mature, and secrete alkaline phosphatase, which facilitates calcification of the matrix. A calcified matrix prohibits diffusion of nutrients, so chondrocytes die, leaving empty lacunae surrounded by a calcified cartilage matrix. These regressive stages occur in the aging process as well as in the epiphyseal plates of growing long bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Calcified cartilage matrix",
+      "explicacao_original": "Degenerating cartilage cells enlarge (hypertrophy), mature, and secrete alkaline phosphatase, which facilitates calcification of the matrix. A calcified matrix prohibits diffusion of nutrients, so chondrocytes die, leaving empty lacunae surrounded by a calcified cartilage matrix. These regressive stages occur in the aging process as well as in the epiphyseal plates of growing long bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A-2-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.10A-2-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Regressing cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.10A.jpg'. Destaca a estrutura ou conceito 'Calcified cartilage matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Degenerating cartilage cells enlarge (hypertrophy), mature, and secrete alkaline phosphatase, which facilitates calcification of the matrix. A calcified matrix prohibits diffusion of nutrients, so chondrocytes die, leaving empty lacunae surrounded by a calcified cartilage matrix. These regressive stages occur in the aging process as well as in the epiphyseal plates of growing long bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Empty lacunae",
+      "explicacao_original": "Degenerating cartilage cells enlarge (hypertrophy), mature, and secrete alkaline phosphatase, which facilitates calcification of the matrix. A calcified matrix prohibits diffusion of nutrients, so chondrocytes die, leaving empty lacunae surrounded by a calcified cartilage matrix. These regressive stages occur in the aging process as well as in the epiphyseal plates of growing long bones.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A-3-ping.png",
+      "arquivo": "imagens/marcadores/T.C.C.H.10A-3-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Regressing cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.10A.jpg'. Destaca a estrutura ou conceito 'Empty lacunae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Degenerating cartilage cells enlarge (hypertrophy), mature, and secrete alkaline phosphatase, which facilitates calcification of the matrix. A calcified matrix prohibits diffusion of nutrients, so chondrocytes die, leaving empty lacunae surrounded by a calcified cartilage matrix. These regressive stages occur in the aging process as well as in the epiphyseal plates of growing long bones.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-10/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of slide from the University of California, San Francisco slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/UCSF-source-ping.png",
+      "arquivo": "imagens/marcadores/UCSF-source-ping.png",
+      "imagem_base": "imagens/base/T.C.C.H.10A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/T.C.C.H.10A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Regressing cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.C.H.10A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of slide from the University of California, San Francisco slide collection.. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Hyaline > Hyaline 10. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/hyaline/hyaline-10/, acesso em 2026-08-07."
+    }
+  ]
+}

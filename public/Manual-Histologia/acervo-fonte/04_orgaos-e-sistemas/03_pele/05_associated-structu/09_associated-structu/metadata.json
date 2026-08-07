@@ -1,0 +1,123 @@
+{
+  "id": 6170,
+  "titulo": "Fingernail",
+  "titulo_wordpress": "Associated Structures 9",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Associated Structures",
+    "Associated Structures 9"
+  ],
+  "descricao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "arquivo": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Fingernail', no setor Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Descricao original da pagina: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Area shown in lower image",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-9-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Area shown in lower image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Nail plate",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9-2A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-2A-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Nail plate' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Nail root",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9-3A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-3A-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Nail root' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Nail bed",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9-4A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-4A-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Nail bed' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Nail matrix",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9-5A-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-5A-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Nail matrix' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Eponychium",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-9-6-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-6-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Eponychium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Hyponychium",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-9-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-7-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Hyponychium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Epidermis",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-9-8-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-8-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Epidermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Dermis",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-9-9-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-9-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Dermis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Bone (phalange)",
+      "explicacao_original": "The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-9-10-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-9-10-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.AS_.-9A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/03/Or.Sk_.AS_.-9A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Fingernail'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.AS_.-9A.jpg'. Destaca a estrutura ou conceito 'Bone (phalange)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The fingernail (nail plate) corresponds to stratum corneum and rests on a nail bed of strata basale and spinosum. The nail root lies in an epidermal fold, whose stratum corneum forms the eponychium (cuticle). Beneath the root is the nail matrix, the germinative portion of the nail. The hyponychium, a thickened epidermis, secures the nail at the fingertip. Upper 4x; Lower 20x. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 9. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-9/, acesso em 2026-08-07."
+    }
+  ]
+}

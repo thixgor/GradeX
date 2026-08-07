@@ -1,0 +1,63 @@
+{
+  "id": 6156,
+  "titulo": "Eccrine sweat gland",
+  "titulo_wordpress": "Associated Structures 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Associated Structures",
+    "Associated Structures 2"
+  ],
+  "descricao_original": "The duct of the gland stains more intensely than the secretory unit and is composed of a stratified cuboidal epithelium. The secretory unit is a simple cuboidal or columnar epithelium, depending on the secretory activity of the gland. 200x, 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.As_.-2.jpg",
+      "arquivo": "imagens/base/Or.Sk_.As_.-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Eccrine sweat gland', no setor Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 2. Descricao original da pagina: The duct of the gland stains more intensely than the secretory unit and is composed of a stratified cuboidal epithelium. The secretory unit is a simple cuboidal or columnar epithelium, depending on the secretory activity of the gland. 200x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Ducts",
+      "explicacao_original": "The upper portion of the left image contains two or three ducts which meander through the dermis, thus producing isolated profiles in section. Other portions of the darkly staining ducts can be seen coiled within the secretory units.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.As_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.As_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eccrine sweat gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.As_.-2.jpg'. Destaca a estrutura ou conceito 'Ducts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The upper portion of the left image contains two or three ducts which meander through the dermis, thus producing isolated profiles in section. Other portions of the darkly staining ducts can be seen coiled within the secretory units.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Secretory units",
+      "explicacao_original": "The secretory portions of glands are also visible, coiled with the beginnings of the ducts. The secretory tubules stain paler than do the ducts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.As_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.As_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eccrine sweat gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.As_.-2.jpg'. Destaca a estrutura ou conceito 'Secretory units' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The secretory portions of glands are also visible, coiled with the beginnings of the ducts. The secretory tubules stain paler than do the ducts.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Blood vessels",
+      "explicacao_original": "Blood vessels and nerves (not shown) are also present in the connective tissue and within the coils of the gland.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.As_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.As_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eccrine sweat gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.As_.-2.jpg'. Destaca a estrutura ou conceito 'Blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Blood vessels and nerves (not shown) are also present in the connective tissue and within the coils of the gland.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Area shown in next image",
+      "explicacao_original": "The next image is similar to that outlined by the rectangle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.Sk_.AS_.-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.AS_.-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.As_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.As_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Eccrine sweat gland'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.As_.-2.jpg'. Destaca a estrutura ou conceito 'Area shown in next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that outlined by the rectangle.. Contexto setorial: Órgãos e Sistemas > Pele > Associated Structures > Associated Structures 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/associated-structures/associated-structures-2/, acesso em 2026-08-07."
+    }
+  ]
+}

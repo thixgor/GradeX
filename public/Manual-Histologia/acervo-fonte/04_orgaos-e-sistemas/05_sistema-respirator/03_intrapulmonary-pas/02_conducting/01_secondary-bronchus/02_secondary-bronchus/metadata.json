@@ -1,0 +1,95 @@
+{
+  "id": 17896,
+  "titulo": "Bronchus",
+  "titulo_wordpress": "Secondary bronchus 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Respiratório",
+    "Intrapulmonary Passageways",
+    "Conducting",
+    "Secondary Bronchus",
+    "Secondary bronchus 3"
+  ],
+  "descricao_original": "A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "arquivo": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bronchus', no setor Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Descricao original da pagina: A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-1-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-1-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-2-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-2-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Smooth muscle",
+      "explicacao_original": "A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-3-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-3-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Smooth muscle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Mixed glands",
+      "explicacao_original": "A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-4-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-4-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Mixed glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A higher magnification image shows the details of the bronchial wall. The mucosa consists of a pseudostratified columnar epithelium with cilia and goblet cells, a lamina propria rich in elastic fibers and a prominent circularly-arranged smooth muscle layer. The submucosa contains mixed, sero-mucous glands and larger bronchial blood vessels. Cartilage plates are present in the outer fibrocartilagenous layer. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cartilage plates",
+      "explicacao_original": "Cartilage plates, rather than cartilage rings, maintain patency in a secondary bronchus.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-5-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-5-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Cartilage plates' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cartilage plates, rather than cartilage rings, maintain patency in a secondary bronchus.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Bronchial blood vessels",
+      "explicacao_original": "Bronchial blood vessels lie within the wall of each bronchus, supplying the tissues of the wall.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-6-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-6-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Bronchial blood vessels' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Bronchial blood vessels lie within the wall of each bronchus, supplying the tissues of the wall.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveoli",
+      "explicacao_original": "Alveoli surrounding this secondary bronchus indicate that this passageway is intrapulmonary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03-7-NEW.png",
+      "arquivo": "imagens/marcadores/O.R.I.C.SB_.03-7-NEW.png",
+      "imagem_base": "imagens/base/O.R.I.C.SB_.03.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/04/O.R.I.C.SB_.03.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bronchus'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.I.C.SB_.03.jpg'. Destaca a estrutura ou conceito 'Alveoli' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveoli surrounding this secondary bronchus indicate that this passageway is intrapulmonary.. Contexto setorial: Órgãos e Sistemas > Sistema Respiratório > Intrapulmonary Passageways > Conducting > Secondary Bronchus > Secondary bronchus 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/respiratory/intrapulmonary-passageways/conducting/secondary-bronchus/secondary-bronchus-3/, acesso em 2026-08-07."
+    }
+  ]
+}

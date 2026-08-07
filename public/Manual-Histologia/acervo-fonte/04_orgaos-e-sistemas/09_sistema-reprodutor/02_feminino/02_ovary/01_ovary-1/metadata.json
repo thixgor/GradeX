@@ -1,0 +1,96 @@
+{
+  "id": 12318,
+  "titulo": "Ovary",
+  "titulo_wordpress": "Ovary 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Ovary",
+    "Ovary 1"
+  ],
+  "descricao_original": "Each ovary is both an exocrine (production of oocytes) and an endocrine (production of estrogen and progesterone) organ. The gland can be divided into an outer cortex and inner medulla. The exterior of the ovary is covered by a serosa with a simple cuboidal epithelium (mesothelium) overlying a band of dense connective tissue, the tunica albuginea. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/",
+  "creditos_identificados": [
+    "Image source: This image is taken of a slide in the University of Mississippi collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "arquivo": "imagens/base/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Ovary', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Descricao original da pagina: Each ovary is both an exocrine (production of oocytes) and an endocrine (production of estrogen and progesterone) organ. The gland can be divided into an outer cortex and inner medulla. The exterior of the ovary is covered by a serosa with a simple cuboidal epithelium (mesothelium) overlying a band of dense connective tissue, the tunica albuginea. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Serosa",
+      "explicacao_original": "The serosa (serous membrane or visceral peritoneum) covering the ovary possesses a simple cuboidal, rather than a simple squamous, epithelium. This epithelium is referred to as the germinal epithelium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-1A-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-1A-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The serosa (serous membrane or visceral peritoneum) covering the ovary possesses a simple cuboidal, rather than a simple squamous, epithelium. This epithelium is referred to as the germinal epithelium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Tunica albuginea",
+      "explicacao_original": "A tunica albuginea of dense connective tissue forms an outer shell beneath the serosa.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-2-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-2-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Tunica albuginea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A tunica albuginea of dense connective tissue forms an outer shell beneath the serosa.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cortex",
+      "explicacao_original": "The cortex forms the outer zone of the ovary. The cortex contains follicles, the corpus luteum, and the degenerating elements of these two structures, atretic follicles and corpora albicantia (sing. corpus albicans), respectively.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-3-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-3-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Cortex' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cortex forms the outer zone of the ovary. The cortex contains follicles, the corpus luteum, and the degenerating elements of these two structures, atretic follicles and corpora albicantia (sing. corpus albicans), respectively.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Medulla",
+      "explicacao_original": "The medulla occupies the center of the ovary and is composed of connective tissue containing blood vessels, lymphatic vessels, and nerves that supply the ovary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-4-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-4-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Medulla' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The medulla occupies the center of the ovary and is composed of connective tissue containing blood vessels, lymphatic vessels, and nerves that supply the ovary.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mesovarium",
+      "explicacao_original": "The ovary is suspended from the broad ligament of the uterus by the mesovarium, through which blood vessels enter and leave the ovary.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-5-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-5-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Mesovarium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The ovary is suspended from the broad ligament of the uterus by the mesovarium, through which blood vessels enter and leave the ovary.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Next image",
+      "explicacao_original": "The next image is similar to that indicated by the outline.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-6-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-6-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Next image' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The next image is similar to that indicated by the outline.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Image source",
+      "explicacao_original": "This image is taken of a slide in the University of Mississippi collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A-7-ping.png",
+      "arquivo": "imagens/marcadores/O.R.F.OV_.01A-7-ping.png",
+      "imagem_base": "imagens/base/O.R.F.OV_.01A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.OV_.01A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Ovary'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.OV_.01A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is taken of a slide in the University of Mississippi collection.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Ovary > Ovary 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/ovary/ovary-1/, acesso em 2026-08-07."
+    }
+  ]
+}

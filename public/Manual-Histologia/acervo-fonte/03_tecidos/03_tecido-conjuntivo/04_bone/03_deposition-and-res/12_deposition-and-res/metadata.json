@@ -1,0 +1,64 @@
+{
+  "id": 10338,
+  "titulo": "Bone: deposition",
+  "titulo_wordpress": "Deposition and Resorption 12",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 12"
+  ],
+  "descricao_original": "The leading tip of a bone remodeling unit, the resorption canal, erodes bone, forming a columnar channel. Further along this column, however, bone resorption ceases and osteoblasts begin to deposit new bone, filling in the resorption canal with an osteon. 400x, 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-12/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.jpg",
+      "arquivo": "imagens/base/T.C.B.D.12.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: deposition', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 12. Descricao original da pagina: The leading tip of a bone remodeling unit, the resorption canal, erodes bone, forming a columnar channel. Further along this column, however, bone resorption ceases and osteoblasts begin to deposit new bone, filling in the resorption canal with an osteon. 400x, 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-12/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Remodeling unit",
+      "explicacao_original": "This oblique section through a bone remodeling unit is located near the junction where resorption ceases and bone deposition begins. Here, resorption is occurring below the bar, while newly formed bone is being deposited around the remainder of the canal. Consequently, this canal is half resorption canal (bottom) and half forming Haversian canal (top).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.12.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.12.jpg'. Destaca a estrutura ou conceito 'Remodeling unit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This oblique section through a bone remodeling unit is located near the junction where resorption ceases and bone deposition begins. Here, resorption is occurring below the bar, while newly formed bone is being deposited around the remainder of the canal. Consequently, this canal is half resorption canal (bottom) and half forming Haversian canal (top).. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Forming osteon",
+      "explicacao_original": "The image on the left shows a canal rimmed with one-two lamellae of bone, a lining layer consisting entirely of osteoblasts, and a regular outline. Thus, it cannot be a resorption canal, but must be a forming osteon. This section, showing the centripetal deposition of lamellae, is located in the closing end of the bone remodeling unit, further from the eroding tip than the image on the right.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.12.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.12.jpg'. Destaca a estrutura ou conceito 'Forming osteon' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image on the left shows a canal rimmed with one-two lamellae of bone, a lining layer consisting entirely of osteoblasts, and a regular outline. Thus, it cannot be a resorption canal, but must be a forming osteon. This section, showing the centripetal deposition of lamellae, is located in the closing end of the bone remodeling unit, further from the eroding tip than the image on the right.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "In regions where bone is being deposited, the remodeling unit and forming osteon are lined by a single layer of osteoblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.12-blasts.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.12-blasts.png",
+      "imagem_base": "imagens/base/T.C.B.D.12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.12.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In regions where bone is being deposited, the remodeling unit and forming osteon are lined by a single layer of osteoblasts.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-12/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Osteoclast",
+      "explicacao_original": "An osteoclast is larger than an osteoblast and lies on a resorbing surface; therefore, although it is not seen in clear focus, this cell is most probably an osteoclast.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.P05.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.12.P05.png",
+      "imagem_base": "imagens/base/T.C.B.D.12.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/02/T.C.B.D.12.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: deposition'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.12.jpg'. Destaca a estrutura ou conceito 'Osteoclast' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: An osteoclast is larger than an osteoblast and lies on a resorbing surface; therefore, although it is not seen in clear focus, this cell is most probably an osteoclast.. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 12. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-12/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": 11853,
+  "titulo": "Stroma and parenchyma",
+  "titulo_wordpress": "Stroma and parenchyma 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Conceitos Gerais",
+    "Stroma and Parenchyma",
+    "Stroma and parenchyma 1"
+  ],
+  "descricao_original": "These images show parenchymal and stromal elements at higher magnification in the stomach and small intestine. 400x (stomach, H&E, left), 100x (small intestine, trichrome, right)",
+  "url_origem": "https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A.jpg",
+      "arquivo": "imagens/base/Or.Concepts.Stroma-2A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stroma and parenchyma', no setor Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 1. Descricao original da pagina: These images show parenchymal and stromal elements at higher magnification in the stomach and small intestine. 400x (stomach, H&E, left), 100x (small intestine, trichrome, right). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Parenchyma",
+      "explicacao_original": "In the mucosa of these two organs, the surface epithelium (black arrows) and glands (green arrows) form the parenchyma.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-2A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-2A.jpg'. Destaca a estrutura ou conceito 'Parenchyma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the mucosa of these two organs, the surface epithelium (black arrows) and glands (green arrows) form the parenchyma.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stroma",
+      "explicacao_original": "The stroma of an organ is composed of connective tissues both loose (red arrows) and dense (green arrows).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-2A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-2A.jpg'. Destaca a estrutura ou conceito 'Stroma' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stroma of an organ is composed of connective tissues both loose (red arrows) and dense (green arrows).. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Loose connective tissue",
+      "explicacao_original": "A loose connective tissue stroma is present beneath the surface epithelium and surrounding the glands. The gelatinous ground substance of this stroma provides good padding for the epithelium, supports the glands and allows for diffusion and cell migration. Delicate collagen fibers are the predominant fiber type in this stroma.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-2A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-2A.jpg'. Destaca a estrutura ou conceito 'Loose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A loose connective tissue stroma is present beneath the surface epithelium and surrounding the glands. The gelatinous ground substance of this stroma provides good padding for the epithelium, supports the glands and allows for diffusion and cell migration. Delicate collagen fibers are the predominant fiber type in this stroma.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dense connective tissue",
+      "explicacao_original": "The stroma also provides more robust structural support for organs wall. In these areas, thick collagen fibers of the dense connective tissue predominate. This section is stained by the trichrome method which demonstrates the stroma of an organ by labeling the connective tissue bluish green.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-2A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-2A.jpg'. Destaca a estrutura ou conceito 'Dense connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The stroma also provides more robust structural support for organs wall. In these areas, thick collagen fibers of the dense connective tissue predominate. This section is stained by the trichrome method which demonstrates the stroma of an organ by labeling the connective tissue bluish green.. Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lumen",
+      "explicacao_original": "These images show parenchymal and stromal elements at higher magnification in the stomach and small intestine. 400x (stomach, H&E, left), 100x (small intestine, trichrome, right)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Concepts.Stroma-2A-5-ping.png",
+      "imagem_base": "imagens/base/Or.Concepts.Stroma-2A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2023/09/Or.Concepts.Stroma-2A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stroma and parenchyma'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Concepts.Stroma-2A.jpg'. Destaca a estrutura ou conceito 'Lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images show parenchymal and stromal elements at higher magnification in the stomach and small intestine. 400x (stomach, H&E, left), 100x (small intestine, trichrome, right). Contexto setorial: Órgãos e Sistemas > Conceitos Gerais > Stroma and Parenchyma > Stroma and parenchyma 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/general-concepts/stroma-and-parenchyma/stroma-and-parenchyma-1/, acesso em 2026-08-07."
+    }
+  ]
+}

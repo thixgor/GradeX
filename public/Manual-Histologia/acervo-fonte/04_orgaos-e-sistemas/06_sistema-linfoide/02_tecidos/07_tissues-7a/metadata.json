@@ -1,0 +1,63 @@
+{
+  "id": 30489,
+  "titulo": "Secondary lymphoid nodule",
+  "titulo_wordpress": "Tissues 7A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 7A"
+  ],
+  "descricao_original": "These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-7a/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-7A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Secondary lymphoid nodule', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 7A. Descricao original da pagina: These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-7a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secondary nodules",
+      "explicacao_original": "These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-7A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-7A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-7A.jpg'. Destaca a estrutura ou conceito 'Secondary nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Germinal centers",
+      "explicacao_original": "These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-7A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-7A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-7A.jpg'. Destaca a estrutura ou conceito 'Germinal centers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Mantle",
+      "explicacao_original": "These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-7A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-7A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-7A.jpg'. Destaca a estrutura ou conceito 'Mantle' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These secondary nodules in a tonsil demonstrate well-developed germinal centers capped by distinct mantles of unstimulated B cells. The nodule, which also contains macrophages and antigen-presenting cells, is supported by a stroma of reticular connective tissue. Tonsils filter tissue fluid in the mucosae of the oral and pharyngeal cavities. Pharyngeal tonsil, 200x. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-7a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Epithelium",
+      "explicacao_original": "The pharyngeal tonsil or adenoid is located in the roof of the pharynx and is covered by a ciliated, pseudostratified columnar epithelium similar to that seen in the respiratory system.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-7A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-7A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-7A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Secondary lymphoid nodule'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-7A.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The pharyngeal tonsil or adenoid is located in the roof of the pharynx and is covered by a ciliated, pseudostratified columnar epithelium similar to that seen in the respiratory system.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 7A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-7a/, acesso em 2026-08-07."
+    }
+  ]
+}

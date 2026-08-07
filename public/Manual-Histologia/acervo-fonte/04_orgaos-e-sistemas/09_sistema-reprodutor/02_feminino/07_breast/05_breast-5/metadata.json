@@ -1,0 +1,94 @@
+{
+  "id": 13298,
+  "titulo": "Breast: pregnancy",
+  "titulo_wordpress": "Breast 5",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Breast",
+    "Breast 5"
+  ],
+  "descricao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "arquivo": "imagens/base/O.R.F.B.05.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Breast: pregnancy', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Descricao original da pagina: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Plasma cells",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P01.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Plasma cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Lymphocytes",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P02.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Lymphocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Active fibroblasts",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P03.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Active fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Inactive fibroblasts",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P04-1.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P04-1.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Inactive fibroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Mast cells",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P05.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Mast cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Adipose cells",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P06.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Adipose cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Collagen fibers",
+      "explicacao_original": "This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.P07.png",
+      "arquivo": "imagens/marcadores/O.R.F.B.05.P07.png",
+      "imagem_base": "imagens/base/O.R.F.B.05.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/03/O.R.F.B.05.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Breast: pregnancy'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.B.05.jpg'. Destaca a estrutura ou conceito 'Collagen fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This high magnification image of the connective tissue of the breast during pregnancy shows the accumulation of plasma cells, which secrete antibodies of the IgA class into the milk. These antibodies provide passive immunity to the newborn child. Other cells typical to connective tissue are also visible. 1000x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Breast > Breast 5. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/breast/breast-5/, acesso em 2026-08-07."
+    }
+  ]
+}

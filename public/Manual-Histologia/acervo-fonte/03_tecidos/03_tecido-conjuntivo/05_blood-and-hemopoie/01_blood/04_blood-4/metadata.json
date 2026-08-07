@@ -1,0 +1,64 @@
+{
+  "id": 6061,
+  "titulo": "Blood: Eosinophil",
+  "titulo_wordpress": "Blood 4",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Blood and Hemopoiesis",
+    "Blood",
+    "Blood 4"
+  ],
+  "descricao_original": "Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/20436-2/blood/blood-4/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-4.jpg",
+      "arquivo": "imagens/base/Or.CV_.Blood-4.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Blood: Eosinophil', no setor Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 4. Descricao original da pagina: Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-4/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-4-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-4-1-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood: Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-4.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Granules",
+      "explicacao_original": "The specific granules of eosinophils contain a number of enzymes and other proteins that moderate the effect of vasoactive agents in inflammation, effect the killing of helminthic parasites, and phagocytose antigen-antibody complexes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-4-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-4-2-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood: Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-4.jpg'. Destaca a estrutura ou conceito 'Granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The specific granules of eosinophils contain a number of enzymes and other proteins that moderate the effect of vasoactive agents in inflammation, effect the killing of helminthic parasites, and phagocytose antigen-antibody complexes.. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Red blood cells",
+      "explicacao_original": "Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-4-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-4-3-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood: Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-4.jpg'. Destaca a estrutura ou conceito 'Red blood cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-4/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Platelets",
+      "explicacao_original": "Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/08/Or.CV_.Blood-4-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.CV_.Blood-4-4-ping.png",
+      "imagem_base": "imagens/base/Or.CV_.Blood-4.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.CV_.Blood-4.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Blood: Eosinophil'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.CV_.Blood-4.jpg'. Destaca a estrutura ou conceito 'Platelets' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Eosinophils are granular leucocytes with heterochromatic, bilobed nuclei and bright eosinophilic granules that fill the cytoplasm. Like neutrophils, eosinophils function in tissues and readily exit the blood stream. Eosinophils play a role in allergic reactions and parasitic infections as well as phagocytosis. 1000x. Contexto setorial: Tecidos > Tecido Conjuntivo > Blood and Hemopoiesis > Blood > Blood 4. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/20436-2/blood/blood-4/, acesso em 2026-08-07."
+    }
+  ]
+}

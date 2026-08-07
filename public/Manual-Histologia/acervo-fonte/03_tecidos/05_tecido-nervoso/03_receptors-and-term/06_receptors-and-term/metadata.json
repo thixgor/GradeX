@@ -1,0 +1,93 @@
+{
+  "id": 3015,
+  "titulo": "Terminals",
+  "titulo_wordpress": "Receptors and terminals 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Nervoso",
+    "Receptors and Terminals",
+    "Receptors and terminals 6"
+  ],
+  "descricao_original": "This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x",
+  "url_origem": "https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "arquivo": "imagens/base/T.N.Rec-6.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Terminals', no setor Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Descricao original da pagina: This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Dendritic spine",
+      "explicacao_original": "This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-1-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Dendritic spine' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Terminal bouton",
+      "explicacao_original": "This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-2-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Terminal bouton' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Neurotransmitter vesicles",
+      "explicacao_original": "This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-3-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Neurotransmitter vesicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Post-synaptic density",
+      "explicacao_original": "This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-4-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Post-synaptic density' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Shaft of the dendrite",
+      "explicacao_original": "This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-5-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Shaft of the dendrite' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This electron micrograph shows the terminal bouton of a synapse terminating on a dendritic spine. Dendritic spines provide sites for excitatory input to the neuron. Note the transmitter vesicles and the well-developed post-synaptic density in the bouton. 25,000x. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Astrocyte processes",
+      "explicacao_original": "Astrocytic processes are frequently seen associated with synapses where they monitor neurotransmitter levels. Astrocyte processes can be distinguished by the presence of glycogen granules in their cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-6-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-6-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Astrocyte processes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Astrocytic processes are frequently seen associated with synapses where they monitor neurotransmitter levels. Astrocyte processes can be distinguished by the presence of glycogen granules in their cytoplasm.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Glycogen granules",
+      "explicacao_original": "Astrocytic processes are frequently seen associated with synapses where they monitor neurotransmitter levels. Astrocyte processes can be distinguished by the presence of glycogen granules in their cytoplasm.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6-7-ping.png",
+      "arquivo": "imagens/marcadores/T.N.Rec-6-7-ping.png",
+      "imagem_base": "imagens/base/T.N.Rec-6.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/05/T.N.Rec-6.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Terminals'. Deve ser sobreposta, sem redimensionamento independente, a 'T.N.Rec-6.jpg'. Destaca a estrutura ou conceito 'Glycogen granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Astrocytic processes are frequently seen associated with synapses where they monitor neurotransmitter levels. Astrocyte processes can be distinguished by the presence of glycogen granules in their cytoplasm.. Contexto setorial: Tecidos > Tecido Nervoso > Receptors and Terminals > Receptors and terminals 6. Origem: Digital Histology, https://digitalhistology.org/tissues/nervous/receptors-and-terminals/receptors-and-terminals-6/, acesso em 2026-08-07."
+    }
+  ]
+}

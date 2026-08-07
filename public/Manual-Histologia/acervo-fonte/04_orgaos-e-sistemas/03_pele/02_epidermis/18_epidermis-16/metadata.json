@@ -1,0 +1,83 @@
+{
+  "id": 6116,
+  "titulo": "Stratum granulosum",
+  "titulo_wordpress": "Epidermis 16",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Pele",
+    "Epidermis",
+    "Epidermis 16"
+  ],
+  "descricao_original": "Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x",
+  "url_origem": "https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "arquivo": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Stratum granulosum', no setor Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Descricao original da pagina: Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Nucleus",
+      "explicacao_original": "Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-15-4-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-15.jpg'. Destaca a estrutura ou conceito 'Nucleus' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Keratohyalin granules",
+      "explicacao_original": "Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-15-1-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-15.jpg'. Destaca a estrutura ou conceito 'Keratohyalin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Maturing keratohyalin granules",
+      "explicacao_original": "Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-15-2-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-15.jpg'. Destaca a estrutura ou conceito 'Maturing keratohyalin granules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Keratin filaments",
+      "explicacao_original": "Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-15-3-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-15.jpg'. Destaca a estrutura ou conceito 'Keratin filaments' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Stratum granulosum cells contain keratohyalin granules of varying sizes. The contents of these electron dense, non-membrane-enclosed granules aggregate tonofibrils into a tightly packed matrix. Additional components crosslink sub-plasmalemmal proteins producing a thickened, cornified cell envelope. The resulting non-living scales or squames form the stratum corneum. 10,000x. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Lamellar bodies",
+      "explicacao_original": "Lamellar bodies are formed in the upper layers of the stratum spinosum and contain lipids enriched in ceramides. Contents of the lamellar bodies are exocytosed into extracellular space as cells transition from the stratum granulosum into stratum corneum. These lipids act as a sealant that forms both a water and microbial barrier for the epidermis.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15-5-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-15-5-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-15.jpg'. Destaca a estrutura ou conceito 'Lamellar bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lamellar bodies are formed in the upper layers of the stratum spinosum and contain lipids enriched in ceramides. Contents of the lamellar bodies are exocytosed into extracellular space as cells transition from the stratum granulosum into stratum corneum. These lipids act as a sealant that forms both a water and microbial barrier for the epidermis.. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Desmosomes",
+      "explicacao_original": "Desmosomes persist into the stratum corneum but are eventually degraded as the scales are shed from the surface (desquamation).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15-7-ping.png",
+      "arquivo": "imagens/marcadores/Or.Sk_.Epi-15-7-ping.png",
+      "imagem_base": "imagens/base/Or.Sk_.Epi-15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Sk_.Epi-15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Stratum granulosum'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Sk_.Epi-15.jpg'. Destaca a estrutura ou conceito 'Desmosomes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Desmosomes persist into the stratum corneum but are eventually degraded as the scales are shed from the surface (desquamation).. Contexto setorial: Órgãos e Sistemas > Pele > Epidermis > Epidermis 16. Origem: Digital Histology, https://digitalhistology.org/organs-systems/skin/epidermis/epidermis-16/, acesso em 2026-08-07."
+    }
+  ]
+}

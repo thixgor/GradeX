@@ -1,0 +1,75 @@
+{
+  "id": 4350,
+  "titulo": "Unicellular gland",
+  "titulo_wordpress": "Unicellular 6",
+  "caminho_setorial": [
+    "Tecidos",
+    "Epitélio",
+    "Glandular",
+    "Exocrine",
+    "Unicellular",
+    "Unicellular 6"
+  ],
+  "descricao_original": "Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x",
+  "url_origem": "https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "arquivo": "imagens/base/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Unicellular gland', no setor Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 6. Descricao original da pagina: Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Secretory cells",
+      "explicacao_original": "Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-6-1-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-6-1.jpg'. Destaca a estrutura ou conceito 'Secretory cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Simple columnar epithelium",
+      "explicacao_original": "Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-2-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-6-2-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-6-1.jpg'. Destaca a estrutura ou conceito 'Simple columnar epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cilia",
+      "explicacao_original": "Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-3-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-6-3-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-6-1.jpg'. Destaca a estrutura ou conceito 'Cilia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Basal bodies",
+      "explicacao_original": "Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-4-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-6-4-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-6-1.jpg'. Destaca a estrutura ou conceito 'Basal bodies' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Loose connective tissue",
+      "explicacao_original": "Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-5-ping.png",
+      "arquivo": "imagens/marcadores/T.E.Gl_.Ex_.Uni-6-5-ping.png",
+      "imagem_base": "imagens/base/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2017/06/T.E.Gl_.Ex_.Uni-6-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Unicellular gland'. Deve ser sobreposta, sem redimensionamento independente, a 'T.E.Gl_.Ex_.Uni-6-1.jpg'. Destaca a estrutura ou conceito 'Loose connective tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Not all unicellular glands are goblet cells. This simple columnar epithelium lining the oviduct demonstrates unicellular glands among the ciliated cells. These unicellular glands, called peg cells in the oviduct, provide nutrition for the oocyte and sperm. The oviduct is the site of fertilization. Oviduct 1000x. Contexto setorial: Tecidos > Epitélio > Glandular > Exocrine > Unicellular > Unicellular 6. Origem: Digital Histology, https://digitalhistology.org/tissues/epithelium/glandular/exocrine/unicellular/unicellular-6/, acesso em 2026-08-07."
+    }
+  ]
+}

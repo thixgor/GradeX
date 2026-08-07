@@ -1,0 +1,65 @@
+{
+  "id": 6771,
+  "titulo": "Tooth",
+  "titulo_wordpress": "Tooth 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "General",
+    "Tooth 2"
+  ],
+  "descricao_original": "This ground tooth preparation of an incisor demonstrates the relationship of the mineralized tissues of the tooth to each other and to the pulp in the pulp chamber. 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 2. Descricao original da pagina: This ground tooth preparation of an incisor demonstrates the relationship of the mineralized tissues of the tooth to each other and to the pulp in the pulp chamber. 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Enamel",
+      "explicacao_original": "Enamel, the hardest calcified tissue in the body, covers the surface of the crown of the tooth. Enamel is formed before tooth eruption and is not replenished after the tooth erupts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-2.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel, the hardest calcified tissue in the body, covers the surface of the crown of the tooth. Enamel is formed before tooth eruption and is not replenished after the tooth erupts.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin, another mineralized tissue, provides the bulk and general form of the tooth. Dentin underlies both the enamel and the cementum and is formed continuously throughout life.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-2.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin, another mineralized tissue, provides the bulk and general form of the tooth. Dentin underlies both the enamel and the cementum and is formed continuously throughout life.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cementum",
+      "explicacao_original": "Cementum, a much thinner layer than either the enamel or dentin, is the mineralized dental tissue covering the anatomic roots of the tooth. Cementum is formed continuously throughout life, passively pushing the tooth toward the oral cavity as it does so.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-2.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementum, a much thinner layer than either the enamel or dentin, is the mineralized dental tissue covering the anatomic roots of the tooth. Cementum is formed continuously throughout life, passively pushing the tooth toward the oral cavity as it does so.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Pulp chamber",
+      "explicacao_original": "In the living tooth the pulp chamber is filled with connective tissue, blood vessels, nerves and lymphatics; odontoblasts are located in the pulp chamber immediately adjacent to the dentin, into which their processes extend. The volume of the pulp cavity decreases throughout life with the continued deposition of dentin by odontoblasts.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-2-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-2-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-2.jpg'. Destaca a estrutura ou conceito 'Pulp chamber' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the living tooth the pulp chamber is filled with connective tissue, blood vessels, nerves and lymphatics; odontoblasts are located in the pulp chamber immediately adjacent to the dentin, into which their processes extend. The volume of the pulp cavity decreases throughout life with the continued deposition of dentin by odontoblasts.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-2/, acesso em 2026-08-07."
+    }
+  ]
+}

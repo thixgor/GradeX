@@ -1,0 +1,65 @@
+{
+  "id": 6773,
+  "titulo": "Tooth",
+  "titulo_wordpress": "Tooth 3",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "General",
+    "Tooth 3"
+  ],
+  "descricao_original": "Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "arquivo": "imagens/base/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Tooth', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 3. Descricao original da pagina: Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Enamel",
+      "explicacao_original": "Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-3-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-3-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-3-with-inset.jpg'. Destaca a estrutura ou conceito 'Enamel' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Stria",
+      "explicacao_original": "Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/05/Or.Dig_.OC_.Tooth-3-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-3-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-3-with-inset.jpg'. Destaca a estrutura ou conceito 'Stria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Dentin",
+      "explicacao_original": "Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-3-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-3-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-3-with-inset.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Dentino-enamel junction",
+      "explicacao_original": "Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.OC_.Tooth-3-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.Tooth-3-4-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.OC_.Tooth_.-3-with-inset.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Tooth'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.OC_.Tooth_.-3-with-inset.jpg'. Destaca a estrutura ou conceito 'Dentino-enamel junction' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Enamel, with its growth lines or striae, appears yellow-brown in this image of ground tooth. Enamel, the hardest substance of the body, is formed by ameloblasts, lying on the surface of enamel during tooth development. These ameloblasts are lost as the tooth erupts, explaining why enamel is not formed after tooth eruption. A portion of the dentin is seen in the lower right corner. 200x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > General > Tooth 3. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/general/tooth-3/, acesso em 2026-08-07."
+    }
+  ]
+}

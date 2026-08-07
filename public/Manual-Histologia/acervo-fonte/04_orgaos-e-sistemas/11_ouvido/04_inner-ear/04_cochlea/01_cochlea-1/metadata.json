@@ -1,0 +1,84 @@
+{
+  "id": 14262,
+  "titulo": "Cochlea",
+  "titulo_wordpress": "Cochlea 1",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Ouvido",
+    "Inner Ear",
+    "Cochlea",
+    "Cochlea 1"
+  ],
+  "descricao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+  "url_origem": "https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "arquivo": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Cochlea', no setor Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Descricao original da pagina: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Tympanic membrane",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P01-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P01-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01-1.jpg'. Destaca a estrutura ou conceito 'Tympanic membrane' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Middle ear",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P02-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P02-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01-1.jpg'. Destaca a estrutura ou conceito 'Middle ear' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Ossicles",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P03-1.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P03-1.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01-1.jpg'. Destaca a estrutura ou conceito 'Ossicles' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Vestibule",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P04.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P04.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01-1.jpg'. Destaca a estrutura ou conceito 'Vestibule' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cochlea",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P05.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P05.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01-1.jpg'. Destaca a estrutura ou conceito 'Cochlea' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Cochlear duct",
+      "explicacao_original": "The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/08/O.E.IE_.SC_.01.P06.png",
+      "arquivo": "imagens/marcadores/O.E.IE_.SC_.01.P06.png",
+      "imagem_base": "imagens/base/O.E.IE_.SC_.01-1.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/O.E.IE_.SC_.01-1.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Cochlea'. Deve ser sobreposta, sem redimensionamento independente, a 'O.E.IE_.SC_.01-1.jpg'. Destaca a estrutura ou conceito 'Cochlear duct' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The cochlea, part of the osseous labyrinth, consists of a long, hollow tube that is coiled into a spiral, resembling a snail shell. The cochlear duct, the membranous labyrinth in the cochlea, lies in the middle of the cochlea, dividing it into thirds. The cochlear duct houses the organ of Corti, the receptor for audition or hearing.. Contexto setorial: Órgãos e Sistemas > Ouvido > Inner Ear > Cochlea > Cochlea 1. Origem: Digital Histology, https://digitalhistology.org/organs-systems/ear/inner-ear/cochlea/cochlea-1/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "id": 29088,
+  "titulo": "Periodondium",
+  "titulo_wordpress": "Periodontium 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Oral Cavity",
+    "Tooth",
+    "Tooth peridontium",
+    "Periodontium 2"
+  ],
+  "descricao_original": "The periodontium is composed of cementum, alveolar bone proper, the periodontal ligament and gingiva. These tissues surround the root of the tooth providing support and anchorage. The periodontium is shown near the neck of the tooth (left) and near the root (right) as indicated by the rectangles in the inset. 100x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/",
+  "creditos_identificados": [
+    "Image source: These images were taken of a slide from the University of Michigan slide collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "arquivo": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Periodondium', no setor Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Descricao original da pagina: The periodontium is composed of cementum, alveolar bone proper, the periodontal ligament and gingiva. These tissues surround the root of the tooth providing support and anchorage. The periodontium is shown near the neck of the tooth (left) and near the root (right) as indicated by the rectangles in the inset. 100x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Cementum",
+      "explicacao_original": "Calcified tissue layer on the surface of the root that anchors the periodontal ligament, seals the ends of the dentin tubules and allows for repair at the tooth root.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Cementum.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Cementum.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Calcified tissue layer on the surface of the root that anchors the periodontal ligament, seals the ends of the dentin tubules and allows for repair at the tooth root.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Acellular cementum",
+      "explicacao_original": "Acellular cementum is the first cementum produced on the cervical two-third of the root. This mineralized tissue does not contain cells (cementocytes).",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Acellular-cementum.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Acellular-cementum.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Acellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Acellular cementum is the first cementum produced on the cervical two-third of the root. This mineralized tissue does not contain cells (cementocytes).. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Cellular cementum",
+      "explicacao_original": "Cellular cementum is found at the apical 1/3 of the tooth root. This type of cementum contains cementocytes within the mineralized cementum and is produced throughout life in response to force or trauma.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Cellular-cementum.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Cellular-cementum.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Cellular cementum' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cellular cementum is found at the apical 1/3 of the tooth root. This type of cementum contains cementocytes within the mineralized cementum and is produced throughout life in response to force or trauma.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Cementoblasts",
+      "explicacao_original": "Cementoblasts line the outer aspect of acellular and cellular cementum and produce the organic matrix, cementoid. During deposition of the cementum, these cells become incorporated into the cementoid, becoming cementocytes. Cementoblasts differentiate from ectomesenchymal stem cells of the dental follicle.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Cementoblasts.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Cementoblasts.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Cementoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Cementoblasts line the outer aspect of acellular and cellular cementum and produce the organic matrix, cementoid. During deposition of the cementum, these cells become incorporated into the cementoid, becoming cementocytes. Cementoblasts differentiate from ectomesenchymal stem cells of the dental follicle.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Cementocytes",
+      "explicacao_original": "As cementoblasts secrete cementum, they become incorporated into the mineralized tissue of cellular cementum. These cells reside within lacunae and have small processes that are located in canaliculi, narrow tunnels with the cementum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Cementocytes.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Cementocytes.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Cementocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: As cementoblasts secrete cementum, they become incorporated into the mineralized tissue of cellular cementum. These cells reside within lacunae and have small processes that are located in canaliculi, narrow tunnels with the cementum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Resting lines",
+      "explicacao_original": "The daily deposition of cementum can be seen as vertical lines that are close together in acellular cementum and farther apart in cellular cementum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Resting-lines.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Resting-lines.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Resting lines' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The daily deposition of cementum can be seen as vertical lines that are close together in acellular cementum and farther apart in cellular cementum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "Alveolar bone proper",
+      "explicacao_original": "Alveolar bone proper, directly adjacent to the periodontal ligament, is a thin layer of compact bone that lines the alveolus and anchors the fibers of the periodontal ligament.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Alveolar-bone-proper.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Alveolar-bone-proper.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Alveolar bone proper' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Alveolar bone proper, directly adjacent to the periodontal ligament, is a thin layer of compact bone that lines the alveolus and anchors the fibers of the periodontal ligament.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Osteoblasts",
+      "explicacao_original": "Osteoblasts line the alveolar bone and secrete osteoid, the organic matrix of bone. These cells can become trapped in the bone matrix, becoming osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Osteoblasts.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Osteoblasts.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Osteoblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Osteoblasts line the alveolar bone and secrete osteoid, the organic matrix of bone. These cells can become trapped in the bone matrix, becoming osteocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Ostocytes",
+      "explicacao_original": "When osteoblasts become surrounded by bone matrix, they become osteocytes.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Osteocytes.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Osteocytes.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Ostocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: When osteoblasts become surrounded by bone matrix, they become osteocytes.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Dentin",
+      "explicacao_original": "Dentin, the first hard tissue deposited during tooth development, is produced by odontoblasts that reside in the pulp cavity throughout life. It makes up the bulk of the hard tissue of the tooth and is 70% mineralized. Dentin is not considered to be a components of the periodontium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Dentin.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Dentin.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Dentin' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Dentin, the first hard tissue deposited during tooth development, is produced by odontoblasts that reside in the pulp cavity throughout life. It makes up the bulk of the hard tissue of the tooth and is 70% mineralized. Dentin is not considered to be a components of the periodontium.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Periodontal ligament",
+      "explicacao_original": "The periodontal ligament anchors the tooth in the socket, protects the tooth by providing a shock absorber, provides vascular supply and nutrients to the tooth, and defends the tooth against infection that would result in periodontal disease.. It consists of dense connective tissue with interstitial spaces containing blood vessels and nerves and occupies the space between the cementum and the alveolar bone. The periodontal ligament develops from the ectomesenchymal stem cells of the dental follicle during root formation.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Periodontal-ligament.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Periodontal-ligament.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Periodontal ligament' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The periodontal ligament anchors the tooth in the socket, protects the tooth by providing a shock absorber, provides vascular supply and nutrients to the tooth, and defends the tooth against infection that would result in periodontal disease.. It consists of dense connective tissue with interstitial spaces containing blood vessels and nerves and occupies the space between the cementum and the alveolar bone. The periodontal ligament develops from the ectomesenchymal stem cells of the dental follicle during root formation.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Fiber groups",
+      "explicacao_original": "The collagen fibers of the periodontal ligament secure the cementum of the tooth root to the alveolar bone of the alveolus. They also connect the alveolar bone and the cementum to the gingiva at the cervix of the tooth.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Fiber-groups.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Fiber-groups.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Fiber groups' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The collagen fibers of the periodontal ligament secure the cementum of the tooth root to the alveolar bone of the alveolus. They also connect the alveolar bone and the cementum to the gingiva at the cervix of the tooth.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Interstitial space",
+      "explicacao_original": "The interstitial spaces of the periodontal ligament are composed of loose connective tissue islands containing nerves and blood vessels that supply sensation and nutrients to the cells of the periodontal ligament.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Or.Dig_.OC_.T.TP-A-2-Interstitial-space.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.OC_.T.TP-A-2-Interstitial-space.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Interstitial space' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The interstitial spaces of the periodontal ligament are composed of loose connective tissue islands containing nerves and blood vessels that supply sensation and nutrients to the cells of the periodontal ligament.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Image source",
+      "explicacao_original": "These images were taken of a slide from the University of Michigan slide collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2025/02/Michigan-source-ping-2-plural.png",
+      "arquivo": "imagens/marcadores/Michigan-source-ping-2-plural.png",
+      "imagem_base": "imagens/base/Image-23-composite-w-arrows.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2025/02/Image-23-composite-w-arrows.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Periodondium'. Deve ser sobreposta, sem redimensionamento independente, a 'Image-23-composite-w-arrows.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: These images were taken of a slide from the University of Michigan slide collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Oral Cavity > Tooth > Tooth peridontium > Periodontium 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/oral-cavity/tooth/advanced/tooth-dev-test-2/, acesso em 2026-08-07."
+    }
+  ]
+}

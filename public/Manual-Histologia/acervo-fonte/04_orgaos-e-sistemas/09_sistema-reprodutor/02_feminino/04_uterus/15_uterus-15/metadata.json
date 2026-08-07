@@ -1,0 +1,84 @@
+{
+  "id": 12761,
+  "titulo": "Uterus: menstrual phase (Days 1-5)",
+  "titulo_wordpress": "Uterus 15",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Reprodutor",
+    "Feminino",
+    "Uterus",
+    "Uterus 15"
+  ],
+  "descricao_original": "Two images of the menstrual phase are shown. The image on the left (at higher magnification) was taken earlier during the menstrual phase, while the one on the right is from the end of menses. 100x, 10x",
+  "url_origem": "https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "arquivo": "imagens/base/O.R.F.U.15.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Uterus: menstrual phase (Days 1-5)', no setor Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Descricao original da pagina: Two images of the menstrual phase are shown. The image on the left (at higher magnification) was taken earlier during the menstrual phase, while the one on the right is from the end of menses. 100x, 10x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Uterine lumen",
+      "explicacao_original": "Two images of the menstrual phase are shown. The image on the left (at higher magnification) was taken earlier during the menstrual phase, while the one on the right is from the end of menses. 100x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.P01.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.15.P01.png",
+      "imagem_base": "imagens/base/O.R.F.U.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.15.jpg'. Destaca a estrutura ou conceito 'Uterine lumen' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two images of the menstrual phase are shown. The image on the left (at higher magnification) was taken earlier during the menstrual phase, while the one on the right is from the end of menses. 100x, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Functional zone",
+      "explicacao_original": "The functional zone is in the process of being sloughed in the left image. Note glands located at the luminal surface. The functional zone has been completely sloughed in the right-hand image, leaving only the basal zone behind.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.P03.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.15.P03.png",
+      "imagem_base": "imagens/base/O.R.F.U.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.15.jpg'. Destaca a estrutura ou conceito 'Functional zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The functional zone is in the process of being sloughed in the left image. Note glands located at the luminal surface. The functional zone has been completely sloughed in the right-hand image, leaving only the basal zone behind.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Basal zone",
+      "explicacao_original": "The functional zone is in the process of being sloughed in the left image. Note glands located at the luminal surface. The functional zone has been completely sloughed in the right-hand image, leaving only the basal zone behind.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.P04.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.15.P04.png",
+      "imagem_base": "imagens/base/O.R.F.U.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.15.jpg'. Destaca a estrutura ou conceito 'Basal zone' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The functional zone is in the process of being sloughed in the left image. Note glands located at the luminal surface. The functional zone has been completely sloughed in the right-hand image, leaving only the basal zone behind.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Glands",
+      "explicacao_original": "At left, sacculated glands abut the luminal surface, indicating that portions of endometrium have already been lost. Remaining glands are sacculated and contain secretory product. On the right all of functional zone has been lost and only bases of glands remain, from which new glands will originate. Extravasated blood can be seen throughout the endometrium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.P05.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.15.P05.png",
+      "imagem_base": "imagens/base/O.R.F.U.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.15.jpg'. Destaca a estrutura ou conceito 'Glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At left, sacculated glands abut the luminal surface, indicating that portions of endometrium have already been lost. Remaining glands are sacculated and contain secretory product. On the right all of functional zone has been lost and only bases of glands remain, from which new glands will originate. Extravasated blood can be seen throughout the endometrium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Extravasated blood",
+      "explicacao_original": "At left, sacculated glands abut the luminal surface, indicating that portions of endometrium have already been lost. Remaining glands are sacculated and contain secretory product. On the right all of functional zone has been lost and only bases of glands remain, from which new glands will originate. Extravasated blood can be seen throughout the endometrium.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.P06.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.15.P06.png",
+      "imagem_base": "imagens/base/O.R.F.U.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.15.jpg'. Destaca a estrutura ou conceito 'Extravasated blood' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: At left, sacculated glands abut the luminal surface, indicating that portions of endometrium have already been lost. Remaining glands are sacculated and contain secretory product. On the right all of functional zone has been lost and only bases of glands remain, from which new glands will originate. Extravasated blood can be seen throughout the endometrium.. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Myometrium",
+      "explicacao_original": "Two images of the menstrual phase are shown. The image on the left (at higher magnification) was taken earlier during the menstrual phase, while the one on the right is from the end of menses. 100x, 10x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.P02.png",
+      "arquivo": "imagens/marcadores/O.R.F.U.15.P02.png",
+      "imagem_base": "imagens/base/O.R.F.U.15.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/04/O.R.F.U.15.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Uterus: menstrual phase (Days 1-5)'. Deve ser sobreposta, sem redimensionamento independente, a 'O.R.F.U.15.jpg'. Destaca a estrutura ou conceito 'Myometrium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Two images of the menstrual phase are shown. The image on the left (at higher magnification) was taken earlier during the menstrual phase, while the one on the right is from the end of menses. 100x, 10x. Contexto setorial: Órgãos e Sistemas > Sistema Reprodutor > Feminino > Uterus > Uterus 15. Origem: Digital Histology, https://digitalhistology.org/organs-systems/reproductive/female/uterus/uterus-15/, acesso em 2026-08-07."
+    }
+  ]
+}

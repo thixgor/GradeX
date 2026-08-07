@@ -1,0 +1,56 @@
+{
+  "id": 10342,
+  "titulo": "Bone: interstitial lamellae",
+  "titulo_wordpress": "Deposition and Resorption 14",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Bone",
+    "Deposition and Resorption",
+    "Deposition and Resorption 14"
+  ],
+  "descricao_original": "Interstitial lamellae are the remnants of osteons that remain after a resorption canal incompletely erodes those osteons. Interstitial lamellae lie adjacent to the complete Haversian system that filled in the resorption canal. 400x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-14/",
+  "creditos_identificados": [
+    "Image credit: This image is of a slide from the Virtual Histology Laaboratory. (http://wwwhistologyguide.com)"
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.jpg",
+      "arquivo": "imagens/base/T.C.B.D.14.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Bone: interstitial lamellae', no setor Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 14. Descricao original da pagina: Interstitial lamellae are the remnants of osteons that remain after a resorption canal incompletely erodes those osteons. Interstitial lamellae lie adjacent to the complete Haversian system that filled in the resorption canal. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-14/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Osteons",
+      "explicacao_original": "Interstitial lamellae are the remnants of osteons that remain after a resorption canal incompletely erodes those osteons. Interstitial lamellae lie adjacent to the complete Haversian system that filled in the resorption canal. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.P01.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.14.P01.png",
+      "imagem_base": "imagens/base/T.C.B.D.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.14.jpg'. Destaca a estrutura ou conceito 'Osteons' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interstitial lamellae are the remnants of osteons that remain after a resorption canal incompletely erodes those osteons. Interstitial lamellae lie adjacent to the complete Haversian system that filled in the resorption canal. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Interstitial lamellae",
+      "explicacao_original": "Interstitial lamellae are the remnants of osteons that remain after a resorption canal incompletely erodes those osteons. Interstitial lamellae lie adjacent to the complete Haversian system that filled in the resorption canal. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.P02.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.14.P02.png",
+      "imagem_base": "imagens/base/T.C.B.D.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.14.jpg'. Destaca a estrutura ou conceito 'Interstitial lamellae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Interstitial lamellae are the remnants of osteons that remain after a resorption canal incompletely erodes those osteons. Interstitial lamellae lie adjacent to the complete Haversian system that filled in the resorption canal. 400x. Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-14/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Image credit",
+      "explicacao_original": "This image is of a slide from the Virtual Histology Laaboratory. (http://wwwhistologyguide.com)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.P03.png",
+      "arquivo": "imagens/marcadores/T.C.B.D.14.P03.png",
+      "imagem_base": "imagens/base/T.C.B.D.14.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2019/06/T.C.B.D.14.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Bone: interstitial lamellae'. Deve ser sobreposta, sem redimensionamento independente, a 'T.C.B.D.14.jpg'. Destaca a estrutura ou conceito 'Image credit' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image is of a slide from the Virtual Histology Laaboratory. (http://wwwhistologyguide.com). Contexto setorial: Tecidos > Tecido Conjuntivo > Bone > Deposition and Resorption > Deposition and Resorption 14. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/bone-and-bone-marrow/deposition-and-resorption/deposition-and-resorption-14/, acesso em 2026-08-07."
+    }
+  ]
+}

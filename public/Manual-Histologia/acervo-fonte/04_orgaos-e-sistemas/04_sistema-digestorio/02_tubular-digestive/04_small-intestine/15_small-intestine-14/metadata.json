@@ -1,0 +1,196 @@
+{
+  "id": 30721,
+  "titulo": "Submucosa",
+  "titulo_wordpress": "Small intestine 14A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Small Intestine",
+    "Small intestine 14A"
+  ],
+  "descricao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are unique to the duodenal segment of small intestine and are most numerous in its proximal regions. 40x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/",
+  "creditos_identificados": [
+    "Image source: This image was taken of a slide in the University of Virginia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Submucosa', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Descricao original da pagina: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are unique to the duodenal segment of small intestine and are most numerous in its proximal regions. 40x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Mucosa",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Mucosa.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Mucosa.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Mucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Epithelium",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Epithelium.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Epithelium.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Lamina-propria-1.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Lamina-propria-1.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Muscularis mucosae",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Musc-mucosae.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Musc-mucosae.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Muscularis mucosae' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Villi",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Villi.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Villi.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Villi' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Lacteal",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Lacteal.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Lacteal.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Lacteal' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 7,
+      "rotulo": "MALT",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-MALT.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-MALT.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'MALT' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 8,
+      "rotulo": "Intestinal glands",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Intestinal-glands.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Intestinal-glands.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Intestinal glands' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 9,
+      "rotulo": "Submucosa",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Submucosa.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Submucosa.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Submucosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 10,
+      "rotulo": "Submucosal glands (Brunner's glands)",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Submucosal-gland.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Submucosal-gland.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Submucosal glands (Brunner's glands)' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 11,
+      "rotulo": "Plica circularis",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Plica.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Plica.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Plica circularis' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 12,
+      "rotulo": "Muscularis externa",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Musc.-ext.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Musc.-ext.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Muscularis externa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 13,
+      "rotulo": "Inner circular layer",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Inner-circ.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Inner-circ.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Inner circular layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 14,
+      "rotulo": "Outer longitudinal layer",
+      "explicacao_original": "In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Outer-long.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Outer-long.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Outer longitudinal layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: In the duodenum, seen here, the submucosa also contains a mucus-secreting gland, named Brunner’s gland. This submucosal gland secretes an alkaline mucus that protects the intestinal mucosa from acidic gastric chyme. These glands are most numerous in the proximal regions of the duodenum. 40x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 15,
+      "rotulo": "Adventitia",
+      "explicacao_original": "The initial 2-3 centimeters of the duodenum is intraperitoneal, the remainder is retroperitoneal until it joins with the stomach. Both regions of the duodenum are visible in this section. The region to the left is retroperitoneal and thus only an adventitia is present. The intraperitoneal section is to the right and is covered by a serosa consisting of the adventitia along with the visceral peritoneum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Adventitia.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Adventitia.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Adventitia' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The initial 2-3 centimeters of the duodenum is intraperitoneal, the remainder is retroperitoneal until it joins with the stomach. Both regions of the duodenum are visible in this section. The region to the left is retroperitoneal and thus only an adventitia is present. The intraperitoneal section is to the right and is covered by a serosa consisting of the adventitia along with the visceral peritoneum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 16,
+      "rotulo": "Serosa",
+      "explicacao_original": "The initial 2-3 centimeters of the duodenum is intraperitoneal, the remainder is retroperitoneal until it joins with the stomach. Both regions of the duodenum are visible in this section. The region to the left is retroperitoneal and thus only an adventitia is present. The intraperitoneal section is to the right and is covered by a serosa consisting of the adventitia along with the visceral peritoneum.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Serosa.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.SmI_.14A-Serosa.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Serosa' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The initial 2-3 centimeters of the duodenum is intraperitoneal, the remainder is retroperitoneal until it joins with the stomach. Both regions of the duodenum are visible in this section. The region to the left is retroperitoneal and thus only an adventitia is present. The intraperitoneal section is to the right and is covered by a serosa consisting of the adventitia along with the visceral peritoneum.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 17,
+      "rotulo": "Image source",
+      "explicacao_original": "This image was taken of a slide in the University of Virginia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/03/UVa-source-ping.png",
+      "arquivo": "imagens/marcadores/UVa-source-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/03/Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Submucosa'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.SmI_.14A-Duodenum-UVA-color-sharp.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: This image was taken of a slide in the University of Virginia collection.. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Small Intestine > Small intestine 14A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/small-intestine/small-intestine-14a/, acesso em 2026-08-07."
+    }
+  ]
+}

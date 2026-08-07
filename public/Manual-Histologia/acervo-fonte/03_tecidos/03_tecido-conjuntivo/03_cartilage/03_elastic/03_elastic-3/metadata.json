@@ -1,0 +1,84 @@
+{
+  "id": 11778,
+  "titulo": "Elastic cartilage",
+  "titulo_wordpress": "Elastic 3",
+  "caminho_setorial": [
+    "Tecidos",
+    "Tecido Conjuntivo",
+    "Cartilage",
+    "Elastic",
+    "Elastic 3"
+  ],
+  "descricao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+  "url_origem": "https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "arquivo": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Elastic cartilage', no setor Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Descricao original da pagina: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Perichondrium: fibrous layer",
+      "explicacao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03A-1A-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.03A-1A-ping.png",
+      "imagem_base": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.T.C.E.03-new-use.jpg'. Destaca a estrutura ou conceito 'Perichondrium: fibrous layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Perichondrium: chondrogenic layer",
+      "explicacao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03A-2A-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.03A-2A-ping.png",
+      "imagem_base": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.T.C.E.03-new-use.jpg'. Destaca a estrutura ou conceito 'Perichondrium: chondrogenic layer' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Chondroblasts",
+      "explicacao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03A-3A-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.03A-3A-ping.png",
+      "imagem_base": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.T.C.E.03-new-use.jpg'. Destaca a estrutura ou conceito 'Chondroblasts' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Elastic cartilage",
+      "explicacao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03A-4A-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.03A-4A-ping.png",
+      "imagem_base": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.T.C.E.03-new-use.jpg'. Destaca a estrutura ou conceito 'Elastic cartilage' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Chondrocytes",
+      "explicacao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03A-5A-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.03A-5A-ping.png",
+      "imagem_base": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.T.C.E.03-new-use.jpg'. Destaca a estrutura ou conceito 'Chondrocytes' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 6,
+      "rotulo": "Elastic fibers",
+      "explicacao_original": "Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03A-6A-ping.png",
+      "arquivo": "imagens/marcadores/T.T.C.E.03A-6A-ping.png",
+      "imagem_base": "imagens/base/T.T.C.E.03-new-use.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2022/06/T.T.C.E.03-new-use.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Elastic cartilage'. Deve ser sobreposta, sem redimensionamento independente, a 'T.T.C.E.03-new-use.jpg'. Destaca a estrutura ou conceito 'Elastic fibers' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Elastic cartilage from the pinna of the ear is stained with a dye specific for elastin. The abundant elastic fibers and additional elastic material in the central regions of the cartilage obscure individual fibers. However, they can be readily seen on the edges. Note the numerous chondrocytes but infrequent isogenous groups. 200x. Contexto setorial: Tecidos > Tecido Conjuntivo > Cartilage > Elastic > Elastic 3. Origem: Digital Histology, https://digitalhistology.org/tissues/connective/cartillage/elastic/elastic-3/, acesso em 2026-08-07."
+    }
+  ]
+}

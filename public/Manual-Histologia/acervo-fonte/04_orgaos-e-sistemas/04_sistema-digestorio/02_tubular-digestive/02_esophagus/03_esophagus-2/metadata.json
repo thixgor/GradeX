@@ -1,0 +1,54 @@
+{
+  "id": 6831,
+  "titulo": "Esophagus: Epithelium",
+  "titulo_wordpress": "Esophagus 2",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Digestório",
+    "Tubular Digestive System",
+    "Esophagus",
+    "Esophagus 2"
+  ],
+  "descricao_original": "A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x",
+  "url_origem": "https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-2/",
+  "creditos_identificados": [],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-2.jpg",
+      "arquivo": "imagens/base/Or.Dig_.Tub_.Eso-2.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Esophagus: Epithelium', no setor Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 2. Descricao original da pagina: A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x. Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-2/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Epithelium",
+      "explicacao_original": "A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-2-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-2-1-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-2.jpg'. Destaca a estrutura ou conceito 'Epithelium' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Sloughing nucleated cells",
+      "explicacao_original": "A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-2-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-2-2-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-2.jpg'. Destaca a estrutura ou conceito 'Sloughing nucleated cells' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-2/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Lamina propria",
+      "explicacao_original": "A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x",
+      "url": "https://digitalhistology.org/wp-content/uploads/2017/10/Or.Dig_.Tub_.Eso-2-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Dig_.Tub_.Eso-2-3-ping.png",
+      "imagem_base": "imagens/base/Or.Dig_.Tub_.Eso-2.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2018/04/Or.Dig_.Tub_.Eso-2.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Esophagus: Epithelium'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Dig_.Tub_.Eso-2.jpg'. Destaca a estrutura ou conceito 'Lamina propria' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: A thick stratified squamous nonkeratinized (moist) epithelium lines the esophagus, providing protection for the organ during food transport. Its moist surface, together with secretions from glands in the lamina propria and submucosa, provide lubrication. The epithelium is not keratinized and nucleated cells remain at the surface of this epithelium. 400x. Contexto setorial: Órgãos e Sistemas > Sistema Digestório > Tubular Digestive System > Esophagus > Esophagus 2. Origem: Digital Histology, https://digitalhistology.org/organs-systems/digestive/tubular-digestive-system/esophagus/esophagus-2/, acesso em 2026-08-07."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": 30530,
+  "titulo": "Lymphoid nodule aggregates: Peyer's patch",
+  "titulo_wordpress": "Tissues 11A",
+  "caminho_setorial": [
+    "Órgãos e Sistemas",
+    "Sistema Linfoide",
+    "Tecidos",
+    "Tissues 11A"
+  ],
+  "descricao_original": "Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r)",
+  "url_origem": "https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/",
+  "creditos_identificados": [
+    "Image source: The image on the right was taken of a slide in the University of Virginia collection."
+  ],
+  "bases": [
+    {
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A.jpg",
+      "arquivo": "imagens/base/Or.Ly_.Tiss-11A.jpg",
+      "legenda_ia": "Imagem-base educacional de histologia da pagina 'Lymphoid nodule aggregates: Peyer's patch', no setor Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 11A. Descricao original da pagina: Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r). Este arquivo nao contem os marcadores interativos; use as camadas PNG relacionadas para localizar estruturas. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/, acesso em 2026-08-07."
+    }
+  ],
+  "marcadores": [
+    {
+      "ordem": 1,
+      "rotulo": "Area shown on right",
+      "explicacao_original": "Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A-4-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-11A-4-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-11A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphoid nodule aggregates: Peyer's patch'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-11A.jpg'. Destaca a estrutura ou conceito 'Area shown on right' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 2,
+      "rotulo": "Peyer’s patch",
+      "explicacao_original": "Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A-1-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-11A-1-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-11A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphoid nodule aggregates: Peyer's patch'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-11A.jpg'. Destaca a estrutura ou conceito 'Peyer’s patch' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 3,
+      "rotulo": "Secondary lymphoid nodules",
+      "explicacao_original": "Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A-2-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-11A-2-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-11A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphoid nodule aggregates: Peyer's patch'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-11A.jpg'. Destaca a estrutura ou conceito 'Secondary lymphoid nodules' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 4,
+      "rotulo": "Diffuse lymphoid tissue",
+      "explicacao_original": "Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r)",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A-3-ping.png",
+      "arquivo": "imagens/marcadores/Or.Ly_.Tiss-11A-3-ping.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-11A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphoid nodule aggregates: Peyer's patch'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-11A.jpg'. Destaca a estrutura ou conceito 'Diffuse lymphoid tissue' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: Lymphoid nodules also occur in aggregates, such as Peyer’s patches in the small intestine. A single Peyer’s patch contains clusters of nodules surrounded by diffuse lymphoid tissue. Because Peyer’s patches are located in the lamina propria of the mucosa, they are part of MALT and filter tissue fluid. Peyer’s patches are most numerous in the ileum, seen here. An area similar to that outlined in the rectangle is shown at higher magnification on the right. Ileum 40x (l); 100x (r). Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/, acesso em 2026-08-07."
+    },
+    {
+      "ordem": 5,
+      "rotulo": "Image source",
+      "explicacao_original": "The image on the right was taken of a slide in the University of Virginia collection.",
+      "url": "https://digitalhistology.org/wp-content/uploads/2026/01/UVA-half-right.png",
+      "arquivo": "imagens/marcadores/UVA-half-right.png",
+      "imagem_base": "imagens/base/Or.Ly_.Tiss-11A.jpg",
+      "url_imagem_base": "https://digitalhistology.org/wp-content/uploads/2026/01/Or.Ly_.Tiss-11A.jpg",
+      "legenda_ia": "Camada transparente de anotacao da pagina 'Lymphoid nodule aggregates: Peyer's patch'. Deve ser sobreposta, sem redimensionamento independente, a 'Or.Ly_.Tiss-11A.jpg'. Destaca a estrutura ou conceito 'Image source' por setas, contornos ou marcadores coloridos (incluindo vermelho quando presente). Explicacao original: The image on the right was taken of a slide in the University of Virginia collection.. Contexto setorial: Órgãos e Sistemas > Sistema Linfoide > Tecidos > Tissues 11A. Origem: Digital Histology, https://digitalhistology.org/organs-systems/lymphoid/tissues/tissues-11a/, acesso em 2026-08-07."
+    }
+  ]
+}
