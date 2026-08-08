@@ -44,7 +44,7 @@ import {
   classificarMarcador,
   traduzirTermo,
 } from '../../lib/histologia/glossario.ts'
-import { traduzirTitulo } from '../../lib/histologia/titulos.ts'
+import { traduzirNoDoCurriculo, traduzirTitulo } from '../../lib/histologia/titulos.ts'
 
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const dirAcervo = path.join(raiz, 'public/Manual-Histologia')
@@ -353,7 +353,12 @@ const entradasDeBusca = []
 for (const bruta of paginasBrutas) {
   const no = caminhoPorPagina.get(bruta.id)
   const diretorio = path.posix.dirname(bruta._arquivo.replace(/\\/g, '/'))
-  const trilhaLegivel = no.setorial.join(' › ')
+  // A trilha usa os nomes traduzidos dos nós: deixar o breadcrumb em inglês
+  // enquanto o título e o conteúdo estão em português é a incoerência que o
+  // aluno mais nota, porque ela fica no topo de toda página.
+  const trilhaLegivel = no.setorial
+    .map((t) => traduzirNoDoCurriculo(t) ?? t)
+    .join(' › ')
 
   const ehLamina = bruta.bases.length > 0 || bruta.marcadores.length > 0
 
@@ -417,7 +422,7 @@ for (const bruta of paginasBrutas) {
     caminho: no.caminho,
     trilha: no.caminho.map((_, i) => ({
       slug: no.caminho.slice(0, i + 1).join('/'),
-      titulo: no.setorial[i],
+      titulo: traduzirNoDoCurriculo(no.setorial[i]) ?? no.setorial[i],
     })),
     titulo: tituloTraduzido ?? bruta.titulo,
     tituloTraduzido: tituloTraduzido !== null,
@@ -615,7 +620,7 @@ function resumirNo(no) {
   return {
     slug: no.slug,
     caminho: no.caminho,
-    titulo: no.titulo,
+    titulo: traduzirNoDoCurriculo(no.titulo) ?? no.titulo,
     tipo: no.pagina?.tipo ?? 'secao',
     laminas: proprias + filhos.reduce((n, f) => n + f.laminas, 0),
     estruturas: estruturasProprias + filhos.reduce((n, f) => n + f.estruturas, 0),

@@ -101,3 +101,41 @@ describe('panoramas de setor', () => {
     }
   })
 })
+
+describe('descrições aprofundadas de lâmina', () => {
+  it('toda chave corresponde a um título real do acervo', async () => {
+    const { DESCRICOES } = await import('@/lib/histologia/laminas')
+    const { readFileSync, readdirSync } = await import('node:fs')
+    const pathMod = await import('node:path')
+    const DIR = pathMod.resolve(__dirname, '../../data/histologia/paginas')
+
+    const titulos = new Set<string>()
+    for (const arquivo of readdirSync(DIR)) {
+      const conteudo: Record<string, { tituloOriginal: string }> = JSON.parse(
+        readFileSync(pathMod.join(DIR, arquivo), 'utf8'),
+      )
+      for (const p of Object.values(conteudo)) titulos.add(p.tituloOriginal.toLowerCase())
+    }
+    for (const chave of Object.keys(DESCRICOES)) {
+      expect(titulos.has(chave), `título inexistente: "${chave}"`).toBe(true)
+    }
+  })
+
+  it('o panorama tem densidade suficiente para substituir o original', async () => {
+    const { DESCRICOES } = await import('@/lib/histologia/laminas')
+    for (const [chave, d] of Object.entries(DESCRICOES)) {
+      // Uma descrição mais curta que a do acervo seria regressão, não melhoria.
+      expect(d.panorama.split(/\s+/).length, chave).toBeGreaterThan(60)
+      expect((d.panorama.match(/\*\*/g) ?? []).length % 2, `destaque aberto em ${chave}`).toBe(0)
+      for (const passo of d.roteiro ?? []) expect(passo.length, chave).toBeGreaterThan(20)
+    }
+  })
+
+  it('toda lâmina com descrição própria também tem o título traduzido', async () => {
+    const { DESCRICOES } = await import('@/lib/histologia/laminas')
+    const { traduzirTitulo } = await import('@/lib/histologia/titulos')
+    for (const chave of Object.keys(DESCRICOES)) {
+      expect(traduzirTitulo(chave), `sem título traduzido: "${chave}"`).toBeTruthy()
+    }
+  })
+})

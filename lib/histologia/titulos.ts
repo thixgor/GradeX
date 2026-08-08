@@ -810,6 +810,37 @@ export const TITULOS: Record<string, string> = {
   /* ── Digestório ── */
   'pancreas 11': 'Pâncreas',
 
+  /* ── Nós do currículo ── */
+  'simple epithelium': 'Epitélio simples',
+  'stratified epithelium': 'Epitélio estratificado',
+  'cell shapes': 'Formas celulares',
+  'cell structures overview': 'Visão geral das estruturas celulares',
+  'mitosis overview': 'Visão geral da mitose',
+  'mitosis light micrographs': 'Mitose em microscopia óptica',
+  'tooth development': 'Desenvolvimento dentário',
+  'periodontium': 'Periodonto',
+  'peridontium': 'Periodonto',
+  'nervous tissue overview': 'Visão geral do tecido nervoso',
+  'supporting cells pns': 'Células de sustentação do SNP',
+  'supporting cells cns': 'Células de sustentação do SNC',
+  'muscle overview': 'Visão geral do tecido muscular',
+  'cartilage overview': 'Visão geral da cartilagem',
+  'overview (exocrine)': 'Visão geral (exócrina)',
+  'overview (endocrine)': 'Visão geral (endócrina)',
+  'overview (cardio vessels)': 'Visão geral (vasos)',
+  'overview (blood supply)': 'Visão geral (irrigação)',
+  'overview of blood supply': 'Visão geral da irrigação',
+  'overview of respiratory intrapulmonary passageways':
+    'Visão geral das vias intrapulmonares',
+  'epididymis head': 'Epidídimo: cabeça',
+  'epididymis body tail': 'Epidídimo: corpo e cauda',
+  'inner ear overview': 'Visão geral da orelha interna',
+  'ear overview': 'Visão geral da orelha',
+  'female overview': 'Visão geral do sistema reprodutor feminino',
+  'male overview': 'Visão geral do sistema reprodutor masculino',
+  'tissues and organs': 'Tecidos e órgãos',
+  'advanced': 'Aprofundamento',
+
   /* ── Ouvido ── */
   'external ear: external auditory meatus': 'Orelha externa: meato acústico externo',
   'middle ear': 'Orelha média',
@@ -824,4 +855,32 @@ export const TITULOS: Record<string, string> = {
 /** Traduz um título de lâmina, ou devolve `null` quando não há entrada. */
 export function traduzirTitulo(original: string): string | null {
   return TITULOS[original.trim().toLowerCase()] ?? null
+}
+
+/**
+ * Traduz um nó do currículo (ramo ou folha da árvore de navegação).
+ *
+ * Os nós do acervo seguem o padrão `<assunto> <ordinal>`: "Tissue preparation
+ * 1", "Associated structures 13A", "As a tissue 7 NEW". Escrever 333 entradas
+ * que só diferem no número seria repetição pura e envelheceria mal — a próxima
+ * lâmina acrescentada exigiria mais uma. Em vez disso, separamos o ordinal,
+ * traduzimos a base pelo mesmo glossário dos títulos e recompomos.
+ *
+ * O ordinal é preservado porque **carrega a ordem de leitura** do currículo:
+ * "Preparo do tecido 3" vem depois do 2 e isso é informação, não ruído. Já o
+ * sufixo "NEW" do CMS de origem é descartado — não diz nada ao aluno.
+ */
+export function traduzirNoDoCurriculo(original: string): string | null {
+  const limpo = original.trim().replace(/\s+NEW$/i, '')
+
+  const direto = TITULOS[limpo.toLowerCase()]
+  if (direto) return direto
+
+  // Ordinal no fim: número, opcionalmente com letra ("13A"), e às vezes entre
+  // parênteses um qualificador que faz parte do assunto ("Overview (exocrine) 4").
+  const comOrdinal = /^(.*?)\s+(\d+[A-Za-z]?)$/.exec(limpo)
+  if (!comOrdinal) return null
+
+  const base = TITULOS[comOrdinal[1].toLowerCase()]
+  return base ? `${base} ${comOrdinal[2]}` : null
 }

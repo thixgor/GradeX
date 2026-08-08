@@ -16,6 +16,7 @@ import {
   Target,
 } from 'lucide-react'
 
+import { descricaoDaLamina, type DescricaoDeLamina } from '@/lib/histologia/laminas'
 import type { Overlay, Pagina } from '@/lib/histologia/esquemas'
 import { COLORACOES } from '@/lib/histologia/glossario'
 import { useProgresso } from '@/lib/histologia/progresso'
@@ -207,17 +208,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
       </header>
 
       {/* ── 3. Resumo orientador ── */}
-      {pagina.descricaoOriginal && (
-        <section className="mb-6 rounded-lg border border-border bg-muted/20 p-4">
-          <h2 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            O que esta lâmina mostra
-          </h2>
-          <p className="histologia-prosa text-sm leading-relaxed">{pagina.descricaoOriginal}</p>
-          <p className="mt-2 text-[10px] text-muted-foreground">
-            Texto do acervo original, em inglês, ainda sem tradução revisada.
-          </p>
-        </section>
-      )}
+      <OQueEstaLaminaMostra pagina={pagina} />
 
       {/* ── 4. Microscópio virtual ── */}
       <section className="mb-6" aria-labelledby="secao-microscopio">
@@ -565,4 +556,99 @@ function estimarMinutos(pagina: Pagina): number {
   const leitura = palavras / 180
   const observacao = pagina.overlays.filter((o) => o.classe === 'estrutura').length * 0.4
   return Math.max(3, Math.round(leitura + observacao))
+}
+
+/**
+ * "O que esta lâmina mostra".
+ *
+ * Prefere o texto próprio, escrito em português para orientar a observação
+ * (`lib/histologia/laminas.ts`), e cai para a descrição do acervo quando ainda
+ * não há um — com aviso explícito de que está no original. A descrição do
+ * acervo continua acessível mesmo quando há texto próprio: ela é a prova de
+ * origem, e quem quiser conferir tem de conseguir.
+ */
+function OQueEstaLaminaMostra({ pagina }: { pagina: Pagina }) {
+  const propria = descricaoDaLamina(pagina.tituloOriginal)
+
+  if (!propria && !pagina.descricaoOriginal) return null
+
+  return (
+    <section className="histologia-cartao mb-6 overflow-hidden">
+      <div className="border-b border-border bg-muted/25 px-4 py-2">
+        <h2 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          O que esta lâmina mostra
+        </h2>
+      </div>
+
+      <div className="space-y-3 p-4">
+        {propria ? (
+          <>
+            <p className="histologia-prosa text-sm leading-relaxed">
+              {comDestaques(propria.panorama)}
+            </p>
+
+            {propria.roteiro && propria.roteiro.length > 0 && (
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Roteiro de observação
+                </p>
+                <ol className="space-y-1">
+                  {propria.roteiro.map((passo: string, i: number) => (
+                    <li key={passo} className="flex gap-2 text-xs leading-relaxed">
+                      <span
+                        aria-hidden
+                        className="mt-px font-mono text-[10px] font-bold text-muted-foreground"
+                      >
+                        {i + 1}.
+                      </span>
+                      {passo}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {propria.atencao && (
+              <p className="rounded border border-amber-500/30 bg-amber-500/[0.07] px-2.5 py-2 text-xs leading-relaxed">
+                <span className="font-semibold">Atenção: </span>
+                {propria.atencao}
+              </p>
+            )}
+
+            {pagina.descricaoOriginal && (
+              <details>
+                <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Descrição do acervo (original)
+                </summary>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  {pagina.descricaoOriginal}
+                </p>
+              </details>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="histologia-prosa text-sm leading-relaxed">{pagina.descricaoOriginal}</p>
+            <p className="text-[10px] text-muted-foreground">
+              Texto do acervo original, em inglês. O aprofundamento em português ainda não foi
+              escrito para esta lâmina.
+            </p>
+          </>
+        )}
+      </div>
+    </section>
+  )
+}
+
+/** Converte `**termo**` em `<strong>` por fatiamento, sem injetar HTML. */
+function comDestaques(texto: string): React.ReactNode[] {
+  return texto.split(/(\*\*[^*]+\*\*)/g).map((parte, i) =>
+    parte.startsWith('**') && parte.endsWith('**') ? (
+      <strong key={i} className="font-semibold">
+        {parte.slice(2, -2)}
+      </strong>
+    ) : (
+      parte
+    ),
+  )
 }
