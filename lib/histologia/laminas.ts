@@ -3671,6 +3671,536 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Percorra epiderme, derme e anexos nessa ordem, sem misturar os compartimentos.',
     ],
   },
+
+  // ---- Sistema cardiovascular ----
+
+  'blood vessels': {
+    panorama:
+      'Todo vaso, do maior ao menor, é uma variação sobre três túnicas concêntricas, e a lâmina se lê medindo a proporção entre elas. A **íntima** tem endotélio, lâmina basal e um pouco de conjuntivo subendotelial; a **média** tem músculo liso e elastina em quantidade variável; a **adventícia** é conjuntivo com vasa vasorum e nervos. O que muda entre um vaso e outro é quanto de cada uma existe: artéria elástica tem média cheia de lamelas, artéria muscular tem média de músculo circular espesso, arteríola tem uma a três camadas, capilar tem só endotélio, e a veia inverte tudo — média fina e adventícia dominante.',
+    roteiro: [
+      'Compare parede e luz na mesma imagem: é a razão entre elas que classifica, não o tamanho absoluto.',
+      'Procure lâminas elásticas: elas separam artéria muscular de veia com segurança.',
+    ],
+  },
+
+  'overview of blood vessels': {
+    panorama:
+      'O circuito vascular é uma sequência de compromissos entre pressão, resistência e troca. Da aorta às **artérias elásticas** parte-se de paredes com lamelas de elastina que amortecem a sístole e devolvem energia na diástole. As **artérias musculares** distribuem o fluxo para os órgãos, com média espessa e as duas lâminas elásticas visíveis. As **arteríolas** controlam a resistência periférica e, portanto, a pressão. Os **capilares** têm uma só camada de endotélio, porque só assim a difusão é viável. As **vênulas** são o palco da diapedese, e as **veias** devolvem o sangue com paredes finas, luz ampla, adventícia dominante e válvulas contra a gravidade.',
+    roteiro: [
+      'Percorra a sequência em ordem e associe cada segmento a uma função hemodinâmica.',
+      'Ao encontrar um vaso isolado, procure seu par no feixe antes de classificá-lo.',
+    ],
+  },
+
+  'transitional artery': {
+    panorama:
+      'A artéria de transição é o trecho em que uma artéria elástica se converte em muscular, e a lâmina mostra os dois padrões convivendo. As lamelas de **elastina** da média vão rareando e se fragmentando, enquanto as camadas de **músculo liso** circular ganham espaço e continuidade; a lâmina elástica interna, mal definida nas elásticas, começa a se destacar como uma linha ondulada nítida. É o que se observa em vasos como a subclávia e as ilíacas comuns. A transição é gradual, sem ponto de corte anatômico, e reconhecê-la evita o erro de classificar o mesmo vaso de dois modos conforme o nível do corte.',
+    roteiro: [
+      'Conte lamelas elásticas e camadas musculares no mesmo campo: a proporção define o estágio da transição.',
+      'Procure a lâmina elástica interna começando a se individualizar.',
+    ],
+  },
+
+  'medium artery and vein': {
+    panorama:
+      'Vistos lado a lado no mesmo feixe neurovascular, a artéria e a veia de médio calibre ensinam a leitura vascular inteira em um só campo. A **artéria** tem parede espessa em relação à luz, média muscular concêntrica bem delimitada, lâmina elástica interna ondulada e refringente, e luz redonda e aberta, porque a média contraída não colaba. A **veia** tem parede fina, luz ampla e frequentemente deformada, média escassa e mal delimitada, e adventícia proporcionalmente mais espessa que a média — inversão que é a assinatura venosa. Podem aparecer válvulas na luz venosa, pregas duplas da íntima voltadas para o coração.',
+    roteiro: [
+      'Sempre compare os dois vasos do feixe; classificar um isolado é a origem da maioria dos erros.',
+      'Meça mentalmente a razão média/adventícia em cada um deles.',
+    ],
+    atencao:
+      'A veia costuma parecer maior e mais irregular que a artéria acompanhante, embora ambas transportem o mesmo volume.',
+  },
+
+  'small artery and vein': {
+    panorama:
+      'No pequeno calibre, os mesmos critérios continuam valendo, mas as estruturas ficam mais discretas e é preciso olhar melhor. A **artéria pequena** tem de quatro a oito camadas de músculo liso na média e ainda mostra a lâmina elástica interna como uma linha ondulada; sua luz é redonda e a parede, proporcionalmente espessa. A **veia pequena** tem apenas uma a três camadas musculares frouxamente arranjadas, sem lâmina elástica definida, adventícia colágena mais espessa que a média, e a luz costuma estar colabada ou irregular, muitas vezes com hemácias dentro — detalhe útil para separá-la de um vaso linfático de calibre parecido.',
+    roteiro: [
+      'Procure hemácias na luz para descartar linfático.',
+      'Verifique se a lâmina elástica interna ainda é contínua: ela desaparece à medida que o calibre cai.',
+    ],
+  },
+
+  'small arteries': {
+    panorama:
+      'As artérias de pequeno calibre são o segmento entre a artéria muscular e a arteríola, e junto com estas respondem pela maior parte da **resistência periférica**. Definem-se por ter de quatro a oito camadas de músculo liso circular na média — acima disso já é muscular de médio calibre, abaixo é arteríola. A íntima ainda mostra uma **lâmina elástica interna** evidente, ondulada pela contração post-mortem da média; a lâmina elástica externa é fina ou ausente, e a adventícia é delgada. São elas que se remodelam na hipertensão crônica, espessando a média e estreitando a luz, com consequências diretas na perfusão de rim, retina e encéfalo.',
+    roteiro: [
+      'Conte as camadas musculares antes de nomear: é o critério, não o diâmetro aparente.',
+      'Relacione o espessamento da média ao contexto clínico da hipertensão.',
+    ],
+  },
+
+  'arteriole and venule': {
+    panorama:
+      'Arteríola e vênula são as duas pontas do leito capilar e costumam aparecer juntas no conjuntivo. A **arteríola** tem luz estreita e parede proporcionalmente espessa, com uma a três camadas contínuas de músculo liso circular; é o vaso de resistência, e sua contração decide quanto sangue cada leito recebe. A **vênula** tem luz ampla e parede finíssima — nas pós-capilares, apenas endotélio e pericitos, sem músculo algum. É justamente essa parede mínima que faz da vênula o palco da inflamação: histamina abre as junções endoteliais, o plasma extravasa e os leucócitos atravessam por diapedese. Nenhum outro segmento vascular cumpre esse papel.',
+    roteiro: [
+      'Compare os dois no mesmo campo: a diferença de espessura de parede é imediata.',
+      'Procure leucócitos aderidos ao endotélio venular como sinal de resposta em curso.',
+    ],
+  },
+
+  arteries: {
+    panorama:
+      'As artérias levam o sangue para longe do coração e se classificam por como a média é construída. As **elásticas** — aorta, tronco pulmonar, carótidas comuns e ilíacas — têm dezenas de lamelas concêntricas de elastina alternadas com músculo liso, e existem para converter o jato pulsátil da sístole em fluxo contínuo. As **musculares** têm média de músculo liso circular espesso, com lâminas elásticas interna e externa bem definidas, e distribuem o débito conforme a demanda de cada órgão. As **pequenas** e as **arteríolas** regulam a resistência periférica. Em todas, a parede é espessa para a luz — o oposto do que se vê nas veias correspondentes.',
+    roteiro: [
+      'Decida primeiro se a média é lamelar ou muscular: isso separa as duas grandes famílias.',
+      'Use coloração para elastina quando as lamelas não estiverem evidentes em H&E.',
+    ],
+  },
+
+  'capillaries and sinusoids': {
+    panorama:
+      'Capilares e sinusoides fazem a mesma coisa — troca — mas com graus de permeabilidade muito diferentes, e a diferença está em três características que devem ser lidas juntas. O **capilar contínuo** tem endotélio sem poros, junções estreitas e lâmina basal contínua: é o mais restritivo, e existe em músculo, pulmão e sistema nervoso, onde compõe a barreira hematoencefálica. O **fenestrado** tem poros com diafragma e lâmina basal contínua, e serve à troca rápida em glândulas endócrinas e mucosa intestinal. O **sinusoide** tem luz ampla e irregular, endotélio **descontínuo** e lâmina basal fragmentada ou ausente, o que permite a passagem de proteínas e até de células inteiras.',
+    roteiro: [
+      'Avalie sempre os três itens: poros, junções e continuidade da lâmina basal.',
+      'Use a localização como confirmação — cada tipo tem territórios característicos.',
+    ],
+  },
+
+  'venule (pericytic venule)': {
+    panorama:
+      'A vênula pericítica, ou pós-capilar, é o menor segmento venoso e tem a parede mais simples de todo o sistema: **endotélio e pericitos**, sem qualquer camada de músculo liso. Os pericitos são células ramificadas que compartilham a lâmina basal do endotélio, envolvem-no parcialmente e têm capacidade contrátil e regenerativa. É nesse segmento que ocorrem os dois eventos centrais da inflamação aguda: o **aumento de permeabilidade**, quando histamina e bradicinina afrouxam as junções endoteliais e o plasma extravasa formando o edema, e a **diapedese**, com neutrófilos rolando, aderindo e atravessando a parede. Nenhum outro vaso reúne as duas funções.',
+    roteiro: [
+      'Procure núcleos externos ao endotélio, compartilhando a mesma lâmina basal: são os pericitos.',
+      'Confirme a ausência de camada muscular organizada antes de nomear.',
+    ],
+  },
+
+  vessels: {
+    panorama:
+      'Este setor reúne todos os tipos de vaso, e o modo econômico de estudá-los é por **função hemodinâmica**, não por nome. Vasos de **condução** (artérias elásticas) amortecem a pulsatilidade. Vasos de **distribuição** (artérias musculares) direcionam o fluxo. Vasos de **resistência** (artérias pequenas e arteríolas) controlam a pressão. Vasos de **troca** (capilares e sinusoides) fazem o trabalho para o qual todo o resto existe. Vasos de **capacitância** (vênulas e veias) armazenam cerca de 70% do volume sanguíneo. E os **linfáticos** recolhem o líquido que escapou do capilar. Cada função impõe uma arquitetura de parede, e é essa arquitetura que se lê na lâmina.',
+    roteiro: [
+      'Atribua uma função ao vaso antes de nomeá-lo; o nome decorre da arquitetura, e a arquitetura da função.',
+      'Verifique se há hemácias na luz para separar sanguíneo de linfático.',
+    ],
+  },
+
+  endocardium: {
+    panorama:
+      'O endocárdio é a camada interna da parede cardíaca e corresponde à túnica íntima dos vasos, com os quais é contínuo. Tem três estratos. O mais interno é o **endotélio** simples pavimentoso, apoiado em uma fina camada de conjuntivo frouxo. Segue-se uma camada de **conjuntivo denso** com fibras elásticas e algumas células musculares lisas, que compõe o grosso do endocárdio. Por fim, a **camada subendocárdica**, de conjuntivo frouxo, faz a transição para o miocárdio e é onde correm vasos, nervos e os ramos do sistema de condução, incluindo as **fibras de Purkinje** — células grandes, claras e cheias de glicogênio, o achado que identifica a região.',
+    roteiro: [
+      'Procure as fibras de Purkinje logo abaixo do endocárdio para confirmar a camada subendocárdica.',
+      'Note a continuidade do endotélio cardíaco com o dos grandes vasos.',
+    ],
+  },
+
+  epicardium: {
+    panorama:
+      'O epicárdio é a camada externa da parede cardíaca e corresponde, ao mesmo tempo, à adventícia dos vasos e à **lâmina visceral do pericárdio seroso**. Sua superfície livre é um **mesotélio** simples pavimentoso, que secreta o líquido pericárdico e permite ao coração deslizar dentro do saco a cada batimento. Abaixo dele há conjuntivo frouxo e, mais profundamente, uma camada subepicárdica com quantidade variável de **tecido adiposo**, por onde correm as artérias coronárias, as veias cardíacas e os nervos autonômicos. Encontrar vasos coronários envoltos em gordura logo abaixo de um mesotélio é a maneira mais direta de identificar a face externa do coração em um corte.',
+    roteiro: [
+      'Ache o mesotélio para confirmar que é a face externa e não o endocárdio.',
+      'Siga os vasos coronários no tecido adiposo subepicárdico.',
+    ],
+  },
+
+  'atrioventricular bundle': {
+    panorama:
+      'O feixe atrioventricular, ou feixe de His, é a **única via de continuidade elétrica** entre átrios e ventrículos: o esqueleto fibroso isola eletricamente as câmaras, e o feixe é o que o atravessa. Nasce do nó atrioventricular, perfura o trígono fibroso direito, desce pela porção membranácea do septo interventricular e se bifurca em ramo direito e ramo esquerdo, que descem sob o endocárdio até se resolverem nas fibras de Purkinje. Histologicamente é feito de cardiomiócitos modificados, maiores e mais pálidos que os contráteis, com poucas miofibrilas periféricas e muito glicogênio. Sua lesão produz os bloqueios de ramo e o bloqueio atrioventricular total.',
+    roteiro: [
+      'Procure células grandes e pálidas dentro do septo, distintas do miocárdio comum ao redor.',
+      'Relacione o trajeto ao isolamento elétrico imposto pelo esqueleto fibroso.',
+    ],
+  },
+
+  'annulus fibrosus': {
+    panorama:
+      'O ânulo fibroso é o anel de **conjuntivo denso** que circunda cada orifício valvar e faz parte do esqueleto fibroso do coração. Cumpre três funções que a lâmina permite deduzir: sustenta a valva, impedindo que o orifício se dilate sob pressão; serve de **ancoragem** para a inserção das fibras miocárdicas atriais e ventriculares, que se prendem nele em vez de se continuarem umas nas outras; e **isola eletricamente** átrios de ventrículos, obrigando o impulso a passar pelo feixe atrioventricular. O eixo conjuntivo de cada cúspide valvar se continua diretamente com ele, de modo que valva e ânulo formam uma unidade mecânica única.',
+    roteiro: [
+      'Siga o eixo conjuntivo da cúspide até o anel para ver a continuidade.',
+      'Note que as fibras miocárdicas terminam no anel, e não o atravessam.',
+    ],
+  },
+
+  'atrioventricular valve': {
+    panorama:
+      'As valvas atrioventriculares — mitral à esquerda, tricúspide à direita — impedem o refluxo durante a sístole ventricular. Cada cúspide é uma prega de **endocárdio nas duas faces** com um eixo central de conjuntivo denso contínuo com o ânulo fibroso. Diferentemente das semilunares, elas dependem de um aparato de sustentação: as **cordas tendíneas**, cordões de colágeno que partem da borda livre e das faces ventriculares, prendem-se aos **músculos papilares**, que se contraem junto com o ventrículo e impedem a eversão da cúspide para o átrio. Não há vasos dentro da cúspide — a nutrição vem por difusão do sangue circulante, o que explica a lentidão do reparo e a vulnerabilidade à endocardite.',
+    roteiro: [
+      'Siga uma corda tendínea da borda livre até o músculo papilar para entender o mecanismo.',
+      'Confirme a ausência de vasos no interior da cúspide.',
+    ],
+  },
+
+  'overview of the cardiovascular system': {
+    panorama:
+      'O sistema cardiovascular é um circuito fechado com uma bomba e dois trajetos em série. A **circulação sistêmica** sai do ventrículo esquerdo pela aorta, distribui sangue oxigenado a todos os tecidos e volta ao átrio direito pelas cavas, operando sob pressão alta. A **circulação pulmonar** sai do ventrículo direito, faz a hematose e retorna ao átrio esquerdo, operando com cerca de um quinto da pressão — o que se lê diretamente na espessura da parede dos vasos e das câmaras. O plano estrutural é o mesmo do coração à periferia: três túnicas concêntricas cuja proporção muda conforme a função, mais o **sistema linfático**, que devolve à circulação o líquido intersticial não reabsorvido.',
+    roteiro: [
+      'Identifique o circuito antes do vaso: pressão explica espessura de parede.',
+      'Compare a parede do ventrículo esquerdo com a do direito no mesmo corte.',
+    ],
+  },
+
+  cardiovascular: {
+    panorama:
+      'Este setor cobre o coração e todos os vasos, e há um princípio que atravessa o conjunto: **estrutura acompanha pressão**. O ventrículo esquerdo tem miocárdio muito mais espesso que o direito porque bombeia contra a resistência sistêmica. A aorta tem lamelas elásticas porque precisa amortecer a sístole; a artéria pulmonar, sob pressão baixa, tem parede fina para o calibre. As arteríolas concentram músculo porque regulam a resistência. Os capilares reduzem a parede a uma camada porque só assim há difusão. As veias têm adventícia dominante e válvulas porque transportam sob pressão mínima, muitas vezes contra a gravidade. Ler um vaso é ler a hemodinâmica a que ele responde.',
+    roteiro: [
+      'Sempre pergunte sob que pressão o segmento trabalha antes de julgar sua parede.',
+      'Compare estruturas homólogas dos dois circuitos para ver o princípio em ação.',
+    ],
+  },
+
+  // ---- Boca, língua e dente ----
+
+  'lip: comparison of epithelia': {
+    panorama:
+      'O lábio é a melhor lâmina para comparar epitélios, porque reúne três em poucos milímetros sobre o mesmo núcleo de músculo esquelético. Na **face cutânea**, epitélio estratificado pavimentoso **queratinizado**, com estrato córneo espesso, pelos, glândulas sebáceas e sudoríparas. Na **zona vermelha**, o mesmo epitélio queratinizado, mas fino e translúcido, sobre papilas altas e muito vascularizadas — daí a cor — e sem glândulas próprias, motivo pelo qual resseca. Na **face mucosa**, epitélio estratificado pavimentoso **não queratinizado**, espesso, com células superficiais que mantêm núcleo, sobre submucosa com glândulas salivares labiais.',
+    roteiro: [
+      'Procure núcleos nas células superficiais: sua presença separa não queratinizado de queratinizado.',
+      'Meça a espessura do córneo nas três regiões e relacione à exposição ao meio.',
+    ],
+  },
+
+  'lip: vermilion zone': {
+    panorama:
+      'A zona vermelha, ou vermelhão, é a faixa de transição entre a pele e a mucosa oral, e sua cor tem explicação histológica direta. O epitélio é estratificado pavimentoso **queratinizado, mas muito fino e translúcido**, e as **papilas dérmicas** por baixo dele são altas, estreitas e densamente capilarizadas — de modo que o sangue dos capilares se vê através do epitélio. Não há pelos, e o que é mais importante clinicamente: **não há glândulas sebáceas nem sudoríparas** nessa faixa, e as glândulas salivares labiais ficam mais para dentro. Sem secreção própria, o vermelhão depende de umidade externa, o que explica por que resseca e racha com tanta facilidade.',
+    roteiro: [
+      'Meça a altura das papilas: é ela, mais que a espessura do epitélio, que produz a cor.',
+      'Confirme a ausência de anexos para delimitar a zona.',
+    ],
+  },
+
+  'oral mucosa: gingiva': {
+    panorama:
+      'A gengiva é mucosa **mastigatória**, adaptada à abrasão e à pressão. Seu epitélio é estratificado pavimentoso **queratinizado ou paraqueratinizado** — neste último, as células superficiais mantêm núcleos picnóticos —, e as papilas de conjuntivo que o sustentam são **altas, finas e muito entrelaçadas** com as cristas epiteliais, arranjo que resiste ao cisalhamento durante a mastigação. Não há submucosa frouxa: a lâmina própria adere firmemente ao periósteo do osso alveolar, formando um mucoperiósteo imóvel. Isso distingue a gengiva da mucosa de revestimento vizinha, que é móvel, não queratinizada e apoiada em submucosa frouxa.',
+    roteiro: [
+      'Teste mentalmente a mobilidade: mucoperiósteo aderido indica mastigatória.',
+      'Compare a altura das papilas com as da mucosa de revestimento adjacente.',
+    ],
+  },
+
+  'dentogingival junction': {
+    panorama:
+      'A junção dentogengival é o único lugar do corpo em que um **tecido duro atravessa o epitélio** e alcança o exterior, e por isso é um ponto de fragilidade permanente. A vedação é feita pelo **epitélio juncional**, algumas camadas de células não queratinizadas que aderem ao esmalte por hemidesmossomos e uma lâmina basal interna — um mecanismo de adesão incomum, já que normalmente o epitélio se prende a conjuntivo, não a mineral. Acima dele fica o **sulco gengival**, fenda rasa entre o dente e a gengiva livre. Abaixo, as fibras gengivais e o ligamento periodontal ancoram o conjunto. A perda dessa vedação abre o caminho da gengivite para a periodontite.',
+    roteiro: [
+      'Localize o fundo do sulco: dele para baixo começa o epitélio juncional.',
+      'Note que o epitélio juncional adere ao esmalte, e não ao conjuntivo.',
+    ],
+  },
+
+  'tongue: filiform papillae': {
+    panorama:
+      'As papilas filiformes são as mais numerosas da língua e as únicas **sem botões gustativos** — não participam do paladar. Cobrem todo o dorso e as faces laterais, e têm forma de chama ou cone, com um eixo de conjuntivo revestido por epitélio estratificado pavimentoso **queratinizado**, cuja ponta se inclina para trás. Sua função é mecânica: aumentam o atrito entre a língua e o alimento, o que ajuda a manipular e a raspar o bolo. Quando a descamação normal se atrasa, a queratina se acumula e produz a saburra lingual. A ausência de botões gustativos nelas é o critério que as separa, à primeira vista, de qualquer outra papila.',
+    roteiro: [
+      'Confirme a queratinização da ponta e a ausência de botões gustativos.',
+      'Compare a forma com a das fungiformes vizinhas, arredondadas e mais baixas.',
+    ],
+  },
+
+  'tongue: fungiform papillae': {
+    panorama:
+      'As papilas fungiformes têm forma de cogumelo — base estreita e topo dilatado e arredondado — e ficam espalhadas entre as filiformes, sobretudo na ponta e nas bordas da língua. Diferem delas em dois pontos decisivos: o epitélio é **não queratinizado ou apenas levemente queratinizado**, e há **botões gustativos**, poucos, localizados na superfície superior. O eixo de conjuntivo é rico em capilares próximos à superfície, o que faz a papila parecer avermelhada a olho nu e permite identificá-la clinicamente sem lâmina. São bem menos numerosas que as filiformes, e essa raridade relativa, somada à forma, resolve a identificação.',
+    roteiro: [
+      'Procure botões gustativos no topo, não nas laterais — a posição as separa das circunvaladas.',
+      'Note a vascularização superficial do eixo conjuntivo.',
+    ],
+  },
+
+  'tongue: filiform and fungiform papillae': {
+    panorama:
+      'Vistas juntas, as duas papilas mais comuns do dorso lingual ensinam a lógica das papilas por contraste. As **filiformes** são numerosas, cônicas ou em chama, **queratinizadas** e **sem botões gustativos**: são mecânicas, aumentam o atrito e ajudam a manipular o alimento. As **fungiformes** são esparsas, em cogumelo, **não queratinizadas**, com **botões gustativos** no topo e um eixo conjuntivo muito vascularizado que lhes dá cor avermelhada. Reconhecer a diferença resolve boa parte da lâmina de língua, e a regra prática é direta: se a ponta é afilada e clara, é filiforme; se é abaulada e tem botões, é fungiforme.',
+    roteiro: [
+      'Percorra o dorso contando as duas populações antes de descrever detalhes.',
+      'Use a queratinização da ponta como critério rápido de triagem.',
+    ],
+  },
+
+  'tongue: taste buds': {
+    panorama:
+      'O botão gustativo é uma estrutura ovoide e pálida que atravessa toda a espessura do epitélio, abrindo-se na superfície por um **poro gustativo**. Reúne três populações celulares dispostas como gomos de laranja: as **células gustativas**, que são as receptoras e fazem sinapse com fibras aferentes, com vida média de dez dias; as **células de sustentação**, mais numerosas; e as **células basais**, que repõem as demais. Microvilosidades das células receptoras se projetam pelo poro e captam as moléculas dissolvidas na saliva. Localizam-se nas paredes laterais das papilas circunvaladas e folhadas e no topo das fungiformes, além da epiglote e do palato mole.',
+    roteiro: [
+      'Ache o poro gustativo na superfície para confirmar a orientação do botão.',
+      'Lembre que os botões precisam de saliva: sem meio líquido, não há estímulo.',
+    ],
+  },
+
+  'tongue: musculature': {
+    panorama:
+      'A língua é uma massa de **músculo esquelético** cuja mobilidade extraordinária vem de um arranjo específico: os feixes correm em **três planos ortogonais** — longitudinal, transversal e vertical — entrelaçados entre si, o que permite mudar de forma em qualquer direção sem depender de articulação. Essa é a definição de um hidrostato muscular. Os músculos **intrínsecos**, contidos inteiramente na língua, alteram sua forma; os **extrínsecos**, que se inserem em ossos vizinhos, alteram sua posição. Entre os feixes há tecido conjuntivo com glândulas salivares linguais, mucosas e serosas, além de tecido adiposo. Um septo fibroso mediano divide a língua em duas metades.',
+    roteiro: [
+      'Identifique os três planos musculares para orientar o corte antes de qualquer outra coisa.',
+      'Procure as glândulas linguais entre os feixes musculares.',
+    ],
+  },
+
+  general: {
+    panorama:
+      'Esta seção reúne o que vale para o sistema digestório como um todo, antes de descer a cada órgão. Do esôfago ao ânus, a parede repete **quatro camadas concêntricas**: **mucosa**, com epitélio, lâmina própria e muscular da mucosa; **submucosa**, de conjuntivo denso com vasos maiores e o plexo de Meissner; **muscular externa**, em geral circular interna e longitudinal externa, com o plexo de Auerbach entre elas; e **adventícia** ou **serosa**, conforme haja ou não peritônio. O que muda de um segmento para outro é o tipo de epitélio, a presença ou ausência de glândulas em cada camada e as especializações da superfície — e são essas variações que identificam a região.',
+    roteiro: [
+      'Nomeie as quatro camadas antes de tentar identificar o órgão.',
+      'Procure em qual camada estão as glândulas: esse dado sozinho localiza vários segmentos.',
+    ],
+  },
+
+  'tooth and dental alveolus': {
+    panorama:
+      'O dente não é um osso: é uma peça mineralizada alojada em uma cavidade óssea, o **alvéolo dentário**, e ligada a ela por uma articulação fibrosa chamada gonfose. Três tecidos duros o compõem. O **esmalte**, que cobre a coroa, é acelular, o material mais mineralizado do corpo e de origem ectodérmica — uma vez perdido, não se refaz. A **dentina** forma o grosso do dente e é produzida pelos odontoblastos, cujos prolongamentos permanecem dentro dos túbulos dentinários; ela continua sendo depositada a vida inteira. O **cemento** recobre a raiz e ancora as fibras do ligamento. No centro, a **polpa** é conjuntivo frouxo com vasos e nervos.',
+    roteiro: [
+      'Localize os três tecidos duros pela posição antes de descrevê-los: esmalte na coroa, cemento na raiz, dentina entre eles e a polpa.',
+      'Procure o espaço do ligamento periodontal entre o cemento e o osso alveolar.',
+    ],
+  },
+
+  periodondium: {
+    panorama:
+      'O periodonto é o conjunto de estruturas que fixam o dente ao maxilar e absorvem a carga da mastigação, e são quatro. O **cemento** recobre a dentina radicular e é o tecido em que as fibras se inserem do lado do dente; assemelha-se ao osso, mas é avascular. O **ligamento periodontal** é conjuntivo denso cujos feixes de colágeno, as fibras de Sharpey, atravessam o espaço entre a raiz e o osso e se ancoram nos dois lados; ele suspende o dente, amortece a força e contém proprioceptores. O **osso alveolar** forma a parede da cavidade e se remodela conforme a carga. A **gengiva** completa o conjunto, vedando a entrada.',
+    roteiro: [
+      'Nomeie os quatro componentes em ordem, do dente para fora.',
+      'Note que o dente está suspenso, e não colado: o espaço do ligamento é funcional.',
+    ],
+  },
+
+  'periodontal ligament principal fiber groups': {
+    panorama:
+      'As fibras principais do ligamento periodontal se agrupam por orientação, e cada grupo resiste a um tipo de força. As **fibras da crista alveolar** correm obliquamente da crista óssea ao cemento cervical e resistem a movimentos laterais e à extrusão. As **horizontais** ficam logo abaixo e resistem à inclinação. As **oblíquas** são o grupo mais numeroso, correm do osso para o cemento em direção apical e convertem a **força de mastigação em tração** sobre o osso — é por isso que o dente é suspenso, e não comprimido contra o fundo do alvéolo. As **apicais** resistem à extrusão e protegem os vasos que entram pelo ápice, e as **inter-radiculares** estabilizam dentes multirradiculares.',
+    roteiro: [
+      'Determine a orientação de cada feixe antes de nomeá-lo; é a direção que define o grupo.',
+      'Relacione o grupo oblíquo à conversão de compressão em tração.',
+    ],
+  },
+
+  'gingival fibers of the periodontal ligament': {
+    panorama:
+      'As fibras gengivais não fazem parte, em sentido estrito, do ligamento periodontal — não ligam dente a osso —, mas compõem o mesmo sistema de ancoragem e sustentam a gengiva contra o dente. Os grupos principais são: as **dentogengivais**, que partem do cemento cervical e se abrem em leque na lâmina própria da gengiva; as **dentoperiosteais**, que vão do cemento ao periósteo alveolar; as **circulares**, que envolvem o colo do dente como um anel sem se inserir em osso, apertando a gengiva marginal contra a superfície dentária; e as **transeptais**, que cruzam de um dente ao vizinho por cima da crista óssea, mantendo o contato interdental e resistindo à separação dos dentes.',
+    roteiro: [
+      'Procure o grupo circular no colo: ele não se ancora em osso, o que o distingue.',
+      'Siga as transeptais de um dente ao outro por cima da crista alveolar.',
+    ],
+  },
+
+  'tooth apex and periodontium': {
+    panorama:
+      'O ápice radicular é a porta de entrada e saída do dente: pelo **forame apical** passam a arteríola, a vênula, os linfáticos e o feixe nervoso que suprem a polpa. Por ser um orifício estreito em um compartimento rígido, qualquer inflamação pulpar que aumente o volume interno comprime esses vasos contra as paredes de dentina e produz isquemia — a razão pela qual a pulpite dói tanto e evolui para necrose. Ao redor do ápice, o ligamento periodontal se organiza no **grupo apical** de fibras, que resiste à extrusão, e o osso alveolar é mais delgado. É por essa via que a infecção pulpar alcança o periodonto e forma o abscesso periapical.',
+    roteiro: [
+      'Ache o forame apical e siga o feixe vasculonervoso até a polpa.',
+      'Note a continuidade entre polpa e ligamento periodontal através do forame.',
+    ],
+  },
+
+  'molar and dental alveolus': {
+    panorama:
+      'O molar mostra, em um único corte, todas as relações do dente com seu alvéolo. A **coroa** é recoberta por esmalte e tem várias cúspides; abaixo dela, o colo, e depois **duas ou três raízes** revestidas por cemento, cada uma alojada em sua própria cavidade. Entre as raízes há a **região de furca**, com fibras inter-radiculares próprias. O **osso alveolar** que forra a cavidade é osso compacto perfurado — a lâmina crivosa —, por onde passam vasos que suprem o ligamento. O espaço do **ligamento periodontal**, de aproximadamente 0,2 mm, separa raiz e osso em toda a extensão, e sua largura constante é o sinal de que a carga está bem distribuída.',
+    roteiro: [
+      'Conte as raízes e localize a furca antes de descrever o ligamento.',
+      'Verifique se o espaço do ligamento tem largura uniforme ao longo da raiz.',
+    ],
+  },
+
+  'dental pulp': {
+    panorama:
+      'A polpa é o único tecido mole do dente: conjuntivo frouxo, muito vascularizado e inervado, alojado numa câmara de paredes rígidas de dentina. Sua camada mais periférica é uma fileira de **odontoblastos** encostados na dentina, cujos prolongamentos permanecem dentro dos túbulos dentinários — de modo que polpa e dentina são funcionalmente um só complexo. Abaixo dela vêm a zona pobre em células de Weil, a zona rica em células, com fibroblastos e células-tronco, e o centro, com vasos e nervos. A polpa nutre a dentina, deposita dentina secundária ao longo da vida e sinaliza dor. Sua confinação em paredes rígidas é o que torna a pulpite tão grave.',
+    roteiro: [
+      'Ache a fileira de odontoblastos na periferia e siga seus prolongamentos para dentro da dentina.',
+      'Relacione o confinamento rígido à isquemia da pulpite.',
+    ],
+  },
+
+  'tooth peridontium': {
+    panorama:
+      'O periodonto reúne os tecidos de suporte do dente, e todos existem para uma tarefa mecânica: transformar a força vertical da mastigação em tração distribuída sobre o osso. O **cemento** cobre a raiz e recebe as fibras do lado do dente. O **ligamento periodontal**, de conjuntivo denso, suspende a raiz dentro do alvéolo e contém, além de colágeno, fibroblastos muito ativos, restos epiteliais de Malassez, vasos e proprioceptores que informam a intensidade da mordida. O **osso alveolar** responde a essa carga remodelando-se continuamente — é isso que torna possível a movimentação ortodôntica. A **gengiva** sela a passagem do dente pela mucosa.',
+    roteiro: [
+      'Percorra os quatro tecidos do dente para fora, nomeando cada um.',
+      'Procure proprioceptores e vasos dentro do espaço ligamentar.',
+    ],
+  },
+
+  'stages of tooth development': {
+    panorama:
+      'A odontogênese segue uma sequência de estágios nomeados pela **forma do germe dentário**, e reconhecer a forma resolve a lâmina. Tudo começa com a **lâmina dentária**, um espessamento do epitélio oral. Dela brota o **estágio de botão**, uma condensação epitelial esférica invadindo o mesênquima. No **estágio de capuz**, a base do botão se invagina e passa a envolver uma condensação mesenquimal, a papila dentária. No **estágio de campânula**, a invaginação se aprofunda, o órgão do esmalte se organiza em quatro camadas e a forma da futura coroa fica definida. Segue-se a **coroa**, com deposição de esmalte e dentina, e a **raiz**, com a bainha de Hertwig guiando o alongamento.',
+    roteiro: [
+      'Determine o estágio pela forma do germe antes de procurar tecidos mineralizados.',
+      'Localize sempre as três partes: órgão do esmalte, papila e folículo dentário.',
+    ],
+  },
+
+  'developing oral cavity': {
+    panorama:
+      'A cavidade oral em desenvolvimento é o cenário em que a odontogênese começa, e a lâmina mostra as três origens teciduais em jogo. O **epitélio oral**, de origem ectodérmica, reveste a superfície e é dele que parte a **lâmina dentária**, um espessamento em forma de ferradura que mergulha no mesênquima ao longo de cada arcada. O **mesênquima** subjacente, derivado da crista neural — o chamado ectomesênquima —, não é passivo: é ele que induz o epitélio e depois responde formando a papila e o folículo dentário. Da interação recíproca entre esses dois tecidos nasce todo o dente: o epitélio dará esmalte, o ectomesênquima dará dentina, polpa, cemento e ligamento.',
+    roteiro: [
+      'Localize a lâmina dentária como um espessamento contínuo do epitélio oral.',
+      'Note que a indução é recíproca: nenhum dos dois tecidos forma dente sozinho.',
+    ],
+  },
+
+  'laminae, bud and cap stages': {
+    panorama:
+      'Os três primeiros momentos da odontogênese aparecem aqui em sequência. A **lâmina dentária** é um espessamento em ferradura do epitélio oral que mergulha no ectomesênquima. Em dez pontos de cada arcada ela prolifera e forma o **botão**, uma condensação epitelial esférica sem organização interna, cercada por mesênquima que começa a se condensar. No **capuz**, a face profunda do botão se invagina e passa a envolver essa condensação, agora chamada **papila dentária**; o epitélio se organiza em epitélio dentário externo, retículo estrelado e epitélio dentário interno, e o mesênquima ao redor de tudo forma o **folículo dentário**. As três partes do germe estão então definidas.',
+    roteiro: [
+      'Siga a progressão pela forma: espessamento, esfera, taça.',
+      'Ache as três partes do germe assim que o capuz se estabelecer.',
+    ],
+  },
+
+  'bud stage of tooth development': {
+    panorama:
+      'O estágio de botão é o primeiro em que existe um germe dentário individualizado. A lâmina dentária prolifera em dez pontos de cada arcada, e cada um desses focos forma uma **condensação epitelial esférica ou ovoide** que se projeta para dentro do ectomesênquima, ainda ligada ao epitélio oral por um pedículo. Nessa fase o botão não tem organização interna: é uma massa de células epiteliais mais ou menos uniformes. O que já se observa é a **condensação do mesênquima** imediatamente ao redor dele, sinal de que a indução recíproca começou. Nenhum tecido mineralizado existe ainda, e a forma final do dente ainda não está determinada.',
+    roteiro: [
+      'Confirme a ausência de organização interna: é isso que separa botão de capuz.',
+      'Procure a condensação mesenquimal ao redor como primeiro sinal de indução.',
+    ],
+  },
+
+  'cap stage of tooth development (early)': {
+    panorama:
+      'No capuz inicial, a face profunda do botão começa a se **invaginar**, e o germe passa da forma esférica à de taça. Essa invaginação abraça uma condensação de ectomesênquima que, a partir daqui, se chama **papila dentária** — futura polpa e dentina. O epitélio começa a se diferenciar em camadas ainda pouco definidas, e o mesênquima que envolve o conjunto se organiza no **folículo dentário**, futuro cemento, ligamento e osso alveolar. É neste estágio que aparece o **nó do esmalte**, um agrupamento de células epiteliais não proliferativas no centro do capuz que funciona como centro de sinalização e determina onde ficarão as cúspides.',
+    roteiro: [
+      'Ache o início da invaginação: é o que define a passagem de botão a capuz.',
+      'Procure o nó do esmalte no centro, como um adensamento celular.',
+    ],
+  },
+
+  'cap stage of tooth development': {
+    panorama:
+      'No estágio de capuz, o germe dentário exibe pela primeira vez suas **três partes** com clareza. O **órgão do esmalte**, epitelial, tem a forma de taça e já mostra o epitélio dentário externo, na convexidade, o **retículo estrelado** no meio — células estreladas separadas por matriz rica em glicosaminoglicanos, que hidrata e dá espaço ao crescimento — e o epitélio dentário interno, na concavidade. A **papila dentária** é a condensação de ectomesênquima abraçada pela taça, e originará a dentina e a polpa. O **folículo dentário** envolve tudo e originará cemento, ligamento periodontal e osso alveolar. Ainda não há nenhum tecido mineralizado.',
+    roteiro: [
+      'Nomeie as três partes antes de descrever qualquer camada isoladamente.',
+      'Confirme a ausência de esmalte e dentina para não confundir com a campânula tardia.',
+    ],
+  },
+
+  'bell stage of tooth development': {
+    panorama:
+      'Na campânula, a invaginação se aprofunda e o órgão do esmalte assume forma de sino, com **quatro camadas** agora bem definidas: epitélio dentário externo, retículo estrelado, **estrato intermédio** — recém-surgido, rico em fosfatase alcalina e indispensável à amelogênese — e epitélio dentário interno. É também aqui que a **forma da futura coroa** fica determinada, pelo dobramento da junção entre o epitélio interno e a papila. As células do epitélio dentário interno começam a se alongar e diferenciar em **pré-ameloblastos**, e induzem as células periféricas da papila a virarem **odontoblastos**. A lâmina dentária começa a se fragmentar, desconectando o germe do epitélio oral.',
+    roteiro: [
+      'Conte as quatro camadas do órgão do esmalte para confirmar o estágio.',
+      'Procure o alongamento das células do epitélio dentário interno.',
+    ],
+  },
+
+  'late bell stage of tooth development': {
+    panorama:
+      'Na campânula tardia começa a **mineralização**, e a lâmina passa a mostrar tecido duro. A sequência é rígida e vale memorizar: os pré-ameloblastos induzem os **odontoblastos**, que depositam a primeira camada de **pré-dentina**; só então os ameloblastos se tornam funcionais e começam a secretar a matriz do **esmalte** sobre ela. A deposição avança das cúspides em direção ao colo. Os odontoblastos recuam em direção à papila conforme depositam dentina, deixando seus prolongamentos nos túbulos dentinários; os ameloblastos, ao contrário, afastam-se para fora. O retículo estrelado colapsa, aproximando os vasos do epitélio externo dos ameloblastos, que têm demanda metabólica alta.',
+    roteiro: [
+      'Verifique a ordem: dentina sempre antes de esmalte — o inverso não ocorre.',
+      'Note a direção oposta de migração de odontoblastos e ameloblastos.',
+    ],
+  },
+
+  'crown stage of tooth development': {
+    panorama:
+      'No estágio de coroa, a deposição de esmalte e dentina já está em pleno curso e a forma coronária está definida. Os **ameloblastos**, células colunares altas com um prolongamento apical característico — o **processo de Tomes** —, secretam a matriz do esmalte em bastões, e é a orientação desses prolongamentos que produz o padrão de prismas do esmalte maduro. Do outro lado da junção, os **odontoblastos** continuam depositando dentina e recuando para dentro da papila. Concluída a espessura total, os ameloblastos entram na fase de maturação, removem água e proteína e elevam a mineralização a mais de 96%. Ao final, degeneram — e por isso o esmalte não se regenera.',
+    roteiro: [
+      'Procure os processos de Tomes no ápice dos ameloblastos.',
+      'Note a junção amelodentinária como a linha em que os dois tecidos se encontram.',
+    ],
+  },
+
+  'root stage of tooth development': {
+    panorama:
+      'A raiz se forma depois que a coroa está pronta, e quem a guia é a **bainha epitelial radicular de Hertwig**: uma extensão em manga do epitélio dentário interno e externo, sem retículo estrelado nem estrato intermédio entre eles — e é justamente essa ausência que impede a formação de esmalte na raiz. A bainha induz as células da papila a se diferenciarem em odontoblastos, que depositam a dentina radicular. Conforme a dentina avança, a bainha se fragmenta, e seus restos permanecem no ligamento periodontal como **restos epiteliais de Malassez**. Pelas brechas abertas, células do folículo alcançam a dentina e se diferenciam em **cementoblastos**, que depositam o cemento.',
+    roteiro: [
+      'Ache a bainha de Hertwig como uma manga epitelial dupla na borda em crescimento.',
+      'Relacione a ausência de estrato intermédio à ausência de esmalte na raiz.',
+    ],
+  },
+
+  'root stage of tooth development - crown region': {
+    panorama:
+      'Na região da coroa durante o estágio de raiz, a amelogênese já terminou. O esmalte alcançou sua espessura final, os ameloblastos completaram a fase de maturação e regrediram a um **epitélio reduzido do esmalte**, camada fina que recobre a coroa e a protege até a erupção — e que, ao alcançar a mucosa, funde-se com o epitélio oral e dá origem ao **epitélio juncional**. Abaixo do esmalte, a dentina coronária está formada, com os odontoblastos já recuados para a periferia da polpa. O contraste com a região radicular, onde a deposição ainda avança, é o que torna esta lâmina útil: dois estágios do mesmo dente convivendo no mesmo corte.',
+    roteiro: [
+      'Compare a região coronária com a radicular no mesmo corte para ver a defasagem.',
+      'Procure o epitélio reduzido do esmalte sobre a coroa já formada.',
+    ],
+  },
+
+  'root stage of tooth development - neck region': {
+    panorama:
+      'A região do colo é onde coroa e raiz se encontram, e é ali que a **bainha de Hertwig** tem origem: as duas camadas do órgão do esmalte, a interna e a externa, encontram-se na alça cervical e se prolongam para baixo como uma manga dupla, agora sem retículo estrelado nem estrato intermédio entre elas. É essa configuração que estabelece a fronteira do esmalte — acima dela há amelogênese, abaixo não. A junção amelocementária, ponto em que esmalte e cemento se encontram, forma-se ali, e sua configuração varia: em cerca de 60% dos dentes o cemento cobre o esmalte, em 30% eles apenas se tocam, e em 10% resta dentina exposta entre os dois, o que explica parte das sensibilidades cervicais.',
+    roteiro: [
+      'Localize a alça cervical: é dela que a bainha se projeta.',
+      'Observe a junção amelocementária e o padrão de contato entre os dois tecidos.',
+    ],
+  },
+
+  'root stage of tooth development - apex': {
+    panorama:
+      'O ápice é a última porção da raiz a se formar e permanece **aberto** por um bom tempo depois de o dente já ter irrompido — a chamada raiz incompleta, com forame amplo e paredes de dentina finas e divergentes. Enquanto a bainha de Hertwig continua ativa ali, a raiz se alonga e o forame vai se estreitando por deposição contínua de dentina e cemento, até se fechar em geral dois a três anos após a erupção. Essa cronologia tem consequência clínica direta: um dente jovem com ápice aberto ainda tem potencial de apicificação, e o tratamento endodôntico difere do de um dente com ápice fechado. Pelo forame passa o feixe vasculonervoso da polpa.',
+    roteiro: [
+      'Avalie o diâmetro do forame e a convergência das paredes para estimar a maturidade da raiz.',
+      'Siga o feixe vasculonervoso atravessando o ápice em direção à polpa.',
+    ],
+  },
+
+  'salivary glands': {
+    panorama:
+      'As glândulas salivares produzem cerca de um litro e meio de saliva por dia e se dividem em maiores e menores. As **maiores** são pares e extrínsecas: **parótida**, acinar composta, puramente **serosa**; **submandibular**, tubuloacinar composta, **mista com predomínio seroso** e com semiluas serosas sobre túbulos mucosos; e **sublingual**, tubuloacinar composta, **mista com predomínio mucoso**. As **menores** estão dispersas na mucosa oral — labiais, bucais, palatinas, linguais — e secretam continuamente. O sistema de ductos é o mesmo em todas: intercalar, estriado, interlobular e excretor, e os **ductos estriados**, com invaginações basais cheias de mitocôndrias, modificam a composição iônica da saliva.',
+    roteiro: [
+      'Classifique a glândula pela proporção seroso/mucoso antes de nomeá-la.',
+      'Procure os ductos estriados: sua abundância também varia entre as três maiores.',
+    ],
+  },
+
+  'major salivary glands': {
+    panorama:
+      'As três glândulas salivares maiores se distinguem na lâmina por dois critérios combinados. A **parótida** tem apenas **ácinos serosos**, arredondados e escuros, base basófila e ápice granular, com ductos estriados numerosos e, no adulto, quantidade variável de tecido adiposo no estroma — o que ajuda a reconhecê-la. A **submandibular** é mista: predominam ácinos serosos, mas há túbulos mucosos pálidos encimados por **semiluas serosas**, e os ductos estriados são longos e conspícuos. A **sublingual** também é mista, com predomínio de **túbulos mucosos** pálidos, poucas semiluas e ductos estriados escassos ou ausentes. A regra prática: só seroso é parótida; misto com semiluas é submandibular; muito mucoso é sublingual.',
+    roteiro: [
+      'Estime a proporção entre seroso e mucoso em pequeno aumento antes de qualquer detalhe.',
+      'Conte os ductos estriados: eles decrescem de parótida para sublingual.',
+    ],
+    atencao:
+      'A semilua serosa clássica é em parte artefato de fixação; em preparações por congelação rápida ela quase desaparece.',
+  },
+
+  'oral cavity': {
+    panorama:
+      'A cavidade oral é o começo do tubo digestório e reúne, num espaço pequeno, uma variedade de tecidos que nenhum outro segmento repete. Seu revestimento é a **mucosa oral**, em três variedades: de **revestimento**, não queratinizada e móvel; **mastigatória**, queratinizada e aderida ao osso; e **especializada**, no dorso da língua, com papilas e botões gustativos. Contém os **dentes**, únicos tecidos mineralizados expostos ao exterior, com seu periodonto; a **língua**, um hidrostato muscular; e as **glândulas salivares** maiores e menores, que umedecem, lubrificam, tamponam e iniciam a digestão do amido. Não há muscular da mucosa em nenhuma parte dela.',
+    roteiro: [
+      'Classifique a mucosa nos três tipos antes de localizar a região.',
+      'Confirme a ausência de muscular da mucosa, que só aparece a partir do esôfago.',
+    ],
+  },
+
+  components: {
+    panorama:
+      'Os componentes do tubo digestório se repetem do esôfago ao ânus, e nomeá-los na ordem certa é o método mais seguro de leitura. A **mucosa** tem três subcamadas: o **epitélio**, que varia conforme a agressão local; a **lâmina própria**, de conjuntivo frouxo com vasos, glândulas e tecido linfoide; e a **muscular da mucosa**, fina lâmina de músculo liso que move a mucosa independentemente da parede. A **submucosa** é conjuntivo denso com os vasos maiores e o plexo de Meissner. A **muscular externa** propele o conteúdo e aloja o plexo de Auerbach. A camada externa é **serosa**, onde há peritônio, ou **adventícia**, onde o órgão é retroperitoneal ou está fora da cavidade.',
+    roteiro: [
+      'Ache a muscular da mucosa: ela é a fronteira entre mucosa e submucosa.',
+      'Decida entre serosa e adventícia procurando o mesotélio na superfície externa.',
+    ],
+  },
+
+  tunics: {
+    panorama:
+      'As quatro túnicas do tubo digestório são constantes, mas suas proporções e conteúdos variam de modo previsível, e é essa variação que identifica o segmento. O **epitélio** é estratificado pavimentoso onde há atrito — esôfago, canal anal — e simples colunar onde há secreção e absorção. As **glândulas** ocupam camadas diferentes conforme a região: na mucosa no estômago e no intestino, na submucosa apenas no esôfago e no duodeno. A **muscular externa** é esquelética no terço superior do esôfago, lisa no restante, tem três camadas no estômago e forma as tênias no cólon. A camada externa é serosa nas porções intraperitoneais e adventícia nas demais.',
+    roteiro: [
+      'Percorra as quatro túnicas em ordem, anotando o que cada uma tem de peculiar.',
+      'Use a localização das glândulas como o critério mais econômico de identificação.',
+    ],
+  },
+
+  'diagnostic features': {
+    panorama:
+      'Cada segmento do tubo digestório tem um punhado de achados que o identificam sem ambiguidade, e vale guardá-los como uma lista curta. **Esôfago**: epitélio estratificado pavimentoso mais glândulas na submucosa. **Estômago**: epitélio simples colunar **sem** células caliciformes, fossetas e três camadas na muscular externa. **Duodeno**: vilosidades mais **glândulas de Brunner** na submucosa. **Jejuno**: vilosidades altas, pregas circulares proeminentes, sem Brunner nem placas de Peyer. **Íleo**: vilosidades mais curtas, muitas caliciformes e **placas de Peyer**. **Cólon**: sem vilosidades, criptas retas e paralelas, muitas caliciformes, **tênias**. **Apêndice**: luz pequena e anel linfoide contínuo.',
+    roteiro: [
+      'Percorra a lista de achados negativos também: ausência de vilosidade ou de caliciforme identifica tanto quanto presença.',
+      'Confirme sempre dois achados antes de nomear o segmento.',
+    ],
+  },
+
+  'overview of the tubular digestive system': {
+    panorama:
+      'O tubo digestório é um cilindro contínuo da boca ao ânus, e sua luz é, topologicamente, **exterior ao corpo** — tudo o que entra precisa atravessar uma célula epitelial para ser absorvido. Suas funções se distribuem ao longo do trajeto: ingestão e mastigação na boca, transporte no esôfago, digestão química e mecânica no estômago, digestão final e **absorção** no delgado, recuperação de água e eletrólitos no cólon, e armazenamento e eliminação no reto. O plano de quatro camadas se mantém em todo o percurso; o que muda é o epitélio, a localização das glândulas e as especializações de superfície — e essas variações acompanham exatamente a função de cada trecho.',
+    roteiro: [
+      'Associe cada segmento à sua função dominante antes de descrever a parede.',
+      'Lembre que a luz é o exterior: isso explica por que há tanto tecido linfoide na parede.',
+    ],
+  },
+
+  'esophagus: epithelium': {
+    panorama:
+      'O esôfago é revestido por epitélio **estratificado pavimentoso não queratinizado**, e a escolha se explica pela função: o órgão apenas transporta, e o que ele precisa é resistir à abrasão do bolo alimentar, não absorver. As células superficiais permanecem vivas e mantêm núcleo e citoplasma — é isso que o separa do epitélio queratinizado da pele. A camada basal é proliferativa e repõe o epitélio inteiro em poucos dias. A lâmina própria abaixo dele contém, em algumas regiões, as **glândulas cárdicas esofágicas**. A metaplasia desse epitélio para colunar com células caliciformes, sob refluxo ácido crônico, é o esôfago de Barrett, com risco aumentado de adenocarcinoma.',
+    roteiro: [
+      'Procure núcleos nas células superficiais para confirmar que não é queratinizado.',
+      'Note a ausência de células caliciformes: encontrá-las aqui é achado patológico.',
+    ],
+  },
+
+  'esophagus: mucosa': {
+    panorama:
+      'A mucosa esofágica tem as três subcamadas habituais e algumas particularidades. O **epitélio** é estratificado pavimentoso não queratinizado, espesso. A **lâmina própria** é conjuntivo frouxo com papilas que sobem para dentro do epitélio, tecido linfoide difuso e, nas extremidades do órgão, as **glândulas cárdicas esofágicas**, mucosas. A **muscular da mucosa** é notavelmente espessa aqui, mais do que em qualquer outro segmento do tubo, e é formada sobretudo por feixes longitudinais — sua contração produz as pregas longitudinais que dão à luz esofágica em repouso o contorno estrelado característico, e que desaparecem quando o bolo passa.',
+    roteiro: [
+      'Note a espessura incomum da muscular da mucosa como pista de esôfago.',
+      'Distinga glândulas na lâmina própria (cárdicas) das da submucosa (esofágicas próprias).',
+    ],
+  },
 }
 
 /**
