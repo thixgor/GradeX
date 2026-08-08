@@ -2842,6 +2842,835 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Procure os pés vasculares encostados nos capilares como confirmação funcional.',
     ],
   },
+
+  // ---- Preparo, microscopia e colorações ----
+
+  'tissue preparation - overview': {
+    panorama:
+      'Nenhuma lâmina mostra tecido vivo: o que se observa é o resultado de uma cadeia de etapas que preserva a estrutura ao custo de alterá-la, e conhecer essa cadeia é o que permite separar achado de artefato. A sequência é sempre a mesma: **fixação**, que estabiliza as proteínas e interrompe a autólise; **desidratação** em álcoois crescentes; **diafanização** em xilol, que torna o tecido miscível com a parafina; **inclusão** em parafina, que dá dureza para o corte; **microtomia**, em fatias de 3 a 8 µm; e **coloração**, precedida de reidratação, já que os corantes usuais são aquosos. Cada etapa deixa marcas — a retração dos solventes, a extração de lipídios, as fendas do micrótomo — e todas aparecem na lâmina final.',
+    roteiro: [
+      'Antes de descrever uma estrutura, pergunte se ela poderia ter sido criada por uma das etapas.',
+      'Lembre que gordura e glicogênio são extraídos na rotina: espaços claros costumam ser eles.',
+    ],
+  },
+
+  'tissue preparation - fixatives': {
+    panorama:
+      'A fixação é a etapa que decide a qualidade de tudo o que vem depois. O fixador mais usado é o **formaldeído a 10% tamponado** (formalina), que forma pontes de metileno entre grupos amino das proteínas, preservando bem a morfologia geral e permitindo imuno-histoquímica posterior — embora exija recuperação antigênica, já que as próprias pontes mascaram epítopos. Para microscopia eletrônica usa-se **glutaraldeído**, que faz ligações cruzadas mais estáveis, seguido de **tetróxido de ósmio**, que fixa lipídios e ao mesmo tempo os torna elétron-densos. Fixadores com metais pesados, como o de Bouin e o de Zenker, dão detalhe nuclear superior mas são incompatíveis com muitos anticorpos. Fixar cedo e em volume suficiente importa mais que a escolha do fixador.',
+    roteiro: [
+      'Relacione o fixador ao que se pretende ver: nenhum preserva tudo igualmente bem.',
+      'Suspeite de autólise quando os núcleos estiverem pálidos e os contornos celulares indistintos.',
+    ],
+  },
+
+  'sectioning – light microscopy': {
+    panorama:
+      'Para a microscopia de luz, o tecido incluído em parafina é cortado no **micrótomo** em fatias de 3 a 8 µm — espessura escolhida por ser aproximadamente a de uma célula, o que dá contraste sem sobreposição excessiva. Os cortes flutuam em banho aquecido para desfazer as pregas, são pescados em lâminas e desparafinizados antes da coloração. Alternativas existem quando a parafina não serve: o **criostato** corta tecido congelado em minutos, preservando lipídios e atividade enzimática, e é o que se usa no exame intraoperatório de congelação, ao custo de morfologia inferior. Artefatos típicos do corte incluem pregas, riscos paralelos por falha na navalha, e fragmentação de tecidos duros mal descalcificados.',
+    roteiro: [
+      'Identifique riscos paralelos e pregas antes de interpretá-los como estrutura.',
+      'Lembre que a espessura do corte determina quantas camadas de células você vê sobrepostas.',
+    ],
+  },
+
+  'sectioning – electron microscopy': {
+    panorama:
+      'A microscopia eletrônica exige cortes **ultrafinos**, de 60 a 90 nm — cerca de cem vezes mais finos que os de rotina —, porque o feixe de elétrons tem baixíssimo poder de penetração. O tecido é fixado em glutaraldeído e ósmio, incluído em **resina epóxi**, que é muito mais dura que a parafina, e cortado no **ultramicrótomo** com navalha de diamante ou de vidro. Os cortes são recolhidos em telinhas de cobre e contrastados com **acetato de uranila** e **citrato de chumbo**, metais pesados que se ligam diferencialmente aos componentes e produzem a imagem em tons de cinza. Antes disso, cortes semifinos de aproximadamente 1 µm, corados com azul de toluidina, são examinados em luz para escolher a área de interesse.',
+    roteiro: [
+      'Lembre que a imagem é de densidade eletrônica, não de cor: "elétron-denso" não significa escuro por corante.',
+      'Use o corte semifino como mapa antes de interpretar o ultrafino.',
+    ],
+  },
+
+  'section planes': {
+    panorama:
+      'Toda lâmina é uma fatia bidimensional de um objeto tridimensional, e a maior parte dos erros de interpretação nasce de esquecer isso. Um tubo cortado **transversalmente** aparece como anel; **longitudinalmente**, como duas faixas paralelas; **obliquamente**, como elipse ou como um contorno que parece ramificar. Uma esfera oca cortada fora do equador parece menor e de parede mais espessa. Uma vilosidade cortada de través vira uma ilha de epitélio solta na luz, e um glomérulo cortado na borda parece um aglomerado sem cápsula. A regra prática é sempre a mesma: **reconstrua mentalmente o volume** a partir de vários perfis do mesmo campo antes de concluir, e prefira o perfil mais completo como referência.',
+    roteiro: [
+      'Procure o perfil mais bem orientado do campo e use-o para interpretar os demais.',
+      'Diante de um achado estranho, teste primeiro a hipótese de plano de corte.',
+    ],
+  },
+
+  staining: {
+    panorama:
+      'Tecido não corado é praticamente transparente e sem contraste; a coloração existe para introduzir diferenças ópticas. O princípio dominante é químico: corantes **básicos** (catiônicos), como a hematoxilina, ligam-se a componentes **aniônicos** — DNA, RNA, glicosaminoglicanos sulfatados —, e o que se cora por eles chama-se **basófilo**; corantes **ácidos** (aniônicos), como a eosina, ligam-se a grupos catiônicos das proteínas, e o que se cora por eles é **acidófilo** ou eosinófilo. Daí a leitura imediata do H&E: núcleo e RER azuis, citoplasma e colágeno rosas. Outras técnicas seguem princípios diferentes — reações químicas específicas, como o PAS, impregnações metálicas, e a imuno-histoquímica, baseada em antígeno e anticorpo.',
+    roteiro: [
+      'Traduza a cor observada em composição química antes de nomear a estrutura.',
+      'Pergunte que técnica foi usada: a mesma estrutura muda completamente de aparência entre elas.',
+    ],
+  },
+
+  'types of stains': {
+    panorama:
+      'As técnicas de coloração se agrupam por mecanismo. As **tintoriais** dependem de carga elétrica e são a base do H&E e dos tricrômicos. As **histoquímicas** usam uma reação química específica para revelar uma classe de molécula: o **PAS** oxida glicóis vicinais e cora carboidratos de magenta; o sudan e o óleo vermelho dissolvem-se em lipídios; o Perls revela ferro. As **impregnações metálicas** depositam prata ou ouro sobre estruturas com afinidade particular, revelando fibras reticulares e prolongamentos neuronais que nenhum corante alcança. As **enzimo-histoquímicas** detectam atividade enzimática preservada. E a **imuno-histoquímica** usa anticorpos contra proteínas específicas, revelados por enzima ou fluorescência, sendo hoje a ferramenta central do diagnóstico.',
+    roteiro: [
+      'Comece toda leitura perguntando qual técnica foi usada — a interpretação depende disso.',
+      'Não conclua ausência a partir de uma técnica que não detecta aquela classe de molécula.',
+    ],
+  },
+
+  'hematoxylin and esosin (h&e) staining': {
+    panorama:
+      'O H&E é a coloração de rotina em todo o mundo, e domina-lo é o pré-requisito de qualquer leitura. A **hematoxilina** não é corante por si: oxidada a hemateína e complexada com um mordente de alumínio, torna-se um corante **básico** que se liga a estruturas aniônicas — cromatina, nucléolo, RER e polissomos, matriz cartilaginosa — e as tinge de azul-arroxeado; essas estruturas são ditas **basófilas**. A **eosina** é um corante **ácido** que se liga a grupos catiônicos das proteínas citoplasmáticas, colágeno, fibras musculares e hemácias, tingindo-os de rosa; são as estruturas **acidófilas** ou eosinófilas. A leitura básica é imediata: azul indica ácido nucleico ou síntese proteica, rosa indica proteína estrutural já formada.',
+    roteiro: [
+      'Traduza azul e rosa em basofilia e acidofilia, e estas em composição — é o raciocínio, não a cor.',
+      'Lembre que mucinas e lipídios são extraídos ou não corados e aparecem como espaços claros.',
+    ],
+  },
+
+  'metal stains for electron microscopy (em)': {
+    panorama:
+      'Na microscopia eletrônica não há cor: a imagem é formada pelo **espalhamento de elétrons**, e regiões que espalham mais aparecem escuras. Como os elementos do tecido biológico são leves e espalham pouco, é preciso introduzir **metais pesados** que se liguem seletivamente. O **tetróxido de ósmio**, aplicado ainda na fixação, liga-se às duplas ligações dos lipídios insaturados e por isso torna todas as **membranas** visíveis — é ele que produz a imagem trilaminar da membrana plasmática. O **acetato de uranila** liga-se a ácidos nucleicos e proteínas, realçando cromatina e ribossomos. O **citrato de chumbo** aumenta o contraste geral, ligando-se a estruturas já marcadas pelo uranila. Fala-se, portanto, em elétron-denso e elétron-lucente, não em corado.',
+    roteiro: [
+      'Interprete o tom de cinza como densidade eletrônica, e essa densidade como afinidade por metal.',
+      'Atribua a nitidez das membranas ao ósmio antes de supor uma propriedade intrínseca.',
+    ],
+  },
+
+  'toluidine blue': {
+    panorama:
+      'O azul de toluidina é um corante básico de uso duplo. Em cortes **semifinos** de resina, de aproximadamente 1 µm, é a coloração padrão para localizar a área de interesse antes da microscopia eletrônica, dando um azul geral com excelente detalhe. Sua propriedade mais interessante, porém, é a **metacromasia**: diante de poliânions muito densos — heparina sulfatada dos grânulos do mastócito, glicosaminoglicanos da matriz cartilaginosa, mucinas ácidas — as moléculas do corante se agregam e passam a absorver em outro comprimento de onda, e o que deveria ser azul aparece **púrpura ou vermelho**. É por isso que os grânulos do mastócito saltam em púrpura enquanto o resto do campo permanece azul.',
+    roteiro: [
+      'Procure o desvio de cor, não a intensidade: metacromasia é mudança de matiz.',
+      'Relacione o púrpura a poliânions densos e use isso para inferir a composição da matriz.',
+    ],
+  },
+
+  osmium: {
+    panorama:
+      'O tetróxido de ósmio cumpre duas funções ao mesmo tempo, e é por isso que ocupa lugar central no preparo para microscopia eletrônica. Como **fixador**, é o único de uso rotineiro que estabiliza **lipídios**, reagindo com as duplas ligações dos ácidos graxos insaturados — sem ele, as membranas seriam extraídas pelos solventes da inclusão. Como agente de **contraste**, o ósmio reduzido é um metal pesado que fica depositado exatamente onde reagiu, tornando as membranas elétron-densas. O resultado direto é a imagem **trilaminar** da membrana plasmática: duas linhas escuras, correspondentes às cabeças polares onde o ósmio se ligou, separadas por uma faixa clara, a região das caudas hidrofóbicas. Também enegrece gotículas lipídicas em cortes de luz.',
+    roteiro: [
+      'Atribua as duas linhas escuras da membrana ao ósmio, não a duas estruturas distintas.',
+      'Lembre que o miolo claro é a parte lipídica: ele não é um espaço.',
+    ],
+  },
+
+  'periodic acid-schiff (pas) stain': {
+    panorama:
+      'O PAS é uma reação histoquímica, não uma coloração por carga. O **ácido periódico** oxida grupos glicol vicinais dos carboidratos, gerando aldeídos, que reagem com o **reativo de Schiff** e produzem uma cor **magenta** intensa. Marca, portanto, tudo o que é rico em açúcar: **glicogênio** do hepatócito e do músculo, **mucinas neutras** das células caliciformes e do epitélio gástrico, o **glicocálice** da borda estriada, as **membranas basais** e as paredes de fungos. Um controle simples torna a técnica específica: um corte tratado previamente com **diastase** perde a marcação do glicogênio mas mantém a das mucinas e membranas basais, o que permite distinguir uma coisa da outra com segurança.',
+    roteiro: [
+      'Peça o controle com diastase antes de afirmar que o magenta é glicogênio.',
+      'Use o PAS para contar caliciformes: em H&E o número é sempre subestimado.',
+    ],
+  },
+
+  'cresyl violet-luxol fast blue': {
+    panorama:
+      'Essa combinação é a coloração padrão para tecido nervoso porque revela, na mesma lâmina, os dois componentes que estruturam o sistema nervoso central. O **luxol fast blue** liga-se às lipoproteínas da **mielina** e tinge de azul a substância branca e as fibras mielinizadas, permitindo delimitar tratos e identificar áreas de desmielinização como falhas na coloração. O **violeta de cresila** é um corante básico que marca a **substância de Nissl** dos corpos neuronais, em roxo, delineando a substância cinzenta e permitindo o mapeamento citoarquitetônico — o método de Nissl clássico. O resultado é um contraste direto entre branca azul e cinzenta arroxeada, ideal para orientação topográfica em cortes de encéfalo e medula.',
+    roteiro: [
+      'Use o azul para delimitar tratos e o roxo para localizar corpos neuronais.',
+      'Procure falhas na coloração azul como sinal de perda de mielina.',
+    ],
+  },
+
+  "masson's trichrome": {
+    panorama:
+      'O tricrômico de Masson usa três corantes de tamanhos moleculares diferentes para separar, em uma só lâmina, três componentes. Os **núcleos** ficam pretos ou azul-escuros pela hematoxilina férrica; o **citoplasma, o músculo e as hemácias** ficam vermelhos pela fucsina ácida; e o **colágeno** fica **azul** (ou verde, na variante com verde-luz), porque suas fibras são mais permeáveis e retêm o corante de molécula maior aplicado por último, após o tratamento com ácido fosfomolíbdico. Isso torna a técnica insubstituível para avaliar **fibrose**: em fígado, rim, coração e pulmão, a extensão do azul mede diretamente quanto de parênquima foi substituído por colágeno, e é ela que fundamenta o estadiamento histológico da cirrose.',
+    roteiro: [
+      'Estime a proporção de azul no campo antes de examinar detalhes celulares.',
+      'Distinga músculo de colágeno pela cor, não pela forma — em corte transversal os dois se confundem.',
+    ],
+  },
+
+  "movat's pentachrome stain": {
+    panorama:
+      'O pentacrômico de Movat é uma técnica de combinação desenhada para mostrar **cinco componentes do tecido conjuntivo simultaneamente**, e por isso é preferida no estudo de vasos e valvas cardíacas. O resultado típico é: **elastina e núcleos em preto**, **colágeno em amarelo**, **mucopolissacarídeos e substância fundamental em azul-esverdeado**, **fibrina em vermelho intenso** e **músculo em vermelho**. Numa parede arterial, isso permite ver de uma só vez as lâminas elásticas, a média muscular, o colágeno da adventícia e o acúmulo de proteoglicanos da íntima — informação que exigiria três colorações separadas. É a técnica de escolha para caracterizar a estrutura de uma valva, com sua fibrosa, esponjosa e ventricular.',
+    roteiro: [
+      'Memorize a chave de cores antes de interpretar: sem ela, a imagem é confusa.',
+      'Use-a quando a questão for a proporção entre elastina, colágeno e músculo.',
+    ],
+  },
+
+  "elastin stain (verhoeff's-van gieson)": {
+    panorama:
+      'A coloração de Verhoeff com contraste de van Gieson é a técnica padrão para **fibras elásticas**, que em H&E são praticamente invisíveis ou aparecem apenas como linhas onduladas pálidas. A hematoxilina férrica de Verhoeff, em excesso e depois diferenciada, permanece ligada apenas à elastina, que fica **preta e nítida**; o contraste de van Gieson tinge o **colágeno de vermelho** e o **restante do tecido de amarelo**. A aplicação principal é vascular: ela demonstra as lâminas elásticas interna e externa das artérias, as lamelas concêntricas da aorta e a rede elástica do pulmão e da derme. Também é usada para documentar a fragmentação elástica de aneurismas e de doenças do tecido conjuntivo.',
+    roteiro: [
+      'Conte as lamelas elásticas para classificar a artéria como elástica ou muscular.',
+      'Procure fragmentação ou rarefação da rede preta como achado patológico.',
+    ],
+  },
+
+  'silver stain': {
+    panorama:
+      'As impregnações argênticas não são colorações por afinidade de carga: sais de prata são depositados e depois **reduzidos a prata metálica** sobre estruturas que têm capacidade de reduzi-los ou que foram previamente sensibilizadas, resultando em depósitos **pretos** sobre fundo claro. São insubstituíveis para dois territórios. No conjuntivo, revelam as **fibras reticulares** de colágeno III — argirófilas por causa de sua alta glicosilação —, expondo o arcabouço de fígado, baço, linfonodo e medula óssea, que o H&E não mostra. No tecido nervoso, revelam **prolongamentos neuronais, neurofibrilas e a glia**, permitindo ver a arborização dendrítica inteira de um neurônio, como no método de Golgi.',
+    roteiro: [
+      'Peça prata quando a pergunta for sobre o arcabouço de sustentação de um órgão.',
+      'Lembre que a técnica é caprichosa: variações de intensidade não devem ser lidas como diferença biológica.',
+    ],
+  },
+
+  stains: {
+    panorama:
+      'Este é o índice das técnicas de coloração, e vale usá-lo como um mapa de decisões. A pergunta que orienta a escolha é sempre "o que eu quero ver?": para morfologia geral, **H&E**; para carboidratos, glicogênio e membranas basais, **PAS**; para colágeno e fibrose, **tricrômico**; para fibras elásticas, **Verhoeff**; para fibras reticulares e neurônios, **prata**; para mielina e corpos neuronais, **luxol e violeta de cresila**; para grânulos de mastócito e matriz cartilaginosa, **azul de toluidina**, pela metacromasia; para lipídios, **sudan** em corte de congelação; e para uma proteína específica, **imuno-histoquímica**. Nenhuma técnica mostra tudo, e a ausência de marcação diz pouco quando a técnica não detecta aquela classe de molécula.',
+    roteiro: [
+      'Escolha a técnica a partir da pergunta, não o contrário.',
+      'Ao interpretar, considere sempre o que aquela técnica *não* mostra.',
+    ],
+  },
+
+  'stains 01': {
+    panorama:
+      'A coloração transforma um corte quase transparente em uma imagem legível, e o mecanismo predominante é eletrostático. Corantes **básicos** carregam carga positiva e se ligam a componentes negativos do tecido — fosfatos do DNA e do RNA, sulfatos dos glicosaminoglicanos —, e o componente que os retém é chamado **basófilo**; a hematoxilina é o exemplo. Corantes **ácidos** carregam carga negativa e se ligam a grupos positivos das proteínas, e o componente é **acidófilo**; a eosina é o exemplo. Compreender essa dupla resolve a maior parte da leitura de rotina: o azul do núcleo e da base do plasmócito é ácido nucleico, o rosa do colágeno e do citoplasma muscular é proteína estrutural.',
+    roteiro: [
+      'Antes de nomear a estrutura, nomeie a afinidade: basófila ou acidófila.',
+      'Ligue a afinidade à composição química, e a composição à função da célula.',
+    ],
+  },
+
+  microscopy: {
+    panorama:
+      'A histologia depende de instrumentos, e cada um impõe seus limites. O **microscópio de luz** usa fótons e lentes de vidro, com resolução limitada pela difração a cerca de 0,2 µm — o que permite ver células, núcleos e tecidos, mas não organelas individuais. O **microscópio eletrônico de transmissão** usa elétrons acelerados e lentes eletromagnéticas, alcançando resolução da ordem de 1 nm e revelando membranas, ribossomos e citoesqueleto em cortes ultrafinos. O **de varredura** varre a superfície e produz imagem tridimensional do relevo. Somam-se técnicas especiais de luz: contraste de fase e interferência para material vivo não corado, campo escuro, polarização para estruturas birrefringentes, e **fluorescência** e **confocal** para localização molecular.',
+    roteiro: [
+      'Pergunte primeiro qual instrumento gerou a imagem: ele define o que é possível estar visível.',
+      'Não atribua a organelas o que a resolução do microscópio de luz não alcança.',
+    ],
+  },
+
+  'magnification and resolution': {
+    panorama:
+      'Aumento e resolução são propriedades diferentes, e confundi-las é a origem do "aumento vazio". O **aumento** é a razão entre o tamanho da imagem e o do objeto, e resulta simplesmente do produto entre objetiva e ocular; ampliar sem melhorar a resolução apenas torna a imagem maior e mais borrada. A **resolução** é a menor distância entre dois pontos que ainda podem ser vistos separadamente, e é limitada pela física: aproximadamente 0,61 vezes o comprimento de onda dividido pela abertura numérica. Para a luz visível isso dá cerca de **0,2 µm**; para o olho nu, 0,2 mm; para o microscópio eletrônico de transmissão, algo próximo de **1 nm**, porque o comprimento de onda do elétron é milhares de vezes menor.',
+    roteiro: [
+      'Cheque a abertura numérica antes de culpar o aumento por uma imagem ruim.',
+      'Use os três números de referência — 0,2 mm, 0,2 µm, 1 nm — como escala mental.',
+    ],
+  },
+
+  'light microscopy': {
+    panorama:
+      'O microscópio óptico composto forma a imagem em duas etapas: a **objetiva** produz uma imagem real ampliada, e a **ocular** a amplia novamente para o olho. O **condensador** concentra a luz na amostra, e sua abertura, junto com a da objetiva, determina a resolução — por isso objetivas de imersão usam óleo, cujo índice de refração próximo ao do vidro aumenta a abertura numérica e permite chegar ao limite de aproximadamente 0,2 µm. Como a maioria dos tecidos é transparente, é necessário corar; alternativas para material vivo incluem **contraste de fase** e **contraste de interferência diferencial**, que convertem diferenças de índice de refração em diferenças de intensidade. Fluorescência e confocal acrescentam especificidade molecular e cortes ópticos.',
+    roteiro: [
+      'Ajuste o condensador antes de reclamar da imagem: ele afeta a resolução tanto quanto a objetiva.',
+      'Escolha entre corar e usar contraste de fase conforme o material esteja fixado ou vivo.',
+    ],
+  },
+
+  'electron microscopy': {
+    panorama:
+      'A microscopia eletrônica substitui fótons por **elétrons acelerados** e lentes de vidro por lentes **eletromagnéticas**, operando em alto vácuo. Como o comprimento de onda do elétron é milhares de vezes menor que o da luz, a resolução alcança cerca de 1 nm, revelando membranas, ribossomos, filamentos e a estrutura interna das organelas. O modo de **transmissão** atravessa cortes ultrafinos de 60 a 90 nm contrastados com metais pesados, e a imagem é formada por espalhamento — daí falar-se em elétron-denso e elétron-lucente, e não em cor. O modo de **varredura** recobre a superfície com metal e varre-a com o feixe, produzindo imagem tridimensional do relevo. O preço é alto: só tecido fixado, campo minúsculo e nenhuma observação de material vivo.',
+    roteiro: [
+      'Determine se a imagem é de transmissão ou de varredura antes de interpretá-la.',
+      'Lembre da escala: o campo típico corresponde a uma fração de uma única célula.',
+    ],
+  },
+
+  'tissue preparation': {
+    panorama:
+      'Preparar tecido é escolher, a cada etapa, o que preservar e o que sacrificar. A **fixação** interrompe a autólise e estabiliza proteínas, mas altera epítopos; a **desidratação** e a **diafanização** retiram a água e substituem-na por solventes que extraem lipídios e provocam retração de aproximadamente 10 a 30% do volume; a **inclusão** em parafina dá dureza para o corte, mas exige calor; a **microtomia** produz fatias de 3 a 8 µm, com riscos e pregas possíveis; e a **coloração** introduz o contraste. O resultado é uma imagem fiel na topografia e infiel na escala e no conteúdo hidrossolúvel — motivo pelo qual gordura, glicogênio e mucinas aparecem como espaços vazios em H&E de rotina.',
+    roteiro: [
+      'Antes de interpretar um espaço claro, verifique se ele corresponde a algo extraído no preparo.',
+      'Corrija mentalmente a retração ao estimar tamanhos absolutos.',
+    ],
+  },
+
+  // ---- Membranas e conceitos gerais ----
+
+  'cutaneous membrane': {
+    panorama:
+      'A membrana cutânea é a pele considerada como membrana de revestimento, e é a única das membranas do corpo que faz fronteira com o **ambiente externo seco**. Diferentemente das mucosas e das serosas, ela é **seca na superfície** — não tem secreção própria que a mantenha úmida, apenas o sebo e o suor — e é **queratinizada**, com um estrato córneo de células mortas cheias de queratina e cimentadas por lipídios, que é a verdadeira barreira contra a perda de água e contra a entrada de microrganismos. Compõe-se de epiderme, epitélio estratificado pavimentoso queratinizado, e derme, o conjuntivo que a sustenta. Essa combinação de queratinização e ressecamento é o que a distingue funcionalmente de todas as outras membranas.',
+    roteiro: [
+      'Compare com uma mucosa na mesma prancha: queratinização e umidade são os dois eixos da diferença.',
+      'Confirme a ausência de núcleos nas camadas superficiais.',
+    ],
+  },
+
+  'mucosal and serosal membranes': {
+    panorama:
+      'Mucosas e serosas são as duas grandes membranas internas, e se distinguem pelo tipo de cavidade que revestem. A **mucosa** forra cavidades **abertas ao exterior** — digestória, respiratória, urinária, genital — e é sempre úmida por secreção própria de muco; tem epitélio variável conforme a agressão local e lâmina própria de conjuntivo, mais uma muscular da mucosa no tubo digestório. A **serosa** forra cavidades **fechadas** — pleural, pericárdica e peritoneal — e é sempre feita de **mesotélio** simples pavimentoso sobre conjuntivo frouxo; sua umidade vem de um ultrafiltrado do plasma enriquecido com ácido hialurônico, que permite o deslizamento sem atrito. Cada serosa tem uma folha visceral, aderida ao órgão, e uma parietal, na parede.',
+    roteiro: [
+      'Pergunte se a cavidade se abre para fora: a resposta separa as duas famílias.',
+      'Confirme o mesotélio simples pavimentoso antes de chamar algo de serosa.',
+    ],
+  },
+
+  'serosal membrane': {
+    panorama:
+      'A membrana serosa reveste as cavidades fechadas do corpo e é notavelmente uniforme: **mesotélio** simples pavimentoso, apoiado em lâmina basal, sobre uma camada delgada de conjuntivo frouxo com vasos, linfáticos e adipócitos. O mesotélio, de origem mesodérmica, não é um epitélio de revestimento comum — suas células têm microvilosidades curtas que retêm o líquido seroso e secretam ácido hialurônico, o que torna a superfície escorregadia e permite que órgãos deslizem uns sobre os outros a cada batimento ou movimento respiratório. Cada serosa tem folha **visceral**, aderida ao órgão, e **parietal**, na parede, contínuas entre si, com um espaço virtual entre elas contendo poucos mililitros de líquido.',
+    roteiro: [
+      'Ache a camada única e achatada de mesotélio na superfície livre.',
+      'Verifique a continuidade entre folha visceral e parietal para confirmar a organização.',
+    ],
+  },
+
+  'cortex and medulla': {
+    panorama:
+      'A divisão em córtex e medula organiza vários órgãos capsulados, mas o que ela significa muda inteiramente conforme o órgão — reconhecê-la é orientação topográfica, não identificação. No **rim**, o córtex tem corpúsculos e túbulos contorcidos e a medula tem alças e coletores em arranjo estriado. No **linfonodo**, o córtex tem nódulos B, o paracórtex tem T e a medula tem cordões e seios. No **timo**, o córtex é escuro pela densidade de timócitos e a medula é clara e tem corpúsculos de Hassall. Na **suprarrenal**, córtex e medula têm origens embriológicas diferentes e produzem classes distintas de hormônio. No **ovário**, o córtex tem folículos e a medula é vascular. No **pelo**, os termos descrevem camadas da haste.',
+    roteiro: [
+      'Localize cápsula, córtex e medula antes de qualquer detalhe em órgão capsulado.',
+      'Nomeie o órgão antes de atribuir significado às duas regiões.',
+    ],
+  },
+
+  'general concepts': {
+    panorama:
+      'Antes de estudar órgãos individualmente, alguns conceitos se repetem e economizam esforço. Todo órgão combina os **quatro tecidos básicos** e pode ser lido pela dupla **parênquima e estroma**. Órgãos **maciços** se organizam em cápsula, septos e lóbulos; órgãos **tubulares** repetem camadas concêntricas em torno de uma luz — mucosa, submucosa, muscular e adventícia ou serosa. A divisão em **córtex e medula** aparece sempre que duas funções precisam de compartimentos distintos. As **membranas** de revestimento se classificam pelo tipo de cavidade que forram. E a **luz** de qualquer tubo é, topologicamente, o exterior do corpo. Aplicar essas chaves antes de procurar detalhes resolve boa parte das lâminas sem memorização adicional.',
+    roteiro: [
+      'Classifique o órgão como maciço ou tubular antes de descrever qualquer estrutura.',
+      'Separe parênquima de estroma como segundo passo, sempre.',
+    ],
+  },
+
+  'daughter cells': {
+    panorama:
+      'As células-filhas são o produto final da divisão, e compará-las com a mãe revela o que a mitose garante e o que ela não garante. O **genoma** é repartido com precisão: cada filha recebe uma cópia idêntica, porque as cromátides irmãs são separadas por um aparato dedicado e vigiado por ponto de checagem. Já o **citoplasma** é repartido de modo estocástico — mitocôndrias, cisternas do retículo, fragmentos do Golgi e demais organelas se distribuem aproximadamente pela metade, sem mecanismo de contagem. Em algumas linhagens a divisão é deliberadamente **assimétrica**: determinantes citoplasmáticos são segregados para um lado só, e as filhas seguem destinos diferentes — é assim que uma célula-tronco se autorrenova e ao mesmo tempo gera uma célula comprometida.',
+    roteiro: [
+      'Compare o tamanho das duas filhas: assimetria evidente sugere divisão determinativa.',
+      'Note que os núcleos ainda estão descondensando enquanto o citoplasma já se separou.',
+    ],
+  },
+
+  'overview of mitosis': {
+    panorama:
+      'A mitose é a divisão que produz duas células geneticamente **idênticas** à mãe, e serve ao crescimento, à renovação de tecidos e ao reparo. Ocorre em quatro fases contínuas — prófase, metáfase, anáfase e telófase, com a prometáfase entre as duas primeiras — precedidas pela replicação do DNA na fase S da intérfase e seguidas pela citocinese. O que se separa é o par de **cromátides irmãs** de cada cromossomo, e não os homólogos, o que preserva a ploidia. Três aparatos comandam o processo: o **fuso mitótico** de microtúbulos nucleados nos centrossomos, os **cinetocoros** que ligam cromossomo a fuso, e o **anel contrátil** de actina e miosina que divide o citoplasma. Pontos de checagem impedem o avanço com ligações incorretas.',
+    roteiro: [
+      'Localize as figuras mitóticas nas zonas proliferativas do tecido antes de tentar fasear.',
+      'Use envoltório nuclear e posição da cromatina como os dois critérios de faseamento.',
+    ],
+  },
+
+  'light micrographs': {
+    panorama:
+      'A fotomicrografia de luz é o registro do que se vê ao microscópio óptico, e interpretá-la exige ter em mente três limites do instrumento. A **resolução** máxima é de aproximadamente 0,2 µm, de modo que organelas individuais não aparecem: o que se vê como granulação é sempre um agregado. A **espessura do corte**, de 3 a 8 µm, faz várias camadas de células se sobreporem, o que explica contornos difusos e núcleos aparentemente encavalados. E a **cor** não é do tecido, mas dos corantes, e traduz afinidade química. Uma boa leitura, portanto, começa pelo pequeno aumento — que dá topografia e orientação — e só depois desce ao detalhe, em vez de partir direto para a objetiva de imersão.',
+    roteiro: [
+      'Comece sempre pelo menor aumento e só então aproxime.',
+      'Cheque a escala ou a barra de referência antes de estimar tamanhos.',
+    ],
+  },
+
+  'meiosis i: prophase': {
+    panorama:
+      'A prófase I é a fase mais longa e mais importante da meiose, e se subdivide em cinco estágios. No **leptóteno** os cromossomos começam a condensar e aparecem como filamentos finos. No **zigóteno** os homólogos se aproximam e pareiam ponto a ponto, formando o **complexo sinaptonêmico**, uma estrutura proteica em zíper. No **paquíteno** o pareamento se completa em bivalentes de quatro cromátides, e ocorre o **crossing over**, a troca recíproca de segmentos entre cromátides não irmãs — a principal fonte de variabilidade genética. No **diplóteno** o complexo se desfaz e os homólogos se afastam, permanecendo unidos nos **quiasmas**, pontos visíveis onde houve troca. Na **diacinese** a condensação atinge o máximo e o envoltório nuclear se rompe.',
+    roteiro: [
+      'Procure os bivalentes espessos do paquíteno: são as maiores figuras do túbulo seminífero.',
+      'Ache os quiasmas no diplóteno como pontos de contato entre homólogos já separados.',
+    ],
+  },
+
+  'meiosis i: metaphase': {
+    panorama:
+      'Na metáfase I são os **bivalentes** — pares de cromossomos homólogos ainda unidos por quiasmas — que se alinham na placa equatorial, e não cromossomos individuais como na mitose. Cada homólogo do par volta seus dois cinetocoros para o **mesmo polo**, arranjo chamado de mono-orientação, e o par inteiro fica sob tração para lados opostos. Duas consequências importantes decorrem daí: a separação seguinte será de homólogos, não de cromátides, e a orientação de cada bivalente na placa é **independente** da dos demais — é esse sorteio, chamado de distribuição independente, que gera 2^23 combinações possíveis no ser humano, somando-se à variabilidade já criada pelo crossing over.',
+    roteiro: [
+      'Conte as unidades na placa: bivalentes são mais espessos e menos numerosos que cromossomos isolados.',
+      'Lembre que a orientação de cada par é aleatória — é o segundo mecanismo de variabilidade.',
+    ],
+  },
+
+  'meiosis i: anaphase': {
+    panorama:
+      'A anáfase I é o momento que define a meiose como divisão **reducional**: os **cromossomos homólogos** se separam e migram para polos opostos, mas cada um leva consigo suas **duas cromátides irmãs ainda unidas** pelo centrômero. Isso é possível porque a coesina dos braços é degradada, liberando os quiasmas, enquanto a coesina centromérica permanece protegida pela shugoshina. O resultado é que cada polo recebe metade do número de cromossomos — de 46 para 23 no ser humano —, mas cada um deles ainda duplicado. Erros aqui produzem **não disjunção**, com um polo recebendo os dois homólogos, e são a causa mais frequente das trissomias, cuja incidência aumenta com a idade materna pela longa parada em prófase I.',
+    roteiro: [
+      'Verifique se as unidades que migram têm duas cromátides: é o que distingue de anáfase mitótica.',
+      'Relacione a redução do número à separação de homólogos, e não de cromátides.',
+    ],
+  },
+
+  'meiosis i: telophase': {
+    panorama:
+      'Na telófase I os dois conjuntos haploides — porém ainda com cromossomos duplicados — chegam aos polos, e o envoltório nuclear pode se reconstruir parcialmente enquanto a citocinese divide o citoplasma. O grau de descondensação varia muito entre espécies e entre os sexos: em muitos casos os cromossomos permanecem condensados e a célula passa direto à meiose II. Segue-se a **intercinese**, um intervalo curto em que **não há replicação do DNA** — é essa ausência que garante a redução final. No macho, a divisão gera dois espermatócitos secundários de tamanho igual; na fêmea, é radicalmente desigual, produzindo um oócito secundário grande e o primeiro corpúsculo polar, minúsculo.',
+    roteiro: [
+      'Confirme que não há fase S entre as duas divisões — é o que diferencia meiose de duas mitoses.',
+      'Compare o tamanho das duas células resultantes para inferir se a gametogênese é masculina ou feminina.',
+    ],
+  },
+
+  'completion of meiosis i': {
+    panorama:
+      'Ao final da meiose I, cada célula-filha é **haploide em número de cromossomos, mas ainda diploide em quantidade de DNA**, já que cada cromossomo mantém suas duas cromátides. É essa aparente contradição que confunde e vale fixar: n cromossomos, 2c de DNA. As células resultantes já são geneticamente distintas entre si e da mãe, por dois mecanismos independentes — o crossing over do paquíteno, que recombinou segmentos, e o sorteio independente dos bivalentes na metáfase I. No homem, as duas filhas são **espermatócitos secundários** de tamanho igual, que entram rapidamente na meiose II. Na mulher, são um **oócito secundário** e o primeiro corpúsculo polar, e o oócito para novamente, agora em metáfase II.',
+    roteiro: [
+      'Distinga número de cromossomos de quantidade de DNA ao classificar a célula.',
+      'Verifique se houve divisão simétrica ou desigual do citoplasma.',
+    ],
+  },
+
+  'meiosis ii: prophase': {
+    panorama:
+      'A prófase II é curta e simples, porque não há nada a parear: cada célula tem apenas um representante de cada par de homólogos. Os cromossomos, que podem ter descondensado parcialmente na intercinese, **recondensam**, o envoltório nuclear se rompe novamente e um novo fuso se organiza a partir dos centrossomos, que foram duplicados sem nova replicação de DNA. Não há complexo sinaptonêmico, não há crossing over e não há quiasmas — toda a recombinação já ocorreu na meiose I. A partir daqui, a mecânica é indistinguível da de uma mitose comum, com a diferença fundamental de que a célula é haploide e de que suas cromátides irmãs não são idênticas, por causa das trocas anteriores.',
+    roteiro: [
+      'Confirme a ausência de pareamento: sem bivalentes, a divisão é a segunda.',
+      'Note que as cromátides irmãs já não são cópias exatas uma da outra.',
+    ],
+  },
+
+  'meiosis ii: metaphase': {
+    panorama:
+      'Na metáfase II os cromossomos **individuais**, cada um com duas cromátides, alinham-se na placa equatorial exatamente como em uma metáfase mitótica — a diferença é o número, que é haploide, e o fato de as cromátides irmãs não serem geneticamente idênticas por causa do crossing over. Cada cromossomo volta seus dois cinetocoros para polos **opostos**, em bi-orientação, ao contrário do que ocorria na metáfase I. No oócito humano, é precisamente aqui que a célula fica **parada** após a ovulação, e só completa a divisão se houver fecundação: o espermatozoide dispara a onda de cálcio que reativa o ciclo, e o segundo corpúsculo polar é expulso.',
+    roteiro: [
+      'Compare o número de cromossomos com o de uma metáfase mitótica no mesmo tecido.',
+      'Lembre da parada em metáfase II do oócito ao interpretar lâminas de ovário e tuba.',
+    ],
+  },
+
+  'meiosis ii: anaphase': {
+    panorama:
+      'A anáfase II é **equacional**: a coesina centromérica, protegida na primeira divisão, é finalmente degradada, e as **cromátides irmãs** se separam, migrando para polos opostos como cromossomos independentes. O número de cromossomos por polo permanece haploide, mas a quantidade de DNA cai pela metade — de 2c para 1c —, completando a redução iniciada na primeira divisão. Cada cromátide carrega uma combinação única de alelos, resultado das trocas do paquíteno. Erros de segregação aqui também produzem aneuploidia, mas com consequências distintas das da não disjunção em anáfase I, porque afetam apenas duas das quatro células resultantes.',
+    roteiro: [
+      'Verifique que as unidades que migram têm cromátide única — é o critério da divisão equacional.',
+      'Relacione a queda de 2c para 1c ao final da redução de DNA.',
+    ],
+  },
+
+  'meiosis ii: telophase': {
+    panorama:
+      'Na telófase II os conjuntos haploides de cromossomos simples chegam aos polos, descondensam, o envoltório nuclear se reconstrói e a citocinese completa a separação. O resultado da meiose inteira são **quatro células haploides**, cada uma com n cromossomos e 1c de DNA, e todas geneticamente distintas. No macho, essas quatro se tornam **espermátides**, que ainda passarão pela espermiogênese — formação do acrossomo, condensação nuclear, montagem do flagelo, descarte de citoplasma — antes de virarem espermatozoides. Na fêmea, apenas uma se torna o **óvulo**, e as outras são corpúsculos polares que degeneram; o citoplasma inteiro foi concentrado em um só gameta, para sustentar as primeiras clivagens do embrião.',
+    roteiro: [
+      'Conte as células resultantes e compare seus tamanhos para identificar o sexo da gametogênese.',
+      'Distinga espermátide de espermatozoide: a transformação seguinte não envolve divisão.',
+    ],
+  },
+
+  'completion of meiosis ii': {
+    panorama:
+      'Concluída a meiose II, o balanço é o seguinte: de uma célula diploide 2n/4c saíram quatro células **n/1c**, todas com combinações genéticas diferentes. Três mecanismos produziram essa diversidade — o crossing over no paquíteno, o sorteio independente dos bivalentes na metáfase I, e o sorteio independente das cromátides na metáfase II. No macho, o rendimento é de quatro espermátides por espermatócito primário, e o processo é contínuo da puberdade em diante. Na fêmea, o rendimento útil é de um único óvulo, e a segunda divisão só se completa **no momento da fecundação**, com a expulsão do segundo corpúsculo polar, já dentro da tuba uterina, o que faz do óvulo maduro uma célula raramente observada.',
+    roteiro: [
+      'Verifique o rendimento — quatro gametas ou um — para identificar a linhagem.',
+      'Lembre que o óvulo só completa a meiose se houver fecundação.',
+    ],
+  },
+
+  'comparison of mitosis and meiosis': {
+    panorama:
+      'Comparar as duas divisões esclarece o papel de cada uma. A **mitose** tem uma divisão após uma replicação, produz **duas** células **diploides idênticas** à mãe, não há pareamento de homólogos nem crossing over, e o que se separa na anáfase são **cromátides irmãs**; serve ao crescimento, à renovação e ao reparo, e ocorre em células somáticas. A **meiose** tem **duas divisões após uma única replicação**, produz **quatro** células **haploides e geneticamente distintas**, inclui pareamento e recombinação na prófase I, e separa **homólogos** na primeira anáfase e cromátides na segunda; serve à reprodução sexuada e ocorre apenas nas linhagens germinativas. A meiose II, isolada, é mecanicamente igual a uma mitose de célula haploide.',
+    roteiro: [
+      'Pergunte o que se separa na anáfase: homólogos indicam meiose I, cromátides indicam mitose ou meiose II.',
+      'Conte as células resultantes e verifique se são idênticas ou distintas.',
+    ],
+  },
+
+  'cell division': {
+    panorama:
+      'A divisão celular tem duas modalidades com finalidades opostas. A **mitose** conserva: mantém o número de cromossomos e produz células idênticas, sustentando o crescimento do organismo, a renovação de epitélios e do sangue, e o reparo de lesões. A **meiose** diversifica e reduz: corta o número de cromossomos pela metade e recombina o material genético, produzindo gametas geneticamente únicos e permitindo que a fecundação restaure a diploidia sem duplicá-la a cada geração. Ambas são precedidas por uma única replicação do DNA na fase S, e ambas terminam com a **citocinese**, que reparte o citoplasma. A diferença essencial está em quantas divisões seguem a replicação e no que se separa em cada anáfase.',
+    roteiro: [
+      'Determine primeiro a modalidade pelo tecido: germinativo permite meiose, somático não.',
+      'Depois estabeleça a fase pelo estado do envoltório nuclear e da cromatina.',
+    ],
+  },
+
+  'endoplasmic reticulum': {
+    panorama:
+      'O retículo endoplasmático é uma rede contínua de membranas que ocupa boa parte do citoplasma e se apresenta em duas formas funcionalmente distintas, embora fisicamente conectadas. O **rugoso** tem cisternas achatadas e empilhadas cobertas de ribossomos, sintetiza proteínas destinadas à secreção, à membrana e às organelas, faz seu enovelamento e glicosilação inicial, e torna o citoplasma **basófilo** — daí a base azul do plasmócito e do ácino pancreático. O **liso** é uma rede de túbulos sem ribossomos, e faz síntese de lipídios e esteroides, detoxificação de fármacos pelo citocromo P450 e sequestro de cálcio; deixa o citoplasma **acidófilo ou pálido**. A proporção entre os dois é uma leitura direta da função da célula.',
+    roteiro: [
+      'Use a cor do citoplasma como indicador da forma dominante de retículo.',
+      'Confirme em microscopia eletrônica pela presença ou ausência de ribossomos nas cisternas.',
+    ],
+  },
+
+  'protein secretory pathway': {
+    panorama:
+      'A via secretora é uma sequência fixa que vale a pena guardar inteira: **RER, vesículas de transporte, face cis do Golgi, cisternas mediais, face trans, rede trans-Golgi, grânulos de secreção e membrana plasmática**. A proteína entra na cisterna do RER durante a própria tradução, guiada pelo peptídeo-sinal; ali é enovelada com auxílio de chaperonas e recebe a glicosilação inicial ligada a asparagina. No Golgi, sofre processamento sequencial — remoção e adição de açúcares, sulfatação, fosforilação — que funciona como endereçamento: manose-6-fosfato, por exemplo, direciona enzimas ao lisossomo. Na rede trans-Golgi, o material é classificado e empacotado. A liberação pode ser **constitutiva**, contínua, ou **regulada**, com grânulos que esperam um sinal.',
+    roteiro: [
+      'Localize RER e Golgi na mesma célula e note que estão sempre próximos e polarizados.',
+      'Procure os grânulos maduros no ápice, do lado da luz — a polaridade revela a via.',
+    ],
+  },
+
+  golgi: {
+    panorama:
+      'O complexo de Golgi é a estação de processamento e triagem da via secretora. É formado por uma pilha de quatro a oito **cisternas achatadas e curvas**, com polaridade bem definida: a face **cis** (de formação), convexa, voltada ao RER, recebe as vesículas de transporte; as cisternas **mediais** fazem o processamento; e a face **trans** (de maturação), côncava, dá origem à rede trans-Golgi, onde o material é classificado e empacotado em vesículas de destinos diferentes. As modificações realizadas — glicosilação terminal, sulfatação, fosforilação — funcionam como etiquetas de endereçamento. Em H&E, o Golgi aparece como uma **área clara** junto ao núcleo, negativa porque suas membranas não retêm corante, e é o halo característico do plasmócito.',
+    roteiro: [
+      'Procure a zona clara justanuclear como assinatura em microscopia de luz.',
+      'Em microscopia eletrônica, oriente-se pela curvatura para identificar as faces cis e trans.',
+    ],
+  },
+
+  microtubules: {
+    panorama:
+      'Os microtúbulos são tubos ocos de 25 µm de diâmetro externo formados por treze protofilamentos de dímeros de **alfa e beta-tubulina**, e são o maior dos três sistemas do citoesqueleto. São **polares**: a extremidade mais cresce rapidamente, a menos fica ancorada no centro organizador. Sua característica funcional decisiva é a **instabilidade dinâmica** — alternam crescimento e despolimerização abrupta, o que lhes permite explorar o espaço e capturar cinetocoros na mitose. Servem de trilho para as proteínas motoras **cinesina**, que caminha para a periferia, e **dineína**, que caminha para o centro, transportando organelas e vesículas. Formam ainda o fuso mitótico e o axonema de cílios e flagelos, onde a organização passa a 9+2.',
+    roteiro: [
+      'Confirme o diâmetro de 25 nm em microscopia eletrônica para separar dos demais filamentos.',
+      'Relacione a instabilidade dinâmica ao mecanismo de ação dos quimioterápicos antimitóticos.',
+    ],
+  },
+
+  'diplosome and mtoc': {
+    panorama:
+      'O diplossomo é o **par de centríolos** dispostos perpendicularmente entre si, e junto com o material pericentriolar amorfo que o envolve constitui o **centrossomo**, o principal centro organizador de microtúbulos (MTOC) da célula animal. É no material pericentriolar, e não nos centríolos em si, que ficam os anéis de **gama-tubulina** que nucleiam os microtúbulos, definindo a extremidade menos e determinando a polaridade de toda a rede citoplasmática. O centrossomo duplica-se na fase S, e os dois pares migram para polos opostos organizando o fuso mitótico. Em células ciliadas, os centríolos se multiplicam e migram para o ápice, onde cada um se torna o corpúsculo basal de um cílio.',
+    roteiro: [
+      'Procure o par perpendicular em L: a disposição é a assinatura do diplossomo.',
+      'Note que a nucleação ocorre no material pericentriolar, não no centríolo.',
+    ],
+  },
+
+  'diplosomes and mtoc': {
+    panorama:
+      'Os diplossomos — pares de centríolos perpendiculares — situam-se no centro do **material pericentriolar**, e o conjunto forma o centrossomo, principal centro organizador de microtúbulos. A distinção entre as duas partes importa: os centríolos são cilindros de nove trincas de microtúbulos, mas quem **nucleia** os microtúbulos citoplasmáticos são os complexos anelares de gama-tubulina do material amorfo em volta. É essa nucleação que estabelece a extremidade menos e, portanto, a direção do transporte por cinesina e dineína, organizando a geografia interna da célula. Antes da mitose, o centrossomo duplica; na mitose, os dois organizam os polos do fuso. Células vegetais montam fusos sem centríolos, o que mostra que eles não são indispensáveis à nucleação.',
+    roteiro: [
+      'Separe conceitualmente centríolo e material pericentriolar antes de atribuir funções.',
+      'Siga os microtúbulos a partir do centrossomo para visualizar a polaridade da célula.',
+    ],
+  },
+
+  lipid: {
+    panorama:
+      'Os lipídios aparecem nas células como **gotículas** de triglicerídeos ou de ésteres de colesterol, e sua leitura na lâmina depende inteiramente da técnica. Na rotina em parafina, os solventes da desidratação e da diafanização os **dissolvem por completo**, deixando espaços claros e redondos, de contorno nítido — é isso que se vê no adipócito, no espongiócito da suprarrenal, no sebócito e no hepatócito esteatótico. Para demonstrá-los é preciso corte de **congelação** e corantes lipossolúveis como o sudan negro ou o óleo vermelho, ou fixação em **ósmio**, que os enegrece. Funcionalmente, a gotícula não tem membrana verdadeira: é envolvida por uma monocamada de fosfolipídios com perilipinas, que regulam o acesso das lipases.',
+    roteiro: [
+      'Interprete espaços claros redondos e uniformes como lipídio extraído antes de supor outra coisa.',
+      'Peça congelação com sudan quando a presença de gordura for a questão.',
+    ],
+  },
+
+  structures: {
+    panorama:
+      'Este setor reúne as organelas e demais componentes internos da célula, e vale organizá-los por critério. Pela **presença de membrana**: têm membrana o núcleo, o retículo rugoso e liso, o Golgi, os lisossomos, os peroxissomos, as mitocôndrias e as vesículas; não têm ribossomos, centríolos, o citoesqueleto e as inclusões. Pela **função**: síntese e processamento (RER, Golgi, ribossomos), energia (mitocôndrias), digestão (lisossomos, peroxissomos), movimento e forma (citoesqueleto, centríolos, cílios), armazenamento (inclusões de glicogênio e lipídio) e controle (núcleo). Em microscopia de luz, quase nenhuma é vista diretamente; o que se vê são efeitos de conjunto, como a basofilia do RER ou o halo claro do Golgi.',
+    roteiro: [
+      'Classifique cada organela pelos dois critérios antes de estudá-la isoladamente.',
+      'Traduza sempre o achado de luz no correlato ultraestrutural que o produz.',
+    ],
+  },
+
+  'cell shapes: stellate': {
+    panorama:
+      'A forma estrelada resulta de múltiplos prolongamentos citoplasmáticos que partem de um corpo central, e aparece sempre que uma célula precisa **alcançar muitos parceiros ou cobrir muito território** com pouco volume. É a forma do **astrócito**, cujos prolongamentos envolvem sinapses de um lado e capilares do outro; do **neurônio multipolar**, com seus dendritos; do **osteócito**, cujos prolongamentos correm em canalículos e se acoplam por junções comunicantes, mantendo a comunicação através da matriz mineralizada; das **células dendríticas** e dos **melanócitos**, que distribuem produto a muitas células vizinhas; e das células mesenquimais do tecido conjuntivo mucoso. Em H&E, os prolongamentos finos raramente aparecem, e a célula parece apenas irregular.',
+    roteiro: [
+      'Peça impregnação por prata ou imuno-histoquímica quando quiser ver os prolongamentos.',
+      'Relacione a forma à necessidade de contato múltiplo, e não a um tipo celular específico.',
+    ],
+  },
+
+  'cell shapes: spindle': {
+    panorama:
+      'A forma fusiforme — alongada, com extremidades afiladas e núcleo central também alongado — é característica de células que **exercem ou resistem a força ao longo de um eixo**. A **célula muscular lisa** é o exemplo canônico: fusiforme, com núcleo em charuto que se enruga em saca-rolhas quando ela contrai, arranjada em feixes cujas extremidades finas se encaixam nas porções largas das vizinhas, o que permite empacotamento denso. O **fibroblasto** também é fusiforme, alinhado com a direção dos feixes de colágeno que produz, e o **fibrócito** quiescente aparece como uma simples linha nuclear entre as fibras. Em corte transversal, qualquer célula fusiforme vira um círculo pequeno, e apenas parte dos perfis mostra núcleo.',
+    roteiro: [
+      'Confirme o plano de corte antes de classificar: transversalmente, fusiforme parece redondo.',
+      'Procure o enrugamento do núcleo como sinal de músculo liso contraído.',
+    ],
+  },
+
+  shapes: {
+    panorama:
+      'A forma de uma célula não é arbitrária: resulta do equilíbrio entre o **córtex de actina**, que tende a minimizar a superfície, e as forças externas de adesão e de matriz. Daí um pequeno repertório recorrente e legível. **Esférica** é a forma de células livres ou suspensas, sem adesão — leucócitos, oócito, condrócito isolado. **Pavimentosa e achatada** aparece onde a difusão precisa ser rápida — endotélio, mesotélio, pneumócito tipo I. **Cúbica e colunar** acompanham a necessidade de espaço interno para organelas de absorção e secreção. **Fusiforme** indica força ao longo de um eixo. **Estrelada** indica contato múltiplo. **Discoide bicôncava** é exclusiva da hemácia e maximiza área de troca e deformabilidade.',
+    roteiro: [
+      'Pergunte o que toca a célula e que força ela exerce: a forma decorre disso.',
+      'Use a forma como hipótese funcional, a ser confirmada pelo contexto do tecido.',
+    ],
+  },
+
+  basics: {
+    panorama:
+      'Os fundamentos da célula reúnem o que se aplica a todas elas antes de qualquer especialização. Toda célula tem **membrana plasmática**, uma bicamada lipídica com proteínas móveis que delimita, transporta e sinaliza; um **núcleo** com o genoma, exceto na hemácia madura e na plaqueta; e um **citoplasma** com organelas e citoesqueleto. Três propriedades gerais orientam a leitura de lâminas: a **forma** decorre das forças de adesão e do córtex de actina; a **polaridade** distingue domínios apical e basolateral em epitélios e viabiliza o transporte vetorial; e a **afinidade tintorial** traduz composição química — basofilia indica ácidos nucleicos e síntese proteica, acidofilia indica proteína estrutural, mitocôndrias e filamentos.',
+    roteiro: [
+      'Aplique as três chaves — forma, polaridade e afinidade — antes de procurar detalhes.',
+      'Lembre que quase nenhuma organela é visível diretamente em luz: leia efeitos de conjunto.',
+    ],
+  },
+
+  // ---- Olho ----
+
+  'eyelid: meibomium gland': {
+    panorama:
+      'As glândulas de Meibômio, ou tarsais, são glândulas **sebáceas grandes e modificadas** alojadas dentro do tarso, a placa de conjuntivo denso que dá rigidez à pálpebra. Diferentemente das sebáceas comuns, **não estão ligadas a folículos pilosos**: seus ácinos se dispõem enfileirados ao longo de um ducto central longo, que desemboca na margem palpebral, atrás dos cílios. A secreção é **holócrina**, com o mesmo gradiente de vacuolização dos sebócitos, e o produto é o **meibum**, uma mistura lipídica que forma a camada superficial do filme lacrimal e retarda sua evaporação. A obstrução de um ducto produz o calázio, granuloma lipídico crônico, distinto do hordéolo, que é infecção das glândulas de Zeis ou de Moll.',
+    roteiro: [
+      'Siga os ácinos enfileirados até o ducto central para confirmar a arquitetura.',
+      'Confirme a ausência de folículo piloso — é o que separa de uma sebácea comum.',
+    ],
+  },
+
+  'eyelid: conjunctiva': {
+    panorama:
+      'A conjuntiva é a mucosa fina e transparente que reveste a face interna das pálpebras e a superfície anterior da esclera. Divide-se em **palpebral**, aderida ao tarso, **bulbar**, frouxamente ligada à esclera, e o **fórnice**, o fundo de saco que as une e permite o movimento do bulbo. O epitélio é **estratificado colunar** na palpebral, tornando-se estratificado pavimentoso não queratinizado perto do limbo, e contém **células caliciformes** dispersas, mais numerosas no fórnice, que produzem a camada de mucina do filme lacrimal. A lâmina própria é conjuntivo frouxo muito vascularizado, com tecido linfoide difuso e nódulos — o tecido linfoide associado à conjuntiva, primeira defesa da superfície ocular.',
+    roteiro: [
+      'Localize o fórnice para orientar as três porções.',
+      'Procure caliciformes: sua ausência prolongada explica a instabilidade do filme lacrimal.',
+    ],
+  },
+
+  'globe: retina': {
+    panorama:
+      'A retina é a túnica interna do bulbo e organiza-se em **dez camadas** que, embora numerosas, seguem uma lógica simples: são a cadeia de três neurônios em série mais suas zonas de sinapse. De fora para dentro: epitélio pigmentar; camada de segmentos de cones e bastonetes; membrana limitante externa; camada nuclear externa, com os corpos dos fotorreceptores; camada plexiforme externa, onde eles fazem sinapse com bipolares e horizontais; camada nuclear interna, com bipolares, horizontais, amácrinas e células de Müller; camada plexiforme interna; camada de células ganglionares; camada de fibras nervosas, que convergem para o disco óptico; e membrana limitante interna. A luz atravessa tudo antes de alcançar os fotorreceptores.',
+    roteiro: [
+      'Conte as camadas de fora para dentro e associe cada nuclear ao neurônio correspondente.',
+      'Localize a fóvea e o disco óptico, que quebram o padrão de camadas.',
+    ],
+  },
+
+  'non-sensory retina': {
+    panorama:
+      'A retina não sensorial, ou porção cega, é a continuação anterior das duas folhas retinianas sobre o **corpo ciliar** e a **íris**, além da **ora serrata**, onde a porção fotossensível termina. Ali as duas folhas persistem, mas nenhuma delas tem fotorreceptores: a folha externa mantém-se **pigmentada** e a interna torna-se **não pigmentada**, e juntas formam o epitélio duplo característico do corpo ciliar, que secreta o humor aquoso, e o epitélio posterior da íris, intensamente pigmentado, que bloqueia a luz. A disposição dos ápices voltados um para o outro é herança direta da invaginação da vesícula óptica no embrião, e é o que explica essa arquitetura aparentemente estranha.',
+    roteiro: [
+      'Procure o epitélio duplo com camadas de pigmentação oposta para confirmar a porção cega.',
+      'Localize a ora serrata como a fronteira entre as duas porções.',
+    ],
+  },
+
+  'non-sensory retina: ora serrata': {
+    panorama:
+      'A ora serrata é a linha ondulada e denteada — daí o nome — que marca a **transição abrupta** entre a retina sensorial e a não sensorial, aproximadamente no equador anterior do bulbo. Ali, as nove camadas da retina neural terminam de uma só vez: os fotorreceptores, os neurônios bipolares e as células ganglionares desaparecem, e o que continua para a frente é apenas um epitélio de duas camadas sobre o corpo ciliar. O epitélio pigmentar, ao contrário, prossegue sem interrupção. É também o ponto de aderência mais firme entre retina e coroide e o limite anterior do descolamento de retina típico, o que faz dele uma referência clínica constante no exame de fundo de olho.',
+    roteiro: [
+      'Ache o ponto em que as camadas neurais somem simultaneamente.',
+      'Verifique que o epitélio pigmentar continua além da transição.',
+    ],
+  },
+
+  'sensory retina: fovea': {
+    panorama:
+      'A fóvea central é a região de maior acuidade visual e sua arquitetura é toda desenhada para isso. É uma depressão no centro da mácula em que as **camadas internas da retina são deslocadas lateralmente**, de modo que a luz chega aos fotorreceptores quase sem atravessar tecido interposto. Ali existem **apenas cones**, muito finos e densamente empacotados, e a relação com as células ganglionares aproxima-se de um para um — cada cone tem sua própria linha de saída, ao contrário da periferia, onde dezenas de bastonetes convergem para uma ganglionar. Não há vasos na fovéola, que se nutre exclusivamente por difusão a partir da coriocapilar, o que a torna especialmente vulnerável na degeneração macular.',
+    roteiro: [
+      'Procure o afastamento lateral das camadas internas como o achado que define a fóvea.',
+      'Confirme a ausência de bastonetes e de vasos no centro.',
+    ],
+  },
+
+  'sensory retina: optic disc': {
+    panorama:
+      'O disco óptico é o ponto em que todos os axônios das células ganglionares convergem, atravessam a esclera pela **lâmina crivosa** e formam o nervo óptico. Como ali não existem fotorreceptores nem camadas retinianas, ele é o **ponto cego** fisiológico do campo visual. É também por onde entram e saem a artéria e a veia central da retina. Duas particularidades anatômicas explicam boa parte da clínica: a lâmina crivosa é o ponto mecanicamente mais frágil, e o aumento da pressão intraocular a deforma, comprimindo os axônios — o mecanismo do **glaucoma**; e o disco não tem barreira hematoencefálica completa, o que permite que a hipertensão intracraniana se manifeste ali como papiledema.',
+    roteiro: [
+      'Ache a interrupção súbita de todas as camadas retinianas.',
+      'Siga os feixes de axônios atravessando a esclera pela lâmina crivosa.',
+    ],
+  },
+
+  eye: {
+    panorama:
+      'O olho é um órgão fotossensível construído como uma câmara. O sistema **dióptrico** — córnea, humor aquoso, cristalino e corpo vítreo — refrata e focaliza a luz; a **córnea** faz a maior parte da refração, e o **cristalino** faz o ajuste fino pela acomodação. O **diafragma** é a íris, que regula a quantidade de luz. O **sensor** é a retina, com cones para visão de detalhe e cor e bastonetes para baixa luminosidade. Três túnicas concêntricas organizam a parede: fibrosa (esclera e córnea), vascular ou úvea (coroide, corpo ciliar e íris) e nervosa (retina). Estruturas anexas — pálpebras, conjuntiva, aparelho lacrimal e músculos extrínsecos — protegem, lubrificam e movem o bulbo.',
+    roteiro: [
+      'Percorra as três túnicas antes de examinar qualquer região isoladamente.',
+      'Separe o que refrata do que capta: são dois sistemas com histologias distintas.',
+    ],
+  },
+
+  // ---- Ouvido ----
+
+  'overview: outer and middle ear': {
+    panorama:
+      'O ouvido externo e o médio formam juntos o **aparelho de condução** do som. O externo capta e canaliza: o pavilhão é cartilagem elástica revestida por pele aderente, e o meato acústico externo é um canal sustentado por cartilagem no terço externo e por osso nos dois terços internos, com glândulas ceruminosas e pelos que o protegem. O médio transforma: a **membrana timpânica** vibra, e a cadeia de ossículos — martelo, bigorna e estribo — transmite essa vibração à janela oval, amplificando a pressão em cerca de vinte vezes graças à razão entre as áreas do tímpano e da platina do estribo. Essa amplificação resolve a diferença de impedância entre o ar e a perilinfa. A tuba auditiva equilibra as pressões.',
+    roteiro: [
+      'Separe o que conduz do que transduz: aqui não há epitélio sensorial algum.',
+      'Confirme o tipo de suporte do meato para localizar o segmento no corte.',
+    ],
+  },
+
+  'overview: inner ear': {
+    panorama:
+      'O ouvido interno é onde a vibração vira impulso nervoso, e sua organização é a de um **labirinto dentro de outro**. O **labirinto ósseo** é um sistema de cavidades escavadas no osso temporal — vestíbulo, canais semicirculares e cóclea — preenchido por **perilinfa**, líquido semelhante ao extracelular, rico em sódio. Dentro dele, suspenso por trabéculas, está o **labirinto membranoso** — utrículo, sáculo, ductos semicirculares e ducto coclear — preenchido por **endolinfa**, líquido único no corpo por ser rico em **potássio**, secretado pela estria vascular. É essa composição iônica peculiar que cria o potencial endococlear e viabiliza a transdução. Os epitélios sensoriais ficam todos no labirinto membranoso.',
+    roteiro: [
+      'Identifique os dois espaços líquidos antes de procurar epitélio sensorial.',
+      'Lembre da composição iônica invertida da endolinfa — ela é a base da transdução.',
+    ],
+  },
+
+  'overview of the ear': {
+    panorama:
+      'O ouvido reúne dois sentidos em um único órgão e três compartimentos com histologias distintas. O **externo** capta o som: pavilhão de cartilagem elástica e meato revestido de pele com glândulas ceruminosas. O **médio** é uma cavidade aérea que casa a impedância entre ar e líquido, com a membrana timpânica e os três ossículos, ligada à faringe pela tuba auditiva. O **interno** transduz: um labirinto ósseo com perilinfa contendo um labirinto membranoso com endolinfa, onde ficam os epitélios sensoriais — o **órgão de Corti**, na cóclea, para a audição; as **máculas** do utrículo e do sáculo, para a aceleração linear e a gravidade; e as **cristas ampulares**, para a aceleração angular.',
+    roteiro: [
+      'Determine o compartimento antes de qualquer detalhe: cada um tem histologia própria.',
+      'Separe o que é auditivo do que é vestibular dentro do labirinto.',
+    ],
+  },
+
+  'external ear': {
+    panorama:
+      'O ouvido externo compreende o pavilhão auricular e o meato acústico externo, e tem uma composição notavelmente uniforme: **cartilagem elástica** recoberta por **pele fina e aderente**, com pericôndrio e derme praticamente fundidos. A cartilagem elástica, com sua rede densa de fibras coradas pelo Verhoeff, dá forma e flexibilidade sem rigidez, e é por isso que o pavilhão retorna à forma após deformado. A pele contém pelos, glândulas sebáceas e, na porção cartilaginosa do meato, **glândulas ceruminosas** — sudoríparas apócrinas modificadas de luz ampla. Nos dois terços internos do meato, o suporte passa a ser o osso temporal e a pele fica muito fina e firmemente aderida ao periósteo.',
+    roteiro: [
+      'Confirme que a cartilagem é elástica e não hialina, com coloração específica se possível.',
+      'Verifique se há pelos e glândulas para localizar-se na porção cartilaginosa.',
+    ],
+  },
+
+  'external ear: auricle': {
+    panorama:
+      'O pavilhão auricular é uma lâmina de **cartilagem elástica** de contorno complexo, coberta em ambas as faces por pele fina cujo tecido subcutâneo é escasso ou ausente — a derme adere diretamente ao pericôndrio, o que explica a dor intensa de qualquer coleção nessa interface e o risco de necrose da cartilagem no hematoma auricular. A cartilagem elástica tem condrócitos em lacunas dentro de uma matriz permeada por uma rede densa de fibras elásticas, que só se revela em colorações específicas como o Verhoeff ou a orceína; em H&E, ela pode ser confundida com hialina. O lóbulo, na porção inferior, não tem cartilagem: é apenas pele e tecido adiposo.',
+    roteiro: [
+      'Peça coloração para elastina antes de classificar a cartilagem.',
+      'Note a ausência de tecido subcutâneo entre a derme e o pericôndrio.',
+    ],
+  },
+
+  'stapes and oval window': {
+    panorama:
+      'O estribo é o menor osso do corpo e o último elo da cadeia ossicular. Sua **platina** encaixa-se na **janela oval**, abertura do labirinto ósseo, presa por um ligamento anular que permite o movimento em pistão. A relação de áreas é o coração do sistema: a membrana timpânica tem cerca de dezessete vezes a área da platina, e a alavanca da cadeia acrescenta mais um fator, de modo que a pressão sobre a perilinfa é amplificada aproximadamente vinte vezes — exatamente o necessário para vencer a impedância do líquido. O músculo **estapédio**, inserido no colo do estribo, reduz essa transmissão diante de sons intensos, no reflexo de proteção. A fixação da platina por otosclerose produz surdez de condução.',
+    roteiro: [
+      'Ache o ligamento anular entre a platina e a borda da janela.',
+      'Relacione a razão de áreas ao ganho de pressão — é a lógica de todo o ouvido médio.',
+    ],
+  },
+
+  'middle ear: mucosa': {
+    panorama:
+      'A mucosa que forra a cavidade timpânica é fina e aderente ao periósteo, formando um **mucoperiósteo**, e reveste também os ossículos, os músculos e a face interna da membrana timpânica. O epitélio varia topograficamente: é **simples pavimentoso a cúbico** na maior parte da caixa, e torna-se progressivamente **pseudoestratificado ciliado com células caliciformes** à medida que se aproxima do óstio da tuba auditiva, continuando-se com o epitélio respiratório da nasofaringe. Essa continuidade explica a fisiopatologia da otite média: a inflamação da via aérea superior sobe pela tuba, e o transporte mucociliar em direção à faringe é o mecanismo natural de drenagem da caixa.',
+    roteiro: [
+      'Siga a mudança de epitélio em direção à tuba: ela é gradual e informa a orientação.',
+      'Note que a mucosa adere ao periósteo, sem submucosa própria.',
+    ],
+  },
+
+  'overview: osseous labyrinth': {
+    panorama:
+      'O labirinto ósseo é um conjunto de cavidades escavadas na porção petrosa do temporal, revestidas por endósteo e preenchidas por **perilinfa**, líquido de composição semelhante à do extracelular, rico em sódio. Tem três partes contínuas: o **vestíbulo**, câmara central que aloja o utrículo e o sáculo e onde se abrem as janelas oval e redonda; os **canais semicirculares**, três, em planos aproximadamente perpendiculares, cada um com uma ampola; e a **cóclea**, um canal espiralado de duas voltas e meia em torno do modíolo. Dentro do labirinto ósseo, suspenso por trabéculas de conjuntivo, está o labirinto membranoso, que repete a forma do ósseo em escala menor.',
+    roteiro: [
+      'Localize o modíolo e as janelas para orientar o corte.',
+      'Distinga o espaço perilinfático do endolinfático em cada perfil observado.',
+    ],
+  },
+
+  'overview: membranous labyrinth': {
+    panorama:
+      'O labirinto membranoso é um sistema fechado de sacos e ductos de tecido conjuntivo revestido por epitélio, suspenso dentro do labirinto ósseo e preenchido por **endolinfa** — um líquido singular no corpo por ser rico em **potássio** e pobre em sódio, produzido pela estria vascular do ducto coclear e pelas células escuras do vestíbulo. Compreende o **utrículo** e o **sáculo**, no vestíbulo, com suas máculas; os três **ductos semicirculares**, com as cristas ampulares; e o **ducto coclear**, com o órgão de Corti. Todas essas regiões sensoriais compartilham o mesmo princípio: células ciliadas cujos estereocílios, ao se dobrarem, abrem canais e despolarizam a célula, graças ao alto potássio da endolinfa.',
+    roteiro: [
+      'Ache as regiões sensoriais como espessamentos do epitélio, sempre cobertas por massa gelatinosa.',
+      'Confirme que o espaço em que elas se abrem é o endolinfático.',
+    ],
+  },
+
+  'overview: cranial nerve viii': {
+    panorama:
+      'O oitavo nervo craniano, vestibulococlear, é puramente sensitivo e reúne dois componentes de origens e gânglios distintos. A **divisão coclear** parte do órgão de Corti; seus neurônios são **bipolares**, com corpos no gânglio espiral, alojado no canal de Rosenthal dentro do modíolo, e seus prolongamentos centrais vão aos núcleos cocleares do bulbo. A **divisão vestibular** parte das máculas e das cristas ampulares; seus neurônios também são bipolares, com corpos no gânglio vestibular (de Scarpa), no meato acústico interno, e projetam-se aos núcleos vestibulares. A presença de neurônios bipolares em gânglio sensorial é uma exceção: em quase todo o resto do corpo eles são pseudounipolares.',
+    roteiro: [
+      'Ache os corpos bipolares no gânglio para confirmar a identidade do nervo.',
+      'Separe as duas divisões pelo destino periférico das fibras.',
+    ],
+  },
+
+  'overview of the inner ear': {
+    panorama:
+      'O ouvido interno abriga dois órgãos sensoriais distintos que compartilham a mesma solução mecânica. Em ambos, uma **célula ciliada** projeta um feixe escalonado de **estereocílios** que mergulha em uma **massa gelatinosa**; quando o líquido se move, a massa desloca-se, os estereocílios se dobram e canais de transdução se abrem, deixando entrar potássio da endolinfa e despolarizando a célula. O que muda é o estímulo que move o líquido e a natureza da massa: na **cóclea**, é a onda sonora e a massa é a membrana tectória; na **crista ampular**, é a rotação da cabeça e a massa é a cúpula, sem cristais; na **mácula**, é a aceleração linear e a gravidade, e a massa carrega **otocônias**.',
+    roteiro: [
+      'Identifique a massa gelatinosa e verifique se ela tem cristais — isso classifica o receptor.',
+      'Confirme que o feixe de estereocílios está imerso no espaço endolinfático.',
+    ],
+  },
+
+  audition: {
+    panorama:
+      'A audição é uma cadeia de conversões, e vale segui-la inteira. A onda sonora aérea move a **membrana timpânica**; a cadeia ossicular a transmite à janela oval com ganho de pressão de cerca de vinte vezes; a platina do estribo empurra a **perilinfa** da rampa vestibular, gerando uma onda que percorre a cóclea e desloca a **membrana basilar**. Essa membrana é estreita e rígida na base e larga e flexível no ápice, de modo que cada frequência tem seu ponto de deslocamento máximo — é a **tonotopia**, com agudos na base e graves no ápice. O deslocamento cisalha os estereocílios das células ciliadas contra a **membrana tectória**, abrindo canais de transdução; as **internas** transduzem, e as **externas** amplificam ativamente.',
+    roteiro: [
+      'Percorra a cadeia em ordem e nomeie o meio em que a energia trafega em cada etapa.',
+      'Relacione a posição ao longo da cóclea à frequência — é a base da audiometria.',
+    ],
+  },
+
+  'inner ear': {
+    panorama:
+      'O ouvido interno contém os epitélios sensoriais da audição e do equilíbrio, sempre alojados no **labirinto membranoso**, banhados por endolinfa e envolvidos por perilinfa dentro do labirinto ósseo. São seis regiões sensoriais em cada orelha: o **órgão de Corti** no ducto coclear, as **máculas** do utrículo e do sáculo, e as três **cristas ampulares** dos ductos semicirculares. Todas compartilham a mesma célula transdutora — a célula ciliada, dos tipos I e II —, células de sustentação, e uma cobertura gelatinosa que acopla o movimento do líquido aos estereocílios. A inervação vem de neurônios **bipolares** dos gânglios espiral e vestibular, reunidos no oitavo nervo craniano.',
+    roteiro: [
+      'Localize a região sensorial pelo espessamento do epitélio e pela massa gelatinosa sobre ele.',
+      'Verifique se há otocônias para separar mácula das demais regiões.',
+    ],
+  },
+
+  ear: {
+    panorama:
+      'A orelha é um órgão duplo: responde pela **audição** e pelo **equilíbrio**, funções que compartilham a mesma célula transdutora mas ocupam regiões distintas do labirinto. Estruturalmente divide-se em externa, média e interna. As duas primeiras conduzem e amplificam a energia sonora, resolvendo a passagem do ar para o líquido; a terceira transduz. As histologias são bem diferentes: cartilagem elástica e pele na externa; cavidade aérea revestida por epitélio simples com ossículos e músculos esqueléticos na média; e um labirinto ósseo com perilinfa contendo um labirinto membranoso com endolinfa na interna, onde ficam o órgão de Corti, as máculas e as cristas ampulares.',
+    roteiro: [
+      'Determine o compartimento antes de descrever: cada um exige um vocabulário diferente.',
+      'Nas regiões sensoriais, procure sempre a tríade célula ciliada, sustentação e massa gelatinosa.',
+    ],
+  },
+
+  // ---- Pele ----
+
+  'thick skin': {
+    panorama:
+      'A pele espessa ocorre apenas nas **palmas das mãos e plantas dos pés**, e o adjetivo se refere à espessura da **epiderme**, não à da pele como um todo. Suas marcas são um **estrato córneo muito espesso**, que pode ter dezenas de camadas, e a presença de um **estrato lúcido** — faixa clara, refringente e acelular entre o granuloso e o córneo, praticamente exclusiva dessa localização. A epiderme forma cristas profundas que se encaixam em papilas dérmicas altas, arranjo que resiste ao cisalhamento e produz as impressões digitais. Não há **folículos pilosos** nem glândulas sebáceas, mas há grande densidade de glândulas sudoríparas écrinas e muitos corpúsculos de Meissner e de Pacini.',
+    roteiro: [
+      'Procure o estrato lúcido e a ausência de pelos: os dois juntos fecham a classificação.',
+      'Compare a espessura do córneo com a da epiderme viva.',
+    ],
+  },
+
+  'thin skin': {
+    panorama:
+      'A pele fina cobre a maior parte do corpo, e "fina" refere-se à **epiderme**, que pode ter poucas camadas mesmo onde a derme é espessa — como no dorso, onde a pele total é das mais grossas do corpo. O **estrato córneo** é delgado, o **granuloso** tem uma ou duas fileiras e pode ser descontínuo, e o **estrato lúcido está ausente**. As cristas epidérmicas são rasas e as papilas dérmicas, baixas. Em compensação, a pele fina tem **folículos pilosos** com suas glândulas sebáceas, ausentes na pele espessa, e glândulas sudoríparas em densidade menor. É essa presença de anexos pilossebáceos, mais que a espessura em si, o critério mais confiável na lâmina.',
+    roteiro: [
+      'Procure folículos pilosos: sua presença já exclui pele espessa.',
+      'Confirme a ausência do estrato lúcido antes de concluir.',
+    ],
+  },
+
+  'thick vs thin skin': {
+    panorama:
+      'A comparação entre os dois tipos de pele fixa vários conceitos de uma vez. A **espessa**, restrita a palmas e plantas, tem epiderme com cinco estratos, incluindo o **lúcido**, córneo muito espesso, cristas profundas, e **não tem pelos nem glândulas sebáceas**; tem alta densidade de écrinas e de mecanorreceptores. A **fina**, no restante do corpo, tem quatro estratos, córneo delgado, granuloso escasso, cristas rasas, e **tem folículos pilosos e glândulas sebáceas**. Uma advertência importante: o adjetivo qualifica a epiderme, não a pele total — a pele do dorso é fina por esse critério, apesar de sua derme ser das mais espessas do corpo, e a das pálpebras é fina nos dois sentidos.',
+    roteiro: [
+      'Aplique dois critérios independentes — estrato lúcido e presença de pelos — antes de concluir.',
+      'Não use a espessura total da lâmina como critério; ela mede sobretudo a derme.',
+    ],
+  },
+
+  'overview of the skin': {
+    panorama:
+      'A pele desempenha funções que vão muito além do revestimento: é **barreira** física, química e imunológica; participa da **termorregulação** pela vasodilatação dérmica e pelo suor; é órgão **sensorial**, com receptores para tato, pressão, vibração, temperatura e dor; sintetiza **vitamina D** sob radiação ultravioleta; e protege contra essa mesma radiação pela melanina. Estruturalmente é epiderme mais derme, com hipoderme abaixo, e reúne anexos de origem epidérmica alojados na derme. Na lâmina, três decisões orientam a leitura: pele espessa ou fina; quais anexos estão presentes; e em que camada da derme se está — papilar frouxa ou reticular densa.',
+    roteiro: [
+      'Tome as três decisões de orientação antes de descrever qualquer detalhe.',
+      'Relacione cada estrutura observada a uma das funções listadas.',
+    ],
+  },
+
+  'epidermis: light-dark skin': {
+    panorama:
+      'A diferença de cor entre peles claras e escuras **não está no número de melanócitos**, que é praticamente o mesmo em todas as populações humanas, e sim no comportamento dos **melanossomos**. Em peles escuras eles são maiores, mais numerosos por melanócito, mais melanizados, permanecem **individuais** dentro dos queratinócitos em vez de se agruparem em complexos, e são degradados mais lentamente — de modo que a melanina alcança camadas mais superficiais da epiderme, chegando até o estrato córneo. Em peles claras, os melanossomos são menores, agrupam-se em complexos envoltos por membrana e são degradados cedo, ficando restritos às camadas basais. A melanina posiciona-se como capuz sobre o núcleo, protegendo o DNA.',
+    roteiro: [
+      'Observe até que altura da epiderme o pigmento chega — é essa distribuição que muda.',
+      'Não conte melanócitos esperando encontrar diferença: ela não está no número.',
+    ],
+  },
+
+  'stratum spinosum: langerhans cell': {
+    panorama:
+      'A célula de Langerhans é a **apresentadora de antígeno** da epiderme e reside principalmente no meio do estrato espinhoso. Deriva de precursores hematopoéticos, e não do ectoderma, e por isso não faz desmossomos com os queratinócitos — em H&E aparece como uma célula clara, de núcleo indentado, difícil de distinguir de um melanócito sem marcação específica. Seus prolongamentos dendríticos formam uma rede que permeia toda a epiderme, captando antígenos que atravessam a barreira; ao capturá-los, a célula migra pelos linfáticos até o linfonodo regional, onde apresenta o antígeno aos linfócitos T. Sua marca ultraestrutural é o **grânulo de Birbeck**, em forma de raquete, e ela expressa CD1a e langerina.',
+    roteiro: [
+      'Peça imuno-histoquímica para S-100 ou CD1a: em H&E a identificação é insegura.',
+      'Lembre que célula clara na basal é provavelmente melanócito; no espinhoso, Langerhans.',
+    ],
+  },
+
+  'stratum corneum - thin skin': {
+    panorama:
+      'Na pele fina, o estrato córneo tem poucas camadas de **corneócitos** — células achatadas, anucleadas e sem organelas, cheias de queratina agregada por filagrina e envoltas por um envelope proteico reticulado. A barreira real, porém, não são as células e sim o **cimento lipídico** entre elas, despejado pelos corpos lamelares na transição do granuloso, que organiza lamelas de ceramidas, colesterol e ácidos graxos livres — daí a metáfora do tijolo e argamassa. Mesmo delgado, esse arranjo reduz a perda de água transepidérmica a valores mínimos. As camadas mais superficiais se soltam por degradação enzimática dos corneodesmossomos, na descamação, e o processo mantém a espessura constante.',
+    roteiro: [
+      'Confirme a ausência de núcleos e a continuidade da camada.',
+      'Compare a espessura com a da epiderme viva subjacente para calibrar.',
+    ],
+  },
+
+  'strata lucidum and corneum - thick skin': {
+    panorama:
+      'Na pele espessa, entre o granuloso e o córneo, aparece o **estrato lúcido**: uma faixa fina, clara e homogênea, refringente, formada por células achatadas já anucleadas cujos limites não são visíveis e cujo citoplasma contém **eleidina**, um produto de transformação da querato-hialina. É praticamente exclusivo de palmas e plantas, e sua presença é um dos dois critérios que definem a pele espessa. Acima dele, o **estrato córneo** é muitíssimo espesso, com dezenas de camadas de corneócitos firmemente coesas, capaz de suportar atrito contínuo. A espessura dessa camada é dinâmica: aumenta com o uso, o que produz calosidades, e diminui na ausência de carga mecânica.',
+    roteiro: [
+      'Procure a faixa clara e homogênea logo acima do granuloso.',
+      'Confirme a ausência de folículos pilosos para fechar a identificação de pele espessa.',
+    ],
+  },
+
+  'stratum corneum': {
+    panorama:
+      'O estrato córneo é a camada mais superficial da epiderme e a barreira efetiva do corpo. É formado por **corneócitos**: queratinócitos que perderam núcleo e organelas, ficaram achatados e se encheram de filamentos de queratina agregados pela filagrina, revestidos internamente por um **envelope cornificado** de involucrina e loricrina reticuladas por transglutaminase. Entre eles, lamelas de **lipídios** — ceramidas, colesterol e ácidos graxos — formam o cimento impermeável liberado pelos corpos lamelares. O conjunto é frequentemente descrito como tijolos e argamassa. As células se destacam quando enzimas degradam os corneodesmossomos, e o equilíbrio entre produção e descamação mantém a espessura estável; sua ruptura está por trás da psoríase e da dermatite atópica.',
+    roteiro: [
+      'Note o padrão em cesta trançada do córneo em cortes de rotina — é artefato de processamento, mas é característico.',
+      'Meça a espessura relativa à epiderme viva para classificar a pele.',
+    ],
+  },
+
+  "meisser's corpuscle": {
+    panorama:
+      'O corpúsculo de Meissner é o mecanorreceptor do **toque leve e discriminativo**, alojado dentro das **papilas dérmicas**, imediatamente sob a epiderme — posição que o coloca no ponto mais próximo possível do estímulo. Tem forma cilíndrica alongada e perpendicular à superfície, e é formado por células de sustentação achatadas empilhadas obliquamente, entre as quais serpenteia um axônio mielinizado que perde a bainha ao entrar no corpúsculo. Adapta-se rapidamente, respondendo a movimento e a variações de textura mais do que a pressão constante. Sua densidade é máxima na polpa digital, nos lábios e nos mamilos, e diminui com a idade, o que explica a perda de sensibilidade tátil fina no idoso.',
+    roteiro: [
+      'Confirme a localização dentro da papila dérmica antes de nomear.',
+      'Note o eixo perpendicular à superfície e o empilhamento oblíquo das células.',
+    ],
+  },
+
+  'hair follicle': {
+    panorama:
+      'O folículo piloso é uma invaginação tubular da epiderme para dentro da derme, e sua parte mais importante é o **bulbo**, na base, onde a **matriz** — o compartimento proliferativo — envolve a **papila dérmica**, um tufo de conjuntivo vascularizado que induz e comanda o crescimento. As células da matriz se dividem e diferenciam formando, de dentro para fora, a **medula**, o **córtex** e a **cutícula** do pelo, mais as bainhas radiculares interna e externa. Melanócitos da matriz pigmentam o pelo. O folículo passa por um ciclo com fases de crescimento (anágena), regressão (catágena) e repouso (telógena). A ele se ligam a glândula sebácea e o músculo eretor do pelo, formando a unidade pilossebácea.',
+    roteiro: [
+      'Ache o bulbo e a papila dérmica para orientar todo o folículo.',
+      'Conte as camadas concêntricas do pelo e das bainhas em corte transversal.',
+    ],
+  },
+
+  fingernail: {
+    panorama:
+      'A unha é uma placa de **queratina dura**, do mesmo tipo da do pelo e diferente da queratina mole da epiderme, produzida pela **matriz ungueal** — o epitélio proliferativo situado sob a raiz da unha, cuja porção distal aparece como a **lúnula**, a meia-lua esbranquiçada. A placa desliza sobre o **leito ungueal**, um epitélio sem estrato granuloso, firmemente aderido ao periósteo da falange distal por cristas longitudinais que impedem o deslizamento lateral e explicam as estrias visíveis. As pregas ungueais lateral e proximal a delimitam, e o **eponíquio** (cutícula) sela a prega proximal. O crescimento é contínuo, de cerca de 0,1 mm por dia nas mãos, e mais lento nos pés.',
+    roteiro: [
+      'Localize a matriz sob a prega proximal — é o único sítio de produção da placa.',
+      'Note a ausência de estrato granuloso no leito ungueal.',
+    ],
+  },
+
+  skin: {
+    panorama:
+      'A pele reúne, num só órgão, exemplos de todos os quatro tecidos básicos e de quase todos os conceitos gerais da histologia — por isso costuma ser a primeira lâmina de órgão do curso. Tem **epiderme**, epitélio estratificado pavimentoso queratinizado em renovação contínua a partir da camada basal, com queratinócitos, melanócitos, células de Langerhans e discos de Merkel; **derme**, conjuntivo papilar frouxo e reticular denso, com vasos, nervos e receptores encapsulados; **hipoderme** adiposa; e **anexos** epidérmicos alojados na derme — folículos pilosos, glândulas sebáceas, sudoríparas écrinas e apócrinas e unhas. Funciona como barreira, termorregulador, órgão sensorial e sintetizador de vitamina D.',
+    roteiro: [
+      'Classifique a pele como espessa ou fina antes de qualquer descrição.',
+      'Percorra epiderme, derme e anexos nessa ordem, sem misturar os compartimentos.',
+    ],
+  },
 }
 
 /**

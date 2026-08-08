@@ -19,7 +19,7 @@ import {
   respondida,
 } from '@/lib/histologia/quiz-engine'
 import { BASE } from '@/lib/histologia/rotas'
-import { EstadoEditorial } from './marca'
+import { EstadoEditorial, TermoNoOriginal } from './marca'
 
 /**
  * Executor de quiz nativo.
@@ -154,7 +154,15 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
         )
         if (!resposta.ok) throw new Error('gabarito indisponível')
         const chave: {
-          questoes: Array<{ id: string; alternativas: Array<{ id: string; correta: boolean; feedback: string }> }>
+          questoes: Array<{
+            id: string
+            alternativas: Array<{
+              id: string
+              correta: boolean
+              feedback: string
+              feedbackPendente?: boolean
+            }>
+          }>
         } = await resposta.json()
 
         const porQuestao = new Map(chave.questoes.map((q) => [q.id, q]))
@@ -170,6 +178,7 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
                 ...alternativa,
                 correta: porAlternativa.get(alternativa.id)?.correta ?? false,
                 feedback: porAlternativa.get(alternativa.id)?.feedback ?? '',
+                feedbackPendente: porAlternativa.get(alternativa.id)?.feedbackPendente,
               })),
             }
           }),
@@ -299,6 +308,7 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
         <h2 className="font-heading text-base font-semibold leading-snug sm:text-lg">
           {questao.enunciado}
         </h2>
+        {questao.enunciadoPendente && <TermoNoOriginal />}
 
         {urlImagem && questao.midia && (
           <figure className="mt-3 overflow-hidden rounded-lg border border-border bg-[#0d1210]">
@@ -451,10 +461,13 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
               .filter((a) => a.correta || escolhidas.includes(a.id))
               .map((a) =>
                 a.feedback ? (
-                  <p key={a.id} className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                    <span className="font-semibold">{a.texto}: </span>
-                    {a.feedback}
-                  </p>
+                  <div key={a.id}>
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                      <span className="font-semibold">{a.texto}: </span>
+                      {a.feedback}
+                    </p>
+                    {a.feedbackPendente && <TermoNoOriginal />}
+                  </div>
                 ) : null,
               )}
           </div>

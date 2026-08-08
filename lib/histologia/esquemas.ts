@@ -234,6 +234,17 @@ export const esquemaAlternativa = z.object({
   correta: z.boolean(),
   /** Devolutiva explicativa exibida depois da resposta. */
   feedback: z.string(),
+  /**
+   * Texto e devolutiva em inglês, e as marcas de pendência correspondentes.
+   *
+   * Ausentes nos arquivos de dados: quem os preenche é `traduzirQuiz`, no
+   * carregamento. Ficam opcionais para que o mesmo schema valide tanto o dado
+   * bruto do acervo quanto o quiz já traduzido.
+   */
+  textoOriginal: z.string().optional(),
+  feedbackOriginal: z.string().optional(),
+  textoPendente: z.boolean().optional(),
+  feedbackPendente: z.boolean().optional(),
 })
 
 export const esquemaQuestao = z.object({
@@ -250,6 +261,8 @@ export const esquemaQuestao = z.object({
   midia: esquemaMidia.nullable(),
   alternativas: z.array(esquemaAlternativa).min(2),
   multipla: z.boolean(),
+  /** Preenchida por `traduzirQuiz` quando o enunciado segue em inglês. */
+  enunciadoPendente: z.boolean().optional(),
 })
 export type Questao = z.infer<typeof esquemaQuestao>
 

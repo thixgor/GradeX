@@ -3,6 +3,8 @@ import 'server-only'
 import type { NoCurriculo, Pagina, Quiz, Relatorio } from './esquemas'
 
 import { FRAGMENTOS, QUIZZES } from './carregadores.gerado'
+import { traduzirTermo } from './glossario'
+import { traduzirQuiz } from './quiz-textos'
 
 import curriculoBruto from '@/data/histologia/curriculo.json'
 import relatorioBruto from '@/data/histologia/relatorio.json'
@@ -68,10 +70,18 @@ export async function obterFragmento(caminho: string[]): Promise<Pagina[]> {
   return Object.values(fragmento)
 }
 
+/**
+ * Quiz já traduzido para português.
+ *
+ * A tradução é aplicada **aqui**, e não na renderização, porque o gabarito é
+ * servido por uma rota de API separada da página: traduzir nos dois lugares
+ * abriria espaço para eles divergirem, e um enunciado que muda entre a pergunta
+ * e a devolutiva é pior que um enunciado em inglês.
+ */
 export async function obterQuiz(slug: string): Promise<Quiz | null> {
   const carregar = QUIZZES[slug]
   if (!carregar) return null
-  return (await carregar()).default as Quiz
+  return traduzirQuiz((await carregar()).default as Quiz, traduzirTermo)
 }
 
 export function listarSlugsDeQuiz(): string[] {

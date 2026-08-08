@@ -47,6 +47,9 @@ export async function GET(_requisicao: Request, { params }: { params: { slug: st
           id: alternativa.id,
           correta: alternativa.correta,
           feedback: alternativa.feedback,
+          // Acompanha a devolutiva para que o modo prova também marque o que
+          // ainda está em inglês, como já ocorre no modo prática.
+          feedbackPendente: alternativa.feedbackPendente,
         })),
       })),
     },

@@ -176,7 +176,16 @@ export function calcularResultado(
  */
 export function alternativasParaCliente(questao: Questao, modo: Modo) {
   if (modo === 'pratica') return questao.alternativas
-  return questao.alternativas.map((a) => ({ id: a.id, texto: a.texto, correta: false, feedback: '' }))
+  // `feedbackOriginal` fica de fora junto com `feedback`: a devolutiva da
+  // alternativa certa começa com "CORRECT." e entregaria o gabarito.
+  return questao.alternativas.map((a) => ({
+    id: a.id,
+    texto: a.texto,
+    textoOriginal: a.textoOriginal,
+    textoPendente: a.textoPendente,
+    correta: false,
+    feedback: '',
+  }))
 }
 
 /** Remove o gabarito de um quiz inteiro, para o modo prova. */
