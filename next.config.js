@@ -17,11 +17,29 @@ const nextConfig = {
         protocol: 'https',
         hostname: '*.public.blob.vercel-storage.com',
       },
+      // Acervo do Manual da Histologia. As lâminas são JPEG de ~1 MB servidos
+      // por um servidor único nos EUA; passá-las pelo otimizador as converte
+      // para AVIF e as coloca atrás do edge cache.
+      {
+        protocol: 'https',
+        hostname: 'digitalhistology.org',
+      },
     ],
-    // Formatos modernos para menor tamanho
-    formats: ['image/avif', 'image/webp'],
-    // Tamanhos otimizados para evitar processamento desnecessário
-    deviceSizes: [640, 750, 828, 1080, 1200],
+    // WebP, e não AVIF.
+    //
+    // Medido na mesma lâmina de 903 KB do acervo de histologia: WebP a 1920 px
+    // dá 234 KB e codifica em 0,65 s; AVIF dá 186 KB e codifica em 8,4 s. São
+    // 20% a menos de bytes por 13× mais tempo de codificação — e essa espera
+    // recai inteira sobre o primeiro aluno a abrir cada uma das 1.318 lâminas,
+    // porque o cache só existe depois da primeira transformação.
+    //
+    // WebP é suportado por praticamente todo navegador em uso, então a troca
+    // não deixa ninguém com o JPEG original.
+    formats: ['image/webp'],
+    // 1920 existe para as lâminas de histologia: elas são exibidas em tamanho
+    // natural dentro do microscópio virtual e o aluno amplia sobre elas, então
+    // limitar a 1200 destruiria o detalhe justamente no uso principal.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     // Minimizar reprocessamento no build
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 dias

@@ -18,7 +18,14 @@ import {
 } from 'lucide-react'
 
 import type { Midia, Overlay } from '@/lib/histologia/esquemas'
-import { AVISO_MIDIA_INDISPONIVEL, urlDaMidia } from '@/lib/histologia/midia'
+import {
+  AVISO_MIDIA_INDISPONIVEL,
+  LARGURA_LAMINA,
+  LARGURA_MINIATURA,
+  LARGURA_PREVIA,
+  urlDaMidia,
+  urlOtimizada,
+} from '@/lib/histologia/midia'
 import {
   OBJETIVOS,
   type Campo,
@@ -131,7 +138,20 @@ export function Microscopio({
     [lamina.overlays],
   )
 
-  const urlBase = lamina.base ? urlDaMidia(lamina.base) : null
+  const urlOriginal = lamina.base ? urlDaMidia(lamina.base) : null
+  /*
+   * Duas resoluções da mesma lâmina.
+   *
+   * `urlPrevia` tem 640 px e qualidade baixa — cerca de 60 KB em AVIF, contra
+   * 1 MB do JPEG original. Ela chega quase imediatamente e é exibida desfocada
+   * enquanto a definitiva não termina, de modo que o aluno vê a lâmina desde o
+   * primeiro instante em vez de um retângulo preto se preenchendo aos poucos.
+   *
+   * `urlBase` mantém os 1920 px do original, porque é sobre ela que o zoom do
+   * microscópio opera: reduzir aqui destruiria o detalhe no uso principal.
+   */
+  const urlBase = urlOtimizada(urlOriginal, LARGURA_LAMINA)
+  const urlPrevia = urlOtimizada(urlOriginal, LARGURA_PREVIA, 45)
 
   /* ────────────────── medição do contêiner ────────────────── */
 
@@ -592,6 +612,9 @@ export function Microscopio({
               alt={lamina.base.alt}
               draggable={false}
               decoding="async"
+              // A lâmina é o elemento principal da página: pedir prioridade
+              // alta a tira da fila das imagens decorativas.
+              fetchPriority="high"
               onLoad={(e) => {
                 const alvo = e.currentTarget
                 setImagem({ largura: alvo.naturalWidth, altura: alvo.naturalHeight })
@@ -642,10 +665,31 @@ export function Microscopio({
           )}
 
           {carregandoBase && !erroDeMidia && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0d1210]">
-              <div className="flex flex-col items-center gap-2 text-white/50">
-                <Layers className="h-6 w-6 animate-pulse" aria-hidden />
-                <p className="text-xs">Iluminando a lâmina…</p>
+            <div className="absolute inset-0 overflow-hidden bg-[#0d1210]">
+              {/*
+                A prévia de 640 px entra aqui, desfocada e fora da matemática do
+                zoom — ela é placeholder, não conteúdo. Ficar de fora do
+                contêiner transformado é o que permite mostrá-la antes de
+                `imagem` existir, já que as dimensões do palco vêm da lâmina
+                definitiva.
+              */}
+              {urlPrevia && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={urlPrevia}
+                  alt=""
+                  aria-hidden
+                  draggable={false}
+                  decoding="async"
+                  fetchPriority="high"
+                  className="absolute inset-0 h-full w-full scale-110 object-contain opacity-70 blur-lg"
+                />
+              )}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-2 rounded-lg bg-black/45 px-3 py-2 text-white/70 backdrop-blur-sm">
+                  <Layers className="h-6 w-6 animate-pulse" aria-hidden />
+                  <p className="text-xs">Iluminando a lâmina…</p>
+                </div>
               </div>
             </div>
           )}
@@ -683,7 +727,11 @@ export function Microscopio({
               style={{ width: 108, height: 108 * (imagem.altura / imagem.largura) }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={urlBase} alt="" className="h-full w-full object-cover opacity-55" />
+              <img
+                src={urlPrevia ?? urlBase}
+                alt=""
+                className="h-full w-full object-cover opacity-55"
+              />
               <div
                 className="absolute border-2"
                 style={{
@@ -807,7 +855,13 @@ export function Microscopio({
           <ul className="flex gap-2 overflow-x-auto pb-1">
             {bandeja.map((item) => {
               const atual = item.rota === lamina.rota
-              const miniatura = item.miniatura ? urlDaMidia(item.miniatura) : null
+              // A bandeja mostra as lâminas a 56 px; baixar o original de 1 MB
+              // para cada uma delas era o que fazia a barra inteira travar.
+              const miniatura = urlOtimizada(
+                item.miniatura ? urlDaMidia(item.miniatura) : null,
+                LARGURA_MINIATURA,
+                60,
+              )
               return (
                 <li key={item.rota} className="shrink-0">
                   <button

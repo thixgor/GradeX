@@ -66,6 +66,44 @@ export function urlDaMidia(midia: Pick<Midia, 'sha256' | 'ext' | 'urlOrigem'>): 
 }
 
 /**
+ * Larguras que o otimizador aceita. Precisa ser subconjunto de
+ * `deviceSizes ∪ imageSizes` em `next.config.js` — pedir uma largura fora
+ * dessa lista devolve 400, e a imagem simplesmente não aparece.
+ */
+export const LARGURA_LAMINA = 1920
+export const LARGURA_PREVIA = 640
+export const LARGURA_MINIATURA = 256
+
+/**
+ * URL passada pelo otimizador de imagem do Next.
+ *
+ * ## Por que isto existe
+ *
+ * As lâminas do acervo são JPEG de 1920×1280 com **1 MB de mediana**, servidos
+ * pelo LiteSpeed do digitalhistology.org — um servidor único, sem CDN, nos
+ * Estados Unidos. Para um aluno no Brasil isso significa pagar TTFB
+ * transatlântico e baixar 1 MB toda vez que o cache do navegador não ajuda.
+ *
+ * O otimizador resolve as duas coisas de uma vez: busca o original **uma vez**,
+ * converte para AVIF ou WebP conforme o `Accept` do navegador e serve do edge
+ * com o cache de 30 dias já configurado. Medido numa lâmina real de 1,4 MB:
+ * AVIF a 1920 px dá 526 KB, e a 640 px dá cerca de 60 KB.
+ *
+ * ## Por que não vale para tudo
+ *
+ * Os 7.765 overlays são PNG de 19 KB de mediana. Passá-los pelo otimizador
+ * multiplicaria as transformações por seis para economizar quilobytes que já
+ * são carregados sob demanda. Ficam na origem, e é por isso que esta função é
+ * aplicada explicitamente onde compensa, em vez de embutida em `urlDaMidia`.
+ */
+export function urlOtimizada(url: string | null, largura: number, qualidade = 75): string | null {
+  if (!url) return null
+  // `data:` e caminhos relativos não passam pelo otimizador remoto.
+  if (!/^https?:\/\//i.test(url)) return url
+  return `/_next/image?url=${encodeURIComponent(url)}&w=${largura}&q=${qualidade}`
+}
+
+/**
  * `srcset` responsivo.
  *
  * O Blob serve o arquivo original, sem transformação, e a otimização de imagem

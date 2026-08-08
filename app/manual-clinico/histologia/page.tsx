@@ -18,7 +18,7 @@ import { MapaCurricular } from '@/components/histologia/mapa-curricular'
 import { setorDe, tema } from '@/components/histologia/tema'
 import { MODULOS_DE_LABORATORIO } from '@/lib/histologia/laboratorio'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
-import { urlDaMidia } from '@/lib/histologia/midia'
+import { LARGURA_LAMINA, urlDaMidia, urlOtimizada } from '@/lib/histologia/midia'
 import { CURRICULO, RESUMO_DE_QUIZZES, TOTAIS, obterPagina } from '@/lib/histologia/repositorio'
 import { BASE, rotaDaPagina } from '@/lib/histologia/seo'
 
@@ -39,7 +39,9 @@ const ROTA_HERO = ['histologia-basica', 'preparacao-do-tecido', 'tissue-preparat
 
 export default async function HomeDaHistologia() {
   const hero = await obterPagina(ROTA_HERO)
-  const urlHero = hero?.base ? urlDaMidia(hero.base) : null
+  // O hero é a primeira imagem que o aluno vê no módulo; é ela que define a
+  // impressão de velocidade da home inteira.
+  const urlHero = urlOtimizada(hero?.base ? urlDaMidia(hero.base) : null, LARGURA_LAMINA)
 
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>

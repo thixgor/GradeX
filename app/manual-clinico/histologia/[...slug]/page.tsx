@@ -5,7 +5,13 @@ import { AppShell } from '@/components/app-shell'
 import { Lamina } from '@/components/histologia/lamina'
 import { SecaoDoCurriculo } from '@/components/histologia/secao'
 import { buildJsonLd } from '@/lib/seo'
-import { urlDaMidia } from '@/lib/histologia/midia'
+import {
+  LARGURA_LAMINA,
+  LARGURA_MINIATURA,
+  LARGURA_PREVIA,
+  urlDaMidia,
+  urlOtimizada,
+} from '@/lib/histologia/midia'
 import {
   RESUMO_DE_QUIZZES,
   obterFragmento,
@@ -95,8 +101,26 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
   const quizzes = RESUMO_DE_QUIZZES.filter((q) => pagina.quizzes.includes(q.slug))
   const imagem = pagina.base ? urlDaMidia(pagina.base) : null
 
+  /*
+   * Pré-carregamento da lâmina, emitido pelo servidor.
+   *
+   * O microscópio é `ssr: false` — ele precisa de `ResizeObserver` e das
+   * dimensões naturais da imagem, que só existem no navegador. A consequência é
+   * que, sem isto, a busca da imagem só começava depois de o JavaScript baixar,
+   * o chunk do microscópio chegar e o componente hidratar: uma corrente em
+   * série, e o aluno olhando para um retângulo cinza o tempo todo.
+   *
+   * Estas duas linhas quebram a corrente. O navegador enxerga o `preload` ainda
+   * ao analisar o HTML e busca a imagem **em paralelo** com o JavaScript, de
+   * modo que a prévia já está no cache quando o microscópio finalmente monta.
+   */
+  const preLamina = urlOtimizada(imagem, LARGURA_LAMINA)
+  const prePrevia = urlOtimizada(imagem, LARGURA_PREVIA, 45)
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
+      {prePrevia && <link rel="preload" as="image" href={prePrevia} fetchPriority="high" />}
+      {preLamina && <link rel="preload" as="image" href={preLamina} />}
       <div className="surface-page min-h-screen">
         <Lamina
           pagina={pagina}
@@ -132,7 +156,10 @@ async function miniaturasDe(caminho: string[]) {
   const mapa: Record<string, string> = {}
   for (const p of paginas) {
     if (!p.base) continue
-    const url = urlDaMidia(p.base)
+    // São miniaturas de índice, exibidas a poucas dezenas de pixels. Servir a
+    // lâmina original de 1 MB em cada uma tornava o índice de setor a página
+    // mais pesada do módulo.
+    const url = urlOtimizada(urlDaMidia(p.base), LARGURA_MINIATURA, 60)
     if (url) mapa[p.caminho.join('/')] = url
   }
   return mapa

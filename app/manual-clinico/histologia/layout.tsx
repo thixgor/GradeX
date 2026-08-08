@@ -35,5 +35,16 @@ export default function LayoutDaHistologia({ children }: { children: React.React
   // A superfície do módulo é aplicada aqui, num só lugar: luz transmitida e
   // grão microscópico atrás de toda tela da Histologia, sem cada página ter de
   // lembrar de vestir o material.
-  return <div className="histologia-superficie min-h-screen">{children}</div>
+  return (
+    <div className="histologia-superficie min-h-screen">
+      {/*
+        As lâminas são buscadas pelo otimizador no digitalhistology.org. Abrir a
+        conexão junto com o HTML tira o custo de DNS e TLS do caminho crítico da
+        primeira imagem — que é sempre a lâmina, o elemento mais pesado da tela.
+      */}
+      <link rel="preconnect" href="https://digitalhistology.org" crossOrigin="anonymous" />
+      <link rel="dns-prefetch" href="https://digitalhistology.org" />
+      {children}
+    </div>
+  )
 }

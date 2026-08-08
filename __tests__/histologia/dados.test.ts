@@ -376,4 +376,30 @@ describe('tradução de títulos', () => {
       }
     }
   })
+
+  it('todo rótulo de estrutura do acervo está traduzido', async () => {
+    // "Estruturas marcadas nesta lâmina" chegou a 100%, e este teste é o que
+    // impede a regressão: um marcador novo sem entrada no glossário falha aqui
+    // em vez de aparecer em inglês no painel do microscópio.
+    const { readFileSync, readdirSync } = await import('node:fs')
+    const pathMod = await import('node:path')
+    const DIR = pathMod.resolve(__dirname, '../../data/histologia/paginas')
+
+    const semTraducao: string[] = []
+    for (const arquivo of readdirSync(DIR)) {
+      if (arquivo.startsWith('_')) continue
+      const conteudo: Record<
+        string,
+        { overlays?: Array<{ classe: string; traduzido: boolean; rotuloOriginal: string }> }
+      > = JSON.parse(readFileSync(pathMod.join(DIR, arquivo), 'utf8'))
+      for (const pagina of Object.values(conteudo)) {
+        for (const overlay of pagina?.overlays ?? []) {
+          if (overlay.classe !== 'estrutura') continue
+          if (!overlay.traduzido) semTraducao.push(overlay.rotuloOriginal)
+        }
+      }
+    }
+    const distintos = [...new Set(semTraducao)]
+    expect(distintos, `rótulos em inglês: ${distintos.slice(0, 5).join(' | ')}`).toEqual([])
+  })
 })

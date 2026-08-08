@@ -6,7 +6,7 @@ import { AlertCircle, Check, ChevronLeft, ChevronRight, RotateCcw, Timer, X } fr
 
 import type { Quiz } from '@/lib/histologia/esquemas'
 import { faixaDeAcerto, registrarEvento } from '@/lib/histologia/analitica'
-import { urlDaMidia } from '@/lib/histologia/midia'
+import { LARGURA_LAMINA, urlDaMidia, urlOtimizada } from '@/lib/histologia/midia'
 import { useProgresso } from '@/lib/histologia/progresso'
 import {
   type EstadoDoQuiz,
@@ -243,7 +243,9 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
   const mostrarDevolutiva = modo === 'pratica' && !!revelado[questao.id]
   const acertou = questaoCorreta(questao, escolhidas)
   const respondidas = estado.questoes.filter((q) => respondida(estado, q.id)).length
-  const urlImagem = questao.midia ? urlDaMidia(questao.midia) : null
+  // A imagem é a própria pergunta: o aluno não consegue responder antes de
+  // ela aparecer, então ela entra otimizada e com prioridade.
+  const urlImagem = urlOtimizada(questao.midia ? urlDaMidia(questao.midia) : null, LARGURA_LAMINA)
 
   return (
     <div>
