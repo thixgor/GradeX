@@ -4783,6 +4783,303 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Use o hilo para orientar o corte e localizar córtex e medula.',
     ],
   },
+
+  'spleen: red and white pulp': {
+    panorama:
+      'O baço tem dois compartimentos entremeados que cumprem tarefas opostas, e vê-los juntos torna a diferença evidente. A **polpa branca** é imunológica e aparece como ilhas basófilas: bainha linfoide periarteriolar de linfócitos T em torno de cada **artéria central**, nódulos B acoplados a ela e zona marginal ao redor. A **polpa vermelha** é o filtro mecânico e ocupa o resto do campo: cordões esplênicos de tecido reticular repletos de macrófagos alternados com **sinusoides** de luz ampla. A relação entre as duas varia com a idade e com o estímulo antigênico. O achado que identifica o órgão é a arteríola central, sempre deslocada para a margem do nódulo.',
+    roteiro: [
+      'Ache a arteríola central antes de qualquer outra coisa.',
+      'Estime a proporção entre as duas polpas: ela informa sobre o estado funcional do órgão.',
+    ],
+  },
+
+  'spleen: circulatory pathways': {
+    panorama:
+      'O sangue percorre o baço por dois trajetos possíveis, e a diferença entre eles explica a função do órgão. A artéria esplênica entra pelo hilo, ramifica-se nas trabéculas e emerge como **artéria central**, envolvida pela bainha linfoide. Dela partem as arteríolas peniciladas e os capilares. Na **via fechada**, o capilar desemboca diretamente no sinusoide, e o sangue volta rápido à circulação. Na **via aberta**, o capilar despeja o sangue nos **cordões esplênicos**, e cada hemácia precisa depois se espremer entre as ripas endoteliais do sinusoide para retornar — teste mecânico que retém as senescentes e as deformadas, entregues aos macrófagos dos cordões. É a via aberta que faz do baço um filtro.',
+    roteiro: [
+      'Siga o trajeto do sangue a partir da trabécula: artéria central, arteríola, capilar, cordão ou sinusoide.',
+      'Relacione a via aberta à remoção de hemácias velhas.',
+    ],
+  },
+
+  'spleen: red pulp circulation': {
+    panorama:
+      'A circulação da polpa vermelha é o mecanismo pelo qual o baço testa a deformabilidade das hemácias. Os capilares despejam o sangue nos **cordões esplênicos**, tecido reticular frouxo cheio de macrófagos, plasmócitos e todas as células do sangue. Para voltar à circulação, a hemácia precisa atravessar a parede do **sinusoide**, cujas células endoteliais são alongadas e dispostas em paralelo como as ripas de um barril, apoiadas em uma lâmina basal descontínua em anéis. As fendas entre as ripas são mais estreitas que a hemácia: as flexíveis passam por deformação, as senescentes, esferocíticas ou parasitadas ficam retidas e são fagocitadas. Daí a esplenomegalia nas anemias hemolíticas.',
+    roteiro: [
+      'Distinga cordão de sinusoide pela disposição paralela dos núcleos endoteliais.',
+      'Procure macrófagos com hemossiderina nos cordões: são o registro da hemocaterese.',
+    ],
+  },
+
+  'thymus medulla': {
+    panorama:
+      'A medula do timo é **mais clara** que o córtex porque tem muito menos timócitos e proporcionalmente mais células epiteliorreticulares. É onde ocorre a **seleção negativa**: células dendríticas e epiteliorreticulares medulares apresentam antígenos próprios, e os timócitos que reagirem fortemente a eles são eliminados por apoptose — o mecanismo central da tolerância central. As epiteliorreticulares medulares expressam o fator AIRE, que as faz produzir proteínas de tecidos periféricos, expondo o timócito a antígenos que ele jamais encontraria ali. A marca histológica exclusiva são os **corpúsculos de Hassall**, formações concêntricas de células epiteliorreticulares queratinizadas em degeneração.',
+    roteiro: [
+      'Compare a densidade nuclear com a do córtex no mesmo lóbulo.',
+      'Ache um corpúsculo de Hassall para fechar a identificação do órgão.',
+    ],
+  },
+
+  'thymus: medulla': {
+    panorama:
+      'A medula tímica ocupa o centro de cada lóbulo e é contínua entre lóbulos vizinhos, ao contrário do córtex, que é descontínuo — detalhe útil em cortes de pequeno aumento. Sua palidez vem da baixa densidade de timócitos: aqui restam apenas os que sobreviveram à seleção positiva do córtex e estão em seleção negativa. A barreira hematotímica **não existe** na medula, e é justamente por isso que antígenos circulantes e células dendríticas podem alcançar os timócitos e testá-los. Os **corpúsculos de Hassall**, exclusivos do órgão, crescem com a idade e parecem participar da geração de linfócitos T reguladores. Daqui os linfócitos maduros deixam o timo por vênulas pós-capilares.',
+    roteiro: [
+      'Note a continuidade da medula entre lóbulos, contra a descontinuidade do córtex.',
+      'Relacione a ausência de barreira hematotímica à função de seleção negativa.',
+    ],
+  },
+
+  'thymus: aging': {
+    panorama:
+      'O timo é o único órgão linfoide que **involui fisiologicamente**. Atinge seu peso máximo perto da puberdade e depois entra em involução progressiva: o parênquima linfoide é substituído por **tecido adiposo**, os lóbulos encolhem, o córtex adelgaça mais rápido que a medula e a produção de linfócitos T novos cai drasticamente. Os **corpúsculos de Hassall** permanecem e ficam relativamente mais evidentes, porque o tecido ao redor desapareceu — em um timo idoso, eles podem ser o único traço reconhecível do órgão. A imunidade celular do adulto passa a depender da expansão de clones T já formados, e não de produção nova, o que explica parte da imunossenescência.',
+    roteiro: [
+      'Estime a proporção entre gordura e parênquima linfoide para inferir a idade.',
+      'Procure corpúsculos de Hassall mesmo em campos aparentemente só adiposos.',
+    ],
+    atencao:
+      'A involução é fisiológica: interpretar a substituição gordurosa como atrofia patológica é o erro clássico desta lâmina.',
+  },
+
+  lymphoid: {
+    panorama:
+      'O sistema linfoide reúne células, tecidos e órgãos dedicados à defesa e à recirculação de linfócitos. Sua leitura se apoia em duas classificações cruzadas. Pela **função**: órgãos primários — medula óssea e timo — produzem e educam linfócitos; secundários — linfonodo, baço, tonsilas e o tecido associado a mucosas — são onde o linfócito encontra o antígeno. Pela **estrutura**: tecido difuso, nódulos, agregados de nódulos e órgãos encapsulados. Praticamente todos têm estroma **reticular**, que sustenta células livres sem imobilizá-las; o timo é a exceção, com células epiteliorreticulares. E **centro germinativo só existe em órgão secundário**.',
+    roteiro: [
+      'Aplique as duas classificações antes de nomear a estrutura.',
+      'Use a presença de centro germinativo como critério decisivo entre primário e secundário.',
+    ],
+  },
+
+  // ---- Reprodutor masculino ----
+
+  subdivisions: {
+    panorama:
+      'O aparelho reprodutor masculino se divide em três partes funcionais. A **gônada** é o testículo, com dupla função: produz espermatozoides nos túbulos seminíferos e testosterona nas células de Leydig do interstício. As **vias espermáticas** conduzem e amadurecem o gameta, na sequência túbulos retos, rede testicular, dúctulos eferentes, ducto epididimário, ducto deferente, ducto ejaculatório e uretra — e cada segmento tem epitélio característico, o que permite localizar-se em qualquer corte. As **glândulas anexas** — vesículas seminais, próstata e bulbouretrais — fornecem quase todo o volume do ejaculado, com nutrientes, tampões e enzimas. O pênis completa o conjunto como órgão copulador.',
+    roteiro: [
+      'Situe o corte em uma das três partes antes de descrever qualquer estrutura.',
+      'Use a altura do epitélio e a espessura da muscular para localizar o segmento da via.',
+    ],
+  },
+
+  'overview of the male reproductive system': {
+    panorama:
+      'O aparelho reprodutor masculino combina uma gônada de função dupla com uma via de condução e glândulas anexas. O **testículo** aloja os túbulos seminíferos, onde a espermatogênese ocorre a partir da puberdade e de modo contínuo, e o interstício com as células de Leydig, produtoras de testosterona. A via começa nos **túbulos retos**, segue pela **rede testicular** e pelos **dúctulos eferentes**, de epitélio ondulado inconfundível, chega ao **epidídimo**, onde o espermatozoide amadurece e é estocado, e continua pelo **ducto deferente**, de muscular espessa em três camadas. **Vesícula seminal**, **próstata** e glândulas bulbouretrais fornecem cerca de 95% do volume do sêmen.',
+    roteiro: [
+      'Percorra a via na ordem e associe cada segmento a seu epitélio característico.',
+      'No testículo, separe compartimento tubular e intersticial antes de nomear células.',
+    ],
+  },
+
+  'testis and epididymis': {
+    panorama:
+      'Testículo e epidídimo aparecem juntos porque são funcionalmente contínuos, e compará-los no mesmo corte esclarece os dois. No **testículo**, os perfis tubulares são os **túbulos seminíferos**: parede espessa e estratificada, com células germinativas em várias camadas e células de Sertoli, e a luz costuma conter poucos espermatozoides ou nenhum, porque eles são liberados imaturos e imóveis. No **epidídimo**, os perfis são de um único ducto enovelado: epitélio **pseudoestratificado colunar com estereocílios**, luz lisa, regular e **repleta de espermatozoides**. O interstício testicular tem células de Leydig acidófilas; o epididimário tem apenas conjuntivo e músculo liso.',
+    roteiro: [
+      'Compare o conteúdo da luz nos dois: quase vazia no testículo, cheia no epidídimo.',
+      'Verifique se a parede é estratificada germinativa ou pseudoestratificada com estereocílios.',
+    ],
+  },
+
+  'overview of the testis': {
+    panorama:
+      'O testículo é envolvido pela **túnica albugínea**, cápsula de conjuntivo denso que espessa posteriormente formando o **mediastino** e emite septos que dividem o órgão em cerca de 250 lóbulos. Cada lóbulo contém de um a quatro **túbulos seminíferos** enovelados, de modo que um corte mostra dezenas de perfis do mesmo tipo. Entre eles fica o **interstício**, com as células de Leydig, vasos e linfáticos abundantes. Os túbulos convergem para os túbulos retos, e estes para a **rede testicular** escavada no mediastino, de onde partem os dúctulos eferentes. A temperatura escrotal, alguns graus abaixo da corporal e mantida pelo plexo pampiniforme, é condição para a espermatogênese.',
+    roteiro: [
+      'Localize a albugínea e o mediastino para orientar o corte.',
+      'Separe compartimento tubular e intersticial antes de descrever células.',
+    ],
+  },
+
+  'testis proper': {
+    panorama:
+      'O testículo propriamente dito é o conjunto dos túbulos seminíferos e do interstício, os dois compartimentos que sustentam suas duas funções. Dentro do túbulo, o **epitélio seminífero** tem duas linhagens: as **células de Sertoli**, altas, estendendo-se da lâmina basal à luz, com núcleo pálido triangular e nucléolo proeminente, que sustentam, nutrem e fagocitam restos, além de formarem a **barreira hematotesticular** por junções estreitas entre si; e as **células germinativas** em maturação, dispostas em camadas da periferia para o centro. No **interstício**, as células de Leydig produzem testosterona sob LH, e a concentração intratesticular do hormônio é muito maior que a plasmática.',
+    roteiro: [
+      'Ache o núcleo pálido com nucléolo grande das Sertoli: é o ponto de referência dentro do túbulo.',
+      'Note que a barreira hematotesticular divide o epitélio em compartimentos basal e adluminal.',
+    ],
+  },
+
+  'testis proper: exocrine portion': {
+    panorama:
+      'A porção exócrina do testículo são os **túbulos seminíferos**, onde a espermatogênese ocorre — o produto, o espermatozoide, é lançado numa luz e conduzido por ductos, o que caracteriza secreção exócrina, ainda que celular. A parede tem uma lâmina basal e células mioides peritubulares contráteis, que ajudam a mover os espermatozoides imóveis em direção aos túbulos retos. O epitélio é estratificado e organizado em camadas concêntricas que reproduzem a sequência de maturação: **espermatogônias** na base, **espermatócitos primários** — as maiores células, paradas em prófase I — acima delas, depois **espermátides** arredondadas e, na luz, espermátides tardias e espermatozoides.',
+    roteiro: [
+      'Leia o epitélio da lâmina basal para a luz: a ordem espacial é a ordem temporal da maturação.',
+      'Procure as células mioides peritubulares por fora da lâmina basal.',
+    ],
+  },
+
+  'testis: spermatogenesis': {
+    panorama:
+      'A espermatogênese converte uma espermatogônia diploide em quatro espermatozoides haploides e leva cerca de 74 dias no ser humano. Tem três fases. Na **fase espermatogônica**, as espermatogônias se dividem por mitose: as do tipo A se autorrenovam ou geram tipo B, e estas originam espermatócitos primários. Na **fase espermatocítica**, ocorre a meiose: o espermatócito primário permanece longamente em prófase I — motivo pelo qual é a célula mais frequente e mais volumosa do túbulo — e gera dois espermatócitos secundários, de vida tão curta que raramente são vistos, que rapidamente originam quatro espermátides. Na **espermiogênese**, a espermátide se transforma em espermatozoide sem nova divisão.',
+    roteiro: [
+      'Identifique cada camada pela posição e pelo tamanho do núcleo.',
+      'Lembre que espermatócitos secundários quase nunca aparecem: são efêmeros.',
+    ],
+  },
+
+  'seminiferous tubules: convoluted portion': {
+    panorama:
+      'A porção contorcida é o trecho enovelado e produtivo do túbulo seminífero, e ocupa quase todo o volume do testículo. Sua parede tem lâmina basal e células mioides, e o epitélio seminífero é estratificado, com as duas linhagens. As **células de Sertoli** são a estrutura de sustentação: seus núcleos pálidos e triangulares, com nucléolo evidente, ficam próximos à base, e suas junções estreitas dividem o epitélio em compartimento **basal**, com espermatogônias, e **adluminal**, com as células meióticas — que expressam proteínas novas e seriam atacadas pelo sistema imune sem essa barreira. As **células germinativas** se organizam em camadas concêntricas de maturação crescente.',
+    roteiro: [
+      'Ache a Sertoli primeiro e use-a como referência para localizar as camadas germinativas.',
+      'Relacione a barreira hematotesticular à necessidade de isolar células com antígenos novos.',
+    ],
+  },
+
+  'stages of spermatogenesis': {
+    panorama:
+      'A espermatogênese não é sincrônica ao longo do túbulo: cada ponto da parede exibe uma **associação celular** específica, e existem seis dessas associações no ser humano, que se sucedem no tempo em um mesmo local — é o ciclo do epitélio seminífero. Por isso, dois perfis de túbulo lado a lado podem mostrar composições diferentes, e isso é normal, não artefato. As células de uma mesma geração permanecem unidas por **pontes citoplasmáticas** desde a divisão da espermatogônia, o que sincroniza sua maturação. Em corte, procura-se identificar as camadas: espermatogônias na base, espermatócitos primários volumosos, espermátides arredondadas e, mais perto da luz, espermátides alongadas.',
+    roteiro: [
+      'Compare túbulos vizinhos: composições diferentes indicam estágios diferentes do ciclo.',
+      'Procure pontes citoplasmáticas ligando células da mesma geração.',
+    ],
+  },
+
+  'seminiferous tubules - straight portion': {
+    panorama:
+      'Os túbulos retos são a transição curta entre o túbulo seminífero contorcido e a rede testicular, e a mudança é abrupta: a **espermatogênese cessa** de uma vez, e a parede passa a ter apenas **células de Sertoli** dispostas em uma camada, depois epitélio simples cúbico. O trajeto é retilíneo, daí o nome, e converge para o mediastino do testículo. Reconhecer esse segmento é útil porque ele marca o fim do compartimento produtivo e o início da via de condução; encontrar um perfil tubular sem células germinativas em meio a túbulos seminíferos íntegros não é sinal de lesão, e sim de que o corte alcançou o túbulo reto.',
+    roteiro: [
+      'Procure a interrupção súbita das camadas germinativas.',
+      'Siga a direção do túbulo: ele aponta para o mediastino.',
+    ],
+    atencao:
+      'Um túbulo reto pode ser confundido com túbulo seminífero atrófico; a retidão e a proximidade do mediastino resolvem.',
+  },
+
+
+  testis: {
+    panorama:
+      'O testículo é a gônada masculina e cumpre duas funções em compartimentos separados. Envolvido pela **túnica albugínea**, divide-se em cerca de 250 lóbulos por septos que partem do mediastino, e cada lóbulo aloja de um a quatro **túbulos seminíferos** enovelados. Dentro deles ocorre a **espermatogênese**, sustentada pelas células de Sertoli, que também formam a barreira hematotesticular. No interstício, as **células de Leydig** produzem testosterona. Fica alojado no escroto porque a espermatogênese exige temperatura alguns graus abaixo da corporal, mantida pelo plexo pampiniforme em contracorrente e pelos músculos cremaster e dartos.',
+    roteiro: [
+      'Localize albugínea, septos e mediastino para orientar o corte.',
+      'Separe compartimento tubular e intersticial antes de descrever células.',
+    ],
+  },
+
+  head: {
+    panorama:
+      'A cabeça do epidídimo é onde os **dúctulos eferentes** desembocam no ducto epididimário, e por isso é o único trecho em que os dois tipos de perfil convivem no mesmo campo — o que a torna a região mais informativa do órgão. Os **dúctulos eferentes** têm contorno luminal **ondulado, festonado**, resultado da alternância entre grupos de células altas ciliadas e baixas não ciliadas, e são eles que reabsorvem a maior parte do líquido vindo do testículo. O **ducto epididimário** tem contorno **liso e regular**, epitélio pseudoestratificado colunar com estereocílios altos e luz cheia de espermatozoides. Distinguir os dois pelo contorno da luz resolve a lâmina.',
+    roteiro: [
+      'Use o contorno luminal como critério: ondulado é dúctulo eferente, liso é ducto epididimário.',
+      'Note a diferença na quantidade de espermatozoides entre os dois.',
+    ],
+  },
+
+  'body and tail': {
+    panorama:
+      'No corpo e na cauda do epidídimo só existe o **ducto epididimário**, e suas proporções mudam progressivamente ao longo do trajeto. O **epitélio vai ficando mais baixo** — de colunar alto com estereocílios longos, na cabeça, a cúbico com estereocílios curtos, na cauda — enquanto a **camada de músculo liso engrossa**, chegando a três camadas na cauda, como no ducto deferente que se segue. A luz aumenta e fica cada vez mais **repleta de espermatozoides**, porque a cauda é o principal reservatório antes da ejaculação. Ao longo desse trajeto, que o espermatozoide leva cerca de duas semanas para percorrer, ele adquire motilidade e capacidade de fecundar.',
+    roteiro: [
+      'Compare altura do epitélio e espessura muscular: variam em sentidos opostos.',
+      'Estime a quantidade de espermatozoides na luz para localizar o segmento.',
+    ],
+  },
+
+  'genital glands': {
+    panorama:
+      'As glândulas anexas fornecem cerca de 95% do volume do ejaculado, e cada uma tem histologia própria. As **vesículas seminais** são tubos únicos muito enovelados, com mucosa em pregas complexas e arcos interligados — o achado que as identifica — e secreção amarelada rica em **frutose**, o combustível do espermatozoide, além de prostaglandinas; contribuem com cerca de 70% do volume. A **próstata** reúne 30 a 50 glândulas tubuloalveolares em estroma fibromuscular, com epitélio pseudoestratificado e **concreções prostáticas** na luz; secreta ácido cítrico, fosfatase ácida e PSA. As **glândulas bulbouretrais** são tubuloalveolares mucosas e lubrificam a uretra antes da ejaculação.',
+    roteiro: [
+      'Use as pregas em arco para a vesícula seminal e as concreções para a próstata.',
+      'Relacione cada secreção à função que ela cumpre no ejaculado.',
+    ],
+  },
+
+  male: {
+    panorama:
+      'O aparelho reprodutor masculino produz e entrega gametas, e a leitura de suas lâminas segue sempre a mesma ordem: gônada, via, glândulas. No **testículo**, separe o compartimento tubular do intersticial. Na **via**, use duas variáveis que mudam em sentidos opostos ao longo do trajeto — a altura do epitélio **diminui** e a espessura da muscular **aumenta** da rede testicular ao ducto deferente. Nas **glândulas anexas**, procure o achado característico de cada uma: pregas em arco na vesícula seminal, concreções na próstata. Diferentemente do feminino, o sistema masculino não é cíclico: uma vez iniciada na puberdade, a produção é contínua e declina apenas lentamente com a idade.',
+    roteiro: [
+      'Percorra as três partes em ordem antes de descrever detalhes.',
+      'Use as duas variáveis da via — epitélio e muscular — para localizar o segmento.',
+    ],
+  },
+
+  // ---- Reprodutor feminino ----
+
+  'overview of the female reproductive system': {
+    panorama:
+      'O aparelho reprodutor feminino difere do masculino em um ponto que organiza tudo o mais: é **cíclico**. Quase toda estrutura muda de aparência conforme o dia do ciclo, de modo que ler a lâmina é também datá-la. O **ovário** aloja folículos em vários estágios no córtex e produz estrogênio e progesterona. A **tuba uterina** capta o oócito e é onde ocorre a fecundação; seu epitélio alterna células ciliadas e secretoras em proporção variável. O **útero** tem endométrio que prolifera, secreta e descama a cada ciclo sobre um miométrio espesso. **Colo** e **vagina** mudam de epitélio e fecham a via. A **mama** completa o conjunto, remodelando-se por inteiro na gravidez e na lactação.',
+    roteiro: [
+      'Tente datar o ciclo antes de julgar o que é normal na lâmina.',
+      'No ovário, conte camadas da granulosa e procure antro para estagiar o folículo.',
+    ],
+  },
+
+  'ovary: primordial follicles': {
+    panorama:
+      'Os folículos primordiais são o estágio mais precoce e o único presente ao nascimento. Cada um consiste em um **oócito primário**, parado na prófase da meiose I desde a vida fetal, envolvido por uma **única camada de células foliculares achatadas**, pavimentosas. Ficam alinhados logo abaixo da túnica albugínea, na periferia do córtex ovariano, e formam a reserva finita da vida reprodutiva: são cerca de sete milhões no feto, um a dois milhões ao nascimento e trezentos mil na puberdade, dos quais apenas quatrocentos chegarão a ovular. A cada ciclo, uma coorte deles retoma o desenvolvimento; os demais degeneram por atresia, processo que ocorre em todas as idades.',
+    roteiro: [
+      'Procure a fileira mais periférica do córtex: é onde eles se concentram.',
+      'Confirme que as células foliculares são achatadas, e não cúbicas.',
+    ],
+  },
+
+  'ovary: primary follicles': {
+    panorama:
+      'O folículo primário marca a retomada do desenvolvimento. Duas mudanças o definem em relação ao primordial: as células foliculares passam de **achatadas a cúbicas**, e o oócito cresce. No **primário unilaminar** há uma única camada de células cúbicas; é também nele que aparece a **zona pelúcida**, camada acidófila e refringente de glicoproteínas ZP1 a ZP3 depositada entre o oócito e as células foliculares, atravessada por prolongamentos que mantêm as duas em contato por junções comunicantes. Quando essas células proliferam e formam várias camadas, o folículo passa a **primário multilaminar**, e a camada recebe o nome de granulosa. Ainda não há antro.',
+    roteiro: [
+      'Verifique a forma das células foliculares: cúbicas indicam folículo primário.',
+      'Procure a zona pelúcida como um anel acidófilo em torno do oócito.',
+    ],
+  },
+
+  'ovary: primary multilaminar follicle': {
+    panorama:
+      'O folículo primário multilaminar, ou primário tardio, resulta da proliferação das células foliculares em **várias camadas**, agora chamadas coletivamente de **granulosa**, ainda **sem antro**. A zona pelúcida está bem estabelecida. Ao redor da lâmina basal que separa a granulosa do estroma, as células estromais começam a se organizar em **teca**, que logo se diferenciará em teca interna, celular e vascularizada, produtora de andrógenos, e teca externa, fibrosa. É neste estágio que se estabelece o modelo das duas células e duas gonadotrofinas: o LH age na teca interna, que produz andrógeno, e o FSH age na granulosa, que o converte em estrogênio pela aromatase.',
+    roteiro: [
+      'Conte as camadas da granulosa e confirme a ausência de antro.',
+      'Procure a teca começando a se organizar por fora da lâmina basal.',
+    ],
+  },
+
+  'ovary: secondary follicles': {
+    panorama:
+      'O folículo secundário, ou antral, se define pelo aparecimento do **antro**: espaços preenchidos por líquido folicular surgem entre as células da granulosa e vão confluindo em uma cavidade única. O oócito primário, envolvido pela zona pelúcida, fica excêntrico, apoiado sobre um pedestal de granulosa chamado **cúmulo oóforo**, e a coroa de células que o acompanhará na ovulação é a **corona radiata**. A teca já está diferenciada em **interna**, celular e muito vascularizada, com aspecto de célula esteroidogênica, e **externa**, fibrosa. O líquido folicular contém estrogênio, e é o crescimento antral que faz o folículo aumentar de tamanho de modo tão marcante.',
+    roteiro: [
+      'Ache o antro para classificar o estágio, depois localize o cúmulo oóforo.',
+      'Separe teca interna de externa pela celularidade e pela vascularização.',
+    ],
+  },
+
+  'ovary: atretic follicles': {
+    panorama:
+      'A **atresia** é o destino de mais de 99% dos folículos, e ocorre em qualquer estágio e em qualquer idade, inclusive na vida fetal e na infância — não é patologia. Na lâmina, o folículo atrésico se reconhece por sinais de degeneração: células da granulosa soltas e picnóticas flutuando no antro, oócito com núcleo irregular ou ausente, e sobretudo a **zona pelúcida colapsada e enrugada**, que resiste mais que o resto e permanece como último vestígio reconhecível. A lâmina basal se espessa em uma faixa hialina, a membrana vítrea. Células da teca interna podem persistir como glândula intersticial. O folículo é depois substituído por tecido cicatricial.',
+    roteiro: [
+      'Procure a zona pelúcida colapsada: é o achado mais duradouro da atresia.',
+      'Note células da granulosa livres na cavidade antral.',
+    ],
+  },
+
+  'ovary: corpus albicans': {
+    panorama:
+      'O corpo albicante é a cicatriz que resta do corpo lúteo depois da involução. Sem gravidez, o corpo lúteo degenera cerca de catorze dias após a ovulação: as células luteínicas sofrem autólise, são removidas por macrófagos e substituídas por **tecido conjuntivo denso** produzido por fibroblastos invasores. O resultado é uma estrutura branca, homogênea, intensamente acidófila e **pobre em células** — o contraste com o corpo lúteo, muito celular e cheio de células grandes e vacuoladas, é o critério mais direto de distinção. O corpo albicante encolhe lentamente ao longo de meses e afunda em direção à medula do ovário, deixando cicatrizes que se acumulam com a idade.',
+    roteiro: [
+      'Compare a celularidade com a de um corpo lúteo: quase só colágeno contra muito celular.',
+      'Note a posição mais profunda no córtex, resultado do encolhimento progressivo.',
+    ],
+  },
+
+  'oviduct: isthmus': {
+    panorama:
+      'O istmo é o segmento estreito da tuba uterina, entre a ampola e a porção intramural, e suas proporções são o inverso das da ampola. A **mucosa tem pregas baixas e pouco ramificadas**, que ocupam pequena parte da luz, e a **camada muscular é espessa**, bem mais desenvolvida que na ampola — a regra ao longo da tuba é que pregas e músculo variam em sentidos opostos. O epitélio continua simples colunar com células ciliadas e secretoras, mas a proporção de ciliadas é menor aqui. A musculatura espessa tem papel funcional: mantém o embrião retido por alguns dias, sincronizando sua chegada ao útero com o preparo do endométrio.',
+    roteiro: [
+      'Compare a complexidade das pregas com a espessura da muscular para localizar o segmento.',
+      'Confirme a presença de células ciliadas mesmo em menor proporção.',
+    ],
+  },
+
+  'oviduct: intramural portion': {
+    panorama:
+      'A porção intramural, ou uterina, é o trecho final da tuba, que atravessa a parede do útero para se abrir na cavidade endometrial. É o segmento de **menor calibre** e o de pregas mais simples — às vezes quase ausentes —, e sua parede se confunde com o **miométrio** ao redor, o que é justamente o achado que o identifica: um perfil tubular com epitélio simples colunar ciliado cercado por feixes espessos de músculo liso uterino, e não por sua própria muscular. O epitélio mantém células ciliadas e secretoras, e a estreiteza da luz aqui é um dos fatores que contribuem para a implantação ectópica quando o transporte falha.',
+    roteiro: [
+      'Verifique se o músculo ao redor é da própria tuba ou já é miométrio.',
+      'Note a redução máxima do pregueamento neste segmento.',
+    ],
+  },
+
+  'uterus: phases of the menstrual cycle': {
+    panorama:
+      'O endométrio percorre três fases a cada ciclo, e cada uma tem achados que a datam. Na **proliferativa**, dias 6 a 14, sob estrogênio, a camada basal regenera a funcional: o endométrio é fino, as **glândulas são retas e estreitas**, sem secreção, e há mitoses no epitélio e no estroma. Na **secretora**, dias 14 a 26, sob progesterona, as glândulas ficam **largas e tortuosas**, em dente de serra, cheias de secreção; **vacúolos subnucleares** marcam o início da fase, e o estroma incha e sofre reação decidual no fim. Na **menstrual**, dias 1 a 5, a funcional necrosa e descama, restando estroma colapsado, sangue, fibrina e neutrófilos, com a basal preservada.',
+    roteiro: [
+      'Avalie glândulas, estroma e espessura juntos: nenhum dos três data a fase sozinho.',
+      'Procure vacúolos subnucleares como o primeiro sinal confiável de que houve ovulação.',
+    ],
+  },
 }
 
 /**
