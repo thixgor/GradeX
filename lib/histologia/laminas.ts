@@ -4201,6 +4201,588 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Distinga glândulas na lâmina própria (cárdicas) das da submucosa (esofágicas próprias).',
     ],
   },
+
+  'overview: surface epithelium': {
+    panorama:
+      'Todo o epitélio de superfície do estômago é secretor: uma camada simples colunar em que **cada célula produz muco**, sem que exista uma célula caliciforme sequer — arranjo chamado de glândula em lâmina. O muco é neutro, rico em bicarbonato, e forma sobre a mucosa um gel aderente de cerca de meio milímetro que mantém a superfície epitelial em pH próximo de 7, mesmo com a luz em pH 2. É essa camada, e não o epitélio em si, que impede a autodigestão. As células têm núcleo basal, ápice repleto de grânulos de mucinogênio que em H&E ficam pálidos, e vida curta: renovam-se a cada três a cinco dias a partir do istmo da glândula.',
+    roteiro: [
+      'Confirme a ausência de células caliciformes: é o achado que separa estômago de intestino.',
+      'Siga o epitélio de superfície descendo para dentro das fossetas gástricas.',
+    ],
+  },
+
+  'overview: gastric mucosa': {
+    panorama:
+      'A mucosa gástrica é espessa e tem uma organização vertical que vale ler de cima para baixo. Na superfície, o epitélio simples colunar mucossecretor mergulha em **fossetas gástricas**, funis onde desembocam as glândulas. As **glândulas gástricas** ocupam o restante da lâmina própria e chegam até a muscular da mucosa, com composição celular variável por região. A **proporção entre fosseta e glândula** é o dado que localiza o segmento: na cárdia elas têm comprimento parecido; no fundo e no corpo a glândula é muito mais longa; no piloro a fosseta ocupa dois terços da espessura. A muscular da mucosa fecha a camada e emite fibras que sobem entre as glândulas.',
+    roteiro: [
+      'Meça a razão fosseta/glândula antes de qualquer outra coisa: ela identifica a região.',
+      'Procure a muscular da mucosa para delimitar a base das glândulas.',
+    ],
+  },
+
+  glands: {
+    panorama:
+      'As glândulas gástricas são tubulares simples ramificadas e mudam de composição celular conforme a região. Nas **glândulas fúndicas**, as mais estudadas, distinguem-se quatro níveis: o **istmo**, com células-tronco e mitoses; o **colo**, com células mucosas do colo, que produzem muco ácido; o **corpo**, com **células parietais** — grandes, arredondadas e intensamente acidófilas pelas mitocôndrias, produtoras de ácido clorídrico e fator intrínseco — e a **base**, com **células principais**, de base basófila e ápice granular, que secretam pepsinogênio. Espalhadas por toda a extensão há células enteroendócrinas, com grânulos voltados para a lâmina basal.',
+    roteiro: [
+      'Localize as células parietais pela acidofilia e pela forma arredondada; elas são o ponto de referência.',
+      'Desça até a base para achar as células principais, azuladas.',
+    ],
+  },
+
+  'overview: mucosal innervation': {
+    panorama:
+      'A inervação da mucosa gástrica vem do **plexo submucoso de Meissner**, gânglios do sistema nervoso entérico alojados na submucosa, cujos ramos sobem para a lâmina própria. Ele controla o que a mucosa faz por conta própria: **secreção glandular**, fluxo sanguíneo local e contração da muscular da mucosa. O sistema nervoso entérico tem cerca de cem milhões de neurônios e opera com autonomia — daí ser chamado de segundo cérebro —, integrando neurônios sensoriais que detectam distensão e composição química, interneurônios e neurônios motores. O parassimpático vagal e o simpático apenas modulam esse circuito local, em vez de comandá-lo diretamente.',
+    roteiro: [
+      'Procure os gânglios do plexo submucoso como agrupamentos pálidos entre as fibras colágenas.',
+      'Distinga-os do plexo mioentérico pela camada em que estão.',
+    ],
+  },
+
+  'overview: muscularis externa': {
+    panorama:
+      'A muscular externa do estômago é a única do tubo digestório com **três camadas**, e a camada extra tem função definida. De dentro para fora: **oblíqua interna**, incompleta e presente sobretudo no fundo e no corpo; **circular média**, que se espessa no piloro para formar o esfíncter; e **longitudinal externa**. Enquanto duas camadas bastam para propelir — a circular estreita a luz e a longitudinal encurta o segmento —, a oblíqua acrescenta um vetor de torção que permite **triturar e misturar** o conteúdo, e não apenas empurrá-lo. Entre a circular e a longitudinal corre o plexo mioentérico de Auerbach, que coordena a onda peristáltica.',
+    roteiro: [
+      'Conte as camadas: três indicam estômago com boa segurança.',
+      'Procure o plexo mioentérico entre a circular e a longitudinal.',
+    ],
+  },
+
+  'overview: innervation': {
+    panorama:
+      'A parede do tubo digestório contém dois plexos nervosos, e distingui-los é uma questão de topografia. O **plexo submucoso de Meissner** fica na submucosa e controla secreção glandular, fluxo sanguíneo local e a muscular da mucosa. O **plexo mioentérico de Auerbach** fica entre as camadas circular e longitudinal da muscular externa e controla a motilidade — é ele que gera e coordena a onda peristáltica. Ambos pertencem ao **sistema nervoso entérico**, que funciona com autonomia considerável: mesmo desconectado do sistema nervoso central, o intestino mantém peristalse. Na lâmina, os dois aparecem como pequenos gânglios pálidos, e o que os identifica é a camada em que estão.',
+    roteiro: [
+      'Localize a camada antes de nomear o plexo: submucosa é Meissner, entre músculos é Auerbach.',
+      'Procure corpos neuronais grandes e pálidos com células gliais entéricas ao redor.',
+    ],
+  },
+
+  'overview of the stomach': {
+    panorama:
+      'O estômago armazena, tritura e inicia a digestão proteica, e cada uma dessas funções tem correlato estrutural. Armazena porque a mucosa e a submucosa formam **rugas**, pregas que desaparecem com a distensão. Tritura porque a muscular externa tem **três camadas**, e não duas. Digere proteína porque as glândulas contêm **células parietais**, que produzem ácido clorídrico, e **células principais**, que produzem pepsinogênio, ativado a pepsina em pH ácido. E não se autodigere porque todo o epitélio de superfície secreta um gel de muco neutro com bicarbonato. Divide-se em cárdia, fundo, corpo e piloro, distinguíveis pela razão entre a profundidade da fosseta e o comprimento da glândula.',
+    roteiro: [
+      'Confirme a ausência de células caliciformes antes de tudo.',
+      'Use a razão fosseta/glândula para determinar a região.',
+    ],
+  },
+
+  'stomach: fundus and pylorus': {
+    panorama:
+      'Comparar fundo e piloro no mesmo corte torna a diferença óbvia e memorizável. No **fundo**, as fossetas são **curtas**, ocupando cerca de um quarto da espessura da mucosa, e as glândulas são longas, retas e cheias de **células parietais** acidófilas e **células principais** basófilas — o aparelho secretor de ácido e pepsinogênio. No **piloro**, a proporção se inverte: as fossetas ocupam cerca de **dois terços** da mucosa e as glândulas são curtas, enoveladas, ramificadas e predominantemente **mucosas**, com poucas parietais e muitas **células G** produtoras de gastrina. A camada circular da muscular externa se espessa ali para formar o esfíncter pilórico.',
+    roteiro: [
+      'Meça a razão fosseta/glândula nas duas metades do corte antes de descrever células.',
+      'Procure células parietais acidófilas: elas abundam no fundo e rareiam no piloro.',
+    ],
+  },
+
+  regions: {
+    panorama:
+      'O estômago se divide em quatro regiões, e três delas se distinguem histologicamente pela **razão entre fosseta e glândula** e pela composição celular. A **cárdia** é uma faixa estreita em torno da entrada do esôfago, com fossetas e glândulas de comprimento semelhante e predomínio de células mucosas. O **fundo** e o **corpo** têm a mesma histologia e formam a maior parte do órgão: fossetas curtas, glândulas longas, ricas em células parietais e principais. O **piloro** tem fossetas profundas, ocupando dois terços da mucosa, glândulas curtas e mucosas, e muitas células G. Cárdia e piloro se parecem muito, e distingui-las depende do contexto do corte.',
+    roteiro: [
+      'Use a razão fosseta/glândula como primeiro critério, sempre.',
+      'Se cárdia e piloro parecerem iguais, procure o epitélio esofágico ou o duodeno na vizinhança.',
+    ],
+  },
+
+  stomach: {
+    panorama:
+      'O estômago é a porção mais dilatada do tubo digestório e mantém as quatro camadas com marcas próprias. A **mucosa** é espessa, com epitélio simples colunar inteiramente mucossecretor — sem caliciformes —, fossetas gástricas e glândulas tubulares ramificadas. A **submucosa** é conjuntivo denso e forma o eixo das rugas. A **muscular externa** tem **três camadas**: oblíqua interna, circular média e longitudinal externa, arranjo que permite triturar além de propelir. A camada externa é **serosa**, já que o órgão é intraperitoneal. Funcionalmente, ele armazena, mistura, acidifica, inicia a digestão de proteínas e absorve pouquíssimo — água, álcool e alguns fármacos.',
+    roteiro: [
+      'Percorra as quatro camadas em ordem, confirmando as três camadas musculares.',
+      'Determine a região pela razão fosseta/glândula antes de encerrar a leitura.',
+    ],
+  },
+
+  'mucosa: lacteals': {
+    panorama:
+      'O quilífero central é o capilar **linfático** de fundo cego que ocupa o eixo de cada vilosidade intestinal, e existe porque a gordura absorvida não cabe no capilar sanguíneo. Ácidos graxos e monoglicerídeos entram no enterócito, são reesterificados no retículo liso e empacotados com apoproteínas em **quilomícrons**, partículas grandes demais para atravessar a parede de um capilar contínuo. Elas são exocitadas na face basolateral e entram no quilífero, cuja parede é endotélio descontínuo, sem lâmina basal completa e com filamentos de ancoragem que o mantêm aberto. Dali seguem pelos linfáticos e pelo ducto torácico até a circulação, contornando o fígado.',
+    roteiro: [
+      'Ache o vaso central de luz irregular e parede finíssima, distinto dos capilares sanguíneos ao redor.',
+      'Note a ausência de hemácias na luz: é o que confirma tratar-se de linfático.',
+    ],
+  },
+
+  "submucosa: brunner's glands": {
+    panorama:
+      'As glândulas de Brunner são **as únicas glândulas da submucosa do intestino**, e essa localização isolada faz delas o achado que identifica o duodeno com maior segurança. São tubuloacinares ramificadas, mucosas, de células pálidas com núcleo basal achatado, e seus ductos atravessam a muscular da mucosa para desembocar nas criptas de Lieberkühn. Sua secreção é viscosa e **alcalina**, rica em bicarbonato, e cumpre duas tarefas: neutralizar o quimo ácido que chega do estômago, protegendo a mucosa duodenal, e elevar o pH até a faixa em que as enzimas pancreáticas funcionam. Produzem também urogastrona, que inibe a secreção ácida gástrica.',
+    roteiro: [
+      'Verifique se as glândulas atravessaram a muscular da mucosa: só as de Brunner o fazem.',
+      'Siga um ducto até seu ponto de desembocadura na cripta.',
+    ],
+  },
+
+  'submucosa: submucosal plexus': {
+    panorama:
+      'O plexo submucoso, ou de Meissner, é a divisão do sistema nervoso entérico alojada na submucosa, e na lâmina aparece como pequenos **gânglios** — agrupamentos de corpos neuronais pálidos com nucléolo evidente, cercados por células gliais entéricas — interligados por feixes finos de fibras amielínicas. Diferentemente do plexo mioentérico, ele não controla a peristalse: comanda a **secreção glandular**, o **fluxo sanguíneo local** e a contração da muscular da mucosa, ajustando o relevo da superfície absortiva. Recebe informação de neurônios sensoriais que detectam distensão e composição química do conteúdo luminal, e opera em circuito local, apenas modulado pelo vago e pelo simpático.',
+    roteiro: [
+      'Confirme que os gânglios estão na submucosa, e não entre as camadas musculares.',
+      'Procure corpos neuronais com núcleo pálido e nucléolo grande entre as fibras colágenas.',
+    ],
+  },
+
+  'muscularis externa': {
+    panorama:
+      'A muscular externa é a camada que move o conteúdo, e no intestino delgado tem duas subcamadas de músculo liso com papéis distintos. A **circular interna** estreita a luz no ponto em que se contrai; a **longitudinal externa** encurta o segmento. A alternância coordenada das duas produz a **peristalse**, uma onda que empurra o conteúdo em direção anal, e as **contrações de segmentação**, que apenas misturam sem propelir e são o padrão dominante durante a digestão. Entre as duas camadas corre o **plexo mioentérico de Auerbach**, que gera e coordena essa atividade — sua ausência congênita, como na doença de Hirschsprung, abole a peristalse do segmento.',
+    roteiro: [
+      'Confirme as duas orientações musculares e localize o plexo entre elas.',
+      'Lembre que em corte transversal do órgão as duas camadas aparecem em planos opostos.',
+    ],
+  },
+
+  'muscularis externa: myenteric plexus': {
+    panorama:
+      'O plexo mioentérico de Auerbach fica exatamente **entre as camadas circular e longitudinal** da muscular externa, e essa posição é o que o identifica. Aparece como gânglios ovais de corpos neuronais grandes e pálidos, com nucléolo proeminente, envoltos por células gliais entéricas e conectados por feixes de fibras amielínicas. É o marca-passo da motilidade: contém neurônios sensoriais que detectam distensão da parede, interneurônios que integram e neurônios motores excitatórios (acetilcolina, substância P) e inibitórios (óxido nítrico, VIP), cuja atuação coordenada produz a contração acima e o relaxamento abaixo do bolo — o reflexo peristáltico.',
+    roteiro: [
+      'Localize a camada antes de nomear: entre os dois músculos é Auerbach, na submucosa é Meissner.',
+      'Note a presença de glia entérica ao redor dos corpos neuronais.',
+    ],
+  },
+
+  serosa: {
+    panorama:
+      'A serosa é a camada mais externa dos segmentos **intraperitoneais** do tubo digestório e é, de fato, o peritônio visceral. Compõe-se de duas partes: um **mesotélio** simples pavimentoso na superfície livre e uma fina camada de conjuntivo frouxo abaixo dele, com vasos, nervos e frequentemente adipócitos. O mesotélio secreta um líquido seroso rico em ácido hialurônico que permite às alças intestinais deslizarem umas sobre as outras sem atrito. Onde o órgão é retroperitoneal ou está fora da cavidade — como o esôfago torácico, o duodeno em grande parte e o reto distal —, não há mesotélio, e a camada externa se chama **adventícia**.',
+    roteiro: [
+      'Procure o mesotélio na superfície livre: sua presença é o que define a serosa.',
+      'Relacione a ausência dele à posição retroperitoneal do segmento.',
+    ],
+  },
+
+  'small intestine': {
+    panorama:
+      'O intestino delgado é onde a digestão se completa e onde ocorre praticamente toda a **absorção**, e sua histologia inteira serve a ampliar superfície. Três níveis encaixados fazem isso: **pregas circulares**, de mucosa e submucosa; **vilosidades**, só de mucosa; e **microvilosidades** na borda estriada de cada enterócito — juntas multiplicam a área em cerca de 600 vezes. Entre as vilosidades abrem-se as **criptas de Lieberkühn**, com células-tronco, células de Paneth e enteroendócrinas. Os três segmentos se distinguem: **duodeno** pelas glândulas de Brunner na submucosa, **jejuno** pelas pregas altas e vilosidades longas, **íleo** pelas placas de Peyer e pela abundância de caliciformes.',
+    roteiro: [
+      'Confirme a presença de vilosidades e depois procure o achado que localiza o segmento.',
+      'Desça até o fundo das criptas para encontrar os grânulos das células de Paneth.',
+    ],
+  },
+
+  'recto-anal junctions': {
+    panorama:
+      'A junção reto-anal concentra várias transições em poucos milímetros, e percorrê-las em ordem resolve a lâmina. O epitélio muda de **simples colunar** com criptas, no reto, para **estratificado pavimentoso não queratinizado** na zona de transição anal, e depois para **estratificado pavimentoso queratinizado** com anexos cutâneos na pele perianal. As criptas param abruptamente na linha pectínea, e a muscular da mucosa se desfaz. A submucosa aloja um plexo venoso hemorroidário volumoso. A camada circular interna da muscular externa se espessa e forma o **esfíncter anal interno**, de músculo liso e involuntário, envolvido pelo esfíncter externo, esquelético e voluntário.',
+    roteiro: [
+      'Percorra os epitélios em sequência e marque cada transição antes de descrever a parede.',
+      'Identifique os dois esfíncteres e o tipo de músculo de cada um.',
+    ],
+  },
+
+  anus: {
+    panorama:
+      'O ânus é o segmento terminal e mostra a passagem completa de mucosa a pele. Na **zona colorretal** ainda há epitélio simples colunar com criptas; na **zona de transição anal**, entre a linha pectínea e a linha anocutânea, o epitélio é estratificado, primeiro cúbico e depois pavimentoso não queratinizado; e na **zona escamosa**, já do lado externo, o epitélio é estratificado pavimentoso **queratinizado**, com pelos, glândulas sebáceas e sudoríparas apócrinas — as glândulas circum-anais. A submucosa da porção superior contém o plexo hemorroidário interno; a da inferior, o externo. Os dois esfíncteres, liso interno e esquelético externo, garantem a continência.',
+    roteiro: [
+      'Ache a linha pectínea: ela separa territórios com irrigação, drenagem e inervação diferentes.',
+      'Confirme a queratinização e os anexos cutâneos na porção mais distal.',
+    ],
+  },
+
+  'large intestine and anus': {
+    panorama:
+      'O intestino grosso recupera água e eletrólitos, compacta o resíduo e o armazena até a eliminação, e sua histologia reflete essas tarefas simples. **Não há vilosidades**: a superfície é plana, e as criptas de Lieberkühn descem retas e paralelas até a muscular da mucosa, com abundância de **células caliciformes**, que lubrificam a passagem de um conteúdo cada vez mais desidratado. A muscular externa tem a camada longitudinal condensada em três faixas, as **tênias do cólon**, cuja tração produz as haustrações. No reto as tênias se dispersam e a camada volta a ser contínua; no canal anal o epitélio se estratifica e os esfíncteres se organizam.',
+    roteiro: [
+      'Confirme a ausência de vilosidades e a retidão das criptas.',
+      'Procure as tênias: sua presença localiza o cólon, e sua ausência aponta reto ou apêndice.',
+    ],
+  },
+
+  'tubular digestive system': {
+    panorama:
+      'O tubo digestório propriamente dito vai do esôfago ao ânus e repete quatro camadas em toda a extensão, mas cada segmento resolve um problema diferente e mostra isso na parede. O **esôfago** transporta e precisa resistir a abrasão: epitélio estratificado e glândulas na submucosa. O **estômago** tritura e acidifica: três camadas musculares e glândulas com células parietais. O **delgado** absorve: pregas, vilosidades e microvilosidades. O **grosso** desidrata e lubrifica: sem vilosidades, criptas retas e muitas caliciformes. O **reto e o ânus** armazenam e controlam a eliminação: esfíncteres e transição de epitélio. Ler a parede é, portanto, ler a função.',
+    roteiro: [
+      'Pergunte que problema o segmento resolve antes de descrever a parede.',
+      'Use dois achados independentes para confirmar cada identificação.',
+    ],
+  },
+
+  'pancreas 11': {
+    panorama:
+      'Esta lâmina mostra o pâncreas com suas duas porções lado a lado, o que é a maneira mais direta de entender o órgão. A **porção exócrina**, que ocupa quase todo o campo, é uma glândula acinar composta: ácinos esféricos de células piramidais com base intensamente basófila, pelo retículo rugoso, e ápice acidófilo, cheio de grânulos de zimogênio. Dentro da luz de alguns ácinos aparecem as **células centroacinares**, pálidas, que são o início do ducto intercalar — achado exclusivo do pâncreas. A **porção endócrina** são as **ilhotas de Langerhans**, aglomerados pálidos e ricamente capilarizados que contrastam com o ácino escuro ao redor. Não há ductos estriados.',
+    roteiro: [
+      'Procure células centroacinares dentro dos ácinos: elas identificam o pâncreas de imediato.',
+      'Confirme a ausência de ductos estriados para separá-lo da parótida.',
+    ],
+  },
+
+  'liver: portal canals': {
+    panorama:
+      'O espaço porta é o canto do lóbulo hepático clássico e contém a **tríade portal**, que vale identificar peça por peça. O **ramo da veia porta** é o maior, de parede fina e luz ampla, frequentemente com hemácias. O **ramo da artéria hepática** é menor, de parede muscular espessa e luz redonda. O **ducto biliar** se reconhece pelo epitélio simples cúbico ou colunar baixo, com núcleos regularmente espaçados. Há ainda linfáticos e fibras nervosas. Todos ficam imersos em tecido conjuntivo, o único do lóbulo, e delimitados por uma placa de hepatócitos. O sangue segue dali para os sinusoides; a bile corre em sentido oposto, dos canalículos para o ducto.',
+    roteiro: [
+      'Identifique os três componentes pela parede e pelo epitélio antes de descrever o lóbulo.',
+      'Note que sangue e bile correm em sentidos opostos dentro do mesmo lóbulo.',
+    ],
+  },
+
+  'liver: central veins': {
+    panorama:
+      'As veias centrolobulares ocupam o centro de cada lóbulo hepático clássico e recebem o sangue que percorreu os sinusoides desde os espaços porta. Reconhecem-se por três características combinadas: parede **muito fina**, praticamente só endotélio com pouco conjuntivo; ausência de tríade ao redor; e sobretudo pelo fato de os **sinusoides desembocarem diretamente nelas**, de modo que a parede aparece perfurada por aberturas em vários pontos. As placas de hepatócitos convergem radialmente para ela, arranjo que dá ao lóbulo seu aspecto de roda. Várias veias centrolobulares confluem em veias sublobulares e depois nas veias hepáticas, que deixam o órgão em direção à cava inferior.',
+    roteiro: [
+      'Procure as aberturas dos sinusoides na parede: é o achado que a distingue de qualquer outro vaso.',
+      'Confirme a ausência de tríade portal ao redor.',
+    ],
+  },
+
+  'liver: central vein': {
+    panorama:
+      'A veia centrolobular é o ponto de convergência do lóbulo hepático clássico e o marco a partir do qual se lê a arquitetura do fígado. Tem parede muito delgada, sem músculo organizado, e recebe diretamente os **sinusoides**, que desembocam nela por aberturas visíveis ao longo do contorno. As **placas de hepatócitos**, com uma célula de espessura, irradiam dela em direção aos espaços porta, e entre elas correm os sinusoides no sentido inverso. A distância até a veia central define as três zonas metabólicas: a zona 1, periportal, recebe sangue mais oxigenado e faz gliconeogênese; a zona 3, centrolobular, é a mais hipóxica e a primeira a sofrer na congestão e na intoxicação.',
+    roteiro: [
+      'Use a veia central como centro e siga as placas de hepatócitos até o espaço porta.',
+      'Relacione a posição da lesão às zonas metabólicas ao interpretar um fígado alterado.',
+    ],
+  },
+
+  'liver: hepatocytes': {
+    panorama:
+      'Os hepatócitos ocupam cerca de 80% do volume do fígado e são células poliédricas grandes, com citoplasma acidófilo salpicado de basofilia — o rosa vem das mitocôndrias abundantes e do retículo liso, o azul do retículo rugoso. Muitos são **binucleados**, e os núcleos são grandes, esféricos e com nucléolo evidente, frequentemente poliploides. Organizam-se em **placas de uma célula de espessura** banhadas em ambas as faces por sinusoides, arranjo que maximiza o contato com o plasma. Cada hepatócito tem três domínios de membrana: dois **sinusoidais**, com microvilosidades voltadas para o espaço de Disse, e o **canalicular**, um sulco que, com o da célula vizinha, forma o canalículo biliar.',
+    roteiro: [
+      'Procure células binucleadas: são comuns e ajudam a reconhecer o hepatócito.',
+      'Note que a placa tem uma célula de espessura, com sinusoide dos dois lados.',
+    ],
+  },
+
+  'liver: hepatocyte': {
+    panorama:
+      'O hepatócito é uma das células mais versáteis do corpo, e sua ultraestrutura mostra isso. Tem **retículo rugoso** abundante, para sintetizar as proteínas plasmáticas — albumina, fatores de coagulação, transportadores; **retículo liso** extenso, para conjugar bilirrubina e detoxificar fármacos pelo citocromo P450, e que prolifera após exposição a álcool e barbitúricos; **mitocôndrias** aos milhares, mais de oitocentas por célula; **peroxissomos**, para oxidar ácidos graxos de cadeia muito longa e degradar peróxido; e depósitos de **glicogênio** e lipídio, que variam com o estado nutricional. Sua polaridade é tripla, com dois domínios sinusoidais e um canalicular por onde a bile é excretada.',
+    roteiro: [
+      'Relacione cada organela a uma função hepática conhecida antes de descrever a célula.',
+      'Ache o canalículo biliar como um sulco entre duas células vizinhas.',
+    ],
+  },
+
+  'gall bladder: mucosa': {
+    panorama:
+      'A mucosa da vesícula biliar tem apenas epitélio e lâmina própria — **não há muscular da mucosa nem submucosa**, e essa ausência é o achado que identifica o órgão. O epitélio é simples colunar alto, com núcleos basais alinhados e microvilosidades apicais curtas, especializado em **absorver água e íons** para concentrar a bile em até dez vezes. Quando a absorção está ativa, os espaços intercelulares laterais aparecem dilatados, um dos poucos casos em que o transporte é diretamente visível na lâmina. A mucosa forma pregas altas e ramificadas que, em corte, imitam glândulas ou criptas; segui-las até a superfície mostra que são apenas dobras.',
+    roteiro: [
+      'Confirme a ausência de muscular da mucosa antes de nomear o órgão.',
+      'Siga as pregas até a superfície para não confundi-las com glândulas.',
+    ],
+  },
+
+  'gall bladder: muscularis externa': {
+    panorama:
+      'A camada muscular da vesícula biliar não se organiza em camadas nítidas como a do tubo digestório: é uma **malha frouxa de feixes de músculo liso** orientados em várias direções, entremeados de colágeno e fibras elásticas. Essa disposição basta para o que ela precisa fazer — esvaziar um saco, e não propelir conteúdo direcionalmente. A contração é disparada pela **colecistocinina**, liberada pelas células enteroendócrinas do duodeno em resposta à gordura, que também relaxa o esfíncter de Oddi. Externamente há serosa na face livre e adventícia onde a vesícula adere ao fígado. Invaginações do epitélio que atravessam a muscular são os seios de Rokitansky-Aschoff.',
+    roteiro: [
+      'Note que os feixes se cruzam: não tente forçar uma leitura em camadas separadas.',
+      'Procure seios de Rokitansky-Aschoff atravessando a camada muscular.',
+    ],
+  },
+
+  'major glands': {
+    panorama:
+      'As glândulas anexas do sistema digestório são três, e todas se desenvolvem como brotos do epitélio do tubo. As **glândulas salivares** maiores lançam saliva na boca, iniciando a digestão do amido e lubrificando o bolo. O **fígado** é a maior glândula do corpo e acumula funções exócrina — produz bile, que emulsifica gorduras — e metabólica, sintetizando proteínas plasmáticas, armazenando glicogênio e detoxificando. O **pâncreas** é misto: a porção exócrina produz as enzimas que digerem proteínas, gorduras e carboidratos, e a endócrina, nas ilhotas, produz insulina e glucagon. Nenhum deles faz parte da parede do tubo, mas todos desembocam nele.',
+    roteiro: [
+      'Identifique a glândula pela arquitetura: ácinos serosos, placas de hepatócitos ou ácinos com células centroacinares.',
+      'Siga o ducto até seu ponto de desembocadura no tubo.',
+    ],
+  },
+
+  digestive: {
+    panorama:
+      'O sistema digestório reúne o tubo, da boca ao ânus, e as glândulas anexas, e cumpre cinco funções em sequência: **ingestão**, **digestão** mecânica e química, **absorção**, **compactação** e **eliminação**. A leitura de qualquer lâmina começa pelas quatro camadas — mucosa, submucosa, muscular externa e serosa ou adventícia —, e a identificação vem de duas perguntas: que tipo de epitélio reveste, e em que camada estão as glândulas. Vale lembrar que a luz do tubo é topologicamente o exterior do corpo: é isso que explica a quantidade de tecido linfoide na parede e por que toda substância absorvida precisa atravessar uma célula epitelial.',
+    roteiro: [
+      'Nomeie as quatro camadas antes de tentar identificar o segmento.',
+      'Responda às duas perguntas — epitélio e localização das glândulas — em ordem.',
+    ],
+  },
+
+  // ---- Sistema endócrino ----
+
+  'overview of endocrine organs': {
+    panorama:
+      'Os órgãos endócrinos compartilham uma arquitetura reconhecível, e ela decorre de não terem ducto. O parênquima se organiza em **cordões**, **ninhos** ou **folículos**, sempre encostado num leito de **capilares fenestrados** abundante, com estroma reticular delicado em vez de septos grossos. Os exclusivamente endócrinos são hipófise, tireoide, paratireoide, suprarrenal e pineal; pâncreas, gônadas, rim e placenta acumulam função endócrina dentro de órgãos com outras tarefas. O tipo de hormônio se lê no citoplasma: produtoras de **peptídeo** têm retículo rugoso e grânulos, com citoplasma basófilo ou granular; produtoras de **esteroide** têm retículo liso, mitocôndrias de cristas tubulares e gotículas lipídicas, com citoplasma vacuolado.',
+    roteiro: [
+      'Classifique o arranjo — cordão, ninho ou folículo — antes de tentar nomear o órgão.',
+      'Leia o citoplasma para decidir entre hormônio peptídico e esteroide.',
+    ],
+  },
+
+  'cells and clusters': {
+    panorama:
+      'Nem toda função endócrina exige um órgão dedicado. Células produtoras de hormônio existem em três configurações. **Isoladas**, dispersas dentro de um epitélio — as células enteroendócrinas do tubo digestório e das vias aéreas, com grânulos voltados para a lâmina basal e não para a luz, o que denuncia sua natureza endócrina. Em **agrupamentos** dentro de um parênquima com outra função — as ilhotas de Langerhans no pâncreas, as células de Leydig no testículo, as células justaglomerulares no rim. E em **órgãos** inteiros dedicados a isso. Nas três configurações a assinatura é a mesma: sem ducto, coladas em capilar, com citoplasma que revela a classe do hormônio.',
+    roteiro: [
+      'Procure a orientação dos grânulos: voltados para a base indicam secreção endócrina.',
+      'Confirme sempre a ausência de ducto antes de classificar.',
+    ],
+  },
+
+  thyroid: {
+    panorama:
+      'A tireoide é o único órgão endócrino que **armazena seu hormônio fora da célula**, e daí sua arquitetura única em folículos. Cada **folículo** é uma esfera de epitélio simples, cúbico em repouso e colunar quando ativo, delimitando uma cavidade preenchida por **coloide** acidófilo — tireoglobulina iodada, a reserva de hormônio, suficiente para semanas. As células foliculares captam iodeto, sintetizam tireoglobulina, iodam-na na interface apical e depois reabsorvem o coloide por endocitose para liberar T3 e T4. Entre os folículos, no conjuntivo, e às vezes dentro do epitélio, estão as **células parafoliculares** (células C), maiores e pálidas, que secretam calcitonina e baixam a calcemia.',
+    roteiro: [
+      'Avalie a altura do epitélio folicular: ela indica o estado funcional da glândula.',
+      'Procure as células claras entre folículos ou na base do epitélio.',
+    ],
+    atencao:
+      'Vacúolos de reabsorção na borda do coloide indicam atividade, mas em parte são artefato de fixação.',
+  },
+
+  parathyroid: {
+    panorama:
+      'A paratireoide é uma glândula compacta organizada em **cordões e ninhos** de células separados por capilares, **sem folículos** — o que a distingue imediatamente da tireoide vizinha. Duas populações convivem: as **células principais**, pequenas, pálidas e majoritárias, que produzem o **paratormônio**, e as **células oxífilas**, maiores e intensamente acidófilas pela quantidade de mitocôndrias, cuja função permanece incerta e que aumentam após a puberdade. Adipócitos aparecem no estroma e sua proporção cresce com a idade, podendo chegar a metade do órgão no adulto — o que é normal. O PTH eleva a calcemia mobilizando osso via RANKL, reabsorvendo cálcio no rim e ativando a vitamina D.',
+    roteiro: [
+      'Confirme a ausência de folículos para separar da tireoide.',
+      'Não interprete a gordura do parênquima como atrofia: ela é fisiológica.',
+    ],
+  },
+
+  'adrenal medulla': {
+    panorama:
+      'A medula da suprarrenal não é glândula no sentido usual: é um **gânglio simpático modificado**. Suas células, derivadas da crista neural, são neurônios pós-ganglionares que perderam os axônios e passaram a lançar seu produto no sangue. Chamam-se **células cromafins** porque escurecem quando tratadas com sais de crômio, que oxidam as catecolaminas armazenadas em seus grânulos. Organizam-se em cordões e ninhos entre capilares e vênulas de grande calibre, e recebem inervação **pré-ganglionar direta** do simpático — motivo pelo qual respondem em segundos ao estresse. Produzem adrenalina, em cerca de 80% das células, e noradrenalina. Entre elas há ainda alguns neurônios ganglionares verdadeiros.',
+    roteiro: [
+      'Compare com o córtex no mesmo corte: a medula é mais basófila e não tem vacuolização.',
+      'Procure as veias de grande calibre, que drenam a glândula inteira e ficam na medula.',
+    ],
+  },
+
+  adrenal: {
+    panorama:
+      'A suprarrenal são dois órgãos fundidos, com origens embriológicas e produtos diferentes. O **córtex**, mesodérmico, produz esteroides e tem três zonas concêntricas: **glomerulosa**, em ninhos arredondados, que faz aldosterona sob o sistema renina-angiotensina; **fasciculada**, a mais espessa, em cordões radiais de células muito vacuoladas — os espongiócitos —, que faz cortisol sob ACTH; e **reticular**, em cordões anastomosados de células menores e mais escuras com lipofuscina, que faz andrógenos fracos. A **medula**, derivada da crista neural, é feita de células cromafins que liberam adrenalina e noradrenalina direto na circulação. O sangue entra pela cápsula e sai por veias na medula.',
+    roteiro: [
+      'Percorra as três zonas corticais do exterior para o interior antes de chegar à medula.',
+      'Use a vacuolização como guia: a fasciculada é a mais clara de todas.',
+    ],
+  },
+
+  pineal: {
+    panorama:
+      'A pineal é uma pequena projeção do teto do diencéfalo que converte informação luminosa em sinal hormonal. Seu parênquima é feito de **pinealócitos**, células de núcleo grande e pálido com prolongamentos que terminam em bulbos junto aos capilares, produtoras de **melatonina** a partir da serotonina, com pico noturno. A via de controle vem da retina pelo núcleo supraquiasmático e pelo simpático cervical superior, o que faz da glândula o elo entre o ciclo claro-escuro e o ritmo circadiano. Entre os pinealócitos há astrócitos modificados, de núcleo menor e mais escuro. A marca histológica clássica são os **corpos arenáceos**, concreções calcificadas concêntricas que se acumulam com a idade.',
+    roteiro: [
+      'Procure a areia cerebral: sua presença praticamente identifica o órgão.',
+      'Separe pinealócito de glia pelo tamanho e pela palidez do núcleo.',
+    ],
+  },
+
+  // ---- Sistema linfoide ----
+
+  'overview: lymphoid organs and tissue': {
+    panorama:
+      'O sistema linfoide se organiza por grau de estruturação, e reconhecer o grau resolve boa parte das lâminas. O **tecido difuso** é o menos organizado: linfócitos e plasmócitos espalhados na lâmina própria das mucosas, sem cápsula nem nódulo. Os **nódulos linfoides** são agregados esféricos de linfócitos B, primários quando homogêneos e secundários quando têm centro germinativo. Os **agregados de nódulos** formam tonsilas e placas de Peyer, ainda sem cápsula completa. E os **órgãos encapsulados** — linfonodo, baço e timo — têm arquitetura interna definida. A distinção funcional que atravessa tudo é entre órgãos **primários**, onde o linfócito amadurece, e **secundários**, onde ele responde ao antígeno.',
+    roteiro: [
+      'Determine primeiro o grau de organização: difuso, nodular, agregado ou encapsulado.',
+      'Depois classifique como primário ou secundário pela presença de centro germinativo.',
+    ],
+  },
+
+  'overview: the immune system': {
+    panorama:
+      'A imunidade opera em duas frentes complementares. A **inata** é imediata, inespecífica e não guarda memória: barreiras físicas e químicas, neutrófilos, macrófagos, células NK, complemento e a resposta inflamatória. A **adaptativa** demora dias, é específica para o antígeno e deixa **memória**, que torna a segunda exposição muito mais rápida; divide-se em **humoral**, mediada por linfócitos B e anticorpos, eficaz contra patógenos extracelulares, e **celular**, mediada por linfócitos T, eficaz contra células infectadas e tumorais. As duas frentes conversam: o macrófago da inata apresenta antígeno ao linfócito T da adaptativa, e o anticorpo da adaptativa opsoniza a presa para o fagócito da inata.',
+    roteiro: [
+      'Classifique cada célula observada como inata ou adaptativa antes de descrever sua função.',
+      'Procure os pontos de contato entre as duas frentes: apresentação e opsonização.',
+    ],
+  },
+
+  'overview: cells of the immune system': {
+    panorama:
+      'As células do sistema imune derivam todas da célula-tronco hematopoética e se dividem em duas linhagens. Da **mieloide** vêm os **neutrófilos**, primeiros a chegar na infecção bacteriana; os **eosinófilos**, ativos contra helmintos e nas alergias; os **basófilos** e **mastócitos**, com histamina e heparina; e os **monócitos**, que se tornam **macrófagos** e **células dendríticas** nos tecidos, fagocitando e apresentando antígeno. Da **linfoide** vêm os **linfócitos B**, que originam plasmócitos produtores de anticorpo; os **T**, divididos em auxiliares, que coordenam, e citotóxicos, que matam células infectadas; e as **NK**, que matam sem sensibilização prévia. Morfologicamente, B e T são indistinguíveis.',
+    roteiro: [
+      'Identifique a linhagem pela presença ou ausência de grânulos e pela forma do núcleo.',
+      'Não tente separar B de T pela morfologia: só imunofenotipagem resolve.',
+    ],
+  },
+
+  'overview: stroma': {
+    panorama:
+      'O estroma dos órgãos linfoides é quase sempre **reticular**, e isso não é detalhe: uma malha frouxa de fibras de colágeno tipo III sustenta as células livres sem restringir seu movimento, o que é exatamente o que um órgão de trânsito celular precisa. As **células reticulares** produzem essa malha e se apoiam nela, envolvendo-a com prolongamentos. Em H&E a rede é praticamente invisível, e só a impregnação por prata a revela. Há uma exceção importante: o **timo** não tem estroma reticular conjuntivo, e sim uma rede de **células epiteliorreticulares** unidas por desmossomos, de origem epitelial — diferença que reflete sua origem na terceira bolsa faríngea e explica os corpúsculos de Hassall.',
+    roteiro: [
+      'Peça impregnação argêntica quando quiser ver o arcabouço de um órgão linfoide.',
+      'Lembre da exceção do timo ao generalizar sobre estroma reticular.',
+    ],
+  },
+
+  'overview: primary lymphoid organs': {
+    panorama:
+      'Os órgãos linfoides **primários** são onde os linfócitos nascem e são educados, antes de qualquer contato com antígeno estranho. A **medula óssea** produz todas as células do sangue e é onde os linfócitos **B** completam a maturação, adquirindo receptor e passando por seleção que elimina os autorreativos. O **timo** recebe precursores da medula e educa os linfócitos **T**: no córtex ocorre a seleção **positiva**, que preserva os capazes de reconhecer o MHC próprio, e na medula a seleção **negativa**, que elimina os que reagem fortemente a antígenos próprios. Mais de 95% dos timócitos morrem no processo. Órgãos primários **não têm centros germinativos** — esse é o critério que os separa dos secundários.',
+    roteiro: [
+      'Confirme a ausência de centro germinativo antes de classificar como primário.',
+      'No timo, separe córtex escuro de medula clara e procure corpúsculos de Hassall.',
+    ],
+  },
+
+  'overview: innate immunity': {
+    panorama:
+      'A imunidade inata é a primeira e mais rápida linha de defesa, e atua sem precisar reconhecer um antígeno específico. Suas **barreiras** são físicas e químicas: epitélios contínuos com junções estreitas, muco e transporte mucociliar, pH ácido do estômago e da vagina, lisozima nas secreções, defensinas das células de Paneth. Suas **células** reconhecem padrões moleculares comuns a microrganismos por receptores como os do tipo Toll: neutrófilos e macrófagos fagocitam, células dendríticas capturam e apresentam, células NK matam células sem MHC próprio. Seus **mediadores solúveis** são o complemento, as citocinas e as proteínas de fase aguda. Não há memória: a resposta é igual em toda exposição.',
+    roteiro: [
+      'Relacione cada barreira epitelial observada a um mecanismo inato específico.',
+      'Lembre que a inata é quem aciona a adaptativa, pela apresentação de antígeno.',
+    ],
+  },
+
+  'overview: diffuse lymphoid tissue': {
+    panorama:
+      'O tecido linfoide difuso é a forma menos organizada do sistema imune e a mais extensa: linfócitos, plasmócitos, macrófagos e células dendríticas espalhados pela lâmina própria e pela submucosa das mucosas, **sem cápsula e sem nódulos**. É a vigilância permanente das superfícies que fazem contato com o meio — trato digestório, respiratório, urinário e genital —, e sua densidade varia continuamente com a exposição antigênica local, sem que isso seja patológico. A resposta característica é a produção de **IgA dimérica** pelos plasmócitos, que atravessa o epitélio acoplada ao componente secretor e neutraliza patógenos na própria luz, sem desencadear inflamação.',
+    roteiro: [
+      'Confirme a ausência de cápsula e de nódulos antes de classificar como difuso.',
+      'Procure plasmócitos junto às glândulas: são a fonte da IgA secretora.',
+    ],
+  },
+
+  'overview: lymphoid nodules': {
+    panorama:
+      'O nódulo linfoide é o degrau seguinte de organização: um agregado esférico e delimitado de **linfócitos B**, sustentado por células dendríticas foliculares e fibras reticulares, sem cápsula própria. Distinguem-se dois estados. O **primário** é homogeneamente escuro, formado por linfócitos pequenos e virgens que ainda não encontraram seu antígeno. O **secundário** tem um **centro germinativo** pálido, com centroblastos em proliferação, macrófagos de corpo tingível e células dendríticas foliculares, cercado por um **manto** escuro de linfócitos comprimidos. É no centro germinativo que ocorrem a hipermutação somática e a troca de classe — o processo que aumenta a afinidade do anticorpo.',
+    roteiro: [
+      'Procure clareamento central: qualquer palidez no meio já indica nódulo secundário.',
+      'Ache os macrófagos de corpo tingível para confirmar a seleção em curso.',
+    ],
+  },
+
+  'overview: aggregates of lymphoid nodules': {
+    panorama:
+      'Quando a exposição antigênica é constante em um ponto, os nódulos se acumulam e formam agregados permanentes, sem cápsula completa. As **tonsilas** compõem o anel de Waldeyer na entrada das vias aérea e digestória: as palatinas com criptas profundas e ramificadas revestidas por epitélio estratificado, a faríngea com pregas e epitélio respiratório, as linguais com criptas rasas. As **placas de Peyer** ficam na parede antimesentérica do íleo, atravessam a muscular da mucosa e alcançam a submucosa; sobre elas o epitélio se modifica, as vilosidades achatam e surgem **células M**, que transportam antígenos da luz para bolsões cheios de linfócitos. O **apêndice** tem um anel quase contínuo de nódulos.',
+    roteiro: [
+      'Verifique se os nódulos atravessam a muscular da mucosa: é o padrão das placas de Peyer.',
+      'Procure achatamento das vilosidades como sinal de agregado logo abaixo.',
+    ],
+  },
+
+  'overview: lymphatic drainage': {
+    panorama:
+      'A drenagem linfática recolhe o líquido que o capilar sanguíneo não reabsorveu e o devolve à circulação, e sua arquitetura é toda de sentido único. Começa nos **capilares linfáticos**, tubos de fundo cego com endotélio descontínuo, sem lâmina basal completa e sem pericitos, mantidos abertos por **filamentos de ancoragem** presos à matriz — quando o interstício incha, esses filamentos puxam a parede e abrem as fendas. Segue por **vasos coletores** com válvulas frequentes e pouco músculo, atravessa pelo menos um **linfonodo**, onde a linfa é filtrada, e desemboca no **ducto torácico** ou no ducto linfático direito, que a lançam nas veias subclávias.',
+    roteiro: [
+      'Confirme a ausência de hemácias na luz para separar linfático de vaso sanguíneo.',
+      'Procure válvulas frequentes: elas são mais numerosas que nas veias.',
+    ],
+  },
+
+  'overview: circulation of body fluids': {
+    panorama:
+      'O líquido do corpo circula em três compartimentos ligados entre si. No capilar sanguíneo, a **pressão hidrostática** empurra plasma para fora na extremidade arterial, e a **pressão coloidosmótica** das proteínas plasmáticas puxa a maior parte de volta na extremidade venosa — é o equilíbrio de Starling. O que não retorna, cerca de 10% do filtrado, forma o **líquido intersticial** e é recolhido pelos **capilares linfáticos**, que o transformam em linfa. A linfa atravessa linfonodos, onde é filtrada e amostrada pelo sistema imune, e retorna ao sangue pelas veias subclávias. A falência de qualquer etapa produz edema, e é por isso que a obstrução linfática causa linfedema.',
+    roteiro: [
+      'Relacione cada compartimento à pressão que o governa.',
+      'Lembre que a linfa é a única via de retorno das proteínas que escaparam do capilar.',
+    ],
+  },
+
+  'overview: lymph nodes': {
+    panorama:
+      'O linfonodo é um filtro interposto no trajeto linfático, e sua arquitetura serve a fazer a linfa percorrer devagar um território cheio de células imunes. É **inteiramente encapsulado**, com trabéculas curtas, e tem uma geografia constante: o **córtex externo** aloja nódulos B; o **paracórtex** é território T, com vênulas de endotélio alto por onde os linfócitos circulantes entram; e a **medula** tem cordões, ricos em plasmócitos, e seios. A linfa entra por vários **vasos aferentes** que perfuram a cápsula, percorre o seio subcapsular, os trabeculares e os medulares, e sai por um único **vaso eferente** no hilo — arranjo que garante tempo de contato e sentido único.',
+    roteiro: [
+      'Marque os três territórios antes de descrever qualquer célula.',
+      'Conte os vasos: muitos aferentes na periferia, um eferente no hilo.',
+    ],
+  },
+
+  'overview: spleen': {
+    panorama:
+      'O baço filtra **sangue**, e não linfa, e por isso não tem seios linfáticos nem vasos aferentes. É encapsulado, com trabéculas que penetram fundo, e tem dois compartimentos entremeados. A **polpa branca** é o território imune: bainha linfoide periarteriolar de linfócitos T em torno de cada artéria central, nódulos B acoplados a ela e zona marginal ao redor, onde o antígeno é apresentado. A **polpa vermelha** é o filtro mecânico: cordões esplênicos cheios de macrófagos alternados com **sinusoides** cujas células endoteliais em ripas obrigam a hemácia a se espremer para voltar à circulação — as flexíveis passam, as senescentes ficam e são fagocitadas.',
+    roteiro: [
+      'Ache a arteríola central dentro do nódulo: é o achado que identifica o baço.',
+      'Separe cordão de sinusoide na polpa vermelha pela disposição dos núcleos endoteliais.',
+    ],
+  },
+
+  'overview of lymphoid tissues and organs': {
+    panorama:
+      'O sistema linfoide se lê por duas classificações cruzadas. A primeira é **funcional**: órgãos **primários** — medula óssea e timo — produzem e educam linfócitos; órgãos **secundários** — linfonodo, baço, tonsilas e o tecido associado a mucosas — são onde o linfócito competente encontra o antígeno e responde. A segunda é **estrutural**: tecido difuso, nódulos isolados, agregados de nódulos e órgãos encapsulados. Combinando as duas, cada estrutura se identifica sem ambiguidade. Um dado prático fecha o raciocínio: **centro germinativo só existe em órgão secundário**, e sua ausência em um órgão encapsulado aponta para o timo.',
+    roteiro: [
+      'Aplique as duas classificações em sequência antes de nomear a estrutura.',
+      'Use a presença ou ausência de centro germinativo como critério decisivo.',
+    ],
+  },
+
+  "lymphoid nodule aggregates: peyer's patch": {
+    panorama:
+      'As placas de Peyer são agregados de dez a duzentos nódulos linfoides na parede **antimesentérica do íleo**, que atravessam a muscular da mucosa e invadem a submucosa — o que as separa de nódulos isolados. Sobre elas o epitélio se modifica de modo característico: as **vilosidades achatam**, as células caliciformes rareiam e surgem as **células M**, com dobras irregulares em vez de microvilosidades e um bolsão basal profundo que aloja linfócitos e células dendríticas. A célula M transporta antígenos e microrganismos inteiros da luz para esse bolsão, onde a resposta se inicia. A consequência é uma via de vigilância eficiente — e também a porta de entrada de patógenos como a Salmonella typhi.',
+    roteiro: [
+      'Procure achatamento das vilosidades como sinal de placa logo abaixo.',
+      'Verifique se os nódulos alcançam a submucosa antes de nomeá-los.',
+    ],
+  },
+
+  'lymphoid nodule aggregates: appendix': {
+    panorama:
+      'O apêndice mantém o plano do intestino grosso em miniatura, com o compartimento imune hipertrofiado. A luz é **estreita e irregular**, muitas vezes com restos no interior; a mucosa tem criptas de Lieberkühn mais curtas e menos regulares que as do cólon, com caliciformes e algumas células de Paneth. O que domina o campo é um **anel quase contínuo de nódulos linfoides** ocupando a lâmina própria e atravessando a muscular da mucosa até a submucosa — configuração que rendeu ao órgão o apelido de tonsila abdominal. A muscular externa tem as duas camadas completas, **sem tênias**, e há serosa. Com a idade o tecido linfoide regride e pode ser substituído por fibrose.',
+    roteiro: [
+      'Confirme a luz pequena e o anel linfoide contínuo: juntos identificam o órgão.',
+      'Verifique a ausência de tênias para separar de cólon em corte transversal.',
+    ],
+  },
+
+  'lymph vessels': {
+    panorama:
+      'Os vasos linfáticos formam um sistema de sentido único que devolve à circulação o líquido intersticial não reabsorvido. Começam em **capilares de fundo cego**, sem lâmina basal contínua e sem pericitos, mantidos abertos por filamentos de ancoragem presos à matriz. Os **coletores** têm parede fina com pouco músculo e **válvulas muito frequentes**, que dividem o vaso em segmentos chamados linfangions, cada um contraindo-se ritmicamente e propelindo a linfa adiante; a contração da musculatura esquelética ao redor ajuda. Todos passam por pelo menos um linfonodo antes de desembocar no ducto torácico ou no ducto linfático direito, que se abrem nas veias subclávias.',
+    roteiro: [
+      'Procure luz ampla, parede fina e ausência de hemácias.',
+      'Conte as válvulas: sua frequência é maior que a de qualquer veia de calibre semelhante.',
+    ],
+  },
+
+  'lymphatic capillaries': {
+    panorama:
+      'O capilar linfático é desenhado para captar o que o capilar sanguíneo não consegue reabsorver, e cada característica sua serve a isso. É um tubo de **fundo cego**, com endotélio de células achatadas que se sobrepõem em vez de se unirem por junções contínuas, formando **válvulas em aba** que se abrem para dentro. **Não há lâmina basal contínua nem pericitos**. **Filamentos de ancoragem** de fibrilina prendem a face externa do endotélio às fibras colágenas do interstício: quando o líquido se acumula e o tecido incha, esses filamentos tracionam a parede, abrem as abas e o capilar se enche. É por essa via que proteínas, lipídios e até células inteiras entram na linfa.',
+    roteiro: [
+      'Procure luz ampla e irregular sem hemácias, com parede quase imperceptível.',
+      'Lembre que a ausência de lâmina basal é o que permite a entrada de macromoléculas.',
+    ],
+  },
+
+  'lymphatic vessels': {
+    panorama:
+      'Os vasos linfáticos coletores recolhem a linfa dos capilares e a conduzem em sentido único. Sua parede é fina e tem as três túnicas, mas todas reduzidas: endotélio com pouco subendotélio, uma ou duas camadas frouxas de músculo liso e adventícia colágena que se confunde com o tecido vizinho. O que os identifica na lâmina é a combinação de **luz ampla e irregular**, parede desproporcionalmente fina, **ausência de hemácias** e **válvulas frequentes** — às vezes duas no mesmo campo. Entre duas válvulas, o segmento se chama linfangion e contrai-se de modo autônomo, funcionando como uma bomba em série. A linfa pode conter linfócitos, que a atravessam durante a recirculação.',
+    roteiro: [
+      'Procure hemácias na luz: sua ausência, com válvulas presentes, confirma linfático.',
+      'Compare a espessura da parede com a de uma veia de calibre semelhante no mesmo campo.',
+    ],
+  },
+
+  tissues: {
+    panorama:
+      'Este setor trata dos tecidos linfoides antes dos órgãos, e a lógica é a mesma que organiza todo o sistema: grau crescente de estruturação. O **tecido difuso** não tem cápsula nem nódulo, e é a vigilância de rotina das mucosas. Os **nódulos linfoides**, primários ou secundários, são agregados esféricos de linfócitos B sem cápsula própria. Os **agregados de nódulos** formam tonsilas, placas de Peyer e o apêndice, com cápsula incompleta. Todos compartilham um estroma **reticular** que sustenta células livres sem imobilizá-las, e todos estão posicionados exatamente onde o corpo faz fronteira com o meio externo — sob epitélios de mucosa, no caminho do antígeno.',
+    roteiro: [
+      'Classifique pelo grau de organização antes de nomear a estrutura.',
+      'Relacione a posição sob o epitélio à função de vigilância.',
+    ],
+  },
+
+  'lymph node: secondary nodule': {
+    panorama:
+      'O nódulo secundário do linfonodo é um nódulo primário que **encontrou antígeno**. Sua marca é o **centro germinativo**: região central pálida com centroblastos em proliferação intensa, centrócitos em seleção, células dendríticas foliculares que apresentam o antígeno e macrófagos de corpo tingível, que fagocitam os linfócitos B que falharam e por isso exibem restos nucleares no citoplasma. Ao redor, o **manto** escuro reúne linfócitos B pequenos e virgens comprimidos pela expansão central. Encontrar centros germinativos no córtex de um linfonodo indica resposta humoral em curso, e sua abundância é proporcional à intensidade do estímulo.',
+    roteiro: [
+      'Procure o contraste claro/escuro entre centro e manto: é o que define o nódulo como secundário.',
+      'Ache os macrófagos de corpo tingível como espaços claros salpicados no centro.',
+    ],
+  },
+
+  'lymph node: germinal center': {
+    panorama:
+      'O centro germinativo é a oficina que fabrica anticorpos de alta afinidade, e tem duas zonas com papéis distintos. Na **zona escura**, centroblastos grandes proliferam rapidamente e sofrem **hipermutação somática** nos genes das imunoglobulinas, gerando variantes do receptor ao acaso. Na **zona clara**, os centrócitos resultantes competem pelo antígeno preso às células dendríticas foliculares e por sinais de linfócitos T foliculares: quem tem receptor de maior afinidade sobrevive e prossegue para plasmócito ou célula de memória; os demais entram em apoptose e são removidos pelos **macrófagos de corpo tingível**, cujos vacúolos dão ao conjunto o aspecto de céu estrelado.',
+    roteiro: [
+      'Separe zona escura de zona clara antes de descrever células isoladas.',
+      'Relacione os macrófagos de corpo tingível à seleção, e não a infecção.',
+    ],
+  },
+
+  'lymph node: sinuses': {
+    panorama:
+      'Os seios são os canais por onde a linfa atravessa o linfonodo, e sua arquitetura serve a retardar o fluxo. O **seio subcapsular** recebe a linfa dos vasos aferentes que perfuram a cápsula e a distribui em torno de todo o córtex. Dele partem os **seios trabeculares**, que acompanham as trabéculas para dentro do órgão, e depois os **seios medulares**, que se anastomosam entre os cordões medulares e convergem para o vaso eferente no hilo. Não são tubos revestidos como um vaso comum: são espaços atravessados por uma malha de células reticulares e por **macrófagos** que se estendem através da luz, filtrando partículas e microrganismos enquanto a linfa passa lentamente.',
+    roteiro: [
+      'Siga o trajeto da linfa na ordem: subcapsular, trabecular, medular, eferente.',
+      'Procure macrófagos atravessando a luz dos seios — eles são o filtro propriamente dito.',
+    ],
+  },
+
+  'lymph node: paracortex': {
+    panorama:
+      'O paracórtex é o território **T** do linfonodo e fica entre o córtex externo, com seus nódulos B, e a medula. Não forma nódulos: é tecido difuso, mais pálido que o córtex nodular, e sua espessura varia com o tipo de resposta em curso — expande-se muito nas respostas celulares, como as virais, e pouco nas humorais. Seu achado diagnóstico são as **vênulas de endotélio alto**, vasos de parede fina cujas células endoteliais são cúbicas a colunares em vez de pavimentosas, com núcleos volumosos que fazem a luz parecer estrelada. É por elas que os linfócitos circulantes deixam o sangue e entram no órgão, e não é raro flagrá-los no meio da parede.',
+    roteiro: [
+      'Procure vênulas de endotélio alto: sua presença confirma o paracórtex.',
+      'Compare a palidez do paracórtex com a densidade dos nódulos corticais vizinhos.',
+    ],
+  },
+
+  'lymph node: medulla': {
+    panorama:
+      'A medula é a região central do linfonodo e tem dois componentes alternados. Os **cordões medulares** são faixas de tecido linfoide que se estendem do paracórtex para dentro, ricas em **plasmócitos** — é aqui que a maior parte do anticorpo do linfonodo é produzida —, além de linfócitos B e macrófagos. Os **seios medulares** são os espaços entre esses cordões, atravessados por células reticulares e macrófagos, e recolhem a linfa que percorreu o córtex e o paracórtex, conduzindo-a ao vaso eferente no hilo. A alternância entre cordão celular e seio claro dá à medula um aspecto rendilhado, bem distinto da densidade uniforme do córtex.',
+    roteiro: [
+      'Distinga cordão de seio pela densidade celular antes de procurar tipos específicos.',
+      'Procure plasmócitos nos cordões: núcleo excêntrico em roda de carroça e halo claro.',
+    ],
+  },
+
+  'lymph node: hilum': {
+    panorama:
+      'O hilo é a reentrância na superfície convexa do linfonodo por onde entram a artéria e saem a veia e o **vaso linfático eferente** — um só, contra vários aferentes distribuídos pela cápsula do lado oposto. Essa assimetria não é acidental: muitos aferentes distribuem a linfa por toda a periferia e um único eferente a recolhe, o que garante que ela atravesse o parênquima inteiro e em sentido único. O hilo é também onde o conjuntivo da cápsula é mais espesso e de onde partem as trabéculas. O vaso eferente, ao sair, carrega linfócitos ativados e anticorpos produzidos no órgão, que seguirão para o ducto torácico e daí para a circulação sanguínea.',
+    roteiro: [
+      'Conte os vasos: um eferente no hilo contra vários aferentes na convexidade.',
+      'Use o hilo para orientar o corte e localizar córtex e medula.',
+    ],
+  },
 }
 
 /**
