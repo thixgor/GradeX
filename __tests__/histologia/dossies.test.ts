@@ -110,14 +110,38 @@ describe('descrições aprofundadas de lâmina', () => {
     const DIR = pathMod.resolve(__dirname, '../../data/histologia/paginas')
 
     const titulos = new Set<string>()
+    // Para chaves escopadas, guardamos "rota::titulo" de cada página real.
+    const escopados = new Set<string>()
     for (const arquivo of readdirSync(DIR)) {
       const conteudo: Record<string, { tituloOriginal: string }> = JSON.parse(
         readFileSync(pathMod.join(DIR, arquivo), 'utf8'),
       )
-      for (const p of Object.values(conteudo)) titulos.add(p.tituloOriginal.toLowerCase())
+      for (const [rota, p] of Object.entries(conteudo)) {
+        titulos.add(p.tituloOriginal.toLowerCase())
+        const partes = rota.split('/')
+        for (let i = 1; i <= partes.length; i++) {
+          escopados.add(`${partes.slice(0, i).join('/')}::${p.tituloOriginal.toLowerCase()}`)
+        }
+      }
     }
     for (const chave of Object.keys(DESCRICOES)) {
-      expect(titulos.has(chave), `título inexistente: "${chave}"`).toBe(true)
+      if (chave.includes('::')) {
+        // Um escopo que não casa com página alguma nunca renderizaria.
+        expect(escopados.has(chave), `escopo sem lâmina: "${chave}"`).toBe(true)
+      } else {
+        expect(titulos.has(chave), `título inexistente: "${chave}"`).toBe(true)
+      }
+    }
+  })
+
+  it('chave escopada só existe onde o título é mesmo ambíguo', async () => {
+    const { DESCRICOES } = await import('@/lib/histologia/laminas')
+    for (const chave of Object.keys(DESCRICOES)) {
+      if (!chave.includes('::')) continue
+      const titulo = chave.split('::')[1]
+      // Escopar um título que já tem descrição nua torna a nua inalcançável
+      // em parte do acervo sem que nada avise.
+      expect(DESCRICOES[titulo], `escopo redundante: "${chave}"`).toBeUndefined()
     }
   })
 
@@ -135,7 +159,8 @@ describe('descrições aprofundadas de lâmina', () => {
     const { DESCRICOES } = await import('@/lib/histologia/laminas')
     const { traduzirTitulo } = await import('@/lib/histologia/titulos')
     for (const chave of Object.keys(DESCRICOES)) {
-      expect(traduzirTitulo(chave), `sem título traduzido: "${chave}"`).toBeTruthy()
+      const titulo = chave.includes('::') ? chave.split('::')[1] : chave
+      expect(traduzirTitulo(titulo), `sem título traduzido: "${titulo}"`).toBeTruthy()
     }
   })
 })

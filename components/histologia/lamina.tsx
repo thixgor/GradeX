@@ -568,7 +568,7 @@ function estimarMinutos(pagina: Pagina): number {
  * origem, e quem quiser conferir tem de conseguir.
  */
 function OQueEstaLaminaMostra({ pagina }: { pagina: Pagina }) {
-  const propria = descricaoDaLamina(pagina.tituloOriginal)
+  const propria = descricaoDaLamina(pagina.tituloOriginal, pagina.caminho)
 
   if (!propria && !pagina.descricaoOriginal) return null
 
