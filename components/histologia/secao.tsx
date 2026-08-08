@@ -4,6 +4,7 @@ import { ChevronRight, FolderTree, Microscope } from 'lucide-react'
 import type { NoCurriculo, Pagina } from '@/lib/histologia/esquemas'
 import { BASE, rotaDaPagina } from '@/lib/histologia/rotas'
 import { type ResumoDeSetor, resumoDoSetor } from '@/lib/histologia/resumos'
+import { destacarTermos } from './destaque'
 import { setorDe, tema } from './tema'
 
 /**
@@ -233,21 +234,3 @@ function PanoramaDoSetor({ resumo }: { resumo: ResumoDeSetor }) {
   )
 }
 
-/**
- * Converte a marcação `**termo**` do panorama em `<strong>`.
- *
- * Feito por fatiamento, e não por `dangerouslySetInnerHTML`: o texto é nosso,
- * mas abrir esse caminho num componente que renderiza conteúdo de dados é
- * exatamente como um XSS entra depois, quando alguém reaproveitar a função.
- */
-function destacarTermos(texto: string): React.ReactNode[] {
-  return texto.split(/(\*\*[^*]+\*\*)/g).map((parte, i) =>
-    parte.startsWith('**') && parte.endsWith('**') ? (
-      <strong key={i} className="font-semibold">
-        {parte.slice(2, -2)}
-      </strong>
-    ) : (
-      parte
-    ),
-  )
-}

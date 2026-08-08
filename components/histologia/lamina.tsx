@@ -23,6 +23,8 @@ import { COLORACOES } from '@/lib/histologia/glossario'
 import { useProgresso } from '@/lib/histologia/progresso'
 import { BASE, rotaDaPagina } from '@/lib/histologia/rotas'
 import { registrarEvento } from '@/lib/histologia/analitica'
+import { aprofundamentoDe } from '@/lib/histologia/aprofundamento'
+import { destacarTermos } from './destaque'
 import { Creditos, EstadoEditorial, TermoNoOriginal } from './marca'
 import { setorDe, tema } from './tema'
 
@@ -309,8 +311,8 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
             </section>
           )}
 
-          {/* ── Lacunas editoriais, declaradas ── */}
-          <SecoesPendentes />
+          {/* ── Aprofundamento didático do setor ── */}
+          <SecoesDeAprofundamento caminho={pagina.caminho} />
 
           {/* ── 16. Créditos ── */}
           <Creditos
@@ -554,47 +556,125 @@ function DossieDaEstrutura({
 }
 
 /**
- * Lacunas editoriais, declaradas em vez de preenchidas.
+ * Aprofundamento didático, por setor do currículo.
  *
- * A página didática prevê histogênese, ultraestrutura, diferenciais,
- * correlações clínicas e resumo de alta retenção. O acervo não fornece nada
- * disso em português, e escrever conteúdo biomédico sem fonte é exatamente o
- * que este módulo não pode fazer. Então a página **diz o que falta** — o aluno
- * sabe onde termina o que está verificado, e a equipe editorial sabe o que
- * ainda tem pela frente.
+ * A página prevê seis seções — histogênese, ultraestrutura, manutenção,
+ * diferenciais, correlações clínicas e resumo. Elas vêm de
+ * `lib/histologia/aprofundamento.ts`, que as escreve por **setor**: a origem
+ * embrionária do epitélio é a mesma nas 95 lâminas de epitélio, e repeti-la por
+ * lâmina só criaria 95 cópias para dessincronizar.
+ *
+ * Quando não há texto para o caminho, a página **declara a lacuna** em vez de
+ * preencher com plausibilidade — era o comportamento anterior e continua sendo
+ * o comportamento correto onde ainda falta escrever.
  */
-function SecoesPendentes() {
-  const pendentes = [
-    'Histogênese e origem embrionária',
-    'Ultraestrutura',
-    'Vascularização, inervação e renovação',
-    'Diagnósticos diferenciais e armadilhas de identificação',
-    'Correlações clínicas',
-    'Resumo de alta retenção',
-  ]
+function SecoesDeAprofundamento({ caminho }: { caminho: string[] }) {
+  const conteudo = aprofundamentoDe(caminho)
+
+  if (!conteudo) {
+    const pendentes = [
+      'Histogênese e origem embrionária',
+      'Ultraestrutura',
+      'Vascularização, inervação e renovação',
+      'Diagnósticos diferenciais e armadilhas de identificação',
+      'Correlações clínicas',
+      'Resumo de alta retenção',
+    ]
+    return (
+      <section
+        aria-labelledby="secao-pendentes"
+        className="rounded-lg border border-dashed border-border bg-muted/15 p-4"
+      >
+        <h2 id="secao-pendentes" className="text-sm font-bold">
+          Aprofundamento ainda não escrito
+        </h2>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          Estas seções fazem parte do modelo editorial desta página e ainda não existem para este
+          setor. Elas serão publicadas conforme o aprofundamento avança pelo currículo.
+        </p>
+        <ul className="mt-2.5 grid gap-1 sm:grid-cols-2">
+          {pendentes.map((item) => (
+            <li key={item} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-muted-foreground/40" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
   return (
-    <section
-      aria-labelledby="secao-pendentes"
-      className="rounded-lg border border-dashed border-border bg-muted/15 p-4"
-    >
-      <h2 id="secao-pendentes" className="text-sm font-bold">
-        Aprofundamento ainda não escrito
+    <section aria-labelledby="secao-aprofundamento" className="space-y-3">
+      <h2 id="secao-aprofundamento" className="font-heading text-base font-bold">
+        Aprofundamento
       </h2>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-        Estas seções fazem parte do modelo editorial desta página e ainda não existem para esta
-        lâmina. Elas só serão publicadas com fonte acadêmica citada e revisão biomédica — não
-        preenchemos campo com texto plausível.
+
+      <BlocoDeTexto titulo="Histogênese e origem embrionária" texto={conteudo.histogenese} />
+      <BlocoDeTexto titulo="Ultraestrutura" texto={conteudo.ultraestrutura} />
+      <BlocoDeTexto
+        titulo="Vascularização, inervação e renovação"
+        texto={conteudo.manutencao}
+      />
+
+      {conteudo.diferenciais.length > 0 && (
+        <div className="histologia-cartao rounded-lg border border-border p-4">
+          <h3 className="text-sm font-bold">Diagnósticos diferenciais e armadilhas</h3>
+          <dl className="mt-2 space-y-2">
+            {conteudo.diferenciais.map((d) => (
+              <div key={d.confundeCom}>
+                <dt className="text-xs font-semibold">Confunde-se com {d.confundeCom}</dt>
+                <dd className="text-xs leading-relaxed text-muted-foreground">{d.comoSeparar}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      {conteudo.clinica.length > 0 && (
+        <div className="histologia-cartao rounded-lg border border-border p-4">
+          <h3 className="text-sm font-bold">Correlações clínicas</h3>
+          <dl className="mt-2 space-y-2">
+            {conteudo.clinica.map((c) => (
+              <div key={c.condicao}>
+                <dt className="text-xs font-semibold">{c.condicao}</dt>
+                <dd className="text-xs leading-relaxed text-muted-foreground">{c.correlacao}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      {conteudo.retencao.length > 0 && (
+        <div className="rounded-lg border border-emerald-600/30 bg-emerald-500/[0.06] p-4">
+          <h3 className="text-sm font-bold">Resumo de alta retenção</h3>
+          <ul className="mt-2 space-y-1.5">
+            {conteudo.retencao.map((item) => (
+              <li key={item} className="flex gap-2 text-xs leading-relaxed">
+                <span aria-hidden className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-emerald-600" />
+                <span>{destacarTermos(item)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <p className="text-[10px] leading-relaxed text-muted-foreground">
+        Texto próprio, escrito para este módulo e organizado por setor do currículo — vale para
+        todas as lâminas deste assunto, não só para esta. Pendente de revisão biomédica, como o
+        restante da página.
       </p>
-      <ul className="mt-2.5 grid gap-1 sm:grid-cols-2">
-        {pendentes.map((item) => (
-          <li key={item} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-muted-foreground/40" />
-            {item}
-          </li>
-        ))}
-      </ul>
     </section>
+  )
+}
+
+/** Bloco de prosa do aprofundamento, com destaque de termos. */
+function BlocoDeTexto({ titulo, texto }: { titulo: string; texto: string }) {
+  return (
+    <div className="histologia-cartao rounded-lg border border-border p-4">
+      <h3 className="text-sm font-bold">{titulo}</h3>
+      <p className="histologia-prosa mt-1.5 text-xs leading-relaxed">{destacarTermos(texto)}</p>
+    </div>
   )
 }
 
