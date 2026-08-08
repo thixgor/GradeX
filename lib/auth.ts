@@ -11,8 +11,14 @@ const JWT_CONFIG = {
   ACCESS_TOKEN_EXPIRY: process.env.NODE_ENV === 'production' ? '7d' : '7d',
   // Duracao maxima do cookie
   COOKIE_MAX_AGE: process.env.NODE_ENV === 'production' ? 60 * 60 * 24 * 7 : 60 * 60 * 24 * 7, // 7d em prod e dev
-  // SameSite mais restritivo em producao
-  SAME_SITE: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as 'strict' | 'lax' | 'none'
+  // 'lax' em vez de 'strict': no PWA instalado na tela de início do iPhone
+  // (display: standalone), o WebKit trata o app como um container de
+  // armazenamento à parte do Safari normal e é notoriamente inconsistente em
+  // preservar cookies 'strict' nessa navegação "de fora" — resultado: o app
+  // pedia login toda vez que era reaberto. 'lax' ainda bloqueia o cookie em
+  // POST/requisição de outro site (a proteção que importa contra CSRF); só
+  // passa a valer também na navegação de topo normal, que é o caso do ícone.
+  SAME_SITE: 'lax' as 'strict' | 'lax' | 'none'
 }
 
 // CRÍTICO: Verificar JWT_SECRET em produção
