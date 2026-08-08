@@ -5080,6 +5080,342 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Procure vacúolos subnucleares como o primeiro sinal confiável de que houve ovulação.',
     ],
   },
+
+  'umbilical cord': {
+    panorama:
+      'O cordão umbilical liga o feto à placenta e tem uma composição incomum: **duas artérias umbilicais** e **uma veia umbilical**, imersas em **tecido conjuntivo mucoso** — a geleia de Wharton —, tudo recoberto por epitélio amniótico simples cúbico a colunar. A inversão habitual vale a pena fixar: a veia carrega sangue **oxigenado** para o feto, e as artérias carregam sangue pobre em oxigênio de volta à placenta. Os vasos não têm lâmina elástica interna definida e são espiralados, o que permite alongamento. A geleia de Wharton, riquíssima em ácido hialurônico e portanto muito hidratada, funciona como uma bainha turgente que impede a compressão e a torção dos vasos.',
+    roteiro: [
+      'Conte os vasos: duas artérias e uma veia é o padrão; artéria umbilical única é achado a registrar.',
+      'Note a ausência de qualquer outra estrutura no cordão — não há nervos nem linfáticos.',
+    ],
+  },
+
+  placenta: {
+    panorama:
+      'A placenta é um órgão temporário formado por uma parte **fetal**, o córion frondoso com suas vilosidades, e uma parte **materna**, a decídua basal. A unidade funcional é a **vilosidade coriônica**: um eixo de mesênquima com capilares fetais, revestido por **citotrofoblasto**, camada proliferativa interna, e **sinciciotrofoblasto**, camada externa contínua e multinucleada, banhada diretamente pelo sangue materno do espaço interviloso. A barreira, portanto, tem quatro camadas no início e afina para pouco mais de duas no termo. Além das trocas, o sinciciotrofoblasto produz hCG, lactogênio placentário, estrogênio e progesterona — o que faz da placenta também uma glândula endócrina.',
+    roteiro: [
+      'Determine a idade gestacional pela espessura do revestimento e pela posição dos capilares.',
+      'Lembre que o sangue materno banha a vilosidade por fora, sem se misturar ao fetal.',
+    ],
+  },
+
+  'breast: stages': {
+    panorama:
+      'A mama é o órgão que mais se transforma ao longo da vida adulta, e comparar seus estágios torna cada um mais legível. Em **repouso**, domina o estroma: ductos com epitélio de duas camadas, ácinos rudimentares ou ausentes, e estroma interlobular denso e adiposo ocupando quase todo o volume. Na **gravidez**, os ductos terminais proliferam e brotam ácinos, os lóbulos crescem e comprimem o estroma, e plasmócitos infiltram o interstício intralobular. Na **lactação**, os ácinos estão distendidos e cheios de secreção, com **assincronia** evidente entre lóbulos vizinhos. Na **involução**, após o desmame, os ácinos regridem e o estroma volta a dominar, sem restaurar exatamente o estado anterior.',
+    roteiro: [
+      'Estime a razão entre parênquima e estroma: é ela que data o estágio.',
+      'Na lactação, procure a assincronia entre ácinos como confirmação.',
+    ],
+  },
+
+  breast: {
+    panorama:
+      'A mama é uma glândula sudorípara apócrina modificada, tubuloalveolar composta, organizada em quinze a vinte **lobos** independentes, cada um drenado por um **ducto lactífero** próprio que se dilata em **seio lactífero** antes de se abrir no mamilo. Dentro de cada lobo há lóbulos com unidades ducto-lobulares terminais — o sítio de origem da maioria das lesões, benignas e malignas. O epitélio dos ductos e ácinos tem **duas camadas**: as células secretoras internas e as **mioepiteliais** externas, contráteis, cuja presença é critério de benignidade em anatomia patológica. O estroma se divide em **intralobular**, frouxo e hormônio-responsivo, e **interlobular**, denso e adiposo.',
+    roteiro: [
+      'Separe os dois estromas: o contraste entre eles identifica a mama de imediato.',
+      'Procure a camada mioepitelial nos ductos.',
+    ],
+  },
+
+  female: {
+    panorama:
+      'O aparelho reprodutor feminino produz gametas, recebe o embrião e o sustenta até o nascimento, e faz tudo isso de modo **cíclico** — o que o distingue estruturalmente do masculino. O **ovário** aloja a reserva folicular finita e produz estrogênio e progesterona conforme o estágio do ciclo. A **tuba uterina** capta o oócito, oferece o sítio da fecundação e transporta o embrião. O **útero** prepara e descarta o endométrio a cada mês, e hipertrofia inteiro na gravidez. **Colo** e **vagina** controlam o acesso e mudam com o ciclo. A **mama** completa o conjunto. Em toda lâmina, a primeira pergunta é a mesma: em que ponto do ciclo — ou da vida — este material foi colhido?',
+    roteiro: [
+      'Tente datar o material antes de julgar o que é normal.',
+      'Relacione cada achado ao hormônio dominante naquele momento do ciclo.',
+    ],
+  },
+
+  reproductive: {
+    panorama:
+      'Os dois aparelhos reprodutores compartilham origem embrionária e um plano geral — gônada, via de condução, glândulas anexas —, mas divergem em pontos que organizam o estudo. O masculino é **contínuo**: a espermatogênese começa na puberdade e não para, produzindo dezenas de milhões de gametas por dia; suas lâminas variam pouco com o tempo. O feminino é **cíclico e finito**: a reserva de oócitos é estabelecida antes do nascimento, um gameta amadurece por ciclo, e quase toda estrutura muda de aparência conforme o dia — de modo que datar o material é parte da leitura. As gônadas de ambos são também glândulas endócrinas, e é o esteroide que produzem que comanda o restante do aparelho.',
+    roteiro: [
+      'Determine o sexo do material e, se feminino, tente datar o ciclo.',
+      'Separe sempre a função gametogênica da endócrina dentro da gônada.',
+    ],
+  },
+
+  // ---- Sistema respiratório ----
+
+  'respiratory: overview': {
+    panorama:
+      'O sistema respiratório se divide em duas porções com histologias distintas. A **condutora** — cavidades nasais, faringe, laringe, traqueia, brônquios e bronquíolos até os terminais — leva o ar e o condiciona: aquece pelo plexo venoso da mucosa, umidifica pelas glândulas seromucosas e filtra pelo **aparelho mucociliar**, que arrasta o muco com as partículas em direção à faringe. A **respiratória** — bronquíolos respiratórios, ductos e sacos alveolares e alvéolos — faz a hematose. A transição é gradual e legível por uma sequência de desaparecimentos: some a cartilagem, somem as glândulas, somem as caliciformes, o epitélio baixa e o músculo liso ganha importância relativa.',
+    roteiro: [
+      'Use a sequência de desaparecimentos para localizar o segmento.',
+      'Procure o primeiro alvéolo abrindo-se na parede: ele marca o início da porção respiratória.',
+    ],
+  },
+
+  'respiratory: components': {
+    panorama:
+      'Os componentes do sistema respiratório se organizam em três eixos que vale distinguir. **Anatomicamente**, há vias superiores — nariz, faringe, laringe — e inferiores — traqueia, brônquios, pulmões. **Funcionalmente**, há porção condutora e porção respiratória. **Estruturalmente**, cada segmento é definido por quatro variáveis que mudam de modo previsível ao longo do trajeto: o tipo de **suporte** (osso, cartilagem em anel, em placa, ou nenhum), a presença de **glândulas** na submucosa, o tipo de **epitélio** e a proporção de **músculo liso**. Saber o valor dessas quatro variáveis em qualquer corte basta para localizá-lo com precisão na árvore respiratória.',
+    roteiro: [
+      'Avalie as quatro variáveis em ordem antes de nomear o segmento.',
+      'Lembre que suporte e músculo liso variam em sentidos opostos.',
+    ],
+  },
+
+  'component composition': {
+    panorama:
+      'A composição da parede muda ao longo da árvore respiratória de modo suficientemente regular para ser memorizado como uma tabela. **Traqueia**: anéis de cartilagem em C, glândulas na submucosa, epitélio pseudoestratificado ciliado com caliciformes. **Brônquio**: placas de cartilagem, glândulas presentes, mesmo epitélio, músculo liso completo em espiral. **Bronquíolo**: **sem cartilagem e sem glândulas**, músculo liso proporcionalmente espesso, epitélio simples colunar a cúbico com células club. **Bronquíolo terminal**: cúbico, sem caliciformes. **Bronquíolo respiratório**: parede interrompida por alvéolos. **Ducto e saco alveolares**: só botões de músculo. **Alvéolo**: pneumócitos I e II.',
+    roteiro: [
+      'Cheque cartilagem e glândulas primeiro: as duas somem juntas e marcam o bronquíolo.',
+      'Confirme o segmento com um segundo achado antes de concluir.',
+    ],
+  },
+
+  'respiratory epithelium': {
+    panorama:
+      'O epitélio respiratório típico é **pseudoestratificado colunar ciliado com células caliciformes**, e reúne cinco tipos celulares que se apoiam todos na membrana basal, apesar de nem todos alcançarem a superfície — daí o "pseudo". As **células ciliadas**, as mais numerosas, têm cerca de 250 cílios cada e batem coordenadamente em direção à faringe. As **caliciformes** produzem o muco em que as partículas ficam presas. As **células basais** são as células-tronco que repõem as demais. As **células em escova** têm microvilosidades e provável função sensorial. E as **células neuroendócrinas** têm grânulos basais. Sob a base, a **membrana basal é notavelmente espessa**, achado característico do trato respiratório.',
+    roteiro: [
+      'Confirme que todos os núcleos, em alturas diferentes, pertencem a células apoiadas na membrana basal.',
+      'Note a espessura da membrana basal como pista de epitélio respiratório.',
+    ],
+  },
+
+  'respiratory mucosa': {
+    panorama:
+      'A mucosa respiratória é o conjunto do epitélio respiratório com a lâmina própria subjacente, e é ela que condiciona o ar. O **epitélio** pseudoestratificado ciliado com caliciformes retém e transporta partículas. A **lâmina própria** é conjuntivo frouxo com fibras elásticas longitudinais abundantes, tecido linfoide difuso e plasmócitos produtores de IgA, além de um **plexo venoso** volumoso — nas conchas nasais ele forma verdadeiros corpos cavernosos que aquecem o ar e cujo ingurgitamento alternado produz o ciclo nasal. Nas vias maiores, a submucosa aloja **glândulas seromucosas** cujos ductos atravessam a mucosa e cuja secreção compõe, com a das caliciformes, o filme mucociliar.',
+    roteiro: [
+      'Procure o plexo venoso na lâmina própria como marca de mucosa respiratória condicionante.',
+      'Distinga as glândulas da submucosa das células caliciformes do epitélio.',
+    ],
+  },
+
+  'overview of the respiratory system': {
+    panorama:
+      'O sistema respiratório existe para trocar oxigênio e gás carbônico entre o ar e o sangue, e tudo o mais é logística para viabilizar essa troca em segurança. A **porção condutora** ocupa cerca de 150 mL — o espaço morto anatômico — e cumpre três tarefas: aquecer o ar até a temperatura corporal, saturá-lo de vapor d’água e filtrá-lo, retendo partículas no muco e removendo-as pelo transporte mucociliar. A **porção respiratória** oferece uma superfície de aproximadamente 140 m² e uma barreira de 0,2 µm, o que torna a difusão praticamente instantânea. Somam-se funções acessórias: fonação na laringe, olfação no teto nasal e conversão de angiotensina I no endotélio pulmonar.',
+    roteiro: [
+      'Separe as duas porções antes de descrever qualquer segmento.',
+      'Relacione cada especialização epitelial a uma das três tarefas de condicionamento.',
+    ],
+  },
+
+  'extrapulmonary passages': {
+    panorama:
+      'As vias extrapulmonares vão das narinas aos brônquios principais, antes da entrada no pulmão, e compartilham a tarefa de condicionar o ar. As **cavidades nasais** têm três mucosas — vestibular, respiratória e olfatória — e as conchas, que criam turbulência e aumentam o contato com a superfície. A **faringe** é via comum a ar e alimento. A **laringe** acrescenta a fonação, com cartilagens hialinas e elásticas, pregas vestibulares e vocais. A **traqueia** tem anéis de cartilagem em C abertos posteriormente, fechados pelo músculo traqueal, e glândulas seromucosas na submucosa. Os **brônquios principais** repetem o plano da traqueia até penetrarem no hilo pulmonar.',
+    roteiro: [
+      'Use o tipo de suporte cartilaginoso para localizar o segmento.',
+      'Na laringe, confirme se a cartilagem é hialina ou elástica antes de nomeá-la.',
+    ],
+  },
+
+  'overview of extrapulmonary passageways': {
+    panorama:
+      'Percorrer as vias extrapulmonares na ordem mostra como cada segmento acrescenta uma função. O **vestíbulo nasal** filtra grosseiramente, com pele e vibrissas. A **mucosa respiratória nasal** aquece e umidifica, graças ao plexo venoso das conchas. A **mucosa olfatória**, no teto, capta odores. A **faringe** é a encruzilhada de ar e alimento, e a epiglote protege a via aérea na deglutição. A **laringe** fecha a via na deglutição e produz som nas pregas vocais. A **traqueia** conduz, mantendo-se aberta pelos anéis em C, e sua parede membranácea posterior permite que o bolo esofágico passe. Os **brônquios principais** distribuem o ar aos dois pulmões, com o direito mais vertical e calibroso.',
+    roteiro: [
+      'Associe cada segmento à função que ele acrescenta ao conjunto.',
+      'Relacione a abertura posterior dos anéis traqueais à vizinhança do esôfago.',
+    ],
+  },
+
+  'nasal cavities': {
+    panorama:
+      'As cavidades nasais são o primeiro segmento da via aérea e abrigam três mucosas distintas. A do **vestíbulo** é pele modificada, com epitélio estratificado pavimentoso queratinizado, vibrissas e glândulas sebáceas e sudoríparas, que retêm partículas grandes. A **respiratória** cobre a maior parte, com epitélio pseudoestratificado ciliado com caliciformes sobre lâmina própria com glândulas seromucosas e um plexo venoso volumoso nas **conchas** — cujo ingurgitamento alternado produz o ciclo nasal. A **olfatória**, restrita ao teto, tem epitélio pseudoestratificado alto e amarelado, sem caliciformes, com neurônios bipolares e as glândulas de Bowman na lâmina própria.',
+    roteiro: [
+      'Localize-se pelo epitélio: os três tipos correspondem a três regiões bem definidas.',
+      'Procure o plexo venoso nas conchas, típico da mucosa respiratória.',
+    ],
+  },
+
+  'nasal cavity': {
+    panorama:
+      'A cavidade nasal condiciona o ar antes de qualquer outro segmento, e sua geometria serve a isso: as **conchas** projetam-se da parede lateral e criam turbulência, forçando o ar a tocar a mucosa em vez de passar direto. O aquecimento vem do **plexo venoso** subepitelial, denso o bastante para funcionar como radiador; a umidificação, das glândulas seromucosas e das caliciformes; a filtragem, das vibrissas do vestíbulo e do transporte mucociliar. No teto fica a **mucosa olfatória**, com os únicos neurônios do corpo em contato direto com o meio externo e capazes de se renovar. Os seios paranasais, revestidos por mucosa respiratória mais fina, drenam para a cavidade.',
+    roteiro: [
+      'Relacione a geometria das conchas à função de condicionamento.',
+      'Procure a mucosa olfatória no teto, mais espessa e sem caliciformes.',
+    ],
+  },
+
+
+  'intrapulmonary passages': {
+    panorama:
+      'Dentro do pulmão, a via aérea se ramifica cerca de 23 vezes e muda de modo progressivo e previsível. Os **brônquios intrapulmonares** têm cartilagem em **placas** irregulares em vez de anéis, glândulas na submucosa e uma camada completa de músculo liso em espiral. Os **bronquíolos** perdem cartilagem e glândulas, ganham músculo liso proporcionalmente espesso e trocam caliciformes por **células club**. Os **bronquíolos terminais** são os últimos exclusivamente condutores. A partir dos **bronquíolos respiratórios**, alvéolos começam a se abrir na parede, e a via passa a trocar gases enquanto ainda conduz — a transição para ductos e sacos alveolares completa o trajeto.',
+    roteiro: [
+      'Cheque cartilagem e glândulas: as duas somem juntas na passagem para bronquíolo.',
+      'Procure o primeiro alvéolo na parede para marcar o início da porção respiratória.',
+    ],
+  },
+
+  'overview of intrapulmonary passageways': {
+    panorama:
+      'A árvore intrapulmonar resolve um problema de escala: distribuir o ar por 300 milhões de alvéolos mantendo a resistência baixa. Faz isso por ramificação dicotômica, em que o **diâmetro de cada ramo diminui**, mas a **área de secção total aumenta** a cada geração — de modo que a resistência, concentrada nos brônquios de médio calibre, cai drasticamente na periferia. À medida que o calibre diminui, a cartilagem desaparece e o **músculo liso** passa a ser o principal determinante do calibre, o que faz dos bronquíolos o alvo da broncoconstrição na asma. O parênquima ao redor traciona as paredes e as mantém abertas — quando o enfisema destrói esse arcabouço, os bronquíolos colapsam na expiração.',
+    roteiro: [
+      'Relacione o desaparecimento da cartilagem ao aumento da importância do músculo liso.',
+      'Note a tração exercida pelo parênquima sobre as paredes bronquiolares.',
+    ],
+  },
+
+  'branches of primary bronchi': {
+    panorama:
+      'Os brônquios principais se dividem em **brônquios lobares**, um para cada lobo — três à direita, dois à esquerda —, e estes em **brônquios segmentares**, que definem os segmentos broncopulmonares, unidades anatômicas e cirurgicamente independentes. Histologicamente, cada divisão repete o padrão com todas as camadas mais finas: a cartilagem passa de anéis a **placas** que envolvem a via por todos os lados, e o **músculo liso** forma uma camada completa em espiral entre a mucosa e a cartilagem. É a contração post-mortem desse músculo que deixa a mucosa pregueada em festão nos cortes. Glândulas seromucosas continuam presentes na submucosa, e o epitélio segue pseudoestratificado ciliado.',
+    roteiro: [
+      'Procure placas em vez de anéis: elas indicam que a via já está dentro do pulmão.',
+      'Confirme glândulas na submucosa para descartar bronquíolo.',
+    ],
+  },
+
+  bronchi: {
+    panorama:
+      'Os brônquios são as vias intrapulmonares que ainda têm **cartilagem** e **glândulas**, e esses dois achados os definem contra os bronquíolos. A cartilagem hialina se organiza em **placas irregulares** que circundam a via por todos os lados, cada uma com seu pericôndrio. Entre a mucosa e as placas há uma camada **completa de músculo liso** disposta em espiral, ausente na traqueia exceto na parede posterior. A submucosa aloja glândulas seromucosas cujos ductos atravessam a mucosa. O epitélio permanece pseudoestratificado colunar ciliado com caliciformes, ficando mais baixo conforme o calibre diminui, e a lâmina própria é rica em fibras elásticas longitudinais.',
+    roteiro: [
+      'Confirme cartilagem e glândulas juntas antes de nomear brônquio.',
+      'Note o pregueamento da mucosa, artefato de contração do músculo liso.',
+    ],
+  },
+
+  'transition from bronchus to bronchiole': {
+    panorama:
+      'A passagem de brônquio a bronquíolo é definida por **duas ausências simultâneas**: somem a **cartilagem** e as **glândulas da submucosa**. Nada mais é necessário para a classificação — nem calibre, nem tipo de epitélio, que muda depois e de modo gradual. Nessa transição o músculo liso, que já era completo no brônquio, torna-se proporcionalmente a estrutura mais espessa da parede, e a lâmina própria fica reduzida. O epitélio ainda pode ser pseudoestratificado ciliado com algumas caliciformes nos bronquíolos maiores, e só mais adiante se torna simples colunar e depois cúbico, com as células club substituindo as caliciformes.',
+    roteiro: [
+      'Percorra a circunferência inteira antes de afirmar que não há cartilagem.',
+      'Não use o calibre como critério: bronquíolos grandes existem.',
+    ],
+  },
+
+  'secondary bronchus': {
+    panorama:
+      'O brônquio secundário, ou lobar, ventila um lobo inteiro e repete o plano do brônquio principal com todas as camadas mais delgadas. A cartilagem já é francamente em **placas**, e não em anéis; o **músculo liso** é uma camada completa e proporcionalmente mais evidente; e as glândulas seromucosas continuam presentes na submucosa, embora menos numerosas. O epitélio segue pseudoestratificado colunar ciliado com caliciformes. As fibras elásticas longitudinais da lâmina própria permanecem abundantes, mas mais dispersas que na traqueia e nos brônquios principais. Cada brônquio lobar se divide em segmentares, que definem as unidades broncopulmonares.',
+    roteiro: [
+      'Compare a espessura das camadas com as de um brônquio principal.',
+      'Confirme placas de cartilagem e glândulas para fechar a identificação.',
+    ],
+  },
+
+  'bronchus to bronchiole transition': {
+    panorama:
+      'Esta transição é uma das mais cobradas porque tem um critério objetivo e um distrator frequente. O critério é a **perda simultânea de cartilagem e de glândulas submucosas**. O distrator é o calibre: bronquíolos podem ser relativamente largos e brônquios pequenos podem ser estreitos, de modo que o diâmetro não classifica. Ao lado dessa perda, o **músculo liso** ganha proeminência relativa, e a mucosa costuma aparecer pregueada em festão pela contração post-mortem. O epitélio muda mais tarde, de pseudoestratificado com caliciformes a simples colunar com células club — e só nos bronquíolos terminais fica cúbico.',
+    roteiro: [
+      'Percorra toda a circunferência procurando cartilagem antes de concluir.',
+      'Ignore o calibre como critério e confie nas duas ausências.',
+    ],
+  },
+
+  'bronchiole to respiratory bronchiole transition': {
+    panorama:
+      'A passagem do bronquíolo terminal ao bronquíolo respiratório marca o início da **porção respiratória**, e o critério é único: **alvéolos passam a se abrir diretamente na parede**. Antes dessa transição, a parede é contínua e não há troca gasosa; depois, cada abertura alveolar interrompe o epitélio cúbico, que se adelgaça abruptamente para pavimentoso nas bordas da boca alveolar. Entre as aberturas, o revestimento continua cúbico com células club e há músculo liso. Quanto mais distal o segmento, mais alvéolos e menos parede própria, até que a estrutura se converte em ducto alveolar. Este é também o sítio inicial do enfisema centrolobular do tabagismo.',
+    roteiro: [
+      'Percorra a circunferência procurando a primeira interrupção da parede por um alvéolo.',
+      'Note a mudança abrupta de epitélio nas bordas de cada abertura.',
+    ],
+  },
+
+  conducting: {
+    panorama:
+      'A porção condutora leva o ar da narina ao bronquíolo terminal sem trocar gases, e existe para entregá-lo aquecido, úmido e limpo. Três mecanismos fazem esse condicionamento. O **plexo venoso** da mucosa nasal aquece; as **glândulas seromucosas** e as caliciformes umidificam e fornecem o muco; e o **aparelho mucociliar** limpa, com o muco retendo partículas e os cílios batendo a cerca de mil vezes por minuto em direção à faringe, formando uma escada rolante que transporta o material para ser deglutido. Falhas nesse aparelho — como na fibrose cística, com muco espesso, ou na discinesia ciliar — produzem infecção respiratória de repetição.',
+    roteiro: [
+      'Relacione cada estrutura observada a uma das três tarefas de condicionamento.',
+      'Confirme a ausência de alvéolos para classificar o segmento como condutor.',
+    ],
+  },
+
+  'respiratory portion': {
+    panorama:
+      'A porção respiratória começa onde surge o primeiro alvéolo e vai até o alvéolo terminal, compreendendo **bronquíolos respiratórios**, **ductos alveolares**, **sacos alveolares** e **alvéolos**. À medida que se avança, a parede própria vai desaparecendo: no bronquíolo respiratório ainda há trechos de epitélio cúbico com músculo liso entre as bocas alveolares; no ducto alveolar restam apenas botões de músculo liso nas bordas; no saco alveolar, nem isso. O conjunto formado por um bronquíolo terminal e tudo o que dele deriva é o **ácino pulmonar**, unidade funcional do órgão. A área total alcança cerca de 140 m², e a barreira ar-sangue mede aproximadamente 0,2 µm.',
+    roteiro: [
+      'Localize o segmento pela quantidade de parede própria remanescente.',
+      'Procure os botões de músculo liso para identificar o ducto alveolar.',
+    ],
+  },
+
+  'transition of terminal to respiratory bronchiole': {
+    panorama:
+      'Esta é a fronteira entre conduzir e trocar. O **bronquíolo terminal** tem parede contínua, epitélio simples cúbico com células club e poucas ciliadas, músculo liso completo e nenhum alvéolo — é o último segmento puramente condutor. O **bronquíolo respiratório** é idêntico, exceto por um detalhe decisivo: **alvéolos se abrem em sua parede**, tornando-o capaz de hematose. A transição costuma ser abrupta e localizada, de modo que um único alvéolo interrompendo a parede já reclassifica o segmento. Nas bordas de cada abertura o epitélio cúbico se adelgaça de imediato para pavimentoso, e essa mudança brusca é o achado mais fácil de reconhecer.',
+    roteiro: [
+      'Percorra a parede inteira: um só alvéolo muda a classificação.',
+      'Procure a mudança abrupta de altura do epitélio nas bordas da abertura.',
+    ],
+  },
+
+  'transition from bronchiole to respiratory bronchiole to alveolar duct': {
+    panorama:
+      'A sequência completa mostra a parede própria desaparecendo em três passos. No **bronquíolo terminal**, a parede é contínua: epitélio cúbico com células club, músculo liso completo, nenhum alvéolo. No **bronquíolo respiratório**, alvéolos começam a se abrir, e entre as aberturas ainda restam trechos de epitélio cúbico com músculo. No **ducto alveolar**, as aberturas se tornam praticamente contínuas, e da parede sobram apenas **botões** de músculo liso, elastina e colágeno nas bordas entre alvéolos vizinhos, recobertos por epitélio cúbico baixo. Acompanhar essa progressão em um único corte é a maneira mais eficiente de fixar a transição.',
+    roteiro: [
+      'Percorra o corte na ordem e conte quanta parede resta em cada segmento.',
+      'Use os botões de músculo liso para reconhecer o ducto alveolar.',
+    ],
+  },
+
+  'transition from bronchiole to respiratory bronchiole': {
+    panorama:
+      'A conversão de bronquíolo terminal em respiratório é definida por um único achado: **alvéolos abrindo-se na parede**. Tudo o mais permanece — epitélio cúbico com células club entre as aberturas, músculo liso, ausência de cartilagem e de glândulas. A consequência funcional é grande: o segmento deixa de ser espaço morto e passa a participar da troca gasosa. A consequência clínica também: é ali que se inicia o **enfisema centrolobular**, porque os bronquíolos respiratórios proximais são os primeiros a sofrer com a fumaça do tabaco, e sua dilatação destrói o arcabouço elástico que mantinha as vias periféricas abertas na expiração.',
+    roteiro: [
+      'Procure a interrupção da parede por alvéolos ao longo de toda a circunferência.',
+      'Relacione o achado ao sítio inicial do enfisema centrolobular.',
+    ],
+  },
+
+  'transition of respiratory bronchiole to alveolar duct': {
+    panorama:
+      'Nesta transição, a parede própria termina de desaparecer. No **bronquíolo respiratório**, ainda há trechos contínuos de epitélio cúbico com células club e músculo liso entre as bocas alveolares. No **ducto alveolar**, essas bocas se tornam praticamente contínuas, e o que resta da parede são pequenos **botões** ou nós nas bordas entre aberturas vizinhas, contendo feixes de músculo liso, fibras elásticas e colágenas, recobertos por epitélio cúbico baixo. Em corte, esses botões aparecem como espessamentos arredondados repetidos ao longo do corredor, e são o achado que identifica o ducto — na ausência deles, já se está em saco alveolar.',
+    roteiro: [
+      'Conte os botões ao longo do corredor: é o critério, não o calibre.',
+      'Verifique se ainda resta epitélio cúbico contínuo entre as aberturas.',
+    ],
+  },
+
+  'transition of respiratory bronchiole to alveolar ducts': {
+    panorama:
+      'Um mesmo bronquíolo respiratório se divide em vários **ductos alveolares**, e a lâmina que mostra essa ramificação torna a progressão evidente. Proximalmente, o bronquíolo respiratório ainda tem trechos de parede própria com epitélio cúbico e músculo liso entre as aberturas alveolares. Distalmente, cada ramo perde essa continuidade e se converte em ducto alveolar, delimitado apenas pelas bocas dos alvéolos e pelos **botões de músculo liso** nas bordas entre elas. Cada ducto termina em **sacos alveolares**, aglomerados de alvéolos que se abrem em um átrio comum e nos quais já não há botões musculares.',
+    roteiro: [
+      'Siga a ramificação do proximal para o distal, anotando a perda progressiva de parede.',
+      'Distinga ducto de saco pela presença ou ausência dos botões.',
+    ],
+  },
+
+  'alveolar duct alveolus': {
+    panorama:
+      'Os alvéolos que se abrem diretamente no ducto alveolar têm a mesma estrutura dos demais, mas sua boca é sustentada por um anel de **músculo liso**, elastina e colágeno, e é esse anel que, cortado transversalmente, produz os botões característicos do ducto. O alvéolo em si é uma bolsa poliédrica de cerca de 200 µm revestida por **pneumócitos tipo I**, células pavimentosas extremamente delgadas que cobrem 95% da superfície, e **pneumócitos tipo II**, arredondados e vacuolados nos ângulos, produtores de surfactante e células de reserva do epitélio. A parede compartilhada com o alvéolo vizinho é o septo interalveolar, atravessado pelos poros de Kohn.',
+    roteiro: [
+      'Ache o anel de músculo liso na boca do alvéolo para confirmar que ele pertence ao ducto.',
+      'Procure os pneumócitos tipo II abaulados nos cantos do alvéolo.',
+    ],
+  },
+
+  'alveolar sac': {
+    panorama:
+      'O saco alveolar é um agrupamento de alvéolos que se abrem em um espaço comum, o **átrio**, na extremidade de um ducto alveolar. Diferencia-se do ducto por não ter mais os **botões de músculo liso** nas bordas das aberturas: a estrutura se reduz a septos interalveolares finíssimos, com capilares, fibras elásticas e reticulares. É o ponto terminal da árvore respiratória, e cada bronquíolo terminal serve, através de seus bronquíolos respiratórios e ductos, a milhares de alvéolos reunidos nesses sacos. A rede elástica que percorre os septos é o que devolve o pulmão ao volume de repouso na expiração, que assim é passiva.',
+    roteiro: [
+      'Confirme a ausência de botões musculares para separar saco de ducto.',
+      'Note que vários alvéolos compartilham o mesmo átrio.',
+    ],
+  },
+
+  'alveloar sacs': {
+    panorama:
+      'Os sacos alveolares são a terminação da via aérea: conjuntos de alvéolos que desembocam em um átrio comum, sem qualquer resquício de parede própria — nem epitélio cúbico contínuo, nem botões de músculo liso, que ainda existiam no ducto alveolar. O que resta são **septos interalveolares** de espessura mínima, compostos pela barreira ar-sangue, uma rede capilar densa, fibras elásticas e reticulares, alguns fibroblastos e macrófagos. É aqui que se concentra a superfície de troca, e é a rede elástica destes septos que armazena a energia da inspiração e devolve o pulmão ao repouso — sua destruição no enfisema torna a expiração ativa e aprisiona ar.',
+    roteiro: [
+      'Confirme a ausência total de parede própria antes de nomear saco alveolar.',
+      'Siga um septo para ver quantos alvéolos ele separa.',
+    ],
+  },
+
+  'type ii (septal) cell': {
+    panorama:
+      'O pneumócito tipo II, ou célula septal, é a célula abaulada dos ângulos do alvéolo, e cumpre duas funções essenciais. Produz o **surfactante**, mistura de fosfolipídios e proteínas armazenada em **corpos lamelares** — organelas com membranas concêntricas que dão ao citoplasma aspecto vacuolado em H&E, porque o lipídio é extraído no processamento. O surfactante reduz a tensão superficial e impede o colapso alveolar na expiração; sua deficiência no prematuro causa a doença da membrana hialina. A segunda função é ser a **célula-tronco do epitélio alveolar**: divide-se para repor a si mesma e ao pneumócito tipo I, que não se divide. É mais numeroso que o tipo I, mas cobre área muito menor.',
+    roteiro: [
+      'Procure a célula abaulada e vacuolada nos cantos, destoando da parede lisa.',
+      'Lembre que o vacúolo é lipídio extraído, e não degeneração.',
+    ],
+  },
+
+  alveoli: {
+    panorama:
+      'O alvéolo é a unidade de troca do pulmão: uma bolsa poliédrica de cerca de 200 µm, e são aproximadamente 300 milhões deles, somando 140 m² de superfície. O revestimento tem dois tipos celulares: os **pneumócitos tipo I**, pavimentosos e extremamente delgados, que cobrem 95% da área mas são minoria numérica, e os **pneumócitos tipo II**, arredondados, produtores de surfactante e células de reserva. A parede entre dois alvéolos é o **septo interalveolar**, com capilares contínuos, fibras elásticas e reticulares e macrófagos. A **barreira ar-sangue** — citoplasma do tipo I, lâminas basais fundidas e citoplasma endotelial — mede cerca de 0,2 µm. Os **poros de Kohn** permitem ventilação colateral.',
+    roteiro: [
+      'Procure o pneumócito tipo II nos ângulos antes de descrever o septo.',
+      'Lembre que quase todo núcleo visível no septo é de capilar ou de tipo II.',
+    ],
+  },
+
+  'intrapulmonary passageways': {
+    panorama:
+      'As vias intrapulmonares vão do brônquio principal, ao entrar no hilo, até o alvéolo, e a leitura de qualquer corte se apoia numa sequência de perdas. Perde-se a **cartilagem** — de anéis a placas e depois a nada — e, junto com ela, as **glândulas submucosas**: as duas somem simultaneamente e marcam a passagem para bronquíolo. Perdem-se depois as **células caliciformes**, substituídas pelas células club. O **epitélio** baixa de pseudoestratificado a simples colunar, cúbico e por fim pavimentoso. E o **músculo liso**, que era acessório, torna-se a estrutura dominante da parede antes de se reduzir a botões nos ductos alveolares.',
+    roteiro: [
+      'Aplique a sequência de perdas em ordem para localizar o segmento.',
+      'Confirme cada identificação com um segundo achado independente.',
+    ],
+  },
 }
 
 /**
