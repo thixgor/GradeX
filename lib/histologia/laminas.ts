@@ -5416,6 +5416,352 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Confirme cada identificação com um segundo achado independente.',
     ],
   },
+
+  // ---- Sistema urinário ----
+
+  kidney: {
+    panorama:
+      'O rim filtra cerca de 180 litros de plasma por dia e devolve mais de 99% do filtrado, produzindo um a dois litros de urina. É envolvido por uma cápsula fibrosa e se divide em **córtex**, periférico, e **medula**, organizada em pirâmides cujos ápices, as papilas, se abrem nos cálices menores. A unidade funcional é o **néfron**: corpúsculo renal, túbulo contorcido proximal, alça de Henle, túbulo contorcido distal — e são cerca de um milhão por rim. Vários néfrons drenam para um **ducto coletor**, que não faz parte do néfron mas responde ao ADH. Além de filtrar, o rim regula pressão pela renina, produz eritropoetina e ativa a vitamina D.',
+    roteiro: [
+      'Determine se está no córtex ou na medula pela presença ou ausência de corpúsculos.',
+      'Use os raios medulares para orientar o eixo córtico-medular.',
+    ],
+  },
+
+  'kidney: cortex and medulla': {
+    panorama:
+      'A divisão em córtex e medula no rim é funcional, e não apenas topográfica. O **córtex** contém todos os **corpúsculos renais** e os túbulos contorcidos, e é onde ocorrem a filtração e a maior parte da reabsorção; seu aspecto é granular, porque os perfis tubulares se cruzam em todas as direções. A **medula** não tem corpúsculo algum: é feita de alças de Henle, ductos coletores e vasos retos correndo paralelos em direção à papila, o que lhe dá aspecto **estriado**. Essa disposição paralela é o que permite a multiplicação em contracorrente e a manutenção do gradiente osmótico crescente em direção à papila, sem o qual não haveria concentração da urina.',
+    roteiro: [
+      'Procure glomérulos: sua presença define córtex em qualquer aumento.',
+      'Relacione o aspecto estriado da medula ao arranjo paralelo exigido pela contracorrente.',
+    ],
+  },
+
+  'renal cortex': {
+    panorama:
+      'O córtex renal ocupa a metade externa do órgão e alterna dois territórios. A **porção contorcida**, ou labirinto cortical, contém os **corpúsculos renais** e os túbulos contorcidos proximal e distal, cortados em todas as direções. Os **raios medulares** são faixas de túbulos retos — porção reta do proximal, ramo espesso ascendente e ducto coletor — que descem em direção à medula e conferem ao córtex seu aspecto listrado. Um raio medular com a porção contorcida ao redor constitui o **lóbulo renal**, delimitado pelas artérias interlobulares. A distinção prática entre os dois túbulos contorcidos é constante: o proximal é acidófilo, com borda em escova e poucos núcleos; o distal é pálido, de luz limpa e mais núcleos.',
+    roteiro: [
+      'Separe labirinto cortical de raio medular antes de descrever túbulos.',
+      'Conte núcleos por perfil para distinguir proximal de distal.',
+    ],
+  },
+
+  'nephron in the cortex': {
+    panorama:
+      'A porção cortical do néfron reúne os segmentos de maior atividade. O **corpúsculo renal** filtra o plasma: o glomérulo, com endotélio fenestrado, a membrana basal glomerular e os podócitos formam uma barreira que retém células e proteínas. O **túbulo contorcido proximal** reabsorve dois terços do filtrado, toda a glicose e os aminoácidos, e para isso tem epitélio cúbico alto e intensamente **acidófilo**, com borda em escova que torna a luz mal definida e limites celulares invisíveis. O **túbulo contorcido distal** ajusta sódio, potássio e ácido sob aldosterona, e é mais pálido, sem borda em escova, com luz nítida e mais núcleos por perfil. A **mácula densa** marca seu contato com o corpúsculo.',
+    roteiro: [
+      'Use acidofilia e borda em escova para achar o proximal, sempre mais numeroso.',
+      'Procure a mácula densa no polo vascular do corpúsculo.',
+    ],
+  },
+
+  'renal medulla': {
+    panorama:
+      'A medula renal é organizada em **pirâmides**, e sua histologia é ditada pela tarefa de manter o gradiente osmótico. Não há corpúsculos: o campo é feito de túbulos e vasos correndo **paralelos** em direção à papila. Encontram-se as porções fina e espessa da **alça de Henle**, os **ductos coletores** — de células cúbicas a colunares pálidas com limites intercelulares nítidos, o achado mais útil da região — e os **vasos retos**, capilares em alça que retiram água sem dissipar o gradiente. A osmolaridade cresce do limite córtico-medular, próximo ao plasma, até a papila, onde pode chegar a quatro vezes esse valor. O interstício é mais abundante que no córtex e rico em glicosaminoglicanos.',
+    roteiro: [
+      'Confirme a ausência de glomérulos e o arranjo paralelo dos perfis.',
+      'Ache os ductos coletores pelos limites celulares visíveis e use-os para se orientar.',
+    ],
+  },
+
+  'overview of the urinary system': {
+    panorama:
+      'O sistema urinário produz, conduz, armazena e elimina a urina, e cada função tem correlato histológico. Os **rins** produzem: filtram o plasma no corpúsculo renal e ajustam a composição do filtrado ao longo do néfron, regulando volume, osmolaridade, eletrólitos e equilíbrio ácido-básico, além de secretarem renina e eritropoetina. Os **ureteres** conduzem por peristalse, com urotélio e muscular em camadas invertidas em relação ao intestino. A **bexiga** armazena, e seu urotélio muda de espessura conforme a repleção graças às placas de uroplaquina e às vesículas fusiformes. A **uretra** elimina, e seu epitélio varia ao longo do trajeto, terminando em estratificado pavimentoso.',
+    roteiro: [
+      'Confirme o urotélio para identificar qualquer segmento da via excretora.',
+      'Note a inversão das camadas musculares em relação ao tubo digestório.',
+    ],
+  },
+
+  'glomerulus: blood supply': {
+    panorama:
+      'A irrigação do glomérulo é peculiar e explica sua função. O sangue chega pela **arteríola aferente** e sai pela **arteríola eferente** — um capilar interposto entre duas arteríolas, arranjo raro no corpo e essencial aqui. Como a aferente tem calibre **maior** que a eferente, a pressão dentro do novelo capilar permanece alta, cerca de 45 mmHg contra os 15 mmHg de um capilar comum, e é essa pressão que impulsiona a filtração. Regular independentemente os dois calibres permite ajustar a taxa de filtração sem alterar o fluxo renal total. A eferente segue para formar os capilares peritubulares no córtex ou os vasos retos na medula — segundo leito capilar em série, um sistema porta arterial.',
+    roteiro: [
+      'Compare o calibre das duas arteríolas no polo vascular.',
+      'Lembre que há dois leitos capilares em série: glomerular e peritubular.',
+    ],
+  },
+
+  'proximal tubule': {
+    panorama:
+      'O túbulo contorcido proximal é o segmento mais longo e mais ativo do néfron: reabsorve **dois terços** do filtrado, além de toda a glicose, todos os aminoácidos e a maior parte do bicarbonato e do fosfato. Sua histologia denuncia esse trabalho. O epitélio é cúbico alto e intensamente **acidófilo**, pela enorme quantidade de mitocôndrias necessárias ao transporte ativo. A **borda em escova** de microvilosidades multiplica a área apical e torna a luz mal definida. Os limites celulares laterais são invisíveis por causa das interdigitações. Poucos núcleos aparecem por perfil, e as células frequentemente descamam. É também o segmento mais numeroso em qualquer corte de córtex.',
+    roteiro: [
+      'Use acidofilia mais borda em escova como par de critérios.',
+      'Conte núcleos por perfil: poucos indicam proximal.',
+    ],
+  },
+
+  'distal tubule': {
+    panorama:
+      'O túbulo contorcido distal é mais curto e menos numeroso que o proximal, e sua histologia reflete uma carga de transporte menor e mais seletiva. O epitélio é cúbico **baixo e pálido**, sem borda em escova, de modo que a luz aparece **nítida e limpa**. Os limites celulares são um pouco mais discerníveis, e há **mais núcleos por perfil** que no proximal, já que as células são menores. Funcionalmente, reabsorve sódio sob aldosterona, secreta potássio e hidrogênio e é impermeável à água na ausência de ADH. Onde ele encosta na arteríola aferente do próprio corpúsculo, suas células se adensam e formam a **mácula densa**, sensor do aparelho justaglomerular.',
+    roteiro: [
+      'Procure luz limpa e ausência de borda em escova.',
+      'Conte núcleos por perfil: mais núcleos apontam para distal.',
+    ],
+  },
+
+  'collecting duct': {
+    panorama:
+      'O ducto coletor não faz parte do néfron — tem origem embriológica distinta, no broto ureteral — mas é decisivo para a concentração da urina. Reconhece-se com facilidade: epitélio cúbico a colunar **pálido**, com **limites celulares nítidos**, o que o distingue de qualquer túbulo do néfron, e luz ampla e regular. Tem duas populações: as **células principais**, majoritárias, com receptores para ADH, que inserem aquaporinas na membrana apical e permitem a reabsorção de água em direção ao interstício hipertônico da medula; e as **células intercalares**, mais escuras, que ajustam o equilíbrio ácido-básico secretando hidrogênio ou bicarbonato. Vários coletores confluem nos ductos papilares.',
+    roteiro: [
+      'Procure limites celulares visíveis: é o achado que o separa dos túbulos do néfron.',
+      'Use os ductos coletores como referência para se orientar na medula.',
+    ],
+  },
+
+  'medulla: papillary ducts': {
+    panorama:
+      'Os ductos papilares, ou de Bellini, são a via final da urina dentro do parênquima renal. Formam-se pela confluência de vários ductos coletores e têm **grande calibre**, com epitélio simples colunar alto e pálido de limites celulares muito nítidos. Percorrem a porção interna da pirâmide e se abrem no ápice da papila por dezenas de orifícios que compõem a **área crivosa**. Ao redor deles, o interstício medular é abundante e a osmolaridade é máxima, o que faz deste o último ponto em que a água ainda pode ser reabsorvida sob ADH. O epitélio da superfície papilar transiciona para urotélio, contínuo com o do cálice menor que a abraça.',
+    roteiro: [
+      'Procure os ductos de maior calibre convergindo para o ápice da papila.',
+      'Ache a transição para urotélio na superfície papilar.',
+    ],
+  },
+
+  'renal pyramid': {
+    panorama:
+      'A pirâmide renal é a unidade em que a medula se organiza — são de oito a dezoito por rim —, com a base voltada para o córtex e o ápice, a **papila**, projetando-se para dentro de um cálice menor. É composta inteiramente por túbulos e vasos em arranjo **paralelo**: alças de Henle, ductos coletores, ductos papilares e vasos retos, todos correndo no eixo córtico-papilar. Esse paralelismo é o requisito estrutural do mecanismo de contracorrente. Entre pirâmides vizinhas, o córtex se aprofunda formando as **colunas renais** de Bertin, por onde correm as artérias interlobares. Uma pirâmide mais o córtex que a recobre constitui o **lobo renal**.',
+    roteiro: [
+      'Oriente-se pela direção dos túbulos: eles apontam para a papila.',
+      'Localize as colunas renais entre pirâmides vizinhas.',
+    ],
+  },
+
+  'minor calyx': {
+    panorama:
+      'O cálice menor é o primeiro segmento da via excretora propriamente dita: uma taça que abraça a papila de uma pirâmide e recolhe a urina que sai pela área crivosa. Sua parede já tem a estrutura das vias urinárias — **urotélio** de poucas camadas, lâmina própria de conjuntivo e uma camada de músculo liso — mas ainda delgada. A transição entre o epitélio simples da papila e o urotélio do cálice é abrupta e ocorre na borda da papila. Vários cálices menores confluem em cálices maiores, e estes na pelve renal, que se afunila no ureter. A musculatura calicial gera as ondas peristálticas que iniciam a propulsão da urina.',
+    roteiro: [
+      'Ache a transição de epitélio na borda da papila.',
+      'Confirme o urotélio para saber que já se está na via excretora.',
+    ],
+  },
+
+  'tubules and collecting system': {
+    panorama:
+      'Este setor cobre tudo o que vem depois da filtração, e o modo econômico de estudá-lo é por função de cada segmento. O **túbulo proximal** reabsorve em massa, sem seletividade fina: dois terços do filtrado, glicose, aminoácidos, bicarbonato. A **alça de Henle** cria o gradiente medular por contracorrente, com o ramo descendente permeável à água e o ascendente espesso impermeável e transportador ativo de sódio. O **túbulo distal** faz o ajuste fino de sódio e potássio sob aldosterona. O **ducto coletor** ajusta a água sob ADH e o pH pelas células intercalares. A histologia acompanha: acidofilia e borda em escova onde há transporte massivo, palidez e limites nítidos onde há ajuste.',
+    roteiro: [
+      'Associe cada perfil tubular a uma função antes de nomeá-lo.',
+      'Use acidofilia, borda em escova e nitidez dos limites celulares como critérios combinados.',
+    ],
+  },
+
+  'renal calyx': {
+    panorama:
+      'Os cálices são as primeiras câmaras coletoras de urina fora do parênquima. Os **cálices menores** abraçam cada papila e recebem a urina da área crivosa; dois ou três deles confluem num **cálice maior**, e estes na **pelve renal**, que se afunila no ureter. Todos compartilham a mesma parede: **urotélio**, cujas camadas aumentam progressivamente em direção ao ureter, lâmina própria de conjuntivo denso sem glândulas, e músculo liso que também engrossa no mesmo sentido. Não há submucosa. A musculatura calicial e pélvica é responsável pelas ondas peristálticas que empurram a urina, e sua distensão aguda por cálculo produz a cólica renal.',
+    roteiro: [
+      'Conte as camadas do urotélio: elas aumentam em direção ao ureter.',
+      'Confirme a ausência de glândulas e de submucosa.',
+    ],
+  },
+
+  'urinary bladder: neck': {
+    panorama:
+      'O colo da bexiga é a região afunilada que se continua na uretra, e concentra o mecanismo de continência. Ali as fibras da camada média do **detrusor** se organizam de modo circular em torno do orifício uretral interno, formando o **esfíncter uretral interno** — de músculo liso e, portanto, involuntário, sob controle simpático. O urotélio se torna progressivamente mais fino em direção à uretra, e a lâmina própria contém um plexo venoso. Distalmente, no assoalho pélvico, um segundo esfíncter, o **externo**, de músculo esquelético e voluntário, completa o controle. O trígono, entre os orifícios ureterais e o colo, tem mucosa lisa mesmo com a bexiga vazia.',
+    roteiro: [
+      'Procure a organização circular das fibras do detrusor em torno do orifício.',
+      'Note o afinamento do urotélio em direção à uretra.',
+    ],
+  },
+
+  'urethra: male': {
+    panorama:
+      'A uretra masculina tem cerca de 20 cm e serve tanto à urina quanto ao sêmen, com três segmentos e epitélios diferentes. A **prostática** atravessa a próstata e é revestida por **urotélio**; nela desembocam os ductos ejaculatórios e os ductos prostáticos, e sua parede posterior tem o colículo seminal. A **membranácea** é curta, atravessa o diafragma urogenital e é envolvida pelo esfíncter uretral externo, de músculo esquelético voluntário; seu epitélio é **estratificado ou pseudoestratificado colunar**. A **esponjosa**, a mais longa, percorre o corpo esponjoso, mantém epitélio pseudoestratificado colunar e passa a **estratificado pavimentoso** na fossa navicular; recebe as glândulas de Littré.',
+    roteiro: [
+      'Use o epitélio para localizar o segmento: urotélio indica prostática.',
+      'Procure as glândulas de Littré na porção esponjosa.',
+    ],
+  },
+
+  'urethra: female': {
+    panorama:
+      'A uretra feminina é muito mais curta, com cerca de 4 cm, e serve apenas à urina. Começa no colo vesical revestida por **urotélio** e, ao longo do trajeto, passa a **estratificado ou pseudoestratificado colunar** e, próximo ao meato, a **estratificado pavimentoso não queratinizado**. A lâmina própria é conjuntivo com muitas fibras elásticas e um plexo venoso semelhante a tecido erétil; nela se abrem glândulas mucosas, as de Littré, e as parauretrais de Skene desembocam perto do meato. A camada muscular tem músculo liso em duas orientações, e um esfíncter externo de músculo esquelético envolve o terço médio. O comprimento reduzido explica a maior incidência de infecção urinária ascendente.',
+    roteiro: [
+      'Percorra o epitélio do colo ao meato anotando as transições.',
+      'Procure o plexo venoso na lâmina própria.',
+    ],
+  },
+
+  urinary: {
+    panorama:
+      'O sistema urinário se lê em duas partes com histologias completamente diferentes. O **rim** é parênquima especializado: corpúsculos e túbulos no córtex, alças, coletores e vasos retos em arranjo paralelo na medula, tudo desenhado para filtrar, reabsorver e concentrar. As **vias excretoras** — cálices, pelve, ureter, bexiga e uretra — são tubos de plano uniforme: **urotélio** impermeável, lâmina própria sem glândulas, músculo liso em camadas cuja ordem é **invertida** em relação ao tubo digestório, e adventícia ou serosa. Reconhecer o urotélio resolve de imediato a segunda parte; para a primeira, a pergunta inicial é sempre se há corpúsculos renais no campo.',
+    roteiro: [
+      'Decida primeiro entre parênquima renal e via excretora.',
+      'No rim, procure corpúsculos; na via, procure urotélio.',
+    ],
+  },
+
+  // ---- Epitélios ----
+
+  'overview of surface epithelia': {
+    panorama:
+      'Os epitélios de revestimento se classificam por dois critérios combinados, e responder aos dois em ordem resolve qualquer lâmina. Primeiro, o **número de camadas**: **simples**, se todas as células tocam a lâmina basal e alcançam a superfície; **estratificado**, se há mais de uma camada; **pseudoestratificado**, se todas tocam a lâmina basal mas nem todas alcançam a superfície. Segundo, a **forma das células superficiais**: pavimentosa, cúbica ou colunar. O **urotélio** é um caso à parte, com células superficiais que mudam de forma conforme a distensão. Um cuidado atravessa tudo: em **corte oblíquo** um epitélio simples parece estratificado, e a conferência dos núcleos é o que decide.',
+    roteiro: [
+      'Responda aos dois critérios na ordem, sem pular o primeiro.',
+      'Verifique o plano de corte pela forma dos núcleos antes de classificar.',
+    ],
+  },
+
+  'overview of lining and covering epithelia': {
+    panorama:
+      'A escolha do epitélio em cada superfície não é arbitrária: ela responde à agressão local e à demanda funcional. Onde há **atrito**, o epitélio é **estratificado pavimentoso** — queratinizado na pele, não queratinizado na boca, no esôfago e na vagina. Onde há **difusão rápida**, é **simples pavimentoso** — endotélio, mesotélio, alvéolo. Onde há **absorção e secreção**, é **simples cúbico** ou **colunar** — túbulos renais, estômago, intestino, vesícula. Onde há transporte de muco, é **pseudoestratificado ciliado** — vias respiratórias. E onde há distensão cíclica com necessidade de impermeabilidade, é **urotélio**. Nomear o epitélio é, portanto, deduzir o que aquela superfície enfrenta.',
+    roteiro: [
+      'Pergunte que agressão a superfície enfrenta: a resposta prediz o epitélio.',
+      'Confirme a hipótese contando camadas e observando a forma das células superficiais.',
+    ],
+  },
+
+  'stratified cuboidal epithelium': {
+    panorama:
+      'O epitélio estratificado cúbico é raro e, quando aparece, quase sempre é em **ductos de glândulas**. Tem duas ou mais camadas de células aproximadamente tão altas quanto largas, sendo as superficiais cúbicas — é a forma delas que define a classificação, e não a das camadas profundas. Encontra-se nos **ductos excretores das glândulas sudoríparas**, onde a dupla camada é característica e ajuda a distinguir o ducto do segmento secretor no mesmo novelo, e em ductos de glândulas salivares maiores. Sua função é sobretudo de condução com alguma capacidade de modificar a composição do fluido, e não de proteção contra atrito nem de absorção intensa.',
+    roteiro: [
+      'Conte as camadas e observe a forma das superficiais, não das basais.',
+      'Use a localização em ducto como confirmação.',
+    ],
+  },
+
+  'stratified columnar epithelium': {
+    panorama:
+      'O epitélio estratificado colunar é o mais raro dos epitélios de revestimento e ocorre em poucos sítios: parte da **uretra masculina**, grandes **ductos excretores** de glândulas, a **conjuntiva palpebral** e algumas regiões de transição, como a junção anorretal. Tem várias camadas, sendo as **superficiais colunares** — critério da classificação — e as basais cúbicas ou irregulares. Sua raridade se explica: combina a resistência limitada da estratificação com a altura das células colunares, o que não é vantajoso na maioria das superfícies. Quase sempre, quando parece haver estratificado colunar, vale checar se não se trata de um pseudoestratificado ou de um corte oblíquo.',
+    roteiro: [
+      'Confirme que as células superficiais são realmente colunares e que há mais de uma camada.',
+      'Descarte pseudoestratificado verificando se as células profundas alcançam a superfície.',
+    ],
+  },
+
+  stratified: {
+    panorama:
+      'Um epitélio é **estratificado** quando tem mais de uma camada de células e apenas a mais profunda toca a lâmina basal — arranjo que serve à **proteção**, e não à troca, já que a espessura impede a difusão. A classificação usa a forma das **células superficiais**: **pavimentoso**, o mais comum e o mais resistente ao atrito, dividido em queratinizado, na pele, e não queratinizado, nas mucosas úmidas; **cúbico** e **colunar**, ambos raros e restritos a ductos e poucas superfícies. A camada basal é a proliferativa, e as células migram para cima enquanto se diferenciam. O **urotélio** é tratado à parte porque suas células superficiais mudam de forma conforme a distensão do órgão.',
+    roteiro: [
+      'Classifique pela forma das células superficiais, nunca pelas basais.',
+      'Verifique se há núcleos na superfície para separar queratinizado de não queratinizado.',
+    ],
+  },
+
+  'cilia and basal bodies': {
+    panorama:
+      'O cílio é uma projeção móvel da superfície apical, com 5 a 10 µm, sustentada por um **axonema** de microtúbulos em arranjo **9+2**: nove pares periféricos ligados por nexina e um par central, com braços de **dineína** que, ao deslizarem os pares uns sobre os outros, produzem o batimento. Na base de cada cílio há um **corpúsculo basal**, derivado de um centríolo e com arranjo **9+3** — nove trincas, sem par central. Em microscopia de luz, os corpúsculos basais alinhados formam uma **faixa escura** contínua logo abaixo da superfície apical, e reconhecê-la é o modo prático de confirmar que as projeções são cílios, e não microvilosidades ou estereocílios.',
+    roteiro: [
+      'Procure a faixa escura dos corpúsculos basais sob o ápice celular.',
+      'Meça o comprimento: cílios têm de 5 a 10 µm, microvilosidades cerca de 1 µm.',
+    ],
+  },
+
+  hemidesmosomes: {
+    panorama:
+      'O hemidesmossomo é a junção que prende a célula epitelial à **lâmina basal**, e não a outra célula — daí o "hemi", metade de um desmossomo. Sua placa citoplasmática, com plectina e BP230, ancora **filamentos intermediários de queratina**, e não actina; do lado externo, **integrinas** — sobretudo a α6β4 — atravessam a membrana e se ligam à laminina 332 da lâmina lúcida, que por sua vez se conecta às fibrilas de ancoragem de colágeno VII da lâmina reticular. É essa cadeia contínua que impede a epiderme de se descolar da derme, e autoanticorpos contra seus componentes produzem o penfigoide bolhoso, com bolha **subepidérmica** — distinta da bolha intraepidérmica do pênfigo.',
+    roteiro: [
+      'Confirme a assimetria: placa só de um lado, ao contrário do desmossomo.',
+      'Relacione o nível da ancoragem ao nível da bolha nas doenças bolhosas.',
+    ],
+  },
+
+  'surface specializations comparison': {
+    panorama:
+      'Três projeções apicais são frequentemente confundidas, e distingui-las depende de três critérios. As **microvilosidades** têm cerca de 1 µm, eixo de **actina**, são **imóveis** e servem à absorção; densas e uniformes, formam a borda estriada do enterócito. Os **estereocílios** são microvilosidades **muito longas**, também de actina e imóveis, agrupadas em tufos, e existem no epidídimo e no ducto deferente, onde absorvem, e na célula ciliada do ouvido, onde transduzem. Os **cílios** têm de 5 a 10 µm, eixo de **microtúbulos** em 9+2, são **móveis** e transportam material pela superfície; sua base tem corpúsculo basal, visível em luz como faixa escura.',
+    roteiro: [
+      'Aplique os três critérios em ordem: comprimento, eixo e motilidade.',
+      'Procure a faixa de corpúsculos basais para confirmar cílios.',
+    ],
+  },
+
+  'lining and covering': {
+    panorama:
+      'Os epitélios de revestimento cobrem superfícies externas e forram cavidades, e compartilham características que os definem como tecido: células **justapostas** com pouca matriz entre elas, unidas por complexos juncionais; apoio em **lâmina basal**; **avascularidade**, com nutrição por difusão a partir do conjuntivo subjacente; **polaridade**, com domínios apical e basolateral distintos; e alta capacidade de **renovação**. Suas funções vão além de cobrir: fazem barreira seletiva, absorvem, secretam, transportam por batimento ciliar e abrigam receptores sensoriais. A classificação por número de camadas e forma das células superficiais é a chave prática de leitura.',
+    roteiro: [
+      'Ache a lâmina basal para estabelecer o eixo apical-basal.',
+      'Classifique por camadas e forma antes de descrever especializações.',
+    ],
+  },
+
+  'modes of secretion: merocrine': {
+    panorama:
+      'A secreção merócrina é o modo mais comum e o menos custoso: o produto sai por **exocitose**, com a membrana da vesícula fundindo-se à membrana plasmática apical e liberando apenas o conteúdo. **Nada de citoplasma ou de membrana é perdido**, e a célula permanece íntegra, pronta para novo ciclo. É o mecanismo das glândulas salivares, do pâncreas exócrino, das sudoríparas écrinas, das células caliciformes e da maioria das glândulas endócrinas. Na lâmina, a célula merócrina típica mostra polaridade nítida: base basófila pelo retículo rugoso, Golgi supranuclear e grânulos acumulados no ápice, prontos para a exocitose.',
+    roteiro: [
+      'Procure grânulos apicais em célula com base basófila e contorno íntegro.',
+      'Confirme que não há perda de citoplasma nem restos celulares na luz.',
+    ],
+  },
+
+  'modes of secretion: apocrine': {
+    panorama:
+      'Na secreção apócrina, a célula perde **parte do ápice** junto com o produto: a gotícula é envolvida por uma faixa de citoplasma e por membrana plasmática, que se destacam e caem na luz. O exemplo clássico e bem documentado é a liberação do **lipídio do leite** na glândula mamária em lactação, em que a gotícula sai revestida por membrana. Na lâmina, o ápice das células aparece abaulado, e há material amorfo na luz. Vale uma ressalva terminológica: a **glândula sudorípara apócrina** recebeu esse nome por uma interpretação antiga da imagem apical, mas seu mecanismo é predominantemente merócrino — o nome permaneceu por tradição.',
+    roteiro: [
+      'Procure abaulamento apical e material na luz com aparência de citoplasma.',
+      'Não deduza o mecanismo pelo nome da glândula: a apócrina do suor é merócrina.',
+    ],
+  },
+
+  'modes of secretion: holocrine': {
+    panorama:
+      'Na secreção holócrina, a **célula inteira é o produto**: ela acumula material, morre e se desintegra, e seus restos, com o conteúdo, constituem a secreção. A **glândula sebácea** é o exemplo canônico, e o ácino mostra o processo inteiro como um gradiente radial: na periferia, células basais pequenas, basófilas e com núcleo íntegro, capazes de proliferar; para o centro, o citoplasma vai se enchendo de gotículas lipídicas e assume aspecto espumoso, o núcleo picnotiza e por fim a célula se rompe. O turnover completo leva de duas a três semanas, e a reposição depende inteiramente da camada basal — sem ela, a glândula se esgota.',
+    roteiro: [
+      'Leia o ácino da periferia para o centro para acompanhar o gradiente completo.',
+      'Lembre que o aspecto espumoso é o produto, não degeneração patológica.',
+    ],
+  },
+
+  unicellular: {
+    panorama:
+      'A glândula unicelular é o caso mais simples de secreção exócrina: **uma única célula** dispersa em um epitélio de revestimento, sem ducto próprio, entregando o produto diretamente na superfície. O exemplo universal é a **célula caliciforme**, presente no epitélio respiratório e no intestinal. Sua forma dá o nome: base estreita, com núcleo achatado comprimido contra a lâmina basal junto ao retículo rugoso e ao Golgi, e ápice dilatado repleto de grânulos de mucinogênio. Em H&E esse ápice fica pálido ou aparentemente vazio, porque a mucina é extraída no processamento — PAS e azul de alcião a coram intensamente e revelam quantas caliciformes existem de fato.',
+    roteiro: [
+      'Procure a forma de taça e o núcleo comprimido na base.',
+      'Refaça a contagem em PAS: em H&E o número é sempre subestimado.',
+    ],
+  },
+
+  sheet: {
+    panorama:
+      'A glândula em lâmina é aquela em que **todo o epitélio de revestimento secreta**, sem que exista porção secretora individualizada nem ducto. O exemplo é o **epitélio superficial do estômago**: todas as suas células colunares produzem um muco neutro e espesso que, com bicarbonato, forma sobre a mucosa um gel aderente e mantém a superfície em pH próximo de 7, mesmo com a luz em pH 2. É por isso que o estômago não tem células caliciformes — a função delas já é exercida pelo epitélio inteiro, e encontrar caliciformes ali indica metaplasia intestinal. O conceito é útil porque mostra que "glândula" descreve uma função, e não obrigatoriamente uma estrutura separada.',
+    roteiro: [
+      'Confirme que não há ducto nem porção secretora distinta.',
+      'Compare com a caliciforme, em que só algumas células do epitélio secretam.',
+    ],
+  },
+
+  'mucus-secreting tubule': {
+    panorama:
+      'O túbulo mucoso é uma porção secretora alongada, de luz visível, cujas células produzem **muco**. Suas células têm aspecto característico: citoplasma **pálido, quase vazio** em H&E, porque a mucina é extraída no processamento, e núcleo **achatado e comprimido contra a base**, empurrado pelo acúmulo de grânulos. É esse par — palidez e núcleo basal achatado — que separa a célula mucosa da serosa, cujo citoplasma é basófilo na base, granular no ápice, com núcleo redondo e central. Os túbulos mucosos predominam na glândula sublingual, são numerosos na submandibular e ausentes na parótida, e frequentemente têm **semiluas serosas** em sua extremidade.',
+    roteiro: [
+      'Use palidez do citoplasma e núcleo achatado como par de critérios.',
+      'Procure semiluas serosas nas extremidades para confirmar glândula mista.',
+    ],
+  },
+
+  compound: {
+    panorama:
+      'Uma glândula é **composta** quando seu **ducto se ramifica** — e esse é o único critério, frequentemente confundido com a ramificação da porção secretora, que é outra coisa. A arquitetura decorrente é sempre a mesma: cápsula, septos que dividem o órgão em **lobos** e **lóbulos**, e uma hierarquia de ductos com nomes dados pelo trajeto. Dentro do lóbulo ficam os **intralobulares** — intercalares, de epitélio cúbico baixo, e estriados, com invaginações basais cheias de mitocôndrias; nos septos, os **interlobulares**, de epitélio estratificado; e por fim o ducto excretor principal. As porções secretoras podem ser tubulares, acinares ou mistas, o que gera a segunda parte do nome.',
+    roteiro: [
+      'Siga o ducto até ver se ele se divide: é isso, e só isso, que define composta.',
+      'Use o septo como referência para separar ductos intra e interlobulares.',
+    ],
+  },
+
+  exocrine: {
+    panorama:
+      'A glândula exócrina entrega sua secreção a uma superfície por meio de um **ducto**, e se classifica por três critérios independentes que devem ser respondidos em ordem. **Número de células**: unicelular, como a caliciforme, ou multicelular. **Forma do ducto**: simples, se não ramifica; composta, se ramifica. **Forma da porção secretora**: tubular, acinar ou tubuloacinar, cada uma podendo ser reta, enovelada ou ramificada. A isso somam-se a **natureza do produto** — seroso, mucoso ou misto — e o **mecanismo de liberação** — merócrino, apócrino ou holócrino. Responder aos cinco itens descreve qualquer glândula exócrina sem ambiguidade.',
+    roteiro: [
+      'Responda aos três critérios estruturais antes de julgar produto e mecanismo.',
+      'Não confunda ramificação do ducto com ramificação da porção secretora.',
+    ],
+  },
+
+  glandular: {
+    panorama:
+      'Os epitélios glandulares derivam de epitélios de revestimento que proliferaram e mergulharam no conjuntivo subjacente durante o desenvolvimento. Se o cordão de células manteve a conexão com a superfície, ela se tornou um **ducto**, e a glândula é **exócrina**; se a conexão se perdeu, a glândula é **endócrina** e lança o produto no interstício, de onde ele alcança o capilar. Essa origem comum explica por que ambas mantêm lâmina basal, polaridade e junções, como qualquer epitélio. A leitura de uma lâmina glandular começa por uma pergunta: existe ducto? A resposta separa as duas famílias antes de qualquer detalhe de forma ou de produto.',
+    roteiro: [
+      'Procure um ducto antes de qualquer outra coisa.',
+      'Nas endócrinas, confirme a proximidade com capilares fenestrados.',
+    ],
+  },
+
+  epithelium: {
+    panorama:
+      'O tecido epitelial é definido por um conjunto de características que aparecem juntas: células **justapostas** com pouca matriz, unidas por complexos juncionais; apoio em **lâmina basal**; **avascularidade**, com nutrição por difusão; **polaridade** apical-basal; e **renovação** contínua a partir de células-tronco. Divide-se em dois grandes grupos: os **de revestimento**, que cobrem superfícies e forram cavidades, classificados por camadas e forma celular; e os **glandulares**, especializados em secreção, exócrinos quando têm ducto e endócrinos quando não têm. Deriva das três folhas embrionárias, o que o distingue dos demais tecidos básicos, todos de origem mais restrita.',
+    roteiro: [
+      'Confirme lâmina basal e avascularidade antes de classificar o tecido como epitelial.',
+      'Decida entre revestimento e glandular pela presença de porção secretora.',
+    ],
+  },
 }
 
 /**
