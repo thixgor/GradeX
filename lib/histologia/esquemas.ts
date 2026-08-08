@@ -343,12 +343,13 @@ export const esquemaRelatorio = z.object({
    */
   descartados: z
     .object({
+      paginas: z.number().int().default(0),
       assets: z.number().int(),
       bases: z.number().int(),
       overlays: z.number().int(),
       imagensDeQuiz: z.number().int(),
     })
-    .default({ assets: 0, bases: 0, overlays: 0, imagensDeQuiz: 0 }),
+    .default({ paginas: 0, assets: 0, bases: 0, overlays: 0, imagensDeQuiz: 0 }),
   /** Divergências encontradas na conciliação. Vazio é o único estado aceitável. */
   divergencias: z.array(z.string()),
 })

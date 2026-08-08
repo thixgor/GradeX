@@ -156,6 +156,24 @@ try {
   /* nenhum inválido conhecido */
 }
 
+/**
+ * Páginas de rascunho deixadas no CMS de origem.
+ *
+ * Duas existem: título 'item' com descrição 'asdf', e título 'test' com
+ * descrição 'test' — ambas sem imagem-base. Não são conteúdo incompleto; são
+ * detritos editoriais. Publicá-las mostraria um placeholder ao aluno, que é
+ * justamente o que este módulo não pode fazer.
+ */
+let paginasDescartadas = {}
+try {
+  paginasDescartadas = JSON.parse(
+    await readFile(path.join(dirAcervo, 'dados/paginas-descartadas.json'), 'utf8'),
+  )
+} catch {
+  /* nenhuma página descartada */
+}
+let totalPaginasDescartadas = 0
+
 let overlaysDescartados = 0
 let basesDescartadas = 0
 let imagensDeQuizDescartadas = 0
@@ -426,6 +444,16 @@ for (const bruta of paginasBrutas) {
     },
     coloracoes: detectarColoracoes(textoParaColoracao),
     quizzes: [],
+  }
+
+  if (paginasDescartadas[no.caminho.join('/')]) {
+    totalPaginasDescartadas++
+    // A página some, mas o que ela continha ainda existia no acervo: somar aqui
+    // é o que mantém a conciliação fechando com a origem em vez de "bater"
+    // porque duas referências evaporaram junto.
+    overlaysDescartados += pagina.overlays.length
+    if (pagina.base) basesDescartadas++
+    continue
   }
 
   no.pagina = pagina
@@ -743,7 +771,7 @@ const esperado = {
 // descartado por ser inválido: descartar em silêncio faria os números "baterem"
 // escondendo perda de conteúdo.
 const obtido = {
-  paginas: paginasConvertidas.length,
+  paginas: paginasConvertidas.length + totalPaginasDescartadas,
   imagensBase: totalBases + basesDescartadas,
   overlays: totalOverlays + overlaysDescartados,
   imagensDeQuiz: imagensDeQuiz + imagensDeQuizDescartadas,
@@ -807,6 +835,7 @@ const relatorio = {
   formatoServido: Object.keys(derivadas).length > 0 ? 'webp' : 'original',
   /** Referências descartadas por o arquivo de origem não ser uma imagem. */
   descartados: {
+    paginas: totalPaginasDescartadas,
     assets: Object.keys(assetsInvalidos).length,
     bases: basesDescartadas,
     overlays: overlaysDescartados,
@@ -848,6 +877,12 @@ console.log(
 )
 console.log('')
 
+if (totalPaginasDescartadas > 0) {
+  notas.push(
+    `${totalPaginasDescartadas} página(s) de rascunho da origem descartada(s). ` +
+      'Ver dados/paginas-descartadas.json.',
+  )
+}
 if (Object.keys(assetsInvalidos).length > 0) {
   notas.push(
     `${Object.keys(assetsInvalidos).length} asset(s) da origem não são imagem e foram ` +

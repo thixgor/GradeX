@@ -40,7 +40,7 @@ describe('conciliação com o acervo de origem', () => {
      * silêncio, e "consertar" o número escondendo a perda.
      */
     const d = relatorio.descartados
-    expect(relatorio.paginas).toBe(1524)
+    expect(relatorio.paginas + d.paginas).toBe(1524)
     expect(relatorio.imagensBase + d.bases).toBe(1318)
     expect(relatorio.overlays + d.overlays).toBe(7775)
     expect(relatorio.imagensDeQuiz + d.imagensDeQuiz).toBe(388)
@@ -79,7 +79,9 @@ describe('conciliação com o acervo de origem', () => {
 
   it('separa lâminas de nós de índice sem perder páginas', () => {
     expect(relatorio.laminas + relatorio.secoes).toBe(relatorio.paginas)
-    expect(relatorio.laminas).toBe(1320)
+    // As 2 páginas de rascunho descartadas tinham overlay, então contavam como
+    // lâmina na origem: somá-las é o que fecha com as 1.320 do acervo.
+    expect(relatorio.laminas + relatorio.descartados.paginas).toBe(1320)
   })
 
   it('não tem divergências pendentes', () => {
@@ -349,16 +351,20 @@ describe('tradução de títulos', () => {
    * abaixo é o que separa "traduzido e coincide" de "esqueceram de traduzir".
    */
   const COGNATOS = new Set([
+    'glandular',
     'meninges',
-    'ureter',
     'pars distalis',
     'pars intermedia',
     'pars nervosa',
+    'pineal',
+    'placenta',
     'pleura',
-    'submucosa',
-    'serosa',
-    'vagina',
+    'reticular',
     'retina',
+    'serosa',
+    'submucosa',
+    'ureter',
+    'vagina',
   ])
 
   it('nenhuma tradução é vazia, e as idênticas ao original são cognatos declarados', async () => {
