@@ -84,7 +84,9 @@ describe('tradução dos quizzes', () => {
   })
 
   it('nenhuma tradução escrita deixa marcas do inglês', () => {
-    const suspeitas = /\b(the|and|of|with|that|which|are|is)\b/i
+    // Fronteira consciente de Unicode: `\b` do JavaScript é ASCII, então o "é"
+    // de "anéis" contaria como separador e faria "is" casar dentro da palavra.
+    const suspeitas = /(?<!\p{L})(the|and|of|with|that|which|are|is|from)(?!\p{L})/iu
     for (const [chave, valor] of Object.entries({ ...ENUNCIADOS, ...FEEDBACKS })) {
       expect(suspeitas.test(valor), `tradução com resíduo em inglês: "${chave}"`).toBe(false)
     }
