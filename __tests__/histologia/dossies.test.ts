@@ -103,6 +103,32 @@ describe('panoramas de setor', () => {
 })
 
 describe('descrições aprofundadas de lâmina', () => {
+  it('toda lâmina do acervo tem descrição própria em português', async () => {
+    // A cobertura chegou a 100%, e este teste é o que impede que ela regrida:
+    // uma lâmina nova no acervo, sem descrição escrita, cai aqui em vez de ir
+    // para produção mostrando o texto em inglês.
+    const { descricaoDaLamina } = await import('@/lib/histologia/laminas')
+    const { readFileSync, readdirSync } = await import('node:fs')
+    const pathMod = await import('node:path')
+    const DIR = pathMod.resolve(__dirname, '../../data/histologia/paginas')
+
+    const semDescricao: string[] = []
+    for (const arquivo of readdirSync(DIR)) {
+      if (arquivo.startsWith('_')) continue
+      const conteudo: Record<string, { tituloOriginal: string; caminho: string[] }> = JSON.parse(
+        readFileSync(pathMod.join(DIR, arquivo), 'utf8'),
+      )
+      for (const p of Object.values(conteudo)) {
+        if (!p?.tituloOriginal) continue
+        if (!descricaoDaLamina(p.tituloOriginal, p.caminho)) semDescricao.push(p.tituloOriginal)
+      }
+    }
+    expect(
+      [...new Set(semDescricao)],
+      `títulos sem descrição: ${[...new Set(semDescricao)].slice(0, 5).join(' | ')}`,
+    ).toEqual([])
+  })
+
   it('toda chave corresponde a um título real do acervo', async () => {
     const { DESCRICOES } = await import('@/lib/histologia/laminas')
     const { readFileSync, readdirSync } = await import('node:fs')

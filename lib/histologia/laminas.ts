@@ -5762,6 +5762,904 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Decida entre revestimento e glandular pela presença de porção secretora.',
     ],
   },
+
+  // ---- Tecidos básicos e conjuntivo ----
+
+  'basic tissues: epithelial and connective': {
+    panorama:
+      'Epitelial e conjuntivo são os dois primeiros tecidos básicos e se opõem ponto a ponto, o que torna a comparação didática. O **epitelial** tem células justapostas com pouca matriz, é **avascular**, apoia-se em lâmina basal, tem polaridade apical-basal e alta taxa de renovação; reveste superfícies e forma glândulas. O **conjuntivo** tem células dispersas em **matriz abundante**, é vascularizado, não tem lâmina basal nem polaridade, e sua identidade está na composição da matriz — fibras e substância fundamental — mais do que nas células; conecta, sustenta, nutre por difusão e defende. Os dois sempre convivem: todo epitélio depende do conjuntivo subjacente para se nutrir.',
+    roteiro: [
+      'Compare a proporção entre célula e matriz: é o critério mais rápido de separação.',
+      'Procure a lâmina basal como fronteira entre os dois no mesmo campo.',
+    ],
+  },
+
+  'basic tissues: muscle and nervous': {
+    panorama:
+      'Muscular e nervoso são os tecidos **excitáveis**, capazes de gerar e responder a potenciais de ação, e ambos trocam capacidade de regeneração por especialização extrema. O **muscular** converte energia química em força: suas células são alongadas e cheias de filamentos de actina e miosina, e existem em três variedades — esquelética, estriada, multinucleada e voluntária; cardíaca, estriada, ramificada, de núcleo central e com discos intercalares; e lisa, fusiforme, sem estriações e involuntária. O **nervoso** conduz e integra informação: neurônios com dendritos, corpo e axônio, mais a glia, que sustenta, isola, nutre e defende, e que é várias vezes mais numerosa que os neurônios.',
+    roteiro: [
+      'Nos músculos, use estriação, número e posição dos núcleos e ramificação como critérios.',
+      'No nervoso, separe neurônio de glia pelo tamanho e pela presença de Nissl.',
+    ],
+  },
+
+  'tissue basics': {
+    panorama:
+      'Todo o corpo se reduz a **quatro tecidos básicos**, e essa é a maior economia conceitual da histologia. O **epitelial** reveste e secreta: células justapostas, avasculares, sobre lâmina basal. O **conjuntivo** conecta e sustenta: células dispersas em matriz abundante, vascularizado. O **muscular** contrai: células alongadas com aparato de actina e miosina, em três variedades. O **nervoso** conduz e integra: neurônios e glia. Qualquer órgão é uma combinação dos quatro, e a leitura mais segura de uma lâmina começa por identificá-los separadamente, antes de tentar nomear o órgão — a proporção entre eles já é, por si só, uma pista poderosa de identificação.',
+    roteiro: [
+      'Percorra o campo marcando os quatro tecidos antes de qualquer outra coisa.',
+      'Use a proporção entre eles como primeira hipótese de identificação do órgão.',
+    ],
+  },
+
+  'overview of connective tissue proper': {
+    panorama:
+      'O conjuntivo propriamente dito exclui as variedades especializadas — cartilagem, osso, sangue e hemocitopoético — e é definido pela **matriz extracelular**, não pelas células. A matriz tem **fibras** — colágenas, grossas e acidófilas, que resistem à tração; reticulares, finas e argirófilas, que formam malhas de sustentação; e elásticas, onduladas, que devolvem a forma — imersas em **substância fundamental** de proteoglicanos e glicosaminoglicanos altamente hidratada. As células dividem-se em **residentes**, que constroem e mantêm, e **transitórias**, vindas do sangue na resposta imune. A classificação em frouxo e denso, e este em modelado e não modelado, cobre quase todos os casos.',
+    roteiro: [
+      'Descreva a matriz antes das células: é ela que classifica o tecido.',
+      'Identifique o tipo de fibra dominante para refinar a classificação.',
+    ],
+  },
+
+  'connective tissue cells': {
+    panorama:
+      'As células do conjuntivo se dividem em dois grupos por origem e permanência. As **residentes** nascem e vivem no tecido: o **fibroblasto**, que produz e mantém a matriz, com núcleo grande e claro quando ativo e pequeno e escuro quando quiescente; o **adipócito**, que estoca lipídio e secreta adipocinas; o **macrófago**, derivado do monócito, que fagocita e apresenta antígeno, com núcleo reniforme e inclusões; e o **mastócito**, com grânulos metacromáticos de heparina e histamina, sempre perivascular. As **transitórias** chegam do sangue durante a resposta imune: linfócitos, **plasmócitos** produtores de anticorpo, neutrófilos e eosinófilos, e sua presença indica atividade em curso.',
+    roteiro: [
+      'Separe residentes de transitórias antes de nomear cada célula.',
+      'Use a densidade de células transitórias como indicador de resposta inflamatória.',
+    ],
+  },
+
+  fibroblasts: {
+    panorama:
+      'O fibroblasto é a célula mais numerosa do conjuntivo propriamente dito e a única que **produz a matriz** — colágeno, elastina, proteoglicanos e glicoproteínas adesivas. Existe em dois estados funcionais, e distingui-los é leitura direta de atividade. O **ativo** tem núcleo **grande, oval, claro e eucromático**, com nucléolo evidente, e citoplasma abundante e basófilo pelo retículo rugoso — é o maior núcleo que se vê num conjuntivo comum. O **quiescente**, ou fibrócito, tem núcleo **pequeno, alongado, escuro e heterocromático**, com citoplasma escasso e quase invisível, espremido entre feixes de colágeno já formados. A conversão entre os dois estados é reversível, e a lesão a dispara.',
+    roteiro: [
+      'Compare a cromatina dos núcleos no campo: clara indica atividade, densa indica repouso.',
+      'Note que no fibrócito quase só o núcleo é visível.',
+    ],
+  },
+
+  'macrophage and mast cell': {
+    panorama:
+      'Macrófago e mastócito são as duas células de defesa residentes do conjuntivo, e distingui-las é questão de olhar o núcleo e os grânulos. O **macrófago** deriva do monócito, é grande e de contorno irregular, com núcleo **reniforme ou indentado** e citoplasma frequentemente com material fagocitado — inclusões que, na prática, são sua melhor pista de identificação em H&E. Fagocita, apresenta antígeno via MHC II e secreta dezenas de mediadores. O **mastócito** é ovoide, de núcleo **redondo e central**, muitas vezes escondido por grânulos numerosos e **metacromáticos**, que coram em púrpura pelo azul de toluidina; libera histamina e heparina na degranulação mediada por IgE, e é sempre perivascular.',
+    roteiro: [
+      'Use a forma do núcleo como primeiro critério: reniforme contra redondo.',
+      'Peça coloração metacromática quando quiser confirmar mastócitos.',
+    ],
+  },
+
+  lymphocyte: {
+    panorama:
+      'O linfócito é a menor célula de defesa e a única que **recircula** entre sangue, linfa e tecidos, podendo viver anos. Em corte, aparece como uma célula pequena, pouco maior que uma hemácia, com núcleo **redondo, escuro e intensamente heterocromático** ocupando quase todo o volume, cercado por uma orla finíssima de citoplasma basófilo. Essa morfologia não permite distinguir suas classes funcionais: **B**, que originam plasmócitos e anticorpos; **T**, auxiliares e citotóxicos; e **NK**, que matam sem sensibilização prévia. Só marcadores de superfície separam os três. Quando ativado, o linfócito aumenta, o citoplasma fica mais azul e o nucléolo se torna visível.',
+    roteiro: [
+      'Compare o tamanho com o de uma hemácia vizinha para calibrar.',
+      'Não tente classificar em B ou T pela morfologia: é impossível.',
+    ],
+  },
+
+  neutrophil: {
+    panorama:
+      'O neutrófilo é o leucócito mais numeroso do sangue e a primeira célula a chegar em uma infecção bacteriana aguda. Identifica-se pelo **núcleo multilobado**, com três a cinco lobos ligados por filamentos finos — daí polimorfonuclear —, e por grânulos citoplasmáticos pequenos e pouco corados que dão à célula um tom rosa-acinzentado. São dois tipos: os **azurófilos**, que são lisossomos com mieloperoxidase, e os **específicos**, com lisozima, lactoferrina e colagenase. Vive poucas horas no sangue e um a dois dias no tecido, e morre no local da fagocitose, compondo o pus. Encontrá-lo em quantidade no conjuntivo indica inflamação aguda em curso.',
+    roteiro: [
+      'Conte os lobos: o número separa neutrófilo de eosinófilo.',
+      'Note que os grânulos são finos e pálidos, ao contrário dos do eosinófilo.',
+    ],
+  },
+
+  cells: {
+    panorama:
+      'As células do conjuntivo se organizam melhor por **função** do que por origem. As **construtoras** produzem e mantêm a matriz: fibroblasto, e suas variantes especializadas condroblasto e osteoblasto. As **armazenadoras** guardam energia: adipócito unilocular no tecido branco, multilocular no pardo. As **defensoras residentes** vigiam permanentemente: macrófago, que fagocita e apresenta, e mastócito, que dispara a resposta imediata. As **defensoras transitórias** chegam do sangue quando há estímulo: neutrófilo na infecção bacteriana, eosinófilo na parasitose e na alergia, linfócito e plasmócito na resposta específica. A composição celular de um campo é, portanto, um relato do que está acontecendo ali.',
+    roteiro: [
+      'Classifique cada célula por função antes de nomeá-la.',
+      'Leia a proporção entre residentes e transitórias como indicador de atividade.',
+    ],
+  },
+
+  'connective tissue proper': {
+    panorama:
+      'O conjuntivo propriamente dito se classifica respondendo a duas perguntas em sequência. Primeiro: **quanta fibra** existe em relação a células e substância fundamental? Pouca fibra e muita célula é **frouxo** — o tecido de preenchimento, sede das trocas e da inflamação, presente na lâmina própria e em torno de vasos. Fibra dominando o campo é **denso**. Segundo, se for denso: as fibras seguem **uma direção só**? Se sim, é **denso modelado**, de tendões e ligamentos, feito para tração num eixo, com fibrócitos comprimidos em fileiras. Se se cruzam em todos os planos, é **denso não modelado**, da derme reticular e das cápsulas, resistindo a estiramento em qualquer direção.',
+    roteiro: [
+      'Responda às duas perguntas nessa ordem; pular a primeira leva a erro sistemático.',
+      'Use a orientação dos núcleos como pista da direção dos feixes.',
+    ],
+  },
+
+  'collagen fibrils': {
+    panorama:
+      'A fibrila de colágeno é o nível intermediário da hierarquia do colágeno e o primeiro visível em microscopia eletrônica. Sua construção segue etapas: três cadeias polipeptídicas se enrolam em tripla hélice formando a molécula de **tropocolágeno**, com cerca de 300 nm; essas moléculas se alinham paralelamente, deslocadas em um quarto do comprimento, e se ligam por pontes covalentes formando a **fibrila**, de 20 a 90 nm. O deslocamento regular produz o padrão de **bandas transversais a cada 67 nm**, assinatura inconfundível do colágeno em eletromicrografia. Fibrilas se agrupam em **fibras**, visíveis em luz, e estas em **feixes**, nos tecidos densos.',
+    roteiro: [
+      'Procure o padrão de bandas de 67 nm para confirmar colágeno em microscopia eletrônica.',
+      'Situe o nível hierárquico antes de usar o termo: molécula, fibrila, fibra ou feixe.',
+    ],
+  },
+
+  'collagen fibrils and fibers': {
+    panorama:
+      'Colágeno se organiza em quatro níveis, e usar o termo certo em cada um evita confusão. A **molécula de tropocolágeno** é a tripla hélice, com cerca de 1,5 nm de diâmetro. A **fibrila** reúne moléculas alinhadas e deslocadas, mede de 20 a 90 nm e exibe as bandas de 67 nm em microscopia eletrônica. A **fibra** agrupa fibrilas, mede de 1 a 20 µm e é o primeiro nível visível em microscopia de luz, aparecendo acidófila e ondulada. O **feixe** reúne fibras e chega a mais de 20 µm, dominando os tecidos densos. Em H&E, portanto, o que se vê são fibras e feixes; falar em fibrila em luz é impreciso, e é um deslize frequente.',
+    roteiro: [
+      'Nomeie o nível conforme o instrumento: luz mostra fibra e feixe, microscopia eletrônica mostra fibrila.',
+      'Confirme a acidofilia e a ondulação das fibras em H&E.',
+    ],
+  },
+
+  'collagen fibers': {
+    panorama:
+      'As fibras colágenas são o componente mais abundante da matriz do conjuntivo e existem para resistir à **tração** — são praticamente inextensíveis, mas flexíveis. Em H&E aparecem **acidófilas**, em tom rosa, com trajeto ondulado, e coram-se de azul no tricrômico de Masson, o que permite quantificar fibrose. São formadas sobretudo por **colágeno tipo I**, o mais abundante do corpo, presente em derme, tendão, ligamento, cápsula e osso; o tipo II é da cartilagem, o III forma as fibras reticulares e o IV compõe a lâmina basal. A síntese depende de **vitamina C**, cofator das hidroxilases que estabilizam a tripla hélice — daí a fragilidade tecidual do escorbuto.',
+    roteiro: [
+      'Peça tricrômico quando a questão for a quantidade de colágeno.',
+      'Relacione a ondulação ao fato de a fibra resistir a tração, mas não ser elástica.',
+    ],
+  },
+
+  'elastic fibers': {
+    panorama:
+      'As fibras elásticas permitem que o tecido se deforme e retorne à forma original, e são compostas por duas partes. O núcleo é de **elastina**, proteína amorfa riquíssima em glicina, prolina, desmosina e isodesmosina — estas duas últimas fazem as ligações cruzadas que permitem o estiramento até uma vez e meia o comprimento com retorno completo. Ao redor dele há **microfibrilas de fibrilina**, que orientam a deposição da elastina; mutações na fibrilina causam a síndrome de Marfan. Em H&E as fibras elásticas são pálidas e facilmente confundidas com colágeno fino; colorações como orceína, resorcina-fucsina e Verhoeff as tornam escuras e inconfundíveis.',
+    roteiro: [
+      'Peça coloração específica: em H&E as elásticas passam despercebidas.',
+      'Note o trajeto fino, ondulado e ramificado, distinto dos feixes colágenos.',
+    ],
+  },
+
+  'elastic membrane': {
+    panorama:
+      'Quando a elastina se organiza em **lâminas fenestradas** em vez de fibras individuais, tem-se uma membrana elástica. É a forma que ela assume nas paredes vasculares: a **lâmina elástica interna**, entre a íntima e a média, e a **externa**, entre a média e a adventícia, são folhas contínuas perfuradas por fenestras que permitem a difusão de nutrientes através da parede. Em corte, aparecem como linhas onduladas e refringentes — a ondulação é artefato de contração post-mortem da média, mas é característica e útil. A lâmina elástica interna é o achado que distingue com mais segurança uma artéria muscular de uma veia de calibre semelhante.',
+    roteiro: [
+      'Procure a linha ondulada e refringente logo abaixo do endotélio.',
+      'Use coloração para elastina quando a lâmina não estiver evidente em H&E.',
+    ],
+  },
+
+  'elastic laminae': {
+    panorama:
+      'Nas **artérias elásticas**, a elastina não forma apenas duas lâminas limitantes, mas dezenas de **lamelas concêntricas** que ocupam toda a túnica média, alternadas com camadas de músculo liso e matriz. Na aorta são cerca de quarenta a setenta. A função é hemodinâmica e vale entender: na sístole, as lamelas se distendem e armazenam parte da energia do jato ventricular; na diástole, o recuo elástico devolve essa energia e mantém o fluxo, convertendo um regime pulsátil em contínuo — é o chamado efeito Windkessel. Com a idade as lamelas se fragmentam e calcificam, a aorta enrijece e a pressão de pulso aumenta, o que explica a hipertensão sistólica isolada do idoso.',
+    roteiro: [
+      'Conte as lamelas: dezenas indicam artéria elástica.',
+      'Relacione a fragmentação das lamelas ao enrijecimento arterial da idade.',
+    ],
+  },
+
+  fibers: {
+    panorama:
+      'A matriz do conjuntivo tem três tipos de fibra, e cada um se identifica por composição, aparência e coloração. As **colágenas** são de colágeno tipo I, grossas, acidófilas e onduladas em H&E, inextensíveis, e resistem à tração — coram de azul no tricrômico. As **reticulares** são de colágeno tipo III, finas, ramificadas e formam malhas de sustentação em órgãos linfoides, glândulas e ao redor de fibras musculares e adipócitos; são **argirófilas** e PAS-positivas, e praticamente invisíveis em H&E. As **elásticas** têm núcleo de elastina e bainha de fibrilina, são finas, onduladas e ramificadas, permitem estiramento com retorno, e exigem orceína ou Verhoeff para serem vistas.',
+    roteiro: [
+      'Escolha a coloração conforme a fibra que se quer ver: nenhuma técnica mostra as três bem.',
+      'Relacione cada tipo à propriedade mecânica que ele confere ao tecido.',
+    ],
+  },
+
+  loose: {
+    panorama:
+      'O tecido conjuntivo **frouxo**, ou areolar, é o mais difundido do corpo e o mais celular. Tem fibras esparsas e finas, muita **substância fundamental** e um número grande e variado de células, tanto residentes quanto transitórias. Ocupa a lâmina própria das mucosas, a camada papilar da derme, o espaço em torno de vasos, nervos e glândulas, e preenche os interstícios entre órgãos. Suas funções decorrem dessa composição: é o meio por onde nutrientes e resíduos difundem entre o capilar e as células, é o palco da **resposta inflamatória** — daí a concentração de macrófagos, mastócitos e vasos — e é o que permite o deslizamento relativo entre estruturas vizinhas.',
+    roteiro: [
+      'Compare a área ocupada por fibras com a ocupada por núcleos: no frouxo, os núcleos dominam.',
+      'Procure capilares e células de defesa, sempre abundantes nesse tecido.',
+    ],
+  },
+
+  'dense irregular': {
+    panorama:
+      'O tecido conjuntivo **denso não modelado** tem feixes espessos de colágeno cruzando-se em **todas as direções** e poucas células, quase todas fibrócitos comprimidos entre os feixes. Essa disposição multidirecional permite resistir a tração vinda de qualquer sentido, e é por isso que ele forma a **camada reticular da derme**, as **cápsulas** de órgãos como fígado, baço, rim e linfonodo, a dura-máter, o periósteo e o pericôndrio, e a submucosa do tubo digestório. Em corte, o campo aparece dominado por rosa, com poucos núcleos alongados e escuros dispersos sem orientação comum — o contraste com o frouxo, muito mais celular, é imediato.',
+    roteiro: [
+      'Verifique se os feixes mudam de direção dentro do mesmo campo.',
+      'Conte os núcleos: poucos e escuros confirmam denso.',
+    ],
+  },
+
+  'dense regular': {
+    panorama:
+      'O tecido conjuntivo **denso modelado** tem feixes de colágeno **paralelos entre si**, todos alinhados com a direção da força que o tecido suporta — é a arquitetura de máxima resistência a tração em um eixo único, e por isso forma **tendões**, **ligamentos** e **aponeuroses**. Entre os feixes, os fibrócitos aparecem comprimidos em **fileiras**, reduzidos a linhas nucleares finas e escuras paralelas ao colágeno; no tendão, recebem o nome de tenócitos. É praticamente avascular, o que explica a lentidão da cicatrização tendínea. Em **corte transversal**, o paralelismo desaparece e o tecido pode ser confundido com denso não modelado — os núcleos alinhados resolvem a dúvida.',
+    roteiro: [
+      'Procure fileiras de núcleos paralelas aos feixes.',
+      'Considere sempre o plano de corte antes de concluir que não há paralelismo.',
+    ],
+  },
+
+  classification: {
+    panorama:
+      'A classificação dos tecidos conjuntivos parte de uma divisão maior. O **conjuntivo embrionário** compreende o mesênquima e o mucoso, este último presente na geleia de Wharton. O **conjuntivo propriamente dito** divide-se em **frouxo** e **denso**, e o denso em **modelado** e **não modelado**; incluem-se aqui as variedades especiais reticular, elástico e adiposo. O **conjuntivo especializado** reúne **cartilagem**, **osso**, **sangue** e **tecido hemocitopoético** — todos com matriz muito distinta e função própria. O critério que atravessa toda a classificação é sempre a **composição e a organização da matriz**, e não o tipo celular predominante.',
+    roteiro: [
+      'Situe o tecido no nível certo da classificação antes de detalhar.',
+      'Descreva sempre a matriz primeiro: é ela que decide a categoria.',
+    ],
+  },
+
+
+  // ---- Cartilagem ----
+
+  'overview of cartilage': {
+    panorama:
+      'A cartilagem é conjuntivo especializado com matriz firme e hidratada, e três ausências a caracterizam: **não tem vasos, nervos nem linfáticos**. Suas células, os **condrócitos**, vivem em cavidades chamadas **lacunas**, isoladas ou em grupos isógenos, e se nutrem por difusão através da matriz — o que explica a cicatrização lenta e a espessura limitada da peça. A matriz combina colágeno com uma quantidade enorme de proteoglicanos, sobretudo **agrecana**, que retém água e confere resistência à compressão. O **pericôndrio** traz os vasos e contém células-tronco que permitem o crescimento **aposicional**; o crescimento **intersticial** vem da divisão dos próprios condrócitos.',
+    roteiro: [
+      'Confirme lacuna com condrócito dentro antes de chamar o tecido de cartilagem.',
+      'Procure o pericôndrio: sua ausência em uma superfície é achado, não descuido.',
+    ],
+  },
+
+  'regressing cartilage': {
+    panorama:
+      'A cartilagem em regressão aparece nos moldes que estão sendo substituídos por osso durante a **ossificação endocondral**, e a sequência de alterações é legível. Os condrócitos primeiro **hipertrofiam** enormemente, suas lacunas se dilatam e a matriz entre elas se reduz a septos finos; depois essa matriz remanescente se **calcifica**, o que interrompe a difusão de nutrientes; privados de suprimento, os condrócitos morrem, e as lacunas confluem em cavidades. Restam as **espículas de cartilagem calcificada**, que aparecem basófilas e servem de arcabouço para os osteoblastos depositarem osso, acidófilo, sobre elas — a imagem de espícula com centro azul e periferia rosa é a assinatura do processo.',
+    roteiro: [
+      'Procure espículas com centro basófilo e periferia acidófila.',
+      'Acompanhe a sequência hipertrofia, calcificação, morte celular e invasão vascular.',
+    ],
+  },
+
+  hyaline: {
+    panorama:
+      'A cartilagem hialina é a mais abundante e a que define o tipo. Sua matriz tem aspecto **vítreo e homogêneo** em H&E porque o colágeno **tipo II** que a compõe tem fibrilas finas com índice de refração próximo ao da substância fundamental — as fibras estão lá, mas não se veem. Os condrócitos ocupam lacunas, isolados perto do pericôndrio e em **grupos isógenos** no interior, resultado de divisões intersticiais. Ao redor de cada grupo, a **matriz territorial** é mais basófila, por concentração de glicosaminoglicanos, contra a matriz interterritorial mais pálida. Forma o molde do esqueleto fetal, as cartilagens costais, nasais, traqueais e brônquicas, e a superfície articular — onde não há pericôndrio.',
+    roteiro: [
+      'Procure grupos isógenos com halo basófilo ao redor.',
+      'Verifique a presença ou ausência de pericôndrio: na articular ele não existe.',
+    ],
+  },
+
+  elastic: {
+    panorama:
+      'A cartilagem elástica tem a mesma matriz básica da hialina — colágeno tipo II e proteoglicanos —, acrescida de uma **rede densa de fibras elásticas** que permeia todo o tecido. Essa rede lhe dá flexibilidade com retorno à forma, e é por isso que ela compõe o pavilhão auricular, o meato acústico externo, a tuba auditiva, a epiglote e algumas cartilagens laríngeas. Em H&E as fibras elásticas se veem mal, e a cartilagem pode ser confundida com hialina; colorações como orceína, resorcina-fucsina ou Verhoeff as tornam escuras e inconfundíveis. Outras pistas: os condrócitos são mais numerosos e maiores, e há menos matriz proporcionalmente. Tem pericôndrio e não calcifica com a idade.',
+    roteiro: [
+      'Peça coloração para elastina antes de classificar: em H&E o erro é fácil.',
+      'Compare a densidade de condrócitos com a de uma hialina no mesmo aumento.',
+    ],
+  },
+
+  cartilage: {
+    panorama:
+      'A cartilagem tem três variedades, distinguidas pela **fibra dominante na matriz**. A **hialina** tem colágeno tipo II em fibrilas finas e matriz de aspecto vítreo; é a mais abundante, forma o molde do esqueleto fetal, a placa epifisária e a superfície articular. A **elástica** acrescenta uma rede de fibras elásticas e ocorre onde é preciso flexibilidade com retorno: pavilhão, epiglote, laringe. A **fibrocartilagem** tem feixes grossos de colágeno **tipo I** visíveis em H&E, condrócitos em fileiras entre eles, resiste a compressão e tração ao mesmo tempo, e **não tem pericôndrio** — está em discos intervertebrais, sínfise púbica e meniscos. Todas são avasculares e se nutrem por difusão.',
+    roteiro: [
+      'Identifique a fibra dominante para classificar a variedade.',
+      'Verifique a presença de pericôndrio: sua ausência sugere fibrocartilagem ou superfície articular.',
+    ],
+  },
+
+  // ---- Osso ----
+
+  'bone: a tissue and an organ': {
+    panorama:
+      'Osso designa duas coisas distintas, e confundi-las atrapalha o estudo. Como **tecido**, é um conjuntivo especializado de matriz mineralizada, com osteoblastos, osteócitos em lacunas conectadas por canalículos e osteoclastos, classificado em compacto e esponjoso, primário e lamelar. Como **órgão**, é a peça anatômica inteira: tecido ósseo compacto e esponjoso, mais **medula óssea**, **periósteo**, **endósteo**, **cartilagem articular**, vasos e nervos. A distinção importa porque o órgão contém tecidos que não são ósseos, e porque perguntas sobre "osso" podem se referir a qualquer um dos dois níveis — a primeira coisa a fazer diante de uma lâmina é decidir qual está em jogo.',
+    roteiro: [
+      'Decida se o campo mostra tecido ósseo isolado ou uma peça com medula e periósteo.',
+      'Nomeie os componentes não ósseos do órgão quando eles estiverem presentes.',
+    ],
+  },
+
+  'bone types: spongy and compact bone': {
+    panorama:
+      'A distinção entre osso esponjoso e compacto é de **arquitetura**, não de composição — o tecido é o mesmo. O **compacto**, ou cortical, é maciço, com pouquíssimo espaço não ósseo, e se organiza em **ósteons**: cilindros de lamelas concêntricas em torno de um canal de Havers com vaso. Forma a diáfise dos ossos longos e a casca externa de todos. O **esponjoso**, ou trabecular, é uma rede tridimensional de **trabéculas** finas com lamelas paralelas ao contorno, e os espaços entre elas são ocupados por medula. Forma as epífises e o miolo dos ossos chatos. A razão entre área óssea e não óssea no campo é o critério prático de classificação.',
+    roteiro: [
+      'Estime a proporção entre osso e espaço medular antes de nomear.',
+      'Verifique se as lamelas são concêntricas em torno de um canal ou paralelas ao contorno.',
+    ],
+  },
+
+  'bone tissue: microscopic preparation': {
+    panorama:
+      'O osso é mineralizado e não pode ser cortado no micrótomo comum, de modo que há duas técnicas, com resultados quase opostos. Na preparação por **desgaste**, o osso seco é lixado até ficar translúcido: preserva perfeitamente a **arquitetura mineral** — ósteons, lamelas, lacunas, canalículos e canais aparecem com nitidez, preenchidos por ar e detritos que os tornam escuros —, mas **destrói todas as células**. Na preparação por **descalcificação**, o osso é tratado com ácido ou quelante para remover o mineral e depois processado como tecido mole: preserva as **células** e a matriz orgânica, mas a nitidez das lamelas e dos canalículos se perde. As duas são complementares, e nenhuma mostra tudo.',
+    roteiro: [
+      'Identifique a técnica antes de interpretar: ausência de células pode ser método, não achado.',
+      'Use desgaste para arquitetura e descalcificação para células.',
+    ],
+  },
+
+  'bone tissue: cells and matrix': {
+    panorama:
+      'O tecido ósseo tem quatro tipos celulares e uma matriz de composição bem definida. As **células osteoprogenitoras** ficam no periósteo e no endósteo e originam as demais. Os **osteoblastos** depositam o **osteoide** e formam uma fileira contínua sobre a superfície óssea, cúbicos e basófilos quando ativos. Os **osteócitos** são osteoblastos aprisionados na matriz, alojados em **lacunas** e conectados por prolongamentos em **canalículos** — são os mecanossensores do osso. Os **osteoclastos**, multinucleados e de outra linhagem, reabsorvem. A matriz é **35% orgânica** — colágeno tipo I, osteocalcina, osteonectina — e **65% mineral**, cristais de hidroxiapatita depositados sobre as fibrilas colágenas.',
+    roteiro: [
+      'Localize cada célula pela posição: superfície, dentro da matriz ou em lacuna escavada.',
+      'Relacione a proporção mineral/orgânica à combinação de rigidez e resistência a fratura.',
+    ],
+  },
+
+  'bone cells': {
+    panorama:
+      'As quatro células ósseas se distinguem por posição, morfologia e origem. A **osteoprogenitora** é fusiforme e discreta, no periósteo e no endósteo. O **osteoblasto** é cúbico, **basófilo**, com halo claro do Golgi, e dispõe-se em fileira contínua sobre a superfície, como um epitélio — é essa fileira que o identifica. O **osteócito** ocupa uma lacuna dentro da matriz, tem citoplasma escasso e prolongamentos em canalículos que o conectam aos vizinhos por junções comunicantes; percebe deformação mecânica e sinaliza a necessidade de remodelação. O **osteoclasto** é **gigante e multinucleado**, acidófilo, derivado de precursores monocíticos, e ocupa depressões escavadas, as lacunas de Howship.',
+    roteiro: [
+      'Use a posição como primeiro critério: superfície, lacuna interna ou depressão escavada.',
+      'Lembre que o osteoclasto não pertence à linhagem das outras três.',
+    ],
+  },
+
+  'bone classification': {
+    panorama:
+      'O tecido ósseo se classifica por dois eixos independentes, e é preciso responder aos dois. Pela **organização da matriz**: **primário**, ou imaturo, com fibras colágenas dispostas ao acaso, mais células, menos mineral e osteócitos em lacunas arredondadas e desordenadas — é o primeiro osso formado no desenvolvimento e no reparo de fraturas, e depois é substituído; e **lamelar**, ou maduro, com colágeno em camadas paralelas de orientação alternada, muito mais resistente. Pela **densidade**: **compacto**, maciço e organizado em ósteons, e **esponjoso**, em trabéculas com medula entre elas. As combinações são possíveis, e no adulto quase todo osso é lamelar, compacto ou esponjoso.',
+    roteiro: [
+      'Responda aos dois eixos separadamente antes de nomear.',
+      'Procure lamelas: sua ausência com osteócitos desordenados indica osso primário.',
+    ],
+  },
+
+  'bone matrix: remodeling': {
+    panorama:
+      'O osso é continuamente destruído e reconstruído — cerca de 10% do esqueleto por ano no adulto —, e esse processo, a **remodelação**, tem três finalidades: adaptar a arquitetura à carga mecânica, reparar microfraturas antes que se propaguem e mobilizar cálcio para a homeostase. Ocorre em **unidades de remodelação** acopladas: osteoclastos escavam primeiro, e osteoblastos preenchem depois, no mesmo local. O acoplamento é regulado pelo eixo **RANKL–RANK–osteoprotegerina**: o osteoblasto expressa RANKL, que ativa o osteoclasto, e osteoprotegerina, que o bloqueia. Quando a reabsorção supera a formação, instala-se a osteoporose; o desequilíbrio inverso produz osteopetrose.',
+    roteiro: [
+      'Procure osteoclastos e osteoblastos na mesma superfície como sinal de unidade acoplada.',
+      'Relacione o eixo RANKL ao mecanismo de ação dos fármacos antirreabsortivos.',
+    ],
+  },
+
+  'as a tissue': {
+    panorama:
+      'Considerado como **tecido**, o osso é um conjuntivo especializado cuja matriz é mineralizada — e é isso que o distingue de todos os outros. A matriz tem uma fase **orgânica**, cerca de 35%, com colágeno tipo I e proteínas não colágenas como osteocalcina e osteonectina, responsável pela resistência à tração e à fratura; e uma fase **mineral**, cerca de 65%, de cristais de hidroxiapatita alinhados sobre as fibrilas, responsável pela rigidez e pela dureza. Nenhuma das duas basta sozinha: sem mineral o osso dobra, sem matriz orgânica ele quebra como giz. As células são osteoprogenitoras, osteoblastos, osteócitos e osteoclastos, e a nutrição depende dos canalículos, já que a matriz é impermeável.',
+    roteiro: [
+      'Relacione cada fase da matriz a uma propriedade mecânica distinta.',
+      'Note que nenhum osteócito fica a mais de 200 µm de um capilar, limite da difusão pelos canalículos.',
+    ],
+  },
+
+  'bone: the organ - shapes': {
+    panorama:
+      'Os ossos se classificam pela forma, e cada categoria tem uma organização interna característica. Os **longos** têm diáfise de osso compacto com cavidade medular, e epífises de esponjoso com casca compacta fina, separadas pela placa epifisária enquanto há crescimento — fêmur, úmero, falanges. Os **curtos** são aproximadamente cúbicos, com esponjoso central e casca compacta — carpo e tarso. Os **chatos** têm duas lâminas de compacto separadas por esponjoso, o **díploe** nos ossos do crânio, e formam-se por ossificação intramembranosa. Os **irregulares** e os **sesamoides**, como a patela, completam o quadro. A forma acompanha a carga que o osso suporta.',
+    roteiro: [
+      'Identifique a categoria pela proporção e disposição entre compacto e esponjoso.',
+      'Nos ossos chatos, procure o díploe entre as duas lâminas.',
+    ],
+  },
+
+  'bone: the organ - components of long bones': {
+    panorama:
+      'O osso longo tem partes nomeadas que vale percorrer em ordem. A **diáfise** é o corpo cilíndrico, de osso compacto espesso com **cavidade medular** central. As **epífises** são as extremidades, de osso esponjoso com casca compacta fina, recobertas por **cartilagem articular** hialina nas superfícies de contato. Entre elas está a **metáfise**, região de transição que aloja a **placa epifisária** de cartilagem hialina enquanto o osso cresce em comprimento, e que vira a linha epifisária depois da fusão. O **periósteo** cobre toda a superfície externa, exceto onde há cartilagem articular, e o **endósteo** forra a cavidade medular e os canais internos.',
+    roteiro: [
+      'Nomeie as partes em ordem antes de descrever qualquer detalhe microscópico.',
+      'Verifique se a placa epifisária ainda existe: ela data o material como imaturo.',
+    ],
+  },
+
+  'bone: the organ - components': {
+    panorama:
+      'Como órgão, o osso reúne vários tecidos, e vale listá-los porque nem todos são ósseos. O **tecido ósseo** propriamente dito, compacto e esponjoso, é o componente estrutural. A **medula óssea**, vermelha ou amarela, ocupa a cavidade medular e os espaços entre trabéculas e é tecido hemocitopoético ou adiposo. O **periósteo** é conjuntivo denso em duas camadas — fibrosa externa e osteogênica interna — aderido ao osso por fibras de Sharpey. O **endósteo** é uma camada fina de células osteoprogenitoras que forra todas as superfícies internas. A **cartilagem articular** é hialina e não tem pericôndrio. Somam-se vasos, que entram por forames nutrícios, e nervos.',
+    roteiro: [
+      'Liste os componentes não ósseos: eles fazem parte do órgão tanto quanto o osso.',
+      'Procure fibras de Sharpey ancorando o periósteo à matriz.',
+    ],
+  },
+
+  'bone: the organ - spongy bone': {
+    panorama:
+      'O osso esponjoso é uma rede tridimensional de **trabéculas** finas, com os espaços entre elas ocupados por **medula óssea**. Suas lamelas são **paralelas ao contorno** da trabécula, e não concêntricas — não há ósteons completos, porque a trabécula é fina demais e é nutrida por difusão a partir da medula que a banha, sem necessidade de canal central. As trabéculas se orientam ao longo das **linhas de força**, arranjo que dá resistência máxima com massa mínima, e se remodelam quando a carga muda. Como a área de superfície por unidade de volume é muito maior que no compacto, o esponjoso tem **renovação mais rápida** e é o primeiro a sofrer na osteoporose.',
+    roteiro: [
+      'Confirme que as lamelas acompanham o contorno da trabécula.',
+      'Relacione a orientação das trabéculas às linhas de carga do osso.',
+    ],
+  },
+
+  'bone: the organ, compact bone': {
+    panorama:
+      'O osso compacto é maciço e se organiza em **ósteons**, ou sistemas de Havers: cilindros concêntricos de quatro a vinte lamelas em torno de um **canal de Havers** que contém vaso, nervo e endósteo, orientados paralelamente ao eixo longo do osso. Os canais de Havers se comunicam entre si e com as superfícies pelos **canais de Volkmann**, transversais e sem lamelas próprias. Entre os ósteons ficam as **lamelas intersticiais**, restos de ósteons antigos parcialmente destruídos pela remodelação, delimitados por **linhas de cementação**. Nas superfícies externa e interna há lamelas **circunferenciais** contínuas. Todo esse arranjo garante que nenhum osteócito fique longe demais de um capilar.',
+    roteiro: [
+      'Conte as lamelas de um ósteon e ache seu canal central.',
+      'Procure lamelas intersticiais entre ósteons: elas registram gerações anteriores.',
+    ],
+  },
+
+  'bone: the organ - articular cartilage': {
+    panorama:
+      'A cartilagem articular é hialina e recobre as superfícies de contato das epífises, e tem duas particularidades decisivas. Primeira: **não tem pericôndrio** — sua superfície livre é banhada por líquido sinovial, do qual ela se nutre por difusão auxiliada pela compressão intermitente do movimento. Segunda: por isso mesmo, **não cresce por aposição** e tem capacidade regenerativa mínima, o que explica por que a lesão condral não cicatriza e por que a artrose é progressiva. Organiza-se em zonas: superficial, com condrócitos achatados e colágeno paralelo à superfície; média; profunda, com condrócitos em colunas; e calcificada, separada da anterior pela linha de maré.',
+    roteiro: [
+      'Confirme a ausência de pericôndrio na superfície articular.',
+      'Procure a mudança de orientação dos condrócitos entre as zonas.',
+    ],
+  },
+
+  'bone: the organ - periosteum and endosteum': {
+    panorama:
+      'Periósteo e endósteo revestem, respectivamente, as superfícies externa e internas do osso, e ambos contêm células osteoprogenitoras — são as fontes de osso novo. O **periósteo** tem duas camadas: a **fibrosa** externa, de conjuntivo denso com vasos e nervos, ancorada à matriz por **fibras de Sharpey**, feixes colágenos que penetram no osso; e a **osteogênica** interna, com células osteoprogenitoras, osteoblastos e osteoclastos, responsável pelo crescimento em espessura e pelo calo de fratura. Não existe periósteo sobre a cartilagem articular. O **endósteo** é muito mais fino, com uma única camada de células osteoprogenitoras, e forra a cavidade medular, as trabéculas e os canais de Havers e Volkmann.',
+    roteiro: [
+      'Procure fibras de Sharpey atravessando a matriz para confirmar o periósteo.',
+      'Note a diferença de espessura: o endósteo é praticamente uma monocamada.',
+    ],
+  },
+
+  periosteum: {
+    panorama:
+      'O periósteo é a membrana que reveste a superfície externa do osso, exceto onde há cartilagem articular, e tem duas camadas com funções distintas. A **fibrosa**, externa, é conjuntivo denso não modelado com vasos e nervos sensitivos — é ela que torna o periósteo tão sensível à dor — e se ancora à matriz óssea por **fibras de Sharpey**. A **osteogênica**, interna, contém células osteoprogenitoras que se diferenciam em osteoblastos, e é a responsável pelo **crescimento em espessura** do osso por aposição, pela formação do colar periosteal no desenvolvimento e pelo calo ósseo na consolidação de fraturas. Sua preservação cirúrgica é decisiva para a cicatrização óssea.',
+    roteiro: [
+      'Separe as duas camadas pela densidade das fibras e pela presença de células cúbicas.',
+      'Procure fibras de Sharpey penetrando na matriz.',
+    ],
+  },
+
+  endosteum: {
+    panorama:
+      'O endósteo é o revestimento de **todas as superfícies internas** do osso: a cavidade medular, os espaços entre trabéculas do esponjoso e os canais de Havers e de Volkmann. É muito mais delgado que o periósteo, reduzido em geral a uma **única camada** de células osteoprogenitoras achatadas apoiadas em pouca matriz, e não tem as duas camadas distintas do periósteo. Suas células se ativam em osteoblastos quando há necessidade de deposição, e é do endósteo que partem tanto o revestimento das unidades de remodelação quanto a reposição de osso na superfície das trabéculas. Como está em contato direto com a medula, participa também da regulação do nicho hematopoético.',
+    roteiro: [
+      'Procure a monocamada de células achatadas revestindo as superfícies internas.',
+      'Note a diferença de espessura em relação ao periósteo no mesmo corte.',
+    ],
+  },
+
+  'bone: the organ - bone marrow': {
+    panorama:
+      'A medula óssea ocupa a cavidade medular e os espaços entre as trabéculas do osso esponjoso, e existe em duas formas. A **vermelha** é hemocitopoética: um estroma reticular sustentando ilhas de células em maturação entre **sinusoides** de parede descontínua, por onde as células maduras entram na circulação atravessando o próprio citoplasma endotelial. A **amarela** é adiposa e inativa, mas pode reverter a vermelha diante de demanda. Ao nascimento toda a medula é vermelha; no adulto ela fica restrita a ossos chatos, vértebras e epífises proximais de fêmur e úmero. O achado mais fácil de reconhecer na medula vermelha é o **megacariócito**, gigante e multilobado.',
+    roteiro: [
+      'Ache um megacariócito para confirmar que a medula é hemocitopoética.',
+      'Estime a razão entre gordura e células para avaliar a celularidade.',
+    ],
+  },
+
+  'bone: the organ – flat bones': {
+    panorama:
+      'Os ossos chatos, como os da calota craniana, o esterno, as costelas e a escápula, têm uma organização em sanduíche: duas **lâminas de osso compacto** — a tábua externa e a interna — separadas por uma camada de osso esponjoso, o **díploe**, cujos espaços contêm medula óssea vermelha ativa a vida inteira. Essa construção oferece resistência com peso baixo, princípio idêntico ao de uma viga em I. Formam-se por **ossificação intramembranosa**, diretamente a partir de mesênquima condensado, sem molde de cartilagem — o que também explica as fontanelas do recém-nascido, áreas ainda membranosas entre os centros de ossificação, que permitem a deformação do crânio no parto.',
+    roteiro: [
+      'Identifique as duas tábuas e o díploe entre elas.',
+      'Relacione a ossificação intramembranosa à ausência de molde cartilaginoso.',
+    ],
+  },
+
+  'as an organ': {
+    panorama:
+      'Considerado como **órgão**, o osso é muito mais que tecido ósseo: reúne osso compacto e esponjoso, **medula óssea** hemocitopoética ou adiposa, **periósteo** e **endósteo** com suas células osteoprogenitoras, **cartilagem articular** nas superfícies de contato, **cartilagem epifisária** enquanto há crescimento, vasos que entram por forames nutrícios e nervos sensitivos concentrados no periósteo. Cumpre funções que vão além do suporte: protege órgãos, alavanca o movimento pela inserção muscular, abriga a hematopoese e funciona como o principal **reservatório de cálcio e fosfato** do corpo, mobilizando-os sob controle do PTH, da calcitonina e da vitamina D.',
+    roteiro: [
+      'Liste os tecidos não ósseos presentes antes de descrever a matriz.',
+      'Associe cada função do órgão a um componente estrutural específico.',
+    ],
+  },
+
+  'bone: orientation': {
+    panorama:
+      'Orientar-se em uma lâmina de osso é o primeiro passo e depende de reconhecer poucos referenciais. As **lamelas circunferenciais externas** são contínuas e acompanham a convexidade da superfície periosteal; as **internas** acompanham a concavidade da cavidade medular — a curvatura, portanto, indica de que lado se está. Os **canais de Havers** correm paralelos ao eixo longo do osso, de modo que em corte transversal aparecem como círculos e em corte longitudinal como faixas. Os **canais de Volkmann** os cruzam transversalmente e não têm lamelas próprias. O **periósteo** tem duas camadas e fibras de Sharpey; o **endósteo** é uma monocamada. A medula sempre fica do lado interno.',
+    roteiro: [
+      'Use a curvatura das lamelas circunferenciais para decidir o lado externo e o interno.',
+      'Determine o plano de corte pela forma dos canais de Havers.',
+    ],
+  },
+
+  'bone resorption': {
+    panorama:
+      'A reabsorção óssea é executada pelo **osteoclasto** em um compartimento selado, e tem duas etapas químicas em sequência. A célula adere à matriz pela **zona clara**, um anel de integrinas que veda o espaço subjacente, e desenvolve nele a **borda pregueada**, invaginações que ampliam enormemente a área de secreção. Primeiro dissolve o **mineral**: bombas de prótons acidificam o compartimento a pH próximo de 4,5, liberando cálcio e fosfato. Depois digere o **orgânico**: catepsina K e metaloproteinases degradam o colágeno tipo I exposto. O resultado é a **lacuna de Howship**. O controle vem do eixo RANKL–osteoprotegerina e da calcitonina, que inibe o osteoclasto diretamente.',
+    roteiro: [
+      'Procure a célula gigante multinucleada dentro de uma depressão da superfície.',
+      'Note a borda pregueada voltada para o osso em grande aumento.',
+    ],
+  },
+
+  'bone: cement lines': {
+    panorama:
+      'A linha de cementação é uma faixa fina de matriz **pobre em colágeno e rica em glicoproteínas** que marca o ponto em que uma fase de reabsorção terminou e a deposição recomeçou. Aparece como uma linha basófila e nítida delimitando cada **ósteon** e cada fragmento de **lamela intersticial**, e é o registro histológico da remodelação: contá-las e observar seu traçado permite reconstruir a sequência de gerações de ósteons em um campo — quem cortou quem. Mecanicamente, funciona como uma interface de menor coesão que desvia as microfissuras, impedindo-as de atravessar o ósteon e de se propagarem — um mecanismo de proteção contra fratura por fadiga.',
+    roteiro: [
+      'Siga as linhas de cementação para reconstruir a ordem das gerações de ósteons.',
+      'Note que elas delimitam também as lamelas intersticiais.',
+    ],
+  },
+
+  'resorption canal progression': {
+    panorama:
+      'A remodelação do osso compacto avança como um túnel que escava e reconstrói, e a lâmina permite acompanhar suas etapas. À frente vai o **cone de corte**, um grupo de osteoclastos que perfura um canal cilíndrico ao longo do eixo do osso — esse canal de reabsorção tem contorno **irregular**, contém um vaso e é forrado por endósteo com osteoclastos, e **não tem lamelas concêntricas**. Atrás dele vem o **cone de fechamento**: osteoblastos revestem a parede recém-aberta e depositam lamelas concêntricas de fora para dentro, enquanto uma **linha de cementação** marca o limite. O canal se estreita progressivamente até virar o canal de Havers de um ósteon novo.',
+    roteiro: [
+      'Identifique a etapa pela presença de osteoclastos, de osteoblastos ou de lamelas completas.',
+      'Use a ausência de lamelas concêntricas para reconhecer um canal ainda em reabsorção.',
+    ],
+  },
+
+  'deposition and resorption': {
+    panorama:
+      'Deposição e reabsorção são processos **acoplados**: ocorrem no mesmo local, em sequência, e sua razão determina o balanço ósseo. A reabsorção vem primeiro, executada pelo osteoclasto na lacuna de Howship, e dura cerca de duas semanas; a formação vem depois, executada pelos osteoblastos, e leva meses — assimetria que explica por que qualquer aumento na frequência de remodelação tende a causar perda óssea. O acoplamento é mediado pelo eixo **RANKL–RANK–osteoprotegerina**, e fatores liberados da matriz durante a reabsorção recrutam osteoblastos. Na lâmina, encontrar osteoclastos e osteoblastos em superfícies próximas é a evidência direta de uma unidade de remodelação ativa.',
+    roteiro: [
+      'Procure as duas células na mesma região para documentar acoplamento.',
+      'Relacione a assimetria de duração ao mecanismo da perda óssea.',
+    ],
+  },
+
+  intramembranous: {
+    panorama:
+      'A ossificação intramembranosa forma osso **diretamente a partir de mesênquima**, sem molde de cartilagem, e é o mecanismo dos ossos chatos do crânio, da maxila, da mandíbula e da clavícula, além do crescimento em espessura de todos os ossos. A sequência é direta: células mesenquimais se condensam e se diferenciam em **osteoblastos**, que secretam osteoide em um centro de ossificação; o osteoide mineraliza e aprisiona osteoblastos, que viram **osteócitos**; espículas crescem e se fundem em uma rede de osso **primário**, invadida por vasos; o mesênquima remanescente na periferia forma o periósteo e, no interior, a medula. Depois o osso primário é substituído por lamelar.',
+    roteiro: [
+      'Procure espículas de osso primário sem qualquer resquício de cartilagem em volta.',
+      'Ache a fileira de osteoblastos ativos sobre cada espícula em crescimento.',
+    ],
+  },
+
+  'bone development in the fetus': {
+    panorama:
+      'No feto, os dois mecanismos de ossificação operam ao mesmo tempo em regiões diferentes, e reconhecê-los lado a lado é o que a lâmina oferece. A **intramembranosa** forma os ossos chatos do crânio a partir de mesênquima condensado, com espículas de osso primário crescendo em centros de ossificação e áreas ainda membranosas entre eles — as futuras fontanelas. A **endocondral** forma o restante do esqueleto substituindo um molde de cartilagem hialina: o **colar periosteal** aparece por ossificação intramembranosa em torno da diáfise, depois vasos invadem o centro e instalam o centro primário de ossificação, e mais tarde surgem os centros secundários nas epífises. Todo o osso fetal é primário.',
+    roteiro: [
+      'Determine se há molde de cartilagem: sua presença indica ossificação endocondral.',
+      'Note que todo o osso é primário nesta fase, com osteócitos desordenados.',
+    ],
+  },
+
+  endochondral: {
+    panorama:
+      'A ossificação endocondral substitui um molde de cartilagem hialina por osso e forma os ossos longos e a maior parte do esqueleto. Na placa epifisária, a sequência é legível como zonas da epífise para a diáfise: **repouso**, com cartilagem hialina comum; **proliferação**, com condrócitos empilhados em colunas como moedas; **hipertrofia**, em que eles incham e as lacunas se aproximam; **calcificação**, em que a matriz entre as colunas mineraliza e os condrócitos morrem; e **ossificação**, invadida por vasos e osteoblastos que depositam osso sobre as espículas de cartilagem calcificada. O crescimento em comprimento continua enquanto proliferação e substituição se equilibram.',
+    roteiro: [
+      'Percorra as zonas em ordem e nomeie cada uma antes de descrever células isoladas.',
+      'Procure as espículas com centro basófilo de cartilagem e periferia acidófila de osso.',
+    ],
+  },
+
+  formation: {
+    panorama:
+      'Há dois mecanismos de formação óssea, e todo osso usa pelo menos um. A **intramembranosa** deposita osso diretamente sobre mesênquima condensado, sem molde intermediário; forma os ossos chatos do crânio, a maxila, a mandíbula e a clavícula, e é também o mecanismo do crescimento em **espessura** de qualquer osso, a partir da camada osteogênica do periósteo. A **endocondral** substitui um molde de cartilagem hialina por osso, e é responsável pelos ossos longos e pelo crescimento em **comprimento**, através da placa epifisária. Em ambos os casos, o primeiro osso formado é **primário**, desordenado, e é depois remodelado em osso **lamelar** — nenhum osso adulto normal permanece primário.',
+    roteiro: [
+      'Procure molde de cartilagem para distinguir os dois mecanismos.',
+      'Lembre que crescimento em comprimento e em espessura usam mecanismos diferentes.',
+    ],
+  },
+
+  remodeling: {
+    panorama:
+      'A remodelação é a substituição contínua de osso velho por osso novo, e ocorre a vida inteira — cerca de 10% do esqueleto por ano no adulto. Serve a três finalidades: **adaptar** a arquitetura à carga, conforme a lei de Wolff; **reparar** microfraturas antes que se propaguem; e **mobilizar** cálcio para a homeostase. No osso compacto, avança como túneis escavados por cones de corte e preenchidos por lamelas concêntricas, gerando ósteons novos e deixando lamelas intersticiais entre eles. No esponjoso, ocorre na superfície das trabéculas, com lamelas paralelas ao contorno e taxa várias vezes maior, pela área de superfície disponível. Osteoclasto e osteoblasto atuam sempre acoplados.',
+    roteiro: [
+      'Distinga remodelação de compacto e de esponjoso pela orientação das lamelas depositadas.',
+      'Procure linhas de cementação para reconstruir a sequência de gerações.',
+    ],
+  },
+
+  bone: {
+    panorama:
+      'O osso é conjuntivo especializado com **matriz mineralizada**, e reúne quatro tipos celulares: osteoprogenitoras, osteoblastos que depositam, osteócitos que habitam lacunas e monitoram deformação, e osteoclastos que reabsorvem. Sua matriz combina colágeno tipo I, que resiste à tração, com hidroxiapatita, que dá rigidez. Classifica-se pela **organização** em primário e lamelar, e pela **densidade** em compacto e esponjoso. Como órgão, inclui ainda medula, periósteo, endósteo e cartilagem articular. Cumpre suporte, proteção, alavanca para o movimento, abrigo da hematopoese e reserva de cálcio — e é, ao contrário do que a aparência sugere, um tecido metabolicamente muito ativo.',
+    roteiro: [
+      'Classifique nos dois eixos — organização e densidade — antes de descrever detalhes.',
+      'Lembre que a nutrição depende dos canalículos: nenhum osteócito fica longe de um capilar.',
+    ],
+  },
+
+  'blood: eosinophil': {
+    panorama:
+      'O eosinófilo representa de 1 a 4% dos leucócitos e se reconhece por dois traços simultâneos: **núcleo bilobado**, com os lobos ligados por um filamento fino, e **grânulos específicos grandes, uniformes e intensamente acidófilos**, corados de laranja-avermelhado pela eosina, que preenchem o citoplasma. Em microscopia eletrônica, esses grânulos têm um **cristaloide central** de proteína básica principal, tóxica para helmintos — sua função primária. Participa também das reações alérgicas, degradando histamina e leucotrienos, mas lesando o epitélio brônquico na asma crônica. Reside nos tecidos, sobretudo de mucosa, em número muito maior que no sangue.',
+    roteiro: [
+      'Confirme os dois lobos e a uniformidade dos grânulos, distintos dos finos do neutrófilo.',
+      'Procure eosinófilos na lâmina própria intestinal, onde são normais em pequeno número.',
+    ],
+  },
+
+  'blood: basophil': {
+    panorama:
+      'O basófilo é o leucócito mais raro, menos de 1% do total, e por isso difícil de achar em um esfregaço. Tem **núcleo bilobado ou em S**, quase sempre **encoberto** pelos grânulos, e é justamente essa característica que o identifica: os grânulos são grandes, irregulares, intensamente **basófilos** e **metacromáticos**, e escondem o núcleo — no eosinófilo, ao contrário, o núcleo permanece visível. Contêm histamina, heparina e mediadores da inflamação, e a célula carrega receptores de alta afinidade para IgE, degranulando nas reações de hipersensibilidade imediata. É funcionalmente análogo ao mastócito, mas tem origem e linhagem distintas e circula no sangue.',
+    roteiro: [
+      'Verifique se os grânulos escondem o núcleo: é o que o separa do eosinófilo.',
+      'Lembre da raridade: em um esfregaço normal pode não haver nenhum no campo.',
+    ],
+  },
+
+  'blood: monocyte': {
+    panorama:
+      'O monócito é o **maior leucócito circulante**, com 15 a 20 µm, e se identifica por três traços: núcleo **grande, pálido e em ferradura** ou reniforme, cromatina frouxa em rede, e citoplasma abundante, **cinza-azulado** e sem grânulos específicos visíveis, embora contenha grânulos azurófilos finos. Circula por apenas um a três dias e depois atravessa a parede vascular para se instalar nos tecidos, onde se diferencia em **macrófago** — ou em suas versões locais: células de Kupffer no fígado, micróglia no sistema nervoso, osteoclastos no osso, células de Langerhans na pele — e em células dendríticas. É, portanto, um precursor circulante, e não uma célula efetora madura.',
+    roteiro: [
+      'Compare o tamanho com o de um linfócito no mesmo campo: o monócito é bem maior.',
+      'Note a palidez e a frouxidão da cromatina, opostas à densidade do núcleo linfocitário.',
+    ],
+  },
+
+  'bone marrow: fetal': {
+    panorama:
+      'A hematopoese muda de sítio ao longo da vida intrauterina, e a medula é a última etapa. Na terceira semana começa a fase **mesoblástica**, nas ilhotas sanguíneas do saco vitelino, produzindo eritrócitos nucleados primitivos. Da sexta semana ao segundo trimestre predomina a fase **hepática**, com o fígado como principal órgão hematopoético e participação do baço. A partir do quinto ou sexto mês instala-se a fase **medular**, e ao nascimento praticamente toda a medula é vermelha e ativa, ocupando todos os ossos. Na medula fetal, a celularidade é máxima e quase não há gordura — o contraste com a medula adulta, progressivamente adiposa, é o achado que data o material.',
+    roteiro: [
+      'Estime a proporção de gordura: sua quase ausência indica medula fetal ou infantil.',
+      'Procure precursores de todas as linhagens em atividade simultânea.',
+    ],
+  },
+
+  'bone marrow: megakaryocytes': {
+    panorama:
+      'O megacariócito é a maior célula da medula óssea, com 50 a 100 µm, e a mais fácil de reconhecer em qualquer campo. Seu núcleo é **único, gigante e multilobado**, resultado de **endomitose** — sucessivas duplicações do DNA sem divisão celular, que o tornam poliploide, com 16n a 64n. O citoplasma é abundante e granular, e nele se desenvolve um sistema de **membranas de demarcação** que delimita previamente os territórios das futuras plaquetas. A célula emite prolongamentos, as proplaquetas, através da parede dos sinusoides, e deles se destacam de mil a três mil plaquetas. A trombopoetina, produzida no fígado, regula todo o processo.',
+    roteiro: [
+      'Procure a célula gigante de núcleo multilobado: ela confirma que o tecido é hemocitopoético.',
+      'Note que o núcleo é único, e não múltiplo como no osteoclasto.',
+    ],
+  },
+
+  'bone marrow smear': {
+    panorama:
+      'O esfregaço de medula óssea permite ver as células isoladas e coradas por Giemsa ou Wright, com detalhe citoplasmático impossível em corte histológico. A leitura segue três eixos que valem para qualquer precursor: à medida que a célula amadurece, o **tamanho diminui**, a **cromatina condensa** e o nucléolo desaparece, e o **citoplasma perde basofilia** enquanto ganha o produto específico — hemoglobina na série vermelha, grânulos na branca. Identificam-se assim proeritroblastos, eritroblastos basófilos, policromatófilos e ortocromáticos na série eritroide; mieloblastos, promielócitos, mielócitos, metamielócitos e bastonetes na granulocítica; e os megacariócitos, inconfundíveis.',
+    roteiro: [
+      'Aplique os três eixos — tamanho, cromatina e cor do citoplasma — para estagiar qualquer precursor.',
+      'Comece pelas células maiores e mais azuis: são as mais imaturas.',
+    ],
+  },
+
+  'basophilic erythroblast': {
+    panorama:
+      'O eritroblasto basófilo é o segundo estágio da série eritroide, sucedendo o proeritroblasto. É menor que ele, com 12 a 17 µm, e tem núcleo redondo e central com cromatina já **mais condensada**, em grumos grosseiros, e nucléolo pouco ou nada visível. Seu traço definidor é o citoplasma **intensamente basófilo**, de um azul profundo — a célula está no auge da síntese de RNA ribossômico e de ribossomos, montando a maquinaria que produzirá hemoglobina em massa nos estágios seguintes. Ainda não há hemoglobina suficiente para alterar a cor. Divide-se ativamente e origina o eritroblasto policromatófilo, em que as duas colorações começam a competir.',
+    roteiro: [
+      'Procure o azul mais intenso da série: é a assinatura deste estágio.',
+      'Confirme a condensação inicial da cromatina para separá-lo do proeritroblasto.',
+    ],
+  },
+
+  'polychromatophilic erythroblast': {
+    panorama:
+      'O eritroblasto policromatófilo é o estágio em que a hemoglobina começa a competir com os ribossomos pela coloração, e o citoplasma assume um tom **cinza-azulado ou acinzentado** — nem o azul intenso do basófilo, nem o rosa do ortocromático. Daí o nome: "muitas cores". Mede de 12 a 15 µm, e o núcleo continua encolhendo e condensando, com cromatina em grumos grosseiros dispostos em roda. É o **último estágio capaz de mitose** da série eritroide; a partir daqui, a célula apenas amadurece. A acumulação progressiva de hemoglobina e a perda de organelas conduzem ao eritroblasto ortocromático, que expulsará o núcleo.',
+    roteiro: [
+      'Procure o tom acinzentado intermediário entre o azul e o rosa.',
+      'Lembre que é o último estágio que ainda se divide.',
+    ],
+  },
+
+  'orthochromatophilic erythroblast, reticulocyte and mature erythrocytes': {
+    panorama:
+      'Os três últimos estágios da eritropoese mostram a célula se desfazendo de tudo o que não é hemoglobina. O **eritroblasto ortocromático**, ou normoblasto, tem citoplasma já **acidófilo**, quase da cor da hemácia madura, e núcleo pequeno, redondo e intensamente **picnótico**, que é então **expulso** e fagocitado pelo macrófago central da ilha eritroblástica. O **reticulócito** é a célula anucleada resultante, que ainda contém ribossomos residuais — visíveis como retículo com azul de cresil brilhante e responsáveis por uma leve basofilia em Giemsa —, e amadurece em um a dois dias, no sangue. A **hemácia madura** é um disco bicôncavo de 7,5 µm, sem núcleo nem organelas.',
+    roteiro: [
+      'Acompanhe a perda do núcleo e a mudança de cor ao longo dos três estágios.',
+      'Peça azul de cresil brilhante para contar reticulócitos: em Giemsa eles se confundem com hemácias.',
+    ],
+  },
+
+  'neutrophilic myelocyte and metamyelocyte': {
+    panorama:
+      'Estes dois estágios marcam a transição da série granulocítica de proliferativa para apenas maturativa. O **mielócito** é o primeiro estágio em que aparecem os **grânulos específicos** — no caso do neutrófilo, finos e pouco corados —, somados aos azurófilos já presentes; tem núcleo redondo ou levemente oval, ainda excêntrico, e é o **último estágio capaz de mitose**. O **metamielócito** é menor, já não se divide, e seu traço definidor é o núcleo em forma de **rim** ou de feijão, com indentação clara mas ainda sem a forma de bastão. A partir daqui a célula apenas condensa a cromatina e segmenta o núcleo, passando a bastonete e depois a neutrófilo segmentado.',
+    roteiro: [
+      'Use a forma do núcleo como critério: redondo é mielócito, reniforme é metamielócito.',
+      'Procure os grânulos específicos, que aparecem pela primeira vez no mielócito.',
+    ],
+  },
+
+  'neutrophilic band cells and segmented neutrophils': {
+    panorama:
+      'Os dois últimos estágios da granulopoese neutrofílica se distinguem pela forma do núcleo. O **bastonete**, ou band cell, tem núcleo alongado em forma de bastão ou de ferradura, com espessura aproximadamente uniforme e **sem constrições** que reduzam sua largura a menos de um terço. O **neutrófilo segmentado** tem o núcleo dividido em **três a cinco lobos** ligados por filamentos finos de cromatina. Ambos já têm grânulos específicos e não se dividem. A proporção entre eles tem valor clínico: um aumento de bastonetes no sangue periférico é o **desvio à esquerda**, sinal de que a medula está liberando células jovens diante de demanda aguda, tipicamente infecção bacteriana.',
+    roteiro: [
+      'Meça mentalmente a constrição do núcleo: menos de um terço da largura define segmentação.',
+      'Relacione o aumento de bastonetes ao desvio à esquerda.',
+    ],
+  },
+
+  'eosinophilic myelocytes': {
+    panorama:
+      'O mielócito eosinofílico é o estágio em que a linhagem se torna reconhecível, porque é nele que surgem os **grânulos específicos** — grandes, arredondados e intensamente **acidófilos**, corados de laranja-avermelhado, bem diferentes dos grânulos finos e pálidos da linhagem neutrofílica. O núcleo ainda é redondo ou levemente oval e excêntrico, e a cromatina começa a condensar. É o **último estágio proliferativo** da série: daqui em diante a célula apenas amadurece, passando a metamielócito, com núcleo reniforme, e depois a eosinófilo maduro, com o núcleo bilobado característico. A produção é regulada por interleucina-5, elevada nas parasitoses e nas doenças alérgicas.',
+    roteiro: [
+      'Identifique a linhagem pelos grânulos, não pela forma do núcleo.',
+      'Compare a cor dos grânulos com os de um mielócito neutrofílico no mesmo campo.',
+    ],
+  },
+
+  'eosinophilic metamyelocytes and segmented eosinophils': {
+    panorama:
+      'Estes são os dois estágios finais da eosinopoese. O **metamielócito eosinofílico** já não se divide e tem núcleo em forma de **rim**, com indentação nítida, e citoplasma repleto dos grânulos específicos grandes e acidófilos. O **eosinófilo segmentado**, forma madura, tem núcleo **bilobado** — tipicamente dois lobos ligados por um filamento fino, contra os três a cinco do neutrófilo —, e é essa contagem que distingue as duas células maduras com segurança. Os grânulos permanecem grandes, uniformes e intensamente laranja. A célula deixa a medula, circula por poucas horas e migra para os tecidos, sobretudo os de mucosa, onde reside por semanas.',
+    roteiro: [
+      'Conte os lobos para separar eosinófilo maduro de neutrófilo.',
+      'Use a forma do núcleo para distinguir metamielócito de segmentado dentro da mesma linhagem.',
+    ],
+  },
+
+  'thrombocytopoiesis (megakaryocytopoiesis)': {
+    panorama:
+      'A produção de plaquetas parte da célula-tronco hematopoética e passa por megacarioblasto, promegacariócito e **megacariócito** maduro. O traço peculiar do processo é a **endomitose**: a célula duplica o DNA repetidamente **sem dividir o citoplasma**, tornando-se poliploide, com 16n a 64n em um único núcleo multilobado — o que a torna a maior célula da medula. No citoplasma desenvolve-se um sistema de **membranas de demarcação** que delimita previamente os territórios de cada futura plaqueta. A célula então emite prolongamentos, as **proplaquetas**, através da parede dos sinusoides, e o fluxo sanguíneo as fragmenta em mil a três mil plaquetas. A trombopoetina hepática regula o processo.',
+    roteiro: [
+      'Procure o núcleo único e multilobado: ele distingue o megacariócito de qualquer célula multinucleada.',
+      'Note as membranas de demarcação como um citoplasma de aspecto reticulado.',
+    ],
+  },
+
+  'blood and hemopoiesis': {
+    panorama:
+      'Sangue e hemopoese são as duas faces de um mesmo tema: o produto e a fábrica. O **sangue** é conjuntivo de matriz líquida, com plasma, hemácias, leucócitos e plaquetas, e é o único tecido em que as células não produzem a matriz em que estão. A **hemopoese** ocorre na medula óssea vermelha a partir de uma célula-tronco pluripotente que origina as linhagens mieloide e linfoide. Três regras valem para estagiar qualquer precursor: o **tamanho diminui**, a **cromatina condensa** e o **citoplasma perde basofilia** enquanto ganha o produto específico. Cada linhagem termina de um modo próprio — expulsão do núcleo na vermelha, segmentação na granulocítica, fragmentação na megacariocítica.',
+    roteiro: [
+      'Aplique as três regras de estagiamento antes de tentar nomear o precursor.',
+      'Identifique a linhagem pelo produto que já apareceu no citoplasma.',
+    ],
+  },
+
+  reticular: {
+    panorama:
+      'O tecido conjuntivo reticular é uma variedade especializada cuja matriz é dominada por **fibras reticulares de colágeno tipo III**, produzidas por **células reticulares** — fibroblastos modificados que não apenas fabricam a rede, mas se apoiam sobre ela, envolvendo-a com seus prolongamentos. O resultado é uma malha tridimensional frouxa e macia, capaz de sustentar células livres sem restringir seu movimento. É por isso que serve de estroma aos órgãos hemocitopoéticos e linfoides — medula óssea, linfonodo, baço — e também ao fígado e a glândulas endócrinas. Em H&E é praticamente invisível, e só a impregnação por prata revela a arquitetura que ele impõe ao órgão.',
+    roteiro: [
+      'Peça impregnação argêntica quando quiser ver o arcabouço de um órgão linfoide.',
+      'Note que as células reticulares se confundem com as células livres em H&E.',
+    ],
+  },
+
+  adipose: {
+    panorama:
+      'O tecido adiposo tem duas variedades com funções opostas. O **branco** é o mais abundante e estoca energia: adipócitos **uniloculares**, com uma única gotícula de triglicerídeo que empurra o citoplasma para uma orla fina e achata o núcleo contra a periferia, produzindo a imagem em anel de sinete. É também órgão endócrino, secretando leptina, adiponectina e citocinas. O **pardo** produz **calor**: adipócitos **multiloculares**, com várias gotículas pequenas e núcleo central, citoplasma acidófilo por mitocôndrias abundantes, cuja termogenina desacopla a cadeia respiratória e dissipa energia como calor. Em H&E, ambos aparecem com espaços claros, porque o lipídio é extraído.',
+    roteiro: [
+      'Conte as gotículas e localize o núcleo: uni ou multilocular decide a variedade.',
+      'Compare a densidade capilar: o pardo é muito mais vascularizado.',
+    ],
+  },
+
+  mucous: {
+    panorama:
+      'O tecido conjuntivo mucoso é essencialmente **embrionário**, e seu exemplo mais conhecido é a **geleia de Wharton** do cordão umbilical. Sua matriz é predominantemente **substância fundamental**, riquíssima em ácido hialurônico e portanto extremamente hidratada, com poucas fibras colágenas dispersas e sem fibras elásticas. As células são fibroblastos estrelados e esparsos, com longos prolongamentos que se tocam formando uma rede frouxa. Em H&E o campo parece quase vazio, pálido e finamente fibrilar, com raros núcleos — e é justamente essa pobreza que o identifica. No cordão, a turgência conferida pela hidratação impede que os vasos umbilicais sejam comprimidos ou torcidos.',
+    roteiro: [
+      'Reconheça o campo pálido com poucos núcleos estrelados antes de procurar fibras.',
+      'Confirme o contexto: fora do cordão e do embrião, ele é raro no adulto.',
+    ],
+  },
+
+  special: {
+    panorama:
+      'As variedades especiais do conjuntivo propriamente dito recebem esse nome porque um componente domina a matriz e determina a função. No **reticular**, dominam as fibras de colágeno tipo III, formando malhas de sustentação em órgãos linfoides e hemocitopoéticos. No **elástico**, dominam as fibras elásticas, e o tecido ocorre onde é preciso estirar e retornar — ligamentos amarelos da coluna, parede da aorta. No **adiposo**, as células são a maioria absoluta e a matriz é mínima, com função de reserva energética, isolamento e secreção endócrina. No **mucoso**, domina a substância fundamental hidratada, e o tecido é essencialmente embrionário. Em todos, é a matriz que nomeia.',
+    roteiro: [
+      'Identifique o componente dominante da matriz antes de nomear a variedade.',
+      'Relacione esse componente à propriedade mecânica ou metabólica do tecido.',
+    ],
+  },
+
+  connective: {
+    panorama:
+      'O tecido conjuntivo é o único dos quatro tecidos básicos em que a **matriz extracelular** importa mais que as células. Deriva do mesênquima e cumpre quatro funções: **sustentação**, dando forma e arcabouço; **ligação**, unindo tecidos entre si; **transporte**, servindo de meio de difusão entre o capilar e a célula; e **defesa**, abrigando as células imunes. Divide-se em conjuntivo **embrionário**, **propriamente dito** — frouxo, denso e as variedades especiais — e **especializado**, que reúne cartilagem, osso, sangue e tecido hemocitopoético. Em qualquer um deles, a leitura começa pela matriz: tipo de fibra dominante e proporção em relação às células.',
+    roteiro: [
+      'Descreva a matriz antes das células, sempre.',
+      'Situe o tecido na classificação antes de detalhar componentes.',
+    ],
+  },
+
+  'neuromuscular junctions (motor end plates)': {
+    panorama:
+      'A junção neuromuscular, ou placa motora, é a sinapse entre o axônio motor e a fibra muscular esquelética, e sua arquitetura garante transmissão de altíssima confiabilidade. O axônio perde a **bainha de mielina** ao se aproximar e se ramifica em botões terminais alojados em depressões do sarcolema. A membrana pós-sináptica é intensamente **pregueada**, o que multiplica a área e concentra os receptores nicotínicos de acetilcolina nas cristas das pregas. A fenda contém lâmina basal com **acetilcolinesterase**, que degrada o transmissor e encerra o estímulo. Um único potencial pré-sináptico basta para disparar a contração — margem de segurança que a miastenia gravis reduz ao destruir receptores.',
+    roteiro: [
+      'Procure a arborização terminal do axônio sobre a fibra e a ausência de mielina no trecho final.',
+      'Relacione o pregueamento pós-sináptico à concentração de receptores.',
+    ],
+  },
+
+  'muscle spindle': {
+    panorama:
+      'O fuso neuromuscular é o receptor de **estiramento** do músculo esquelético e é encapsulado, o que o torna reconhecível em corte. Dentro de uma cápsula de conjuntivo há um espaço com líquido e um pequeno grupo de **fibras intrafusais**, mais finas e curtas que as extrafusais ao redor, de dois tipos: as de saco nuclear, com núcleos agrupados no centro, e as de cadeia nuclear, com núcleos enfileirados. Terminações sensitivas do tipo Ia e II enrolam-se na porção central, informando comprimento e velocidade de estiramento; motoneurônios **gama** inervam as extremidades contráteis e ajustam a sensibilidade do fuso. É a base do reflexo miotático, o reflexo patelar.',
+    roteiro: [
+      'Procure a cápsula com fibras mais finas dentro, em meio às fibras extrafusais.',
+      'Note a diferença de calibre entre intrafusais e extrafusais no mesmo campo.',
+    ],
+  },
+
+  skeletal: {
+    panorama:
+      'O músculo esquelético é feito de **fibras** que são sincícios: cada uma resulta da fusão de centenas de mioblastos e tem, portanto, **muitos núcleos periféricos** encostados no sarcolema — traço que a distingue de imediato das outras duas variedades. É **estriada**, porque os sarcômeros das miofibrilas se alinham lateralmente, e **voluntária**, inervada por motoneurônios alfa na placa motora. Cada fibra é envolvida pelo **endomísio**, cada fascículo pelo **perimísio** e o músculo inteiro pelo **epimísio**. Entre a lâmina basal e o sarcolema residem as **células satélites**, células-tronco que permitem regeneração limitada após lesão.',
+    roteiro: [
+      'Confirme estriação e núcleos periféricos múltiplos antes de classificar.',
+      'Procure as três bainhas conjuntivas e as células satélites junto ao sarcolema.',
+    ],
+  },
+
+  'intercalated disc': {
+    panorama:
+      'O disco intercalar é a junção complexa entre cardiomiócitos vizinhos e é **exclusivo do músculo cardíaco** — encontrá-lo fecha o diagnóstico. Em H&E aparece como uma linha transversal escura, muitas vezes em degraus. Reúne três tipos de junção com funções complementares: a **fáscia de adesão**, na porção transversal, que ancora os filamentos de actina do sarcômero terminal e transmite a força de contração de uma célula à seguinte; os **desmossomos**, que prendem os filamentos intermediários de desmina e impedem a separação das células sob tensão; e as **junções comunicantes**, na porção longitudinal, que acoplam eletricamente os cardiomiócitos e fazem o miocárdio se comportar como sincício funcional.',
+    roteiro: [
+      'Procure a linha transversal em degraus em corte longitudinal; em transversal ela não aparece.',
+      'Associe cada componente do disco a uma função mecânica ou elétrica.',
+    ],
+  },
+
+  cardiac: {
+    panorama:
+      'O músculo cardíaco é estriado como o esquelético, mas difere dele em três pontos que a lâmina mostra. Suas células são **ramificadas**, e não cilindros paralelos; têm **um ou dois núcleos centrais**, e não muitos periféricos; e são unidas topo a topo por **discos intercalares**, exclusivos do miocárdio. É **involuntário** e **autoexcitável**: o ritmo nasce no nó sinoatrial e se propaga pelo sistema de condução e pelas junções comunicantes. O citoplasma é rico em mitocôndrias e o endomísio tem densidade capilar quase de um por fibra, porque o metabolismo é estritamente aeróbio. Sua capacidade de regeneração é praticamente nula — o infarto cicatriza com fibrose.',
+    roteiro: [
+      'Confirme os três critérios: ramificação, núcleo central e disco intercalar.',
+      'Note a densidade capilar do endomísio, muito maior que a do esquelético.',
+    ],
+  },
+
+  smooth: {
+    panorama:
+      'O músculo liso é formado por células **fusiformes**, com um único **núcleo central** em forma de charuto que se enruga em saca-rolhas quando a célula contrai — sinal útil de contração no corte. **Não tem estriações**, porque os filamentos de actina e miosina não se organizam em sarcômeros alinhados: ancoram-se em **corpos densos** no citoplasma e na membrana, e a contração encurta a célula em todas as direções. É **involuntário**, controlado por inervação autonômica difusa por varicosidades, por hormônios e por estiramento, e as células se acoplam por **junções comunicantes**, contraindo-se em conjunto. Tem a melhor capacidade regenerativa das três variedades, e ainda pode sofrer hiperplasia.',
+    roteiro: [
+      'Procure núcleos centrais em charuto e ausência de estriações.',
+      'Note que, em corte transversal, apenas parte dos perfis mostra núcleo.',
+    ],
+  },
+
+  muscle: {
+    panorama:
+      'Há três variedades de músculo, e três perguntas as separam com segurança. **Há estriações?** Esquelético e cardíaco têm; liso não. **Onde estão os núcleos e quantos são?** Muitos e periféricos no esquelético; um ou dois centrais no cardíaco; um central em charuto no liso. **Há ramificação e disco intercalar?** Só no cardíaco. O controle segue: voluntário no esquelético, involuntário nos outros dois. A capacidade de regeneração difere radicalmente — boa no liso, limitada no esquelético pelas células satélites, praticamente nula no cardíaco. Todas as três convertem energia química em força pelo deslizamento de actina sobre miosina, disparado por cálcio.',
+    roteiro: [
+      'Responda às três perguntas em ordem: elas classificam sem ambiguidade.',
+      'Confirme o plano de corte antes de concluir que não há estriações.',
+    ],
+  },
+
+  'basic neural function': {
+    panorama:
+      'O sistema nervoso executa três operações em sequência, e toda a sua histologia serve a elas. **Recepção**: receptores sensoriais convertem estímulos — mecânicos, térmicos, químicos, luminosos — em potenciais de ação, e neurônios sensitivos os conduzem ao centro. **Integração**: interneurônios, que são a imensa maioria, processam, comparam com memória e decidem, sobretudo no encéfalo e na medula. **Resposta**: neurônios motores conduzem o comando aos efetores, músculos e glândulas. A unidade de sinalização é o **neurônio**, com dendritos que recebem, corpo que integra e axônio que conduz; a **glia**, várias vezes mais numerosa, sustenta, isola, nutre, defende e regula o meio em que tudo isso ocorre.',
+    roteiro: [
+      'Classifique o neurônio observado como sensitivo, interneurônio ou motor pelo contexto.',
+      'Lembre que a glia é maioria numérica em qualquer campo de tecido nervoso.',
+    ],
+  },
+
+  'myelinated axons': {
+    panorama:
+      'A mielina é um isolante formado pelo enrolamento repetido da membrana de uma célula glial em torno do axônio, e existe para acelerar a condução. No sistema nervoso periférico, cada **célula de Schwann** mieliniza **um único internódulo de um único axônio**; no central, cada **oligodendrócito** mieliniza dezenas de axônios ao mesmo tempo. Entre segmentos consecutivos ficam os **nós de Ranvier**, onde o axolema se expõe e concentra canais de sódio — o potencial de ação salta de nó em nó, na **condução saltatória**, muito mais rápida e econômica. Em corte transversal corado por ósmio, a bainha aparece como um anel escuro em torno de um axônio pálido.',
+    roteiro: [
+      'Procure os nós de Ranvier em corte longitudinal para confirmar a segmentação.',
+      'Relacione o diâmetro do axônio à espessura da bainha e à velocidade de condução.',
+    ],
+  },
+
+  'unmyelinated axons': {
+    panorama:
+      'Nem todo axônio é mielinizado, e os amielínicos são a maioria numérica no sistema nervoso periférico. Eles **não ficam nus**: uma única **célula de Schwann** acomoda vários axônios, cada um em uma invaginação separada da sua superfície, sem enrolamento e sem formação de bainha de mielina. Sem nós de Ranvier, a condução é **contínua** ao longo de toda a membrana, e portanto muito mais lenta — cerca de 1 m/s, contra até 120 m/s em uma fibra mielinizada grossa. São as fibras da dor lenta e difusa, da temperatura e do sistema autonômico pós-ganglionar. Em corte, aparecem como grupos de perfis pequenos e pálidos dentro do citoplasma de uma célula de Schwann.',
+    roteiro: [
+      'Procure grupos de axônios pequenos dentro de uma única célula de Schwann.',
+      'Confirme a ausência de anel escuro de mielina ao redor deles.',
+    ],
+  },
+
+  synapse: {
+    panorama:
+      'A sinapse é o ponto de comunicação entre um neurônio e sua célula-alvo, e tem três componentes. O **terminal pré-sináptico** contém as vesículas de neurotransmissor, mitocôndrias e uma **zona ativa** — densidade eletrônica na membrana onde as vesículas se ancoram e se fundem. A **fenda sináptica** mede de 20 a 30 nm. A **membrana pós-sináptica** tem uma densidade correspondente, com os receptores. A transmissão é **unidirecional**: a chegada do potencial abre canais de cálcio, o cálcio dispara a exocitose, o transmissor difunde e se liga aos receptores. Classificam-se pelo alvo em axodendrítica, axossomática e axoaxônica, e o efeito pode ser excitatório ou inibitório.',
+    roteiro: [
+      'Identifique o lado pré-sináptico pelas vesículas: é o único que as contém.',
+      'Procure as duas densidades de membrana e a fenda entre elas.',
+    ],
+  },
+
+  'supporting cells': {
+    panorama:
+      'As células de sustentação do tecido nervoso são a **glia**, e superam os neurônios em número. No sistema nervoso **central** são quatro: **astrócitos**, estrelados, que formam a barreira hematoencefálica com seus pés vasculares, tamponam potássio e recaptam neurotransmissores; **oligodendrócitos**, que mielinizam vários axônios cada um; **micróglia**, de origem monocítica, os macrófagos residentes; e **células ependimárias**, que forram os ventrículos e produzem o líquor nos plexos coroides. No sistema nervoso **periférico** são duas: **células de Schwann**, que mielinizam ou envolvem axônios e cuja lâmina basal viabiliza a regeneração, e **células satélites**, que envolvem corpos neuronais nos gânglios.',
+    roteiro: [
+      'Determine primeiro se o tecido é central ou periférico: isso reduz as opções pela metade.',
+      'Em H&E, quase só os núcleos gliais são visíveis; peça imuno-histoquímica para os prolongamentos.',
+    ],
+  },
+
+  'overview of nervous tissue': {
+    panorama:
+      'O tecido nervoso tem dois componentes celulares e uma característica que o distingue de todos os outros: praticamente **não tem matriz extracelular** — as células se apoiam umas nas outras. Os **neurônios** conduzem e integram: pericário com substância de Nissl, dendritos que recebem e um axônio que conduz, classificados por número de prolongamentos em multipolares, bipolares e pseudounipolares. A **glia** sustenta, isola, nutre e defende, e é várias vezes mais numerosa. Divide-se em sistema nervoso **central**, com substância cinzenta e branca, e **periférico**, com nervos e gânglios. A capacidade de regeneração é limitada no periférico e praticamente nula no central.',
+    roteiro: [
+      'Separe neurônio de glia pelo tamanho do núcleo e pela presença de Nissl.',
+      'Determine se o campo é central ou periférico antes de nomear as células gliais.',
+    ],
+  },
+
+  'neuron types': {
+    panorama:
+      'Os neurônios se classificam por dois critérios. Pela **morfologia**, isto é, pelo número de prolongamentos que saem do corpo: **multipolar**, com um axônio e vários dendritos, é o tipo mais comum e inclui todos os motoneurônios e a maioria dos interneurônios; **bipolar**, com um dendrito e um axônio em polos opostos, é raro e restrito a retina, epitélio olfatório e gânglios vestibular e coclear; **pseudounipolar**, com um único prolongamento que se bifurca em T, é o neurônio sensitivo dos gânglios da raiz dorsal. Pela **função**: sensitivos, que conduzem ao centro; motores, que conduzem à periferia; e interneurônios, que são a imensa maioria e fazem a integração.',
+    roteiro: [
+      'Conte os prolongamentos que saem do corpo para classificar morfologicamente.',
+      'Use a localização como confirmação: cada tipo tem sedes características.',
+    ],
+  },
+
+  'receptors and terminals': {
+    panorama:
+      'As terminações nervosas se dividem por função. As **sensoriais** captam estímulos e podem ser **livres**, ramos amielínicos nus que cobrem dor, temperatura e tato grosseiro e são as mais numerosas, ou **encapsuladas**, em que o axônio é envolvido por lamelas de conjuntivo que filtram mecanicamente o estímulo — Meissner para toque leve nas papilas dérmicas, Pacini para vibração na hipoderme, Ruffini para estiramento, além dos fusos neuromusculares e dos órgãos tendinosos de Golgi. As **motoras** entregam o comando: a **placa motora** no músculo esquelético, com sua membrana pregueada, e as **varicosidades** difusas do sistema autonômico sobre músculo liso e glândulas.',
+    roteiro: [
+      'Pergunte primeiro se há cápsula: ela divide o campo sensorial em duas famílias.',
+      'Nas terminações motoras, verifique o tipo de alvo antes de descrever a arquitetura.',
+    ],
+  },
+
+  'peripheral nervous system': {
+    panorama:
+      'O sistema nervoso periférico compreende tudo o que está fora do encéfalo e da medula: **nervos**, **gânglios** e **terminações**. O **nervo** é um feixe de axônios envolvido por três bainhas — endoneuro em torno de cada fibra, perineuro em torno de cada fascículo, formando a barreira hematonervosa, e epineuro em torno do conjunto. Os **gânglios** são agrupamentos de corpos neuronais: os **sensitivos**, com neurônios pseudounipolares grandes e redondos cercados por células satélites em anel regular, e os **autonômicos**, com neurônios menores, irregulares e mais espaçados. A glia é feita de **células de Schwann** e **satélites**, e a regeneração axonal é possível graças à lâmina basal delas.',
+    roteiro: [
+      'Nomeie as três bainhas do nervo de fora para dentro.',
+      'Distinga gânglio sensitivo de autonômico pelo tamanho e pelo arranjo das células satélites.',
+    ],
+  },
+
+  microglia: {
+    panorama:
+      'A micróglia é a única glia que **não deriva do neuroectoderma**: origina-se de precursores mieloides que colonizam o sistema nervoso central no desenvolvimento, e é, portanto, o **macrófago residente** do encéfalo e da medula. Em repouso tem corpo pequeno e alongado, núcleo denso e prolongamentos finos e ramificados que exploram continuamente o parênquima — é a célula com o menor e mais escuro núcleo do tecido nervoso. Diante de lesão, infecção ou neurodegeneração, ela se **ativa**: retrai os prolongamentos, arredonda-se, prolifera e passa a fagocitar restos celulares e a apresentar antígeno, além de secretar citocinas. Nessa forma é chamada de célula em bastonete ou macrófago cerebral.',
+    roteiro: [
+      'Procure o núcleo menor e mais escuro do campo entre as células gliais.',
+      'Note a mudança de forma como sinal de ativação, não como tipo celular distinto.',
+    ],
+  },
+
+  'ependymal cells': {
+    panorama:
+      'As células ependimárias formam um epitélio **simples cúbico a colunar ciliado** que reveste os ventrículos cerebrais e o canal central da medula, fazendo a interface entre o parênquima nervoso e o líquido cefalorraquidiano. Diferentemente de um epitélio comum, **não têm lâmina basal**: apoiam-se diretamente nos prolongamentos astrocitários. Seus cílios ajudam a movimentar o líquor, e microvilosidades apicais participam da absorção. Nos **plexos coroides**, elas se modificam em um epitélio cúbico sobre um eixo de conjuntivo com capilares fenestrados, e ali **produzem o líquor** por transporte ativo — cerca de 500 mL por dia, renovando o volume total várias vezes.',
+    roteiro: [
+      'Confirme a ausência de lâmina basal para separá-las de um epitélio de revestimento comum.',
+      'Procure a modificação em plexo coroide, com eixo conjuntivo e capilares.',
+    ],
+  },
+
+  'oligdendrocytes - myelin sheath': {
+    panorama:
+      'O oligodendrócito é a glia mielinizante do sistema nervoso central, e difere da célula de Schwann em pontos decisivos. Emite vários prolongamentos e mieliniza **dezenas de axônios simultaneamente**, cada um recebendo um internódulo — de modo que a lesão de um único oligodendrócito desmieliniza muitas fibras, e a remielinização no central é lenta e incompleta. **Não produz lâmina basal**, ao contrário da célula de Schwann, o que remove o tubo que guiaria a regeneração axonal. Em H&E aparece como núcleo pequeno, redondo e denso, com halo claro artefatual, disposto em fileiras entre os feixes da substância branca. É a célula-alvo da esclerose múltipla.',
+    roteiro: [
+      'Procure fileiras interfasciculares na substância branca antes de tentar reconhecer a célula isolada.',
+      'Relacione a mielinização múltipla à extensão das lesões desmielinizantes.',
+    ],
+  },
+
+  'central nervous system': {
+    panorama:
+      'O sistema nervoso central compreende encéfalo e medula espinal e se organiza em substância cinzenta e branca. A **cinzenta** contém corpos neuronais, dendritos, sinapses e glia, e forma o córtex e os núcleos no encéfalo, mas ocupa a posição **central**, em H, na medula — inversão que orienta qualquer corte. A **branca** é feita de axônios mielinizados agrupados em tratos, mais oligodendrócitos e astrócitos fibrosos. Não há tecido conjuntivo entre as células: o arcabouço é a própria glia. Envolve-o um sistema de proteção em camadas — meninges, líquido cefalorraquidiano e **barreira hematoencefálica**, formada pelo endotélio contínuo induzido pelos pés astrocitários.',
+    roteiro: [
+      'Determine se está no encéfalo ou na medula pela posição da substância cinzenta.',
+      'Confirme a ausência de conjuntivo no parênquima: ele só existe nas meninges e ao redor dos vasos.',
+    ],
+  },
+
+  nervous: {
+    panorama:
+      'O tecido nervoso detecta, integra e responde, e é o mais especializado dos quatro tecidos básicos — ao custo de praticamente perder a capacidade de regeneração. Compõe-se de **neurônios**, células excitáveis com pericário, dendritos e axônio, e de **glia**, várias vezes mais numerosa, que sustenta, isola, nutre, defende e regula o meio. Praticamente **não há matriz extracelular**. Divide-se anatomicamente em sistema nervoso **central**, com substância cinzenta e branca protegidas por meninges, líquor e barreira hematoencefálica, e **periférico**, com nervos envolvidos por três bainhas conjuntivas e gânglios sensitivos e autonômicos.',
+    roteiro: [
+      'Separe neurônio de glia e determine se o campo é central ou periférico.',
+      'Confirme a ausência de matriz extracelular como característica do tecido.',
+    ],
+  },
 }
 
 /**
