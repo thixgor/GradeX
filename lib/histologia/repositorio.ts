@@ -3,6 +3,7 @@ import 'server-only'
 import type { NoCurriculo, Pagina, Quiz, Relatorio } from './esquemas'
 
 import { FRAGMENTOS, QUIZZES, QUIZZES_PROPRIOS } from './carregadores.gerado'
+import { traduzirExplicacao } from './explicacoes'
 import { traduzirTermo } from './glossario'
 import { traduzirQuiz } from './quiz-textos'
 
@@ -79,6 +80,29 @@ function chaveDoFragmento(caminho: string[]): string {
 }
 
 /**
+ * Preenche `explicacao` nas camadas de marcação a partir do dicionário.
+ *
+ * Aplicada aqui, e não na renderização, pelo mesmo motivo do quiz: a mesma
+ * lâmina é lida pela página, pelo microscópio e pelo modo prova. Traduzir em
+ * cada um deles abriria espaço para divergirem, e a estrutura descrita de um
+ * jeito na lista e de outro na lupa é pior que a descrição em inglês.
+ *
+ * O objeto do fragmento é copiado em vez de mutado: o módulo JSON importado é
+ * um singleton de processo, e escrever nele contaminaria toda requisição
+ * seguinte da mesma instância serverless.
+ */
+function traduzirOverlays(pagina: Pagina): Pagina {
+  if (!pagina.overlays?.length) return pagina
+  return {
+    ...pagina,
+    overlays: pagina.overlays.map((o) => {
+      const pt = traduzirExplicacao(o.explicacaoOriginal)
+      return pt ? { ...o, explicacao: pt } : o
+    }),
+  }
+}
+
+/**
  * Carrega uma página pelo caminho de slugs. Devolve `null` para rota
  * inexistente — quem chama transforma isso em 404, sem inventar página vazia.
  */
@@ -86,7 +110,8 @@ export async function obterPagina(caminho: string[]): Promise<Pagina | null> {
   const carregar = FRAGMENTOS[chaveDoFragmento(caminho)]
   if (!carregar) return null
   const fragmento = (await carregar()).default as Record<string, Pagina>
-  return fragmento[caminho.join('/')] ?? null
+  const pagina = fragmento[caminho.join('/')]
+  return pagina ? traduzirOverlays(pagina) : null
 }
 
 /** Todas as páginas de um subsetor, na ordem do catálogo. */
@@ -94,7 +119,7 @@ export async function obterFragmento(caminho: string[]): Promise<Pagina[]> {
   const carregar = FRAGMENTOS[chaveDoFragmento(caminho)]
   if (!carregar) return []
   const fragmento = (await carregar()).default as Record<string, Pagina>
-  return Object.values(fragmento)
+  return Object.values(fragmento).map(traduzirOverlays)
 }
 
 /**

@@ -1329,15 +1329,22 @@ function DossieDaEstrutura({ overlay }: { overlay: Overlay }) {
         </p>
       )}
 
-      {overlay.explicacaoOriginal && (
-        <details className="mt-2.5">
-          <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Descrição do acervo
-          </summary>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            {overlay.explicacaoOriginal}
-          </p>
-        </details>
+      {/* Traduzida, ela é o conteúdo principal da lupa e fica aberta; ainda em
+          inglês, continua dobrada atrás do resumo — o aluno escolhe se quer
+          encarar o original em vez de topar com ele no meio da leitura. */}
+      {overlay.explicacao ? (
+        <p className="mt-2.5 text-xs leading-relaxed">{overlay.explicacao}</p>
+      ) : (
+        overlay.explicacaoOriginal && (
+          <details className="mt-2.5">
+            <summary className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Descrição do acervo (em inglês)
+            </summary>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              {overlay.explicacaoOriginal}
+            </p>
+          </details>
+        )
       )}
 
       {!dossie && (

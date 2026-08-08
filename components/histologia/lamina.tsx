@@ -539,7 +539,9 @@ function DossieDaEstrutura({
         </p>
       )}
 
-      {overlay.explicacaoOriginal ? (
+      {overlay.explicacao ? (
+        <p className="mt-3 text-sm leading-relaxed">{destacarTermos(overlay.explicacao)}</p>
+      ) : overlay.explicacaoOriginal ? (
         <>
           <p className="mt-3 text-sm leading-relaxed">{overlay.explicacaoOriginal}</p>
           <p className="mt-2 text-[10px] text-muted-foreground">
