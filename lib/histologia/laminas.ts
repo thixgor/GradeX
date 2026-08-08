@@ -1686,6 +1686,1162 @@ export const DESCRICOES: Record<string, DescricaoDeLamina> = {
       'Use a localização como confirmação — bipolar fora dessas quatro sedes é achado a questionar.',
     ],
   },
+
+  terminals: {
+    panorama:
+      'Os terminais são o ponto em que o axônio deixa de conduzir e passa a comunicar. No sistema nervoso central e nos gânglios, o terminal forma **sinapses** — o botão pré-sináptico, cheio de vesículas e mitocôndrias, a fenda de 20 a 30 nm e a densidade pós-sináptica. No músculo esquelético, o terminal se expande na **junção neuromuscular** (placa motora), onde o axônio perde a mielina, se ramifica em botões que se alojam em goteiras da fibra e liberam acetilcolina sobre uma membrana pregueada e cheia de receptores. Nos efetores autonômicos, não há placa: o axônio corre entre as células e libera o transmissor por **varicosidades** em série, banhando várias células ao mesmo tempo.',
+    roteiro: [
+      'Decida o tipo de alvo antes de descrever o terminal — a arquitetura muda completamente entre eles.',
+      'Na placa motora, procure a arborização terminal sobre a fibra e a ausência de bainha de mielina no trecho final.',
+    ],
+  },
+
+  'peripheral nerve: investments': {
+    panorama:
+      'Um nervo periférico é envolvido por três bainhas de conjuntivo encaixadas, e cada uma tem função e composição distintas. O **endoneuro** é conjuntivo frouxo delicado em torno de **cada fibra**, com fibras reticulares e capilares, e é o meio em que o axônio regenera. O **perineuro** envolve cada **fascículo** e é o mais especializado: camadas concêntricas de células epitelioides unidas por junções estreitas, com lâmina basal, formando a **barreira hematonervosa** que protege o endoneuro — é também o que torna o bloqueio anestésico dependente da difusão através dele. O **epineuro** é conjuntivo denso externo, que reúne os fascículos, carrega os vasos maiores e absorve tração.',
+    roteiro: [
+      'Nomeie as três bainhas de fora para dentro e associe cada uma ao que ela envolve.',
+      'Procure as células achatadas em camadas do perineuro — é a bainha mais fácil de reconhecer.',
+    ],
+  },
+
+  'cell cycle': {
+    panorama:
+      'O ciclo celular é a sequência ordenada que leva uma célula a duplicar seu conteúdo e dividi-lo. Tem duas grandes partes: a **intérfase**, com G1, S e G2, e a **fase M**, com mitose e citocinese. Em G1 a célula cresce e decide, no **ponto de restrição**, se prossegue ou entra em **G0**, estado de quiescência de onde muitas células — neurônios, cardiomiócitos — nunca voltam. Em S o DNA é replicado; em G2 há checagem e preparo. O avanço é comandado por **ciclinas** e **quinases dependentes de ciclina**, e vigiado por pontos de checagem que interrompem o ciclo diante de dano no DNA ou fuso mal montado. A perda desses controles é o mecanismo central da transformação maligna.',
+    roteiro: [
+      'Situe cada figura observada na sequência antes de nomeá-la isoladamente.',
+      'Estime quantas células do campo estão em G0 — na maioria dos tecidos adultos, quase todas.',
+    ],
+  },
+
+  mitosis: {
+    panorama:
+      'A mitose distribui cópias idênticas do genoma para duas células-filhas, e sua sequência é sempre a mesma: **prófase**, com condensação da cromatina, desmonte do nucléolo e formação do fuso; **prometáfase**, com ruptura do envoltório nuclear e captura dos cinetocoros; **metáfase**, com os cromossomos alinhados na placa equatorial; **anáfase**, com separação das cromátides irmãs e sua migração para os polos; e **telófase**, com descondensação, reconstrução do envoltório e reaparecimento dos nucléolos, seguida pela **citocinese**. Em H&E, o que denuncia uma célula em mitose é a combinação de cromatina densa e grosseira com ausência de contorno nuclear — nenhuma célula em intérfase tem as duas coisas.',
+    roteiro: [
+      'Use a presença ou ausência do envoltório para separar prófase das fases seguintes.',
+      'Procure mitoses nas zonas proliferativas do tecido: basal da epiderme, cripta intestinal, centro germinativo.',
+    ],
+  },
+
+  'late telophase and cytokinesis': {
+    panorama:
+      'No final da telófase os dois núcleos já estão praticamente reconstituídos e a divisão do citoplasma domina a cena. O **anel contrátil** de actina e miosina II, ancorado na face interna da membrana no plano equatorial, aperta progressivamente e produz o **sulco de clivagem**, que se aprofunda até que as duas células fiquem unidas apenas por uma ponte estreita. Dentro dela, os microtúbulos remanescentes do fuso central formam o **corpo intermediário** (midbody), plataforma onde a maquinaria de abscisão faz o corte final. As organelas — mitocôndrias, retículo, Golgi já refragmentado — são repartidas estocasticamente entre as filhas, e não por um mecanismo de precisão como o dos cromossomos.',
+    roteiro: [
+      'Procure duas massas de cromatina descondensando unidas por uma ponte fina.',
+      'Note a assimetria possível no tamanho das filhas — a divisão do citoplasma nem sempre é igual.',
+    ],
+  },
+
+  meiosis: {
+    panorama:
+      'A meiose é a divisão que reduz o número de cromossomos pela metade e gera variabilidade. São **duas divisões após uma única replicação**. Na **meiose I**, os cromossomos homólogos pareiam na prófase I — leptóteno, zigóteno, paquíteno, diplóteno e diacinese — formando o complexo sinaptonêmico e trocando segmentos no **crossing over**; depois os homólogos, e não as cromátides, se separam: é a divisão reducional, que leva de diploide a haploide. Na **meiose II**, sem nova replicação, as cromátides irmãs se separam como numa mitose comum. O resultado são quatro células haploides geneticamente distintas, e a distinção vem de duas fontes: a recombinação e o sorteio independente dos homólogos na metáfase I.',
+    roteiro: [
+      'Determine primeiro qual das duas divisões você está vendo: o que se separa é diferente em cada uma.',
+      'Procure espermatócitos primários em paquíteno no túbulo seminífero — são as maiores células germinativas.',
+    ],
+  },
+
+  gametogenesis: {
+    panorama:
+      'A gametogênese aplica a meiose de modos muito diferentes nos dois sexos. A **espermatogênese** começa na puberdade e é contínua: cada espermatogônia dá origem a quatro espermátides, que se transformam em espermatozoides na espermiogênese, sem divisão, com formação do acrossomo, condensação do núcleo, montagem do flagelo e descarte de citoplasma. A **ovogênese** começa na vida fetal, para no **diplóteno da prófase I** até a ovulação, quando se completa a meiose I com divisão **desigual** — um oócito secundário grande e um corpúsculo polar minúsculo —, e a meiose II só termina se houver fecundação. Um oócito por ciclo, portanto, contra dezenas de milhões de espermatozoides por dia.',
+    roteiro: [
+      'Compare as duas linhas pelo destino do citoplasma: dividido igualmente no macho, concentrado num só gameta na fêmea.',
+      'Lembre da parada prolongada em prófase I: ela explica o aumento de erros meióticos com a idade materna.',
+    ],
+  },
+
+  'overview of cell structures': {
+    panorama:
+      'A célula eucariótica se organiza em três compartimentos que orientam qualquer leitura. O **núcleo** guarda o genoma, delimitado pelo envoltório com poros, e contém a cromatina e o nucléolo. O **citoplasma** aloja as organelas membranosas — retículo rugoso e liso, Golgi, lisossomos, peroxissomos e mitocôndrias — e as não membranosas, como ribossomos, centríolos e o citoesqueleto de microfilamentos, filamentos intermediários e microtúbulos. A **membrana plasmática** delimita o conjunto e é a interface com o meio. Uma regra prática vale para quase todas as lâminas: a **basofilia** do citoplasma indica RER e ribossomos, e portanto síntese de proteína para exportação; a **acidofilia** indica mitocôndrias, filamentos e proteína já formada.',
+    roteiro: [
+      'Leia a cor do citoplasma antes de procurar organelas: ela já prediz a função dominante.',
+      'Use o tamanho e a densidade do nucléolo como segunda pista de atividade sintética.',
+    ],
+  },
+
+  'nuclear pores': {
+    panorama:
+      'Os poros nucleares são as únicas passagens entre núcleo e citoplasma, e existem aos milhares em cada envoltório. Cada um se forma onde as membranas interna e externa se fundem, e é ocupado por um **complexo do poro nuclear**: cerca de trinta proteínas diferentes montadas com **simetria octogonal**, formando um anel citoplasmático com filamentos, um anel nuclear com a cesta e um canal central de aproximadamente 9 nm. Moléculas pequenas passam por difusão; proteínas e RNAs maiores só atravessam com sinal — importinas reconhecem a sequência de localização nuclear, exportinas fazem o caminho inverso, e o gradiente da GTPase Ran fornece a direção. O número de poros acompanha a atividade transcricional da célula.',
+    roteiro: [
+      'Procure os poros como interrupções do envoltório em corte tangencial; de face aparecem como anéis.',
+      'Relacione a densidade de poros à atividade da célula observada.',
+    ],
+  },
+
+  'rough endoplasmic reticulum and polysomes': {
+    panorama:
+      'A distinção entre ribossomos **ligados** e **livres** define o destino da proteína, e a lâmina permite inferi-la. Os ribossomos aderidos à face citosólica do retículo rugoso traduzem proteínas destinadas à exportação, à membrana ou às organelas do sistema endomembranoso; a proteína entra na cisterna pelo translocon durante a própria tradução, guiada pelo peptídeo-sinal. Os **polissomos livres** — vários ribossomos enfileirados no mesmo mRNA, formando rosetas ou espirais no citosol — produzem proteínas de uso interno: enzimas citosólicas, elementos do citoesqueleto, proteínas nucleares e mitocondriais. Ambos coram-se de azul em H&E, e é a distribuição, não a cor, que os diferencia.',
+    roteiro: [
+      'Em microscopia eletrônica, verifique se os ribossomos estão sobre cisternas ou soltos em roseta.',
+      'Em luz, associe basofilia difusa a polissomos livres e basofilia em faixas a RER organizado.',
+    ],
+  },
+
+  'nissl substance': {
+    panorama:
+      'A substância de Nissl é o nome clássico dado, no corpo do neurônio, ao conjunto de **retículo endoplasmático rugoso e polissomos livres** organizados em blocos volumosos. Em H&E e sobretudo em corantes básicos como azul de toluidina, aparece como grumos basófilos espalhados pelo pericário e pelos dendritos — e **ausentes no cone de implantação e no axônio**, ausência que é a melhor forma de identificar qual prolongamento é o axônio em uma lâmina de rotina. Ela reflete a intensidade da síntese proteica necessária para manter um citoplasma que pode se estender por mais de um metro. Após lesão axonal, os blocos se dispersam e a coloração se desfaz na **cromatólise**, sinal de reação regenerativa.',
+    roteiro: [
+      'Ache o prolongamento sem Nissl para identificar o axônio.',
+      'Avalie se os grumos estão íntegros ou dispersos — a dispersão é achado, não artefato.',
+    ],
+  },
+
+  'smooth endoplasmic reticulum': {
+    panorama:
+      'O retículo endoplasmático liso é uma rede de túbulos anastomosados sem ribossomos, contínua com o rugoso, e sua abundância denuncia a função da célula. Ele sintetiza **lipídios e esteroides**, o que explica seu desenvolvimento máximo nas células da suprarrenal, do corpo lúteo e de Leydig; **detoxifica** fármacos e xenobióticos pelo sistema do citocromo P450, o que explica sua proliferação no hepatócito após exposição a álcool e barbitúricos; e **sequestra cálcio**, função que na fibra muscular é levada ao extremo pelo retículo sarcoplasmático, que envolve cada miofibrila e libera o cálcio que dispara a contração. Como não tem ribossomos, o citoplasma rico em REL é **acidófilo ou pálido**, não basófilo.',
+    roteiro: [
+      'Use a acidofilia ou palidez do citoplasma como pista indireta de REL abundante.',
+      'Relacione o achado à função conhecida do órgão antes de concluir.',
+    ],
+  },
+
+  cytoskeleton: {
+    panorama:
+      'O citoesqueleto é uma rede dinâmica de três sistemas de filamentos, cada um com monômero, diâmetro e papel próprios. Os **microfilamentos** de actina, com cerca de 7 nm, sustentam microvilosidades, formam a trama terminal e o anel contrátil, e dão motilidade em conjunto com a miosina. Os **filamentos intermediários**, de 10 nm, são os mais estáveis e puramente estruturais — queratinas nos epitélios, vimentina no conjuntivo, desmina no músculo, neurofilamentos no neurônio, laminas no núcleo —, e essa especificidade de tipo é usada rotineiramente para classificar tumores. Os **microtúbulos**, de 25 nm, são tubos ocos de tubulina que partem do centrossomo, servem de trilho para cinesinas e dineínas e formam fuso, cílios e flagelos.',
+    roteiro: [
+      'Classifique pelo diâmetro em microscopia eletrônica: 7, 10 e 25 nm não se confundem.',
+      'Em luz, deduza o sistema pelo que a célula faz — contrai, resiste a tração ou transporta.',
+    ],
+  },
+
+  microfilaments: {
+    panorama:
+      'Os microfilamentos são polímeros de **actina** de aproximadamente 7 nm, o menor dos três sistemas e o mais dinâmico: montam-se e desmontam-se continuamente, com a extremidade mais crescendo e a menos encurtando. Concentram-se logo abaixo da membrana plasmática, formando o **córtex celular** que define a forma e permite as mudanças de superfície. Suas funções derivam sempre da associação com proteínas parceiras: com miosina II fazem contração — do sarcômero muscular ao anel de citocinese —, com fimbrina e vilina sustentam o eixo das microvilosidades, com espectrina ancoram a membrana da hemácia, e sozinhos, em polimerização dirigida, empurram a membrana na formação de lamelipódios e pseudópodos.',
+    roteiro: [
+      'Procure a faixa densa logo sob a membrana apical, a trama terminal, como manifestação em luz.',
+      'Associe cada função à proteína parceira — actina isolada não faz quase nada.',
+    ],
+  },
+
+  'intermediate filaments': {
+    panorama:
+      'Os filamentos intermediários têm cerca de 10 nm — diâmetro entre o dos microfilamentos e o dos microtúbulos, daí o nome — e são o componente **puramente estrutural** do citoesqueleto: não têm polaridade, não hidrolisam nucleotídeo e não participam de transporte ou contração. São os mais estáveis e resistem a tração, distribuindo a força mecânica pelo tecido inteiro através de suas ancoragens em desmossomos e hemidesmossomos. Sua composição é **específica de linhagem** — queratinas em epitélios, vimentina em células mesenquimais, desmina em músculo, proteína glial fibrilar ácida em astrócitos, neurofilamentos em neurônios —, e essa especificidade faz deles os marcadores mais usados em imuno-histoquímica para determinar a origem de um tumor.',
+    roteiro: [
+      'Ligue o tipo de filamento ao tecido: essa correspondência é a base do uso diagnóstico.',
+      'Procure os tonofilamentos convergindo para os desmossomos na camada espinhosa da epiderme.',
+    ],
+  },
+
+  'intermediate filaments and microtubules': {
+    panorama:
+      'Comparar os dois sistemas esclarece o papel de cada um. Os **filamentos intermediários** são apolares, estáveis, montados a partir de monômeros fibrosos que se enrolam em tétrades antissimétricas, e existem para **resistir a estresse mecânico**; sua composição varia com o tecido. Os **microtúbulos** são polares, instáveis por construção — alternam crescimento e catástrofe na chamada instabilidade dinâmica —, montados de dímeros globulares de alfa e beta-tubulina em treze protofilamentos, e existem para **organizar o espaço e transportar**: nucleiam no centrossomo, servem de trilho para cinesina (em direção à periferia) e dineína (em direção ao centro), formam o fuso mitótico e o axonema. Venenos como colchicina e taxol atacam apenas os microtúbulos.',
+    roteiro: [
+      'Use estabilidade e polaridade como critérios: eles separam os dois sistemas melhor que o diâmetro.',
+      'Relacione a instabilidade dinâmica ao motivo pelo qual antimitóticos funcionam.',
+    ],
+  },
+
+  'cell shapes: spherical': {
+    panorama:
+      'A forma esférica é a que uma célula assume quando **nada a deforma**: sem adesão a vizinhas, sem matriz que a estire, a tensão superficial do córtex de actina minimiza a área e produz a esfera. Por isso ela caracteriza células livres ou suspensas — leucócitos circulantes, o oócito, condrócitos e adipócitos isolados na matriz — e também células que se soltaram temporariamente, como qualquer célula aderente prestes a se dividir, que arredonda antes da mitose. O contraste é informativo: célula esférica em meio a um epitélio coeso é achado a explicar, seja migração, apoptose ou perda de adesão. A forma, portanto, é leitura direta das forças mecânicas em que a célula está inserida.',
+    roteiro: [
+      'Pergunte o que está tocando a célula: a forma é consequência do contato, não uma propriedade fixa.',
+      'Procure células arredondadas dentro de epitélios — quase sempre estão em mitose ou em trânsito.',
+    ],
+  },
+
+  'mucosal membrane': {
+    panorama:
+      'A membrana mucosa é o revestimento das cavidades que se comunicam com o exterior, e tem sempre pelo menos duas camadas: um **epitélio**, cujo tipo é ditado pela agressão local — estratificado pavimentoso onde há atrito, como boca, esôfago e vagina; simples colunar onde há absorção ou secreção, como estômago e intestino; pseudoestratificado ciliado nas vias aéreas; urotélio na via urinária —, e uma **lâmina própria** de conjuntivo frouxo, ricamente vascularizada e povoada por células de defesa, plasmócitos e nódulos linfoides. No tubo digestório soma-se uma terceira camada, a **muscular da mucosa**, fina lâmina de músculo liso que move a mucosa independentemente da parede e cuja presença define o limite com a submucosa.',
+    roteiro: [
+      'Identifique o epitélio e pergunte qual agressão ele enfrenta — a resposta explica a escolha.',
+      'Procure a muscular da mucosa para saber onde a mucosa termina.',
+    ],
+  },
+
+  'cortex and medullla': {
+    panorama:
+      'A dupla córtex e medula é um plano de organização que se repete em órgãos de funções muito distintas, e reconhecê-lo economiza tempo em qualquer lâmina. O **córtex** é a região periférica, logo abaixo da cápsula; a **medula**, a central. No **rim**, o córtex tem corpúsculos e túbulos contorcidos e a medula tem alças e coletores em arranjo estriado. No **linfonodo**, o córtex tem nódulos B e o paracórtex tem T, enquanto a medula tem cordões e seios. No **timo**, o córtex é escuro pelos timócitos e a medula é clara e tem corpúsculos de Hassall. Na **suprarrenal**, o córtex faz esteroides e a medula, catecolaminas — duas origens embriológicas diferentes no mesmo órgão. No **ovário**, o córtex tem folículos e a medula, vasos.',
+    roteiro: [
+      'Comece toda lâmina de órgão capsulado localizando cápsula, córtex e medula antes de qualquer detalhe.',
+      'Lembre que a divisão é topográfica: o que ela significa muda inteiramente de órgão para órgão.',
+    ],
+  },
+
+  globe: {
+    panorama:
+      'O bulbo ocular tem três túnicas concêntricas. A **fibrosa**, externa, é a **esclera** opaca em cinco sextos e a **córnea** transparente no sexto anterior, e dá forma e proteção. A **vascular** (úvea), média, compreende a **coroide** posterior, muito vascularizada e pigmentada, o **corpo ciliar**, que produz humor aquoso e ajusta o cristalino pelo músculo ciliar, e a **íris**, diafragma com dois músculos antagonistas que controla a pupila. A **nervosa**, interna, é a **retina**, com sua parte óptica fotossensível e a parte cega anterior. O interior se divide em câmara anterior e posterior, ambas com humor aquoso, e a cavidade vítrea, com o corpo vítreo gelatinoso, atrás do cristalino.',
+    roteiro: [
+      'Percorra as três túnicas de fora para dentro antes de examinar qualquer região isolada.',
+      'Ache o limbo e a ora serrata: são as duas transições que orientam o corte inteiro.',
+    ],
+  },
+
+  'globe: cornea': {
+    panorama:
+      'A córnea é transparente e avascular, e cada uma de suas cinco camadas contribui para isso. O **epitélio anterior** é estratificado pavimentoso não queratinizado, com alta capacidade de regeneração a partir de células-tronco do limbo. A **membrana de Bowman**, homogênea e acelular, é a camada mais superficial do estroma. O **estroma** ocupa 90% da espessura e é o segredo da transparência: cerca de 200 a 250 lamelas de colágeno tipo I com fibrilas de diâmetro uniforme e espaçamento regular, o que cancela o espalhamento de luz por interferência. A **membrana de Descemet** é a lâmina basal espessa do **endotélio corneano**, camada simples pavimentoso que bombeia água para fora e mantém o estroma desidratado — sem essa bomba, a córnea incha e opacifica.',
+    roteiro: [
+      'Conte as cinco camadas em ordem antes de descrever qualquer uma.',
+      'Relacione a regularidade do estroma à transparência: é a explicação central da lâmina.',
+    ],
+  },
+
+  'globe: limbus': {
+    panorama:
+      'O limbo é a zona de transição entre córnea e esclera e concentra estruturas de grande importância funcional. Nele o **epitélio corneano** passa a conjuntival, o estroma perde a regularidade lamelar e ganha vasos, e a membrana de Bowman termina. Ali reside o nicho de **células-tronco limbares**, responsáveis por repovoar o epitélio corneano — sua destruição, em queimaduras químicas, leva à opacificação permanente. No estroma do limbo fica o sistema de drenagem do humor aquoso: a **rede trabecular**, malha de trabéculas revestidas por endotélio, e o **canal de Schlemm**, vaso circular que recolhe o aquoso e o devolve à circulação venosa. A obstrução dessa via é o mecanismo do glaucoma de ângulo aberto.',
+    roteiro: [
+      'Ache o canal de Schlemm como uma luz alongada revestida por endotélio no estroma limbar.',
+      'Note a chegada dos vasos: a transição de avascular para vascularizado marca o limbo.',
+    ],
+  },
+
+  'globe: sclera': {
+    panorama:
+      'A esclera é a porção opaca e resistente da túnica fibrosa, ocupando os cinco sextos posteriores do bulbo. É conjuntivo **denso não modelado** com feixes espessos de colágeno tipo I entremeados de fibras elásticas, dispostos em várias direções — e é justamente essa irregularidade de diâmetro e arranjo, oposta à do estroma corneano, que a torna opaca e branca. Tem poucos vasos e poucos fibroblastos. Sua espessura varia, sendo maior perto do nervo óptico, onde é atravessada pela **lâmina crivosa**, e menor sob a inserção dos músculos extrínsecos. Externamente é recoberta pela cápsula de Tenon e pela conjuntiva; internamente, a lâmina supracoroide faz a transição para a úvea.',
+    roteiro: [
+      'Compare o arranjo das fibras com o do estroma corneano na mesma lâmina — a diferença explica a opacidade.',
+      'Procure a inserção dos músculos extrínsecos para localizar-se no bulbo.',
+    ],
+  },
+
+  'globe: ciliary body': {
+    panorama:
+      'O corpo ciliar é o anel que une a coroide à íris e reúne duas funções. Produz o **humor aquoso**: seu epitélio é duplo — uma camada externa pigmentada e uma interna não pigmentada, arranjo herdado da invaginação da vesícula óptica, com os ápices voltados um para o outro —, e a camada não pigmentada secreta ativamente o aquoso a partir do plexo capilar dos **processos ciliares**, pregas radiais na superfície interna. E ajusta o foco: o **músculo ciliar**, liso, com fibras meridionais, radiais e circulares, quando contrai relaxa as **fibras zonulares** que suspendem o cristalino, deixando-o assumir forma mais esférica para a visão de perto. Com a idade o cristalino endurece e essa acomodação se perde.',
+    roteiro: [
+      'Ache o epitélio duplo — pigmentado por fora, claro por dentro — para confirmar o corpo ciliar.',
+      'Siga as fibras zonulares dos processos ciliares até o equador do cristalino.',
+    ],
+  },
+
+  'globe: iris': {
+    panorama:
+      'A íris é o diafragma do olho, projetando-se sobre o cristalino e delimitando a pupila. Sua face anterior é irregular e **sem epitélio de revestimento**, formada por fibroblastos e melanócitos dispostos em camada descontínua. O estroma é conjuntivo frouxo e muito vascularizado, com quantidade variável de melanócitos — é a densidade deles, e não uma diferença de pigmento, que determina a cor dos olhos: pouca melanina espalha a luz curta e o olho aparece azul. Na face posterior há duas camadas de epitélio **intensamente pigmentado**, que bloqueiam a luz. Dois músculos antagonistas controlam a pupila: o **esfíncter da pupila**, circular e parassimpático, e o **dilatador**, radial e simpático, ambos de origem neuroectodérmica.',
+    roteiro: [
+      'Localize a margem pupilar e siga do estroma até o epitélio pigmentado posterior.',
+      'Procure o esfíncter como uma banda de músculo liso próxima à margem pupilar.',
+    ],
+  },
+
+  'globe: choroid': {
+    panorama:
+      'A coroide é a porção posterior da úvea, situada entre esclera e retina, e existe para nutrir e para absorver luz. É conjuntivo frouxo com uma densidade excepcional de **melanócitos**, que dão a cor escura e impedem a reflexão interna de luz dispersa. Organiza-se em camadas: a lâmina supracoroide, de transição com a esclera; a camada vascular, com artérias e veias de calibre maior; a **coriocapilar**, um plexo de capilares fenestrados de grande calibre logo abaixo da retina, que nutre por difusão o epitélio pigmentar e os fotorreceptores — as camadas retinianas mais externas não têm vasos próprios; e a **membrana de Bruch**, lâmina fina que separa a coriocapilar do epitélio pigmentar e cujo espessamento está no centro da degeneração macular.',
+    roteiro: [
+      'Ache a coriocapilar encostada na retina: a proximidade é o que viabiliza a nutrição por difusão.',
+      'Distinga o pigmento da coroide, difuso no estroma, do pigmento do epitélio retiniano, em fileira única.',
+    ],
+  },
+
+  retina: {
+    panorama:
+      'A retina tem duas folhas de origem embriológica comum, vindas da vesícula óptica. O **epitélio pigmentar**, externo, é uma camada simples cúbica apoiada na membrana de Bruch, cheia de melanina, que absorve luz dispersa, fagocita as pontas gastas dos segmentos externos dos fotorreceptores e recicla o retinal. A **retina neural**, interna, contém a cadeia de três neurônios — fotorreceptor, bipolar, ganglionar — mais células horizontais e amácrinas, que fazem o processamento lateral, e a glia de Müller. Uma peculiaridade: a luz atravessa toda a espessura antes de chegar aos fotorreceptores, que ficam no fundo. Entre as duas folhas persiste um espaço virtual, resquício da cavidade da vesícula, por onde ocorre o descolamento de retina.',
+    roteiro: [
+      'Conte as dez camadas em ordem, de fora para dentro, antes de examinar células isoladas.',
+      'Localize a fóvea, onde as camadas internas se afastam e só restam cones.',
+    ],
+  },
+
+  'external ear: external auditory meatus': {
+    panorama:
+      'O meato acústico externo é um canal de aproximadamente 2,5 cm revestido por pele, e seu esqueleto muda ao longo do trajeto: o terço externo é sustentado por **cartilagem elástica**, continuação da do pavilhão, e os dois terços internos são escavados no **osso temporal**. Na porção cartilaginosa, a pele tem pelos grossos, glândulas sebáceas e **glândulas ceruminosas**, que são sudoríparas apócrinas modificadas, com luz ampla e epitélio cúbico contendo grânulos de pigmento; a mistura de sua secreção com o sebo e com queratina descamada forma o cerume, que acidifica e protege o canal. Na porção óssea, a pele é fina, quase sem anexos, e adere firmemente ao periósteo — o que torna qualquer inflamação ali muito dolorosa.',
+    roteiro: [
+      'Determine se o suporte é cartilagem ou osso: isso localiza o segmento e prediz os anexos.',
+      'Procure as glândulas ceruminosas pela luz ampla, distinta da sudorípara écrina comum.',
+    ],
+  },
+
+  'middle ear': {
+    panorama:
+      'O ouvido médio é uma cavidade aérea no temporal que transforma onda sonora aérea em vibração mecânica, resolvendo o problema de impedância entre ar e líquido. É revestido por epitélio **simples pavimentoso a cúbico**, que se torna ciliado e com caliciformes perto da tuba auditiva. A **membrana timpânica** fecha-o lateralmente: pele por fora, camada intermediária de fibras colágenas radiais e circulares, e mucosa por dentro. A cadeia de ossículos — martelo, bigorna e estribo — articula-se por sinoviais verdadeiras e amplifica a pressão cerca de vinte vezes pela razão entre as áreas do tímpano e da janela oval. Dois músculos esqueléticos, tensor do tímpano e estapédio, amortecem sons intensos. A **tuba auditiva** equaliza a pressão com a faringe.',
+    roteiro: [
+      'Identifique as três camadas da membrana timpânica antes de descrever a cavidade.',
+      'Note a mudança de epitélio em direção à tuba — é gradual e informa a orientação do corte.',
+    ],
+  },
+
+  'vestibular macula': {
+    panorama:
+      'A mácula é a área sensorial do utrículo e do sáculo, especializada em detectar **aceleração linear** e a orientação da cabeça em relação à gravidade. É uma placa de epitélio com células ciliadas dos tipos I e II e células de sustentação, sobre a qual repousa a **membrana otolítica**: uma camada gelatinosa de glicoproteínas coberta por cristais de carbonato de cálcio, as **otocônias**. Como esses cristais são mais densos que a endolinfa, sua inércia desloca a membrana quando a cabeça acelera ou se inclina, dobrando os estereocílios. Uma faixa central, a **estríola**, divide a mácula em duas metades com polaridade oposta, de modo que qualquer direção de movimento excita uma parte e inibe a outra.',
+    roteiro: [
+      'Procure as otocônias sobre o epitélio: elas separam mácula de crista ampular imediatamente.',
+      'Compare com a orientação da mácula do sáculo — as duas ficam em planos perpendiculares.',
+    ],
+  },
+
+  'cochlear duct': {
+    panorama:
+      'O ducto coclear é o compartimento **endolinfático** da cóclea, de secção triangular, encaixado entre as rampas vestibular e timpânica, que contêm perilinfa. Seus três lados têm histologia distinta: o teto é a **membrana vestibular** (de Reissner), fina, de duas camadas de células pavimentosas, que separa endo de perilinfa mantendo a diferença iônica; a parede externa é a **estria vascular**, um epitélio estratificado atípico e vascularizado — único epitélio do corpo com capilares dentro dele — que secreta a endolinfa e mantém seu potássio alto e seu potencial positivo; e o assoalho é a **membrana basilar**, sobre a qual assenta o órgão de Corti, com o limbo espiral e a membrana tectória cobrindo as células ciliadas.',
+    roteiro: [
+      'Nomeie os três lados do triângulo antes de examinar o órgão de Corti.',
+      'Procure capilares dentro do epitélio da estria vascular — é um achado único no corpo.',
+    ],
+  },
+
+  'skin overview': {
+    panorama:
+      'A pele é o maior órgão do corpo e tem duas camadas de origens diferentes. A **epiderme**, ectodérmica, é epitélio estratificado pavimentoso queratinizado, avascular, renovado a cada quatro semanas a partir da camada basal e organizado em estratos que registram a diferenciação progressiva do queratinócito. A **derme**, mesodérmica, é conjuntivo que fornece resistência, vasos e nervos, dividida em papilar frouxa e reticular densa. Abaixo, a **hipoderme** — que não faz parte da pele em sentido estrito — é tecido adiposo que isola e amortece. Os anexos (folículos pilosos, glândulas sebáceas, sudoríparas e unhas) são invaginações epidérmicas alojadas na derme. Fala-se em pele espessa, das palmas e plantas, e pele fina, do restante do corpo.',
+    roteiro: [
+      'Decida primeiro se a pele é espessa ou fina: a presença de estrato lúcido e a ausência de pelos resolvem.',
+      'Conte os estratos da epiderme antes de descrever a derme.',
+    ],
+  },
+
+  'basal lamina': {
+    panorama:
+      'A lâmina basal é a porção da membrana basal produzida pelo **próprio epitélio** e só visível em microscopia eletrônica, com 40 a 120 nm. Tem duas sublâminas: a **lâmina lúcida**, clara, onde ficam as porções de laminina e integrinas ancoradas aos hemidesmossomos, e a **lâmina densa**, escura, uma rede bidimensional de **colágeno tipo IV** entrelaçada com laminina, nidogênio e perlecan. Ela existe em toda superfície epitelial, mas também envolve fibras musculares, adipócitos e células de Schwann, e no glomérulo renal se funde com a do endotélio formando a barreira de filtração. Suas funções vão além da adesão: filtra, polariza a célula, orienta a migração e serve de trilho para a regeneração após lesão.',
+    roteiro: [
+      'Confirme as duas sublâminas em microscopia eletrônica; em luz só se vê a membrana basal como um todo.',
+      'Note onde ela existe fora de epitélios — a lista é curta e vale memorizar.',
+    ],
+  },
+
+  'stratum granulosum': {
+    panorama:
+      'A camada granulosa é onde o queratinócito decide morrer, e tudo o que acontece nela prepara a barreira. Suas três a cinco fileiras de células achatadas são reconhecíveis pelos **grânulos de querato-hialina**, intensamente basófilos e de contorno irregular, sem membrana, que contêm profilagrina — precursora da filagrina, que agrega os filamentos de queratina em feixes compactos. Ao mesmo tempo, os **corpos lamelares** (grânulos de Odland) despejam por exocitose um conteúdo lipídico no espaço intercelular, formando o cimento impermeável que é a verdadeira barreira contra a perda de água. No fim da camada, enzimas lisossômicas destroem núcleo e organelas, e a célula passa a corneócito.',
+    roteiro: [
+      'Procure os grânulos escuros e irregulares — sua forma os distingue de qualquer outro grânulo da epiderme.',
+      'Note o desaparecimento abrupto dos núcleos na transição para o estrato córneo.',
+    ],
+  },
+
+  "meissner's corpuscle": {
+    panorama:
+      'O corpúsculo de Meissner é um mecanorreceptor encapsulado alojado nas **papilas dérmicas**, logo abaixo da epiderme, o que o coloca no ponto mais próximo possível da superfície. Tem forma alongada, perpendicular à pele, e por dentro é feito de células achatadas de sustentação empilhadas em pilha oblíqua, entre as quais serpenteia um axônio mielinizado que perde a mielina ao entrar. Responde ao **toque leve e ao movimento** sobre a pele, adaptando-se rapidamente, e é o receptor da discriminação de dois pontos: sua densidade é máxima na polpa dos dedos, nos lábios e nos mamilos, e cai com a idade, o que explica a perda de sensibilidade tátil fina no idoso.',
+    roteiro: [
+      'Procure dentro da papila dérmica: fora dela, o corpúsculo é outro.',
+      'Note o eixo perpendicular à superfície — é característico e ajuda mesmo em cortes ruins.',
+    ],
+  },
+
+  'pacinian corpuscle': {
+    panorama:
+      'O corpúsculo de Pacini é o maior receptor encapsulado, chegando a mais de um milímetro, e o mais fácil de reconhecer: um corte transversal mostra dezenas de **lamelas concêntricas** de células achatadas separadas por espaço com líquido, exatamente como uma cebola cortada, em torno de um **axônio central** único e desmielinizado. Essa arquitetura é um filtro mecânico: as lamelas deslizam e dissipam a pressão estática, de modo que apenas mudanças rápidas — **vibração** e pressão profunda transitória — chegam ao axônio, o que faz dele um receptor de adaptação muito rápida. Localiza-se na derme profunda, na hipoderme, mas também em periósteo, mesentério, cápsulas articulares e pâncreas.',
+    roteiro: [
+      'Conte as lamelas e ache o axônio central: os dois juntos fecham o diagnóstico.',
+      'Não descarte cortes oblíquos — fora do plano equatorial o corpúsculo parece um cacho irregular.',
+    ],
+  },
+
+  'apocrine sweat gland': {
+    panorama:
+      'A glândula sudorípara apócrina é restrita a axila, região perianal, aréola e conduto auditivo, só se torna funcional na puberdade e responde a estímulo adrenérgico. Diferencia-se da écrina por três traços visíveis: a **luz do segmento secretor é muito ampla**, várias vezes maior; o epitélio é **simples cúbico a colunar** com ápice abaulado; e o ducto desemboca no **folículo piloso**, não diretamente na superfície. A secreção é viscosa, proteica e lipídica, inodora ao sair — o odor corporal vem da degradação bacteriana na superfície da pele. Apesar do nome, o mecanismo de secreção é predominantemente merócrino; o termo é histórico, herdado de uma interpretação antiga da imagem apical.',
+    roteiro: [
+      'Compare o calibre da luz com o de uma glândula écrina no mesmo campo.',
+      'Siga o ducto até seu destino — o folículo piloso confirma a apócrina.',
+    ],
+  },
+
+  'sebaceous gland': {
+    panorama:
+      'A glândula sebácea é acinar ramificada, ligada ao folículo piloso na unidade pilossebácea, e sua secreção é **holócrina**: a célula inteira se desintegra e vira o produto. O ácino mostra esse processo como um gradiente radial — na periferia, células basais pequenas, basófilas, com núcleo íntegro e capacidade proliferativa; para o centro, o citoplasma vai se enchendo de gotículas lipídicas e assume aspecto espumoso, o núcleo picnotiza e finalmente a célula se rompe. O sebo resultante lubrifica pelo e pele e tem ação antimicrobiana leve. A glândula é andrógeno-dependente, o que explica sua ativação na puberdade e seu papel central na acne, quando o ducto se obstrui e a unidade inflama.',
+    roteiro: [
+      'Leia o ácino de fora para dentro para ver o gradiente holócrino completo.',
+      'Localize o ducto curto conectando o ácino ao folículo.',
+    ],
+    atencao:
+      'O aspecto espumoso é lipídio extraído, não degeneração; ele é o próprio produto da glândula.',
+  },
+
+  'associated structures': {
+    panorama:
+      'Chamam-se estruturas associadas os anexos que, embora de origem epidérmica, alojam-se na derme e na hipoderme e trabalham em conjunto com a pele. O **folículo piloso** é uma invaginação com bulbo, papila dérmica indutora, matriz proliferativa e camadas concêntricas que formam pelo e bainhas; o **músculo eretor do pelo**, liso, liga o folículo à derme papilar e produz a piloereção. As **glândulas sebáceas** desembocam no folículo, formando a unidade pilossebácea. As **glândulas sudoríparas écrinas** e **apócrinas** completam o conjunto, e a **unha** é a placa de queratina dura produzida pela matriz ungueal. Todos derivam de brotos epidérmicos que mergulharam na derme durante o desenvolvimento.',
+    roteiro: [
+      'Localize cada anexo pela profundidade e pelo destino do ducto — os dois dados juntos identificam.',
+      'Procure o músculo eretor entre a derme papilar e o folículo para completar a unidade.',
+    ],
+  },
+
+  'arteries vs veins': {
+    panorama:
+      'Distinguir artéria de veia é a tarefa mais frequente em lâminas vasculares, e a comparação deve ser feita **entre os dois vasos do mesmo feixe**, nunca isoladamente. A artéria tem **parede espessa em relação à luz**, com média muscular bem desenvolvida e concêntrica, lâmina elástica interna frequentemente visível como uma linha ondulada e refringente, e luz redonda e aberta, porque a média contraída não colaba. A veia tem parede fina, luz ampla, frequentemente colabada ou irregular, média escassa e mal delimitada, adventícia proporcionalmente espessa e, nos membros, válvulas. Em muitos cortes a veia parece maior e mais deformada que a artéria acompanhante, apesar de transportar o mesmo volume.',
+    roteiro: [
+      'Compare os dois vasos do feixe antes de classificar qualquer um deles sozinho.',
+      'Procure a lâmina elástica interna ondulada: quando presente, resolve a questão.',
+    ],
+  },
+
+  'small artery': {
+    panorama:
+      'A artéria de pequeno calibre é o degrau entre a artéria muscular e a arteríola, e se define por ter de **quatro a oito camadas** de músculo liso na média — acima disso já é muscular de médio calibre, abaixo é arteríola. A íntima tem endotélio e uma **lâmina elástica interna** ainda evidente, ondulada pela contração post-mortem da média; a lâmina elástica externa é fina ou ausente. A adventícia é delgada. Junto com as arteríolas, é o principal território de resistência periférica e o alvo das alterações da hipertensão crônica, em que a média se espessa e a luz se estreita — a chamada arteriosclerose hialina, que reduz a perfusão de rim, retina e encéfalo.',
+    roteiro: [
+      'Conte as camadas musculares para separar de arteríola e de artéria muscular.',
+      'Verifique se a lâmina elástica interna ainda é contínua — ela some progressivamente com a redução do calibre.',
+    ],
+  },
+
+  sinusoid: {
+    panorama:
+      'O sinusoide é o capilar de maior permeabilidade e se distingue por três características que ocorrem juntas: **luz ampla e irregular**, que acompanha os espaços do órgão em vez de ser cilíndrica; **endotélio descontínuo**, com lacunas amplas entre células e sem diafragma; e **lâmina basal ausente ou fragmentada**. O fluxo é lento, o que favorece a troca. Existe onde é preciso que células inteiras ou proteínas grandes cruzem a parede: no **fígado**, forrado também por macrófagos de Kupffer; no **baço**, na polpa vermelha; na **medula óssea**, por onde as células maduras entram na circulação; e em glândulas endócrinas como a suprarrenal e a hipófise.',
+    roteiro: [
+      'Verifique se a luz acompanha o formato do parênquima em vez de ser regular.',
+      'Procure macrófagos residentes na parede — no fígado, as células de Kupffer fazem parte do revestimento.',
+    ],
+  },
+
+  veins: {
+    panorama:
+      'As veias contêm cerca de 70% do volume sanguíneo e funcionam como reservatório de capacitância, o que explica sua parede fina e complacente. Classificam-se por calibre: **vênulas**, de pós-capilares sem músculo a musculares; **veias de pequeno e médio calibre**, com média de poucas camadas e adventícia espessa; e **veias de grande calibre**, como a cava, em que a adventícia é a camada dominante e contém **feixes longitudinais de músculo liso**. Em todas, a média é proporcionalmente menor que na artéria correspondente e a adventícia é maior — inversão que é o traço mais constante do sistema. Válvulas em par, projeções da íntima, garantem o fluxo unidirecional onde ele se dá contra a gravidade.',
+    roteiro: [
+      'Estime a razão média/adventícia: ela é a assinatura venosa em qualquer calibre.',
+      'Nas veias grandes, procure músculo liso longitudinal na adventícia.',
+    ],
+  },
+
+  'small vein': {
+    panorama:
+      'A veia de pequeno calibre recebe o sangue das vênulas musculares e tem parede fina mas já com as três túnicas identificáveis. A **íntima** é endotélio sobre pouco subendotélio, sem lâmina elástica interna definida; a **média** tem uma a três camadas de músculo liso circular frouxamente arranjadas, com colágeno entre elas; e a **adventícia** é a camada mais espessa, de conjuntivo com fibras colágenas longitudinais. A luz costuma estar colabada ou deformada no corte, e frequentemente contém hemácias, o que a distingue de um linfático de calibre semelhante. Comparada à arteríola ou artéria pequena que a acompanha, sua parede é visivelmente mais fina para uma luz maior.',
+    roteiro: [
+      'Procure hemácias na luz para separar de vaso linfático.',
+      'Compare com o vaso acompanhante antes de decidir o calibre pela aparência isolada.',
+    ],
+  },
+
+  heart: {
+    panorama:
+      'A parede cardíaca repete o plano dos vasos com nomes próprios. O **endocárdio** corresponde à íntima: endotélio sobre subendotélio de conjuntivo, com uma camada subendocárdica que aloja vasos, nervos e as **fibras de Purkinje**. O **miocárdio** corresponde à média e é a camada funcional, com cardiomiócitos estriados, ramificados, de núcleo central e unidos por discos intercalares, dispostos em feixes espiralados muito mais espessos no ventrículo esquerdo. O **epicárdio** corresponde à adventícia e é a lâmina visceral do pericárdio seroso: mesotélio sobre conjuntivo com gordura, vasos coronários e nervos. O **esqueleto fibroso**, de conjuntivo denso, ancora as valvas, separa átrios de ventrículos e isola eletricamente as câmaras.',
+    roteiro: [
+      'Nomeie as três camadas de dentro para fora e associe cada uma à túnica vascular correspondente.',
+      'Procure as fibras de Purkinje na região subendocárdica antes de descrever o miocárdio.',
+    ],
+  },
+
+  'interventricular septum': {
+    panorama:
+      'O septo interventricular tem duas porções de constituição diferente. A **porção muscular**, que é a maior parte, é miocárdio espesso contínuo com as paredes ventriculares e contribui ativamente para a ejeção. A **porção membranácea**, pequena e situada na parte superior, junto ao esqueleto fibroso, é conjuntivo denso sem músculo — e é o sítio mais comum de comunicação interventricular congênita, porque depende da fusão de vários primórdios durante a septação. Pelo septo desce o **feixe atrioventricular** (de His), que atravessa o esqueleto fibroso pela única via de continuidade elétrica entre átrios e ventrículos e se bifurca em ramos direito e esquerdo, terminando nas fibras de Purkinje subendocárdicas.',
+    roteiro: [
+      'Localize a transição entre porção muscular e membranácea antes de descrever o septo.',
+      'Procure o feixe de condução no subendocárdio de ambos os lados.',
+    ],
+  },
+
+  'semilunar valve': {
+    panorama:
+      'As valvas semilunares — aórtica e pulmonar — têm três cúspides em forma de bolso, sem cordas tendíneas, e se fecham passivamente pelo refluxo que enche seus seios. Cada cúspide é uma prega de **endocárdio dos dois lados** com um núcleo central de conjuntivo denso contínuo com o esqueleto fibroso, e a organização desse núcleo tem três estratos com funções mecânicas distintas: a **fibrosa**, no lado arterial, com colágeno que suporta a carga do fechamento; a **esponjosa**, central, rica em glicosaminoglicanos, que amortece; e a **ventricular**, com fibras elásticas que devolvem a forma na abertura. Não há vasos no interior da cúspide: sua nutrição vem por difusão a partir do sangue circulante.',
+    roteiro: [
+      'Identifique os três estratos do núcleo conjuntivo e associe cada um ao lado da valva.',
+      'Confirme a ausência de vasos — é o que explica a lentidão de reparo e a vulnerabilidade a endocardite.',
+    ],
+  },
+
+  lip: {
+    panorama:
+      'O lábio é uma boa lâmina de transição porque reúne, em poucos milímetros, três revestimentos diferentes sobre um mesmo núcleo de músculo esquelético, o orbicular da boca. A **face cutânea** é pele fina, com pelos, glândulas sebáceas e sudoríparas. A **zona vermelha** (vermelhão) é epitélio estratificado pavimentoso **queratinizado, mas fino e translúcido**, apoiado em papilas dérmicas altas e muito vascularizadas — daí a cor — e desprovido de glândulas próprias, o que explica por que resseca. A **face mucosa** é estratificado pavimentoso não queratinizado, espesso, com **glândulas salivares labiais** mucosas na submucosa, cujos ductos desembocam na superfície.',
+    roteiro: [
+      'Percorra as três superfícies em sequência e marque onde cada epitélio começa e termina.',
+      'Procure as glândulas labiais para confirmar que você chegou à face mucosa.',
+    ],
+  },
+
+  'lip: mucosal surface': {
+    panorama:
+      'A face mucosa do lábio é mucosa oral de revestimento típica. O epitélio é **estratificado pavimentoso não queratinizado**, espesso, com células superficiais que mantêm núcleo — traço que o separa do epitélio queratinizado da gengiva e do palato duro. A lâmina própria é conjuntivo com papilas curtas e irregulares, muito vascularizada, e não há muscular da mucosa; ela passa diretamente a uma **submucosa** frouxa que aloja as **glândulas salivares menores labiais**, predominantemente mucosas com semiluas serosas, e prende a mucosa ao músculo orbicular. Essa fixação frouxa é o que permite a mobilidade do lábio e explica por que a mucosa desliza sobre o músculo.',
+    roteiro: [
+      'Confirme os núcleos nas células superficiais para classificar como não queratinizado.',
+      'Localize as glândulas labiais na submucosa e siga seus ductos até a superfície.',
+    ],
+  },
+
+  'oral mucosa': {
+    panorama:
+      'A mucosa oral se divide em três tipos funcionais, e reconhecer qual deles está na lâmina orienta todo o resto. A **mucosa de revestimento** cobre lábios, bochechas, assoalho e face ventral da língua: epitélio estratificado pavimentoso **não queratinizado**, lâmina própria com papilas curtas e submucosa frouxa, tudo voltado para a mobilidade. A **mucosa mastigatória** cobre gengiva e palato duro: epitélio **queratinizado ou paraqueratinizado**, papilas altas e entrelaçadas e submucosa firmemente aderida ao osso, feita para resistir à abrasão. A **mucosa especializada** cobre o dorso da língua, com papilas linguais e botões gustativos. Nenhuma delas tem muscular da mucosa.',
+    roteiro: [
+      'Classifique o epitélio primeiro; ele decide qual dos três tipos você está vendo.',
+      'Verifique se a submucosa é frouxa ou aderida ao osso — o dado confirma a classificação.',
+    ],
+  },
+
+  'oral mucosa: lining': {
+    panorama:
+      'A mucosa de revestimento é a mais extensa da cavidade oral e a mais adaptada ao movimento. Seu epitélio é **estratificado pavimentoso não queratinizado**, com as camadas basal, intermediária e superficial, esta última mantendo núcleos, e apresenta grande espessura mas pouca resistência à abrasão. A lâmina própria tem papilas curtas e largas, com rede vascular densa que dá a cor rosada, e passa a uma **submucosa** frouxa e elástica, com glândulas salivares menores mucosas e feixes de fibras elásticas que permitem o estiramento e o retorno. Onde a mobilidade é máxima, como no assoalho da boca, o epitélio é mais fino — o que também torna essa região a de melhor absorção para fármacos sublinguais.',
+    roteiro: [
+      'Meça a altura das papilas: curtas e largas indicam revestimento, altas e finas indicam mastigatória.',
+      'Procure fibras elásticas na submucosa para confirmar a capacidade de estiramento.',
+    ],
+  },
+
+  tongue: {
+    panorama:
+      'A língua é uma massa de **músculo esquelético** disposta em três planos ortogonais — o que permite mudar de forma em qualquer direção — recoberta por mucosa cuja aparência muda radicalmente entre as faces. A **face ventral** é lisa, com epitélio não queratinizado e mucosa fina. O **dorso** é mucosa especializada, com quatro tipos de papilas: **filiformes**, as mais numerosas, cônicas e queratinizadas, sem botões gustativos, que dão aspereza; **fungiformes**, em cogumelo, avermelhadas, com alguns botões no topo; **folhadas**, em pregas laterais; e **circunvaladas**, grandes, em V, com botões nas paredes do sulco. O terço posterior tem a **tonsila lingual**. Entre os feixes musculares há glândulas salivares linguais mucosas e serosas.',
+    roteiro: [
+      'Confirme a orientação do corte pelos três planos musculares antes de tudo.',
+      'Classifique as papilas pelo formato e pela presença de botões gustativos.',
+    ],
+  },
+
+  'secretory units': {
+    panorama:
+      'A unidade secretora é a porção da glândula que efetivamente produz, e sua forma e conteúdo permitem prever o produto. Pela **forma**, é **tubular** quando alongada com paredes paralelas, **acinar** quando esférica com luz virtual, ou **tubuloacinar** quando combina as duas. Pelo **conteúdo**, é **serosa** quando as células têm base basófila pelo RER, ápice granular e núcleo redondo central, produzindo secreção aquosa rica em enzimas; **mucosa** quando o citoplasma é pálido e vazio em H&E e o núcleo está achatado contra a base, produzindo muco viscoso; e **mista** quando as duas coexistem, muitas vezes com células serosas formando uma **semilua** sobre um ácino mucoso. Células mioepiteliais envolvem a unidade e ajudam a expulsar o produto.',
+    roteiro: [
+      'Classifique por forma e por conteúdo separadamente — as duas classificações são independentes.',
+      'Procure as semiluas serosas para identificar uma unidade mista.',
+    ],
+  },
+
+  'esophagus: muscularis externa': {
+    panorama:
+      'A muscular externa do esôfago é a melhor demonstração histológica de uma transição de controle voluntário para involuntário. No **terço superior** ela é inteiramente **músculo esquelético**, contínuo com a musculatura da faringe, o que permite iniciar a deglutição voluntariamente. No **terço médio** as duas variedades se misturam, e um mesmo campo mostra fibras estriadas com núcleos periféricos ao lado de fibras lisas fusiformes de núcleo central. No **terço inferior** só há **músculo liso**, como no resto do tubo digestório. Em toda a extensão as camadas se organizam em circular interna e longitudinal externa, com o plexo mioentérico de Auerbach entre elas coordenando a onda peristáltica.',
+    roteiro: [
+      'Determine o tipo de músculo antes de mais nada: ele localiza o terço do esôfago no corte.',
+      'Procure o plexo mioentérico entre as duas camadas como gânglios pequenos e pálidos.',
+    ],
+  },
+
+  'esophagogastric junction': {
+    panorama:
+      'A junção esofagogástrica é uma das transições abruptas mais fáceis de reconhecer. De um lado, o esôfago, com epitélio **estratificado pavimentoso não queratinizado** e glândulas esofágicas próprias na submucosa; do outro, o estômago, com epitélio **simples colunar** secretor de muco, fossetas gástricas e glândulas cárdicas na mucosa. A mudança ocorre em uma linha nítida, a linha Z. A muscular da mucosa se espessa nessa região e a camada circular da muscular externa forma o esfíncter esofágico inferior, funcional mais que anatômico. Quando o refluxo ácido crônico faz o epitélio escamoso ser substituído por epitélio colunar com células caliciformes, tem-se o **esôfago de Barrett**, metaplasia com risco aumentado de adenocarcinoma.',
+    roteiro: [
+      'Ache a linha Z e descreva os dois lados dela separadamente.',
+      'Procure células caliciformes acima da junção — na mucosa gástrica normal elas não existem.',
+    ],
+  },
+
+  'stomach: cardiac region': {
+    panorama:
+      'A cárdia é a faixa estreita do estômago que circunda a entrada do esôfago e tem a mucosa mais rasa das três regiões gástricas. Suas **fossetas são profundas**, ocupando cerca de metade da espessura da mucosa, e as **glândulas cárdicas** que nelas desembocam são tubulares, frequentemente ramificadas e enoveladas, com predomínio quase absoluto de **células mucosas** — as células parietais e principais são raras ou ausentes. O produto é muco alcalino que ajuda a proteger a mucosa esofágica adjacente do refluxo ácido. Como o padrão glandular se parece com o da região pilórica, distinguir as duas na lâmina depende da presença do epitélio escamoso esofágico ao lado ou da transição duodenal.',
+    roteiro: [
+      'Compare a profundidade da fosseta com o comprimento da glândula para separar as três regiões.',
+      'Procure a vizinhança do corte: cárdia e piloro só se distinguem com segurança pelo contexto.',
+    ],
+  },
+
+  'stomach: pylorus': {
+    panorama:
+      'A região pilórica tem as **fossetas mais profundas** de todo o estômago, ocupando cerca de dois terços da espessura da mucosa, e glândulas curtas, enoveladas e ramificadas que ficam confinadas ao terço restante — proporção inversa à do fundo, e o critério mais confiável para identificar a região. As glândulas pilóricas são predominantemente **mucosas**, com células claras e pálidas; há células parietais esparsas e um número expressivo de **células G**, enteroendócrinas que secretam **gastrina**, o hormônio que estimula a secreção ácida das células parietais do fundo. A muscular externa se espessa aqui na camada circular para formar o **esfíncter pilórico**, que controla o esvaziamento gástrico.',
+    roteiro: [
+      'Meça a razão fosseta/glândula: dois terços de fosseta identifica o piloro.',
+      'Procure o espessamento da camada circular se o corte alcançar o esfíncter.',
+    ],
+  },
+
+  'gastro-duodenal junction': {
+    panorama:
+      'A transição gastroduodenal reúne várias mudanças simultâneas em um espaço curto. O epitélio gástrico simples colunar **sem caliciformes** dá lugar ao epitélio intestinal com **vilosidades** e **células caliciformes**; as glândulas pilóricas terminam e começam as criptas de Lieberkühn com células de Paneth no fundo. O achado mais característico do lado duodenal são as **glândulas de Brunner**, tubuloacinares mucosas alojadas na **submucosa** — únicas glândulas submucosas do intestino —, cuja secreção alcalina neutraliza o quimo ácido e protege a mucosa. O espessamento da camada circular da muscular externa forma o esfíncter pilórico, e a mucosa da junção costuma mostrar as duas populações lado a lado.',
+    roteiro: [
+      'Procure glândulas na submucosa: se existirem no intestino, são de Brunner e o segmento é duodeno.',
+      'Confirme o aparecimento simultâneo de vilosidades e caliciformes.',
+    ],
+  },
+
+  'mucosa: villi': {
+    panorama:
+      'A vilosidade é uma projeção digitiforme **apenas da mucosa** — epitélio mais lâmina própria — para dentro da luz, exclusiva do intestino delgado, e o segundo nível de amplificação de superfície do órgão. Seu revestimento é epitélio simples colunar com **enterócitos** de borda estriada, responsáveis pela absorção, e **células caliciformes** intercaladas, cuja proporção cresce do duodeno ao íleo. O eixo é lâmina própria com um **quilífero central**, capilar linfático de fundo cego que recolhe os quilomícrons da gordura absorvida, uma rede capilar subepitelial que recolhe açúcares e aminoácidos, feixes de músculo liso vindos da muscular da mucosa que encurtam a vilosidade ritmicamente, e abundantes células imunes.',
+    roteiro: [
+      'Ache o quilífero central no eixo: ele é maior e mais irregular que os capilares.',
+      'Compare a altura e a forma das vilosidades entre segmentos — largas no duodeno, mais afiladas no íleo.',
+    ],
+  },
+
+  'mucosa: epithelium': {
+    panorama:
+      'O epitélio da mucosa intestinal é uma folha simples colunar em renovação constante, com quatro tipos celulares principais que compartilham a mesma célula-tronco na cripta. Os **enterócitos**, majoritários, têm borda estriada de microvilosidades com enzimas de membrana e fazem a absorção; suas junções estreitas apicais determinam quanto pode passar pela via paracelular. As **células caliciformes** secretam muco que lubrifica e protege. As **células de Paneth**, no fundo da cripta, com grânulos acidófilos volumosos, secretam lisozima e defensinas e controlam a flora. As **células enteroendócrinas**, dispersas, com grânulos basais, liberam hormônios que coordenam a digestão. Há ainda células M sobre as placas de Peyer, que amostram antígenos da luz.',
+    roteiro: [
+      'Localize cada tipo pela posição: Paneth no fundo, caliciformes ao longo, enteroendócrinas na base do epitélio.',
+      'Confirme a borda estriada como faixa rosada contínua no ápice dos enterócitos.',
+    ],
+  },
+
+  'mucosa: malt': {
+    panorama:
+      'O tecido linfoide associado à mucosa é a resposta imune instalada exatamente onde o corpo faz fronteira com o meio. Aparece de duas formas: **difusa**, com linfócitos, plasmócitos e macrófagos espalhados pela lâmina própria, e **nodular**, com nódulos linfoides isolados ou agregados, como as **placas de Peyer** do íleo. Sobre esses agregados o epitélio se modifica: as vilosidades achatam e surgem as **células M**, com dobras em vez de microvilosidades, que transportam antígenos da luz para bolsões onde linfócitos e células dendríticas esperam. A resposta característica é a produção de **IgA dimérica** pelos plasmócitos, que atravessa o enterócito acoplada ao componente secretor e neutraliza patógenos na própria luz, sem inflamação.',
+    roteiro: [
+      'Procure achatamento das vilosidades como sinal de placa de Peyer logo abaixo.',
+      'Note se os nódulos atravessam a muscular da mucosa e alcançam a submucosa — é o padrão das placas.',
+    ],
+  },
+
+  submucosa: {
+    panorama:
+      'A submucosa é a camada de conjuntivo **denso não modelado** que fica entre a muscular da mucosa e a muscular externa, e é a via de distribuição do tubo digestório: por ela correm os vasos sanguíneos e linfáticos de maior calibre e o **plexo submucoso de Meissner**, gânglios do sistema nervoso entérico que controlam a secreção glandular e o fluxo sanguíneo local. Sua composição frouxa e resistente permite que a mucosa deslize e se pregueie — as pregas circulares do delgado e as rugas gástricas têm núcleo de submucosa. Glândulas nela só existem em dois lugares: as **esofágicas próprias** e as **de Brunner** do duodeno, e encontrá-las é um dado localizador imediato.',
+    roteiro: [
+      'Procure gânglios entre as fibras: o plexo submucoso confirma a camada.',
+      'Se houver glândulas aqui, use-as para localizar o segmento — só duas regiões as têm.',
+    ],
+  },
+
+  appendix: {
+    panorama:
+      'O apêndice vermiforme mantém o plano do intestino grosso, mas em miniatura e com o compartimento imune hipertrofiado. A luz é **estreita, irregular e muitas vezes contém restos**; a mucosa tem criptas de Lieberkühn mais curtas e menos regulares que as do cólon, com caliciformes e algumas células de Paneth. O traço dominante é a **massa de nódulos linfoides** que ocupa a lâmina própria e atravessa a muscular da mucosa até a submucosa, formando um anel quase contínuo — o que fez o órgão ser chamado de tonsila abdominal. A muscular externa tem as duas camadas completas, sem as tênias do cólon, e há serosa. O tecido linfoide regride com a idade e pode ser substituído por fibrose.',
+    roteiro: [
+      'Confirme a luz pequena e o anel linfoide contínuo: juntos identificam o órgão.',
+      'Verifique a ausência de tênias — é o que separa apêndice de cólon em corte transversal.',
+    ],
+  },
+
+  'liver: sinusoids': {
+    panorama:
+      'Os sinusoides hepáticos correm entre as placas de hepatócitos, do espaço porta para a veia centrolobular, e sua construção é feita para máxima troca. O endotélio é **descontínuo e fenestrado sem diafragma**, e **não há lâmina basal** — de modo que o plasma banha diretamente a superfície do hepatócito através do **espaço de Disse**, fenda entre o endotélio e as microvilosidades hepatocitárias. Na luz vivem as **células de Kupffer**, macrófagos residentes que depuram bactérias vindas do intestino e hemácias senescentes. No espaço de Disse ficam as **células estreladas** (de Ito), que armazenam vitamina A em gotículas lipídicas e que, ativadas na lesão crônica, viram miofibroblastos e produzem a fibrose da cirrose.',
+    roteiro: [
+      'Procure as células de Kupffer como núcleos maiores e irregulares dentro da luz.',
+      'Note a ausência de lâmina basal — é ela que permite o contato direto plasma-hepatócito.',
+    ],
+  },
+
+  'gall bladder': {
+    panorama:
+      'A vesícula biliar concentra e armazena a bile, e sua parede é notavelmente simples para um órgão digestivo: tem apenas **três camadas**, sem submucosa e sem muscular da mucosa. A **mucosa** é epitélio simples colunar alto com microvilosidades, apoiado em lâmina própria vascularizada, e forma pregas altas e ramificadas que, em corte, parecem criptas ou glândulas mas são apenas dobras. A **muscular** é uma malha frouxa de músculo liso em várias direções, não organizada em camadas. A camada externa é **serosa** na face livre e **adventícia** onde ela adere ao fígado. Invaginações profundas do epitélio pela muscular formam os **seios de Rokitansky-Aschoff**, achado comum na colecistite crônica.',
+    roteiro: [
+      'Confirme a ausência de submucosa e de muscular da mucosa antes de nomear o órgão.',
+      'Distinga pregas de glândulas seguindo a continuidade com a superfície.',
+    ],
+  },
+
+  'gall bladder: epithelium': {
+    panorama:
+      'O epitélio da vesícula biliar é simples colunar alto, com núcleos basais alinhados e microvilosidades apicais curtas e irregulares, e existe para uma tarefa específica: **absorver água e íons** para concentrar a bile em até dez vezes. O mecanismo é o transporte ativo de sódio pela membrana basolateral, que arrasta cloreto e água por via osmótica através dos espaços intercelulares laterais — que ficam visivelmente dilatados quando a vesícula está absorvendo ativamente, um dos poucos casos em que a atividade de transporte é diretamente visível na lâmina. As junções estreitas apicais impedem que a bile concentrada volte. Perto do colo há algumas glândulas tubuloalveolares mucosas, as únicas do órgão.',
+    roteiro: [
+      'Procure os espaços intercelulares laterais dilatados como sinal de absorção em curso.',
+      'Note a ausência de células caliciformes: sua presença indicaria metaplasia.',
+    ],
+  },
+
+  'pars intermedia': {
+    panorama:
+      'A pars intermedia é a faixa estreita entre a pars distalis e a pars nervosa, resquício da parede posterior da bolsa de Rathke, e é rudimentar no ser humano adulto. Sua marca histológica são os **folículos de Rathke**: cistos revestidos por epitélio cúbico e preenchidos por um coloide levemente acidófilo, restos da luz da bolsa embrionária, que se confundem com folículos tireoidianos à primeira vista. Ao redor há células basófilas fracamente coradas, que produzem **pró-opiomelanocortina** e seus derivados, entre eles o hormônio melanotrófico. Em outras espécies a região é bem mais desenvolvida e regula a pigmentação; no ser humano, sua função é pequena, mas a região é sítio frequente de craniofaringiomas.',
+    roteiro: [
+      'Use os cistos coloides como ponto de referência: eles marcam a fronteira entre as duas metades da hipófise.',
+      'Não confunda com tireoide — o contexto de hipófise em volta resolve.',
+    ],
+  },
+
+  endocrine: {
+    panorama:
+      'A secreção endócrina se define por não ter ducto: a célula libera seu produto no interstício, ele entra no capilar e alcança células-alvo distantes, que respondem se tiverem o receptor apropriado. Isso impõe uma histologia previsível — parênquima em **cordões, ninhos ou folículos**, sempre em contato íntimo com capilares fenestrados, e estroma reticular escasso. O tipo de hormônio determina a aparência da célula: as produtoras de **peptídeos e proteínas** têm RER e Golgi desenvolvidos e estocam o produto em grânulos, com citoplasma basófilo ou granular; as produtoras de **esteroides** não estocam nada, e têm REL abundante, mitocôndrias de cristas tubulares e gotículas lipídicas que deixam o citoplasma vacuolado e pálido.',
+    roteiro: [
+      'Classifique o citoplasma antes de tentar nomear o hormônio: granular ou vacuolado já divide o campo.',
+      'Confirme a ausência de ducto e a proximidade capilar como critérios definidores.',
+    ],
+  },
+
+  'diffuse lymphoid tissue': {
+    panorama:
+      'O tecido linfoide difuso é a forma menos organizada e mais extensa do sistema imune: linfócitos, plasmócitos, macrófagos e células dendríticas espalhados pela lâmina própria de mucosas, **sem cápsula e sem organização nodular**. É a primeira linha de vigilância nas superfícies que fazem contato com o meio — trato digestório, respiratório, urinário e genital — e sua densidade varia continuamente com a exposição antigênica local, sem que isso seja patológico. Não tem arquitetura fixa nem compartimentos B e T separados, embora costume haver predomínio de T no interstício e de plasmócitos produtores de IgA junto às glândulas. Quando a estimulação persiste, ele se organiza em nódulos, e é assim que o tecido nodular aparece.',
+    roteiro: [
+      'Verifique a ausência de cápsula e de nódulos antes de classificar como difuso.',
+      'Procure plasmócitos junto às glândulas — eles são a fonte da IgA secretora.',
+    ],
+  },
+
+  'primary lymphoid nodule': {
+    panorama:
+      'O nódulo linfoide primário é um agregado esférico e denso de **linfócitos B pequenos e virgens**, que ainda não encontraram seu antígeno, sustentado por uma rede de células dendríticas foliculares e fibras reticulares. É **homogeneamente escuro** em H&E, porque as células são pequenas, com pouco citoplasma e cromatina condensada, e **não tem centro germinativo** — essa uniformidade é exatamente o critério que o define e o que o distingue do nódulo secundário. Aparece no córtex do linfonodo, na polpa branca do baço e nas mucosas. Assim que um antígeno é apresentado e a resposta começa, ele se converte em nódulo secundário, com centro claro de proliferação e manto escuro periférico.',
+    roteiro: [
+      'Procure homogeneidade de coloração: qualquer clareamento central já indica nódulo secundário.',
+      'Confirme que o agregado é esférico e delimitado, não difuso.',
+    ],
+  },
+
+  'germinal center': {
+    panorama:
+      'O centro germinativo é a fábrica de anticorpos de alta afinidade. Forma-se dias após o contato com antígeno, quando linfócitos B ativados voltam ao folículo e proliferam intensamente. Tem duas zonas: a **zona escura**, com centroblastos em divisão rápida que sofrem **hipermutação somática** nos genes das imunoglobulinas, e a **zona clara**, com centrócitos que competem pelo antígeno apresentado nas células dendríticas foliculares e por ajuda de linfócitos T foliculares — quem tem receptor de maior afinidade sobrevive, os demais entram em apoptose. Os restos são fagocitados pelos **macrófagos de corpo tingível**, que aparecem como espaços claros salpicados no centro, o achado que dá ao conjunto o aspecto de céu estrelado.',
+    roteiro: [
+      'Separe zona escura e zona clara antes de descrever células isoladas.',
+      'Ache os macrófagos de corpo tingível — eles confirmam a seleção em curso.',
+    ],
+  },
+
+  'aggregated lymphoid nodules: tonsils': {
+    panorama:
+      'As tonsilas são agregados de nódulos linfoides logo abaixo do epitélio da faringe, sem cápsula completa, formando o anel de Waldeyer que guarda a entrada das vias aérea e digestória. As **palatinas** são cobertas por epitélio estratificado pavimentoso não queratinizado que mergulha em **criptas profundas e ramificadas**, o que multiplica enormemente a superfície de amostragem — e também retém detritos, motivo das amigdalites de repetição. As **faríngea** (adenoide) é coberta por epitélio respiratório pseudoestratificado ciliado e tem pregas em vez de criptas. As **linguais**, na base da língua, têm criptas rasas e únicas. Em todas, o epitélio sobre os nódulos fica infiltrado de linfócitos e perde a nitidez de camadas.',
+    roteiro: [
+      'Identifique o epitélio de superfície: ele diferencia as três tonsilas antes de qualquer outro dado.',
+      'Verifique se há cripta e quão profunda ela é.',
+    ],
+  },
+
+  'lymph node: cortex': {
+    panorama:
+      'O córtex do linfonodo tem dois territórios com populações distintas. O **córtex externo** é o compartimento **B**: nódulos linfoides primários e secundários alinhados sob a cápsula, com centros germinativos quando há resposta em curso. O **paracórtex**, logo abaixo, é o compartimento **T**: tecido difuso sem nódulos, mais pálido, que se expande nas respostas celulares e contém as **vênulas de endotélio alto** pelas quais os linfócitos circulantes entram no órgão. Entre a cápsula e o córtex corre o **seio subcapsular**, que recebe a linfa aferente e a distribui para os seios trabeculares e medulares. Essa geografia — B fora, T no meio, cordões e seios na medula — é a chave de leitura do órgão.',
+    roteiro: [
+      'Marque os três territórios antes de descrever qualquer célula.',
+      'Procure vênulas de endotélio alto no paracórtex para confirmar a região.',
+    ],
+  },
+
+  'spleen: red pulp': {
+    panorama:
+      'A polpa vermelha é o filtro do sangue e ocupa a maior parte do baço. É formada por **cordões esplênicos** (de Billroth) — tecido reticular frouxo cheio de macrófagos, linfócitos, plasmócitos e todas as células do sangue — alternados com **sinusoides esplênicos**, vasos de luz ampla revestidos por células endoteliais alongadas dispostas em paralelo, como as ripas de um barril, apoiadas em uma lâmina basal descontínua em anéis. Para voltar à circulação, a hemácia precisa **espremer-se** pelas fendas entre essas ripas: as flexíveis passam, as senescentes ou deformadas ficam retidas e são fagocitadas pelos macrófagos dos cordões. É esse teste mecânico que faz do baço o principal removedor de hemácias velhas.',
+    roteiro: [
+      'Distinga cordão de sinusoide pela organização dos núcleos endoteliais em paralelo.',
+      'Procure macrófagos com pigmento de hemossiderina nos cordões — são o registro da hemocaterese.',
+    ],
+  },
+
+  'thymus: cortex': {
+    panorama:
+      'O córtex do timo é intensamente **basófilo** porque está abarrotado de timócitos imaturos em proliferação, tão densos que quase escondem o estroma. Esse estroma é feito de **células epiteliorreticulares**, e não de fibras reticulares como nos demais órgãos linfoides: elas se unem por desmossomos, formam uma rede tridimensional e desempenham papéis distintos por tipo — as do tipo I revestem a cápsula e os vasos, compondo a **barreira hematotímica** que isola o córtex de antígenos circulantes; as dos tipos II e III expressam MHC e conduzem a **seleção positiva**, em que só sobrevivem os timócitos capazes de reconhecer o MHC próprio. Mais de 95% das células produzidas morrem por apoptose aqui e são removidas por macrófagos.',
+    roteiro: [
+      'Confirme a densidade nuclear extrema e a ausência de nódulos.',
+      'Procure macrófagos com restos apoptóticos: eles são consequência normal da seleção.',
+    ],
+  },
+
+  'testis proper: endocrine portion': {
+    panorama:
+      'A porção endócrina do testículo são as **células intersticiais de Leydig**, agrupadas em ninhos no conjuntivo entre os túbulos seminíferos, sempre junto a capilares e vasos linfáticos. São células grandes, poliédricas, com núcleo redondo e citoplasma **acidófilo e vacuolado** — a assinatura da célula esteroidogênica, com REL extenso, mitocôndrias de cristas tubulares e gotículas de colesterol. Produzem **testosterona** sob estímulo do LH, e a concentração intratesticular do hormônio é muito maior que a plasmática, condição indispensável para a espermatogênese. No ser humano contêm ainda os **cristais de Reinke**, inclusões proteicas alongadas de significado desconhecido, presentes só nesta espécie e em poucas outras.',
+    roteiro: [
+      'Procure ninhos acidófilos no interstício entre túbulos — a posição já sugere Leydig.',
+      'Compare a cor com a das células dentro do túbulo: o contraste é imediato.',
+    ],
+  },
+
+  epididymis: {
+    panorama:
+      'O epidídimo é um único **ducto de cinco a seis metros** enovelado sobre a face posterior do testículo, dividido em cabeça, corpo e cauda, onde o espermatozoide amadurece, adquire motilidade e é armazenado. Um corte mostra dezenas de perfis do mesmo tubo, com **luz regular e lisa** cheia de espermatozoides, revestidos por epitélio **pseudoestratificado colunar com estereocílios** — microvilosidades longas e imóveis que absorvem a maior parte do líquido vindo do testículo. As células principais são altas na cabeça e vão ficando mais baixas em direção à cauda, enquanto a camada de músculo liso engrossa no sentido inverso, de uma para três camadas, preparando a propulsão da ejaculação.',
+    roteiro: [
+      'Compare altura do epitélio e espessura muscular para localizar o segmento.',
+      'Distinga dos dúctulos eferentes pelo contorno luminal: liso aqui, ondulado lá.',
+    ],
+  },
+
+  'ovary: secondary follicle': {
+    panorama:
+      'O folículo secundário, ou antral, se define pelo aparecimento do **antro**: uma cavidade preenchida pelo líquido folicular, que surge entre as células da granulosa quando a proliferação já produziu várias camadas. O oócito primário, envolvido pela **zona pelúcida** — camada acidófila de glicoproteínas ZP1 a ZP3 —, fica excêntrico, apoiado sobre um pedestal de granulosa chamado **cúmulo oóforo**, e a coroa de células que o acompanha na ovulação é a **corona radiata**. Ao redor, o estroma se organiza em **teca interna**, celular, muito vascularizada e produtora de andrógenos, e **teca externa**, fibrosa. Os andrógenos da teca interna são convertidos em estrogênio pela granulosa — o modelo das duas células e duas gonadotrofinas.',
+    roteiro: [
+      'Ache o antro para classificar o estágio e depois localize o cúmulo oóforo.',
+      'Separe teca interna de externa pela celularidade e pela vascularização.',
+    ],
+  },
+
+  oviduct: {
+    panorama:
+      'A tuba uterina capta o oócito, oferece o ambiente da fecundação e transporta o embrião até o útero. Tem quatro segmentos — infundíbulo com fímbrias, ampola, istmo e porção intramural — e ao longo deles duas variáveis mudam em sentidos opostos: as **pregas da mucosa** vão de altíssimas e ramificadas no infundíbulo e na ampola a baixas e simples no istmo, enquanto a **camada muscular** faz o inverso, engrossando em direção ao útero. O epitélio é simples colunar com **células ciliadas**, que batem em direção ao útero, e **células secretoras** em tacha, que nutrem gameta e embrião; a proporção varia com o ciclo, com mais cílios sob estrogênio. Não há submucosa, e a serosa cobre o órgão.',
+    roteiro: [
+      'Use a complexidade das pregas e a espessura muscular juntas para localizar o segmento.',
+      'Procure a alternância de células ciliadas e secretoras em grande aumento.',
+    ],
+  },
+
+  uterus: {
+    panorama:
+      'O útero é um órgão muscular espesso cuja mucosa se refaz a cada ciclo. O **endométrio** tem epitélio simples colunar e glândulas tubulares simples num estroma celular semelhante a mesênquima, e se divide em camada **funcional**, que descama, e **basal**, que permanece e regenera. O **miométrio** ocupa a maior parte da parede e é músculo liso em feixes entrelaçados, com uma camada vascular média muito irrigada; na gravidez suas células hipertrofiam várias vezes e novas surgem por divisão e por diferenciação. O **perimétrio** é serosa na face posterior e adventícia na anterior inferior. A irrigação explica a fisiologia: artérias retas nutrem a basal, artérias espiraladas nutrem a funcional e são elas que se contraem na menstruação.',
+    roteiro: [
+      'Meça a espessura e a atividade das glândulas endometriais para datar a fase.',
+      'Localize a transição endométrio-miométrio antes de descrever o estroma.',
+    ],
+  },
+
+  'uterus: proliferative phase (days 6-14)': {
+    panorama:
+      'A fase proliferativa acompanha o crescimento dos folículos ovarianos e é comandada pelo **estrogênio**. Depois da menstruação, o endométrio recomeça a partir da camada basal: o epitélio superficial é refeito, as glândulas se alongam e a espessura sobe de menos de um milímetro para três ou mais. As **glândulas são retas, estreitas e de luz pequena**, com epitélio colunar alto e pseudoestratificado pelo grande número de mitoses; o estroma é denso, celular e também mitoticamente ativo, sem edema. As **artérias espiraladas** crescem, mas ainda não alcançam o terço superior. É a ausência de secreção na luz glandular e de vacúolos no citoplasma que separa esta fase da secretora.',
+    roteiro: [
+      'Procure mitoses no epitélio glandular e no estroma — elas confirmam a fase.',
+      'Confirme que as glândulas são retas e sem secreção antes de datar.',
+    ],
+  },
+
+  'uterus: pre-menstrual phase (days 26-28)': {
+    panorama:
+      'A fase pré-menstrual, ou isquêmica, é o intervalo curto entre a involução do corpo lúteo e o início do sangramento. Com a queda de progesterona e estrogênio, as **artérias espiraladas entram em constrição prolongada e intermitente**, e a camada funcional sofre isquemia: o estroma perde o edema e colapsa, a altura do endométrio diminui, as glândulas ficam com contorno serrilhado e luz irregular, e aparecem focos de necrose, extravasamento de hemácias e infiltrado de neutrófilos. As células estromais próximas às arteríolas mostram a reação decidual já regredindo. A camada **basal**, irrigada pelas artérias retas, permanece intacta — ela não participa da isquemia e é o que garante a regeneração seguinte.',
+    roteiro: [
+      'Procure focos de hemorragia e neutrófilos na funcional com basal preservada.',
+      'Compare a altura do endométrio com a da fase secretora média: a redução é parte do achado.',
+    ],
+  },
+
+  'breast: inactive': {
+    panorama:
+      'A mama em repouso — fora da gravidez e da lactação — é dominada por **estroma**, não por glândula. O parênquima é escasso: unidades ducto-lobulares terminais com ductos revestidos por epitélio cúbico a colunar de duas camadas, com células mioepiteliais na periferia, e ácinos rudimentares ou ausentes, presentes apenas como brotos sólidos. Cada lóbulo é envolvido por um **estroma intralobular** frouxo, celular e hormônio-responsivo, que se destaca claramente do **estroma interlobular**, denso, fibroso e adiposo, que compõe a maior parte do volume da mama. Ao longo do ciclo menstrual há discreta proliferação e edema na fase lútea, o que explica a sensibilidade mamária pré-menstrual.',
+    roteiro: [
+      'Separe os dois estromas: o contraste entre frouxo intralobular e denso interlobular identifica a mama.',
+      'Procure a camada mioepitelial nos ductos — sua presença é critério de benignidade.',
+    ],
+  },
+
+  'nasal cavities: mucosae': {
+    panorama:
+      'A cavidade nasal tem três mucosas com funções distintas. A do **vestíbulo** é pele modificada, com epitélio estratificado pavimentoso queratinizado, pelos grossos (vibrissas) e glândulas sebáceas e sudoríparas, que filtram partículas grandes. A **mucosa respiratória**, que cobre a maior parte, tem epitélio pseudoestratificado ciliado com caliciformes sobre lâmina própria com glândulas seromucosas e um plexo venoso volumoso, os **corpos cavernosos** dos cornetos, que aquecem e umidificam o ar — e cujo ingurgitamento alternado produz o ciclo nasal. A **mucosa olfatória**, no teto, é epitélio pseudoestratificado alto sem caliciformes, amarelado, com as glândulas de Bowman na lâmina própria.',
+    roteiro: [
+      'Localize-se pelo epitélio: os três tipos correspondem a três regiões bem definidas.',
+      'Procure o plexo venoso na lâmina própria dos cornetos, típico da mucosa respiratória.',
+    ],
+  },
+
+  'nasal cavities: olfactory epithelium': {
+    panorama:
+      'O epitélio olfatório é pseudoestratificado colunar **muito alto e sem células caliciformes**, e reúne três tipos celulares dispostos em camadas reconhecíveis. Os **neurônios olfatórios bipolares** ficam no meio: seu dendrito sobe até a superfície e termina numa vesícula da qual partem cílios imóveis e longos, com os receptores odoríferos, e seu axônio desce e se agrupa em filetes que atravessam a lâmina crivosa até o bulbo olfatório — são os únicos neurônios em contato direto com o meio externo, e os únicos que se **renovam** ao longo da vida, a partir das **células basais**. As **células de sustentação**, altas, com núcleos apicais, formam a camada superior. Na lâmina própria, as **glândulas de Bowman** secretam o fluido seroso que dissolve os odorantes.',
+    roteiro: [
+      'Confirme a ausência de caliciformes e a altura do epitélio para separá-lo do respiratório.',
+      'Identifique as três faixas de núcleos: sustentação em cima, neurônios no meio, basais embaixo.',
+    ],
+  },
+
+  'terminal bronchiole': {
+    panorama:
+      'O bronquíolo terminal é o último segmento **exclusivamente condutor** da árvore respiratória: nele ainda não há alvéolos, e portanto nenhuma troca gasosa. Tem menos de 0,5 mm de diâmetro, epitélio **simples cúbico** com poucas células ciliadas e predomínio de **células club** (Clara), não ciliadas, de ápice abaulado, que secretam surfactante proteico, detoxificam xenobióticos e servem de célula-tronco do epitélio bronquiolar. Não há cartilagem, glândulas nem caliciformes; há uma camada de músculo liso proporcionalmente espessa e completa. O conjunto formado por um bronquíolo terminal e tudo o que dele deriva é o **ácino pulmonar**, unidade funcional do pulmão.',
+    roteiro: [
+      'Percorra a parede inteira: um único alvéolo abrindo-se nela já o reclassifica como respiratório.',
+      'Procure os ápices abaulados das células club no epitélio cúbico.',
+    ],
+  },
+
+  'respiratory bronchiole': {
+    panorama:
+      'O bronquíolo respiratório é a **zona de transição** entre condução e troca, e sua identificação depende de um único achado: a parede é predominantemente bronquiolar, com epitélio cúbico e músculo liso, mas **interrompida por alvéolos** que se abrem diretamente nela. Onde há alvéolo, o epitélio se adelgaça abruptamente para pavimentoso; entre eles, permanece cúbico com células club. Quanto mais distal o segmento, mais alvéolos e menos parede própria, até que a estrutura se converte em ducto alveolar. É também o primeiro ponto em que o ar inspirado pode ser trocado, e o sítio inicial das lesões do enfisema centrolobular do tabagismo.',
+    roteiro: [
+      'Percorra a circunferência procurando a interrupção da parede por alvéolos.',
+      'Note a mudança abrupta de epitélio nas bordas de cada abertura alveolar.',
+    ],
+  },
+
+  'alveolar ducts': {
+    panorama:
+      'O ducto alveolar é o segmento em que a parede própria praticamente desapareceu: ele é pouco mais que um corredor **inteiramente delimitado pelas aberturas de alvéolos e sacos alveolares**. O que sobra de estrutura são pequenos nós ou botões nas bordas entre aberturas vizinhas, contendo feixes de **músculo liso**, fibras elásticas e colágenas, revestidos por epitélio cúbico baixo — em corte, esses nós aparecem como espessamentos arredondados que se repetem regularmente ao longo do ducto, e são o achado que o identifica. As fibras elásticas ali ancoradas formam uma rede contínua responsável pelo recuo elástico da expiração, e sua destruição é o mecanismo central do enfisema.',
+    roteiro: [
+      'Procure os botões de músculo liso nas bordas das aberturas — é o critério, não o calibre.',
+      'Siga o ducto até os sacos alveolares para confirmar a sequência.',
+    ],
+  },
+
+  'alveolar duct': {
+    panorama:
+      'O ducto alveolar sucede o bronquíolo respiratório e antecede os sacos alveolares. Sua característica é a ausência quase completa de parede própria: o corredor é definido pelas bocas dos alvéolos que se abrem em toda a sua extensão, e a estrutura remanescente se resume a **nós de músculo liso**, elastina e colágeno nas bordas entre aberturas, revestidos por um epitélio cúbico baixo que rapidamente se torna pavimentoso dentro do alvéolo. Esses nós, em corte, aparecem como pequenos botões arredondados repetidos, e distinguem o ducto do saco alveolar, que já não os tem. É aqui que a troca gasosa se torna a função dominante do segmento.',
+    roteiro: [
+      'Conte os botões ao longo do corredor: sua presença separa ducto de saco alveolar.',
+      'Verifique se ainda resta epitélio cúbico entre as aberturas.',
+    ],
+  },
+
+  'alveolar macrophage': {
+    panorama:
+      'O macrófago alveolar, ou célula da poeira, é a principal defesa celular do espaço aéreo. Deriva de monócitos do sangue e circula livremente **sobre a superfície alveolar**, dentro do filme de surfactante, fagocitando partículas inaladas, microrganismos e o surfactante usado — cerca de dez por cento da renovação do surfactante é feita por ele. Em H&E aparece como célula grande e arredondada, de citoplasma abundante e frequentemente **pigmentado**: acastanhado por carbono em fumantes e moradores de cidades, ou com hemossiderina na congestão pulmonar crônica, quando é chamado de célula da insuficiência cardíaca. Depois de carregado, migra pelos bronquíolos e é eliminado no escarro ou pelos linfáticos.',
+    roteiro: [
+      'Procure células livres na luz alveolar, não na parede — a posição é parte da identificação.',
+      'Descreva o pigmento: ele conta a história de exposição do paciente.',
+    ],
+  },
+
+  respiratory: {
+    panorama:
+      'O sistema respiratório se divide funcionalmente em duas porções. A **porção condutora** — cavidades nasais, faringe, laringe, traqueia, brônquios e bronquíolos até os terminais — leva o ar e o condiciona: aquece, umidifica e filtra, tarefas cumpridas pelo plexo venoso da mucosa, pelas glândulas seromucosas e pelo **aparelho mucociliar**, que move o muco com as partículas retidas em direção à faringe. A **porção respiratória** — bronquíolos respiratórios, ductos e sacos alveolares e alvéolos — faz a hematose. A transição entre elas é gradual e legível: a cartilagem some, as glândulas somem, as caliciformes somem, o epitélio baixa de pseudoestratificado ciliado a pavimentoso, e o músculo liso ganha importância relativa.',
+    roteiro: [
+      'Situe o segmento pela sequência de desaparecimentos: cartilagem, glândulas, caliciformes, cílios.',
+      'Procure o primeiro alvéolo abrindo-se na parede para marcar o início da porção respiratória.',
+    ],
+  },
+
+  'blood supply': {
+    panorama:
+      'O suprimento sanguíneo de um órgão é parte da sua histologia, não um detalhe acessório: a arquitetura do leito vascular determina o que o parênquima consegue fazer. Há padrões que se repetem. O mais comum é **artéria, arteríola, capilar, vênula, veia** em série. Outros órgãos têm **sistemas porta**, em que dois leitos capilares ficam em série sem passar pelo coração — o porta-hepático, que leva ao fígado o sangue absorvido no intestino, e o porta-hipofisário, que leva ao lobo anterior os fatores liberadores do hipotálamo. Há ainda a **circulação dupla** do pulmão e do fígado, com um vaso funcional e um nutritivo, e as **anastomoses arteriovenosas**, atalhos que desviam o sangue do leito capilar na termorregulação.',
+    roteiro: [
+      'Identifique o padrão antes de descrever vasos isolados — ele explica a função do órgão.',
+      'Procure dois leitos capilares em série antes de descartar a hipótese de sistema porta.',
+    ],
+  },
+
+  'pulmonary capillaries': {
+    panorama:
+      'Os capilares pulmonares formam a rede mais densa do corpo: eles preenchem quase inteiramente o septo interalveolar, e o sangue corre em uma lâmina praticamente contínua, exposta ao ar dos dois lados. São capilares **contínuos**, com endotélio não fenestrado e junções estreitas, o que impede o extravasamento de plasma para o alvéolo — condição indispensável, já que fluido no espaço aéreo bloqueia a troca. A hemácia passa por eles em cerca de 0,75 segundo em repouso, tempo três vezes maior que o necessário para equilibrar o oxigênio, o que dá ao pulmão uma reserva funcional grande. A parede compartilha lâmina basal com o pneumócito tipo I, formando a barreira ar-sangue de aproximadamente 0,2 µm.',
+    roteiro: [
+      'Siga um capilar ao longo do septo e conte quantos alvéolos ele atende.',
+      'Confirme o endotélio contínuo: fenestração aqui seria incompatível com a função.',
+    ],
+  },
+
+  nephron: {
+    panorama:
+      'O néfron é a unidade funcional do rim, e são cerca de um milhão em cada um. Começa no **corpúsculo renal**, com o glomérulo e a cápsula de Bowman, onde o plasma é filtrado; segue pelo **túbulo contorcido proximal**, que reabsorve dois terços do filtrado, toda a glicose e os aminoácidos, com epitélio acidófilo e borda em escova; desce pela **alça de Henle**, com porções fina e espessa, que cria o gradiente osmótico medular por multiplicação em contracorrente; e termina no **túbulo contorcido distal**, que ajusta sódio, potássio e ácido sob aldosterona. Os néfrons **corticais** têm alças curtas; os **justamedulares**, alças longas que descem fundo na medula e são os responsáveis pela concentração da urina. O ducto coletor recebe vários néfrons e responde ao ADH.',
+    roteiro: [
+      'Percorra o néfron na ordem funcional e nomeie o epitélio de cada segmento.',
+      'Use a acidofilia e a borda em escova para separar proximal de distal em qualquer campo.',
+    ],
+  },
+
+  'cortex: juxtaglomerular apparatus': {
+    panorama:
+      'O aparelho justaglomerular é o sensor que regula a pressão arterial e a filtração, e fica no polo vascular do corpúsculo, onde o túbulo contorcido distal do **próprio néfron** volta e encosta na arteríola aferente. Tem três componentes. A **mácula densa** é a região do túbulo distal ali encostada, com células mais altas e núcleos apinhados, que detecta a concentração de cloreto de sódio no fluido tubular. As **células justaglomerulares** são células musculares lisas modificadas da parede da arteríola aferente, com grânulos de **renina**, que respondem à queda de pressão. As **células mesangiais extraglomerulares** (de Lacis) ficam no triângulo entre as duas e fazem a comunicação. Juntos comandam o sistema renina-angiotensina-aldosterona.',
+    roteiro: [
+      'Ache o polo vascular primeiro; sem ele, o aparelho não pode ser identificado.',
+      'Procure o adensamento de núcleos na parede tubular voltada para a arteríola.',
+    ],
+  },
+
+  'cortex: medullary ray': {
+    panorama:
+      'O raio medular é, apesar do nome, uma estrutura **do córtex**: uma faixa de túbulos retos que desce da medula e penetra o córtex, dando-lhe o aspecto listrado. Contém os segmentos **retos** — porção reta do túbulo proximal, ramo espesso ascendente da alça e ducto coletor — e nenhum corpúsculo renal, já que estes ficam apenas na porção contorcida ao redor. Um raio medular com a porção contorcida que o cerca constitui o **lóbulo renal**; um conjunto de raios e a pirâmide a que pertencem constitui o **lobo renal**. Reconhecer o raio é a maneira mais rápida de se orientar em um corte de rim, porque ele dá a direção do eixo córtico-medular.',
+    roteiro: [
+      'Procure faixas de perfis tubulares alinhados sem glomérulos entre eles.',
+      'Use a direção do raio para orientar o corte no eixo córtex-medula.',
+    ],
+    atencao:
+      'Apesar do nome, ele está no córtex; confundi-lo com medula inverte toda a leitura da lâmina.',
+  },
+
+  'renal papilla': {
+    panorama:
+      'A papila renal é o ápice da pirâmide medular e o ponto em que a urina deixa o parênquima. É formada quase inteiramente por **ductos coletores** de grande calibre — os ductos papilares, ou de Bellini —, revestidos por epitélio simples colunar alto e pálido com limites celulares nítidos, além de alças finas e vasos retos, tudo em um interstício abundante. Os ductos se abrem na superfície por dezenas de orifícios que formam a **área crivosa**. O epitélio de revestimento da papila é urotélio, que se continua com o do cálice menor que a abraça. É também o território de maior osmolaridade do rim, e por isso o mais vulnerável à isquemia, o que explica a necrose de papila em diabéticos e no abuso de analgésicos.',
+    roteiro: [
+      'Procure ductos de grande calibre com limites celulares visíveis convergindo para o ápice.',
+      'Ache a transição para urotélio na superfície da papila.',
+    ],
+  },
+
+  'excretory passageways': {
+    panorama:
+      'As vias excretoras — cálices, pelve, ureter, bexiga e uretra proximal — repetem um plano comum e existem para conduzir e armazenar urina sem serem alteradas por ela. A **mucosa** é forrada por **urotélio**, epitélio estratificado impermeável cujas células superficiais em guarda-chuva têm placas de uroplaquina, e assenta sobre lâmina própria de conjuntivo denso; não há submucosa nem glândulas, exceto na uretra. A **muscular** é músculo liso em feixes entrelaçados, geralmente descrito como duas camadas, longitudinal interna e circular externa — arranjo **inverso** ao do tubo digestório —, com uma terceira longitudinal externa no terço distal do ureter e na bexiga. A camada externa é adventícia, e serosa apenas onde há peritônio.',
+    roteiro: [
+      'Confirme o urotélio antes de tudo: ele identifica a via urinária em qualquer nível.',
+      'Note a inversão das camadas musculares em relação ao intestino.',
+    ],
+  },
+
+  ureter: {
+    panorama:
+      'O ureter é um tubo de aproximadamente 25 cm que conduz a urina da pelve renal à bexiga por peristalse, e seu corte transversal é uma das imagens mais reconhecíveis da histologia: a mucosa se pregueia longitudinalmente com o órgão vazio, dando à luz um contorno **estrelado** característico. O **urotélio** tem quatro a cinco camadas, com células em guarda-chuva na superfície, e a lâmina própria é de conjuntivo denso, sem glândulas. A muscular tem **longitudinal interna e circular externa** — ordem oposta à do intestino —, com uma terceira camada longitudinal externa no terço inferior. A adventícia prende o órgão ao retroperitônio. Na entrada da bexiga o trajeto oblíquo intramural funciona como válvula, impedindo o refluxo.',
+    roteiro: [
+      'Reconheça a luz estrelada e depois confirme o urotélio.',
+      'Conte as camadas musculares e verifique a ordem antes de compará-lo ao intestino.',
+    ],
+  },
+
+  simple: {
+    panorama:
+      'Um epitélio é **simples** quando todas as suas células tocam a lâmina basal e alcançam a superfície livre — uma camada única, portanto. Ele aparece onde a demanda é de **troca, absorção ou secreção**, e não de proteção contra atrito: pavimentoso simples em endotélios, mesotélios e alvéolos, onde a fina espessura favorece a difusão; cúbico simples em ductos e túbulos; colunar simples no estômago, no intestino e na vesícula biliar. Um cuidado prático domina a classificação: em **corte oblíquo**, um epitélio simples pode parecer estratificado, porque o plano atravessa células em alturas diferentes. A conferência dos núcleos em relação à lâmina basal, e não a impressão geral, é o que decide.',
+    roteiro: [
+      'Confira se todos os núcleos se alinham na mesma altura em relação à lâmina basal.',
+      'Desconfie de espessamentos localizados: quase sempre são artefato de plano de corte.',
+    ],
+  },
+
+  stereocilia: {
+    panorama:
+      'Apesar do nome, estereocílios **não são cílios**: são microvilosidades muito longas, imóveis, sustentadas por feixes de **actina** — e não pelo axonema de microtúbulos —, frequentemente ramificadas e agrupadas em tufos que se aglutinam nas pontas. Existem em três lugares, com funções diferentes. No **epidídimo** e no **ducto deferente**, são altíssimos e servem à absorção do líquido que vem do testículo, aumentando enormemente a área apical. Na **célula ciliada** do ouvido interno, formam feixes escalonados em degraus cuja deflexão abre canais de transdução, ligados uns aos outros por pontes; ali eles são o próprio mecanismo da audição e do equilíbrio, e sua perda é irreversível.',
+    roteiro: [
+      'Diferencie de cílios pelo comprimento e pela ausência de corpúsculo basal na base.',
+      'Use a localização como confirmação: só três epitélios os têm.',
+    ],
+  },
+
+  desmosomes: {
+    panorama:
+      'O desmossomo, ou mácula de adesão, é uma junção **pontual** — não circunda a célula — feita para resistir a tração. Nas duas membranas aderidas há uma **placa de ancoragem** citoplasmática densa, com desmoplaquina e placoglobina, na qual se inserem **filamentos intermediários**: queratinas nos epitélios, desmina no músculo cardíaco. Atravessando o espaço intercelular, caderinas da família das desmogleínas e desmocolinas ligam as duas placas. O resultado é uma rede contínua de filamentos que atravessa o tecido inteiro célula a célula, distribuindo a força mecânica — é ela que faz a epiderme resistir à abrasão. Autoanticorpos contra desmogleína 3 destroem essa ligação e produzem as bolhas do pênfigo vulgar.',
+    roteiro: [
+      'Procure os "espinhos" da camada espinhosa: cada um marca um desmossomo.',
+      'Confirme em microscopia eletrônica pelas placas simétricas e pelos filamentos convergindo.',
+    ],
+  },
+
+  'overview of exocrine glands': {
+    panorama:
+      'As glândulas exócrinas se classificam por três critérios independentes, e responder aos três resolve qualquer lâmina. Primeiro, o **número de células**: unicelular, como a célula caliciforme, ou multicelular. Segundo, a **forma do ducto**: **simples** quando não ramifica, **composta** quando ramifica. Terceiro, a **forma da porção secretora**: tubular, acinar (alveolar) ou tubuloacinar, e cada uma pode ainda ser reta, enovelada ou ramificada. A isso soma-se a **natureza do produto** — serosa, mucosa ou mista — e o **mecanismo de liberação**: **merócrina**, por exocitose, sem perda de citoplasma, que é a regra; **apócrina**, com perda de parte do ápice, como no lipídio do leite; e **holócrina**, com destruição da célula inteira, como na sebácea.',
+    roteiro: [
+      'Responda aos três critérios em ordem antes de nomear a glândula.',
+      'Não confunda a classificação do ducto com a da porção secretora — são eixos independentes.',
+    ],
+  },
+
+  'sheet gland': {
+    panorama:
+      'A glândula em lâmina, ou epitélio secretor de superfície, é a forma mais simples de secreção multicelular: **todo o epitélio de revestimento secreta**, sem que exista uma porção secretora individualizada nem ducto. O exemplo clássico é o **epitélio superficial do estômago**, cujas células colunares produzem, todas elas, um muco neutro espesso que forma sobre a mucosa uma camada de gel aderente com bicarbonato, protegendo-a do ácido e da pepsina que ela mesma secreta. É por isso que no estômago não há células caliciformes: a função delas já é cumprida pelo epitélio inteiro. O conceito ajuda a entender que "glândula" descreve uma função, não obrigatoriamente uma estrutura separada.',
+    roteiro: [
+      'Note que não há ducto nem porção secretora distinta — é o critério da categoria.',
+      'Compare com a célula caliciforme, em que só algumas células do epitélio secretam.',
+    ],
+  },
+
+  'simple, branched tubular gland': {
+    panorama:
+      'Nesta configuração há um **único ducto** — daí "simples" — no qual desembocam duas ou mais porções secretoras tubulares, que por isso se dizem ramificadas. As **glândulas gástricas** do fundo e do corpo são o exemplo padrão: várias glândulas tubulares confluem para uma mesma fosseta. O mesmo arranjo aparece nas glândulas pilóricas, nas cárdicas, nas glândulas uterinas e nas de Brunner do duodeno. A distinção em relação à glândula composta é fácil de errar e vale insistir: o que define "composta" é a **ramificação do ducto**, não a da porção secretora. Aqui o ducto é único do início ao fim, e apenas as porções secretoras se multiplicam a partir dele.',
+    roteiro: [
+      'Siga o ducto até a superfície: se ele não se dividir, a glândula é simples.',
+      'Conte quantas porções secretoras desembocam no mesmo ducto para confirmar a ramificação.',
+    ],
+  },
+
+  'basic tissues in organs': {
+    panorama:
+      'Todo órgão do corpo é montado a partir de **quatro tecidos básicos**, e essa redução é a maior economia conceitual da histologia. O **epitelial** reveste superfícies e forma glândulas: células justapostas, pouca matriz, apoiadas em lâmina basal, avasculares. O **conjuntivo** conecta e sustenta: células dispersas em matriz abundante, com fibras e substância fundamental, vascularizado. O **muscular** contrai: células alongadas cheias de filamentos de actina e miosina, em três variedades. O **nervoso** conduz e integra: neurônios e glia. Um órgão maciço qualquer combina os quatro — parênquima epitelial, estroma conjuntivo, vasos com músculo liso e inervação autonômica —, e nomeá-los separadamente antes de descrever é o método mais seguro.',
+    roteiro: [
+      'Percorra o campo identificando os quatro tecidos antes de tentar nomear o órgão.',
+      'Use a proporção entre eles como pista: ela varia caracteristicamente de órgão para órgão.',
+    ],
+  },
+
+  'connective tissue proper overview': {
+    panorama:
+      'O conjuntivo propriamente dito é o subgrupo do tecido conjuntivo que exclui as variedades especializadas — cartilagem, osso, sangue e hemocitopoético. É definido pela matriz: **fibras colágenas** grossas e acidófilas, que resistem à tração; **fibras reticulares** de colágeno III, finas, argirófilas, que formam malhas de sustentação em órgãos linfoides e glandulares; e **fibras elásticas**, finas e onduladas, que devolvem a forma. Entre elas há substância fundamental de proteoglicanos e glicosaminoglicanos altamente hidratada. As células residentes constroem e mantêm — fibroblasto, adipócito, macrófago, mastócito —, e as transitórias chegam do sangue na resposta imune. A classificação em frouxo e denso, e este em modelado e não modelado, cobre praticamente todos os casos.',
+    roteiro: [
+      'Comece pela matriz: tipo de fibra dominante e proporção em relação às células.',
+      'Só depois nomeie as células, separando residentes de transitórias.',
+    ],
+  },
+
+  macrophage: {
+    panorama:
+      'O macrófago deriva do monócito circulante, que atravessa a parede vascular e se diferencia no tecido, onde pode viver meses. É uma célula grande, de contorno irregular, com **núcleo reniforme ou indentado** e citoplasma abundante e frequentemente vacuolado, muitas vezes contendo material fagocitado — o que é, na prática, a melhor pista de identificação em H&E, já que sem inclusões ele se confunde com o fibroblasto. Faz três coisas: **fagocita** microrganismos, restos celulares e partículas; **apresenta antígeno** aos linfócitos T via MHC de classe II; e **secreta** dezenas de mediadores. Recebe nomes locais conforme o órgão: células de Kupffer no fígado, micróglia no sistema nervoso, osteoclastos no osso, células de Langerhans na pele.',
+    roteiro: [
+      'Procure inclusões no citoplasma antes de tentar distinguir do fibroblasto pelo núcleo.',
+      'Lembre dos nomes locais: a mesma célula muda de nome conforme o tecido.',
+    ],
+  },
+
+  eosinophil: {
+    panorama:
+      'O eosinófilo representa de 1 a 4% dos leucócitos e é reconhecido por dois traços simultâneos: **núcleo bilobado**, com os lobos ligados por um filamento fino, e **grânulos específicos grandes, uniformes e intensamente acidófilos**, corados de laranja-avermelhado pela eosina. Em microscopia eletrônica esses grânulos têm um cristaloide central de **proteína básica principal**, tóxica para helmintos — sua função primária. Participa também das reações alérgicas, onde modula e ao mesmo tempo amplifica a resposta, degradando histamina e leucotrienos mas lesando o epitélio brônquico na asma crônica. Migra rapidamente para os tecidos, sobretudo os de mucosa, onde reside em número muito maior que no sangue.',
+    roteiro: [
+      'Confirme os dois lobos e a uniformidade dos grânulos — o neutrófilo tem mais lobos e grânulos finos.',
+      'Procure eosinófilos na lâmina própria intestinal, onde são normais em pequeno número.',
+    ],
+  },
+
+  'reticular fibers': {
+    panorama:
+      'As fibras reticulares são feitas de **colágeno tipo III** e formam malhas tridimensionais delicadas, de 0,5 a 2 µm, em vez dos feixes grossos do tipo I. São muito glicosiladas, e é essa característica que as torna **argirófilas** — impregnam-se por sais de prata, aparecendo pretas — e **PAS-positivas**, enquanto em H&E passam praticamente despercebidas. Formam o arcabouço de sustentação onde as células precisam de suporte sem rigidez: órgãos linfoides e hemocitopoéticos, fígado, glândulas endócrinas, e ao redor de fibras musculares, adipócitos e nervos. Também são o primeiro colágeno depositado na cicatrização e no tecido embrionário, sendo depois substituídas por tipo I.',
+    roteiro: [
+      'Peça impregnação por prata: em H&E a rede reticular é praticamente invisível.',
+      'Relacione a presença de rede reticular à necessidade de sustentar células soltas.',
+    ],
+  },
+
+  'bone cells: osteoblasts': {
+    panorama:
+      'O osteoblasto deriva de células osteoprogenitoras do periósteo e do endósteo e é a célula que **constrói** o osso. Enquanto ativo, é cúbico a colunar, com citoplasma **intensamente basófilo** pelo RER abundante e um halo claro correspondente ao Golgi, e dispõe-se em uma camada contínua sobre a superfície óssea, lado a lado, como um epitélio — arranjo que é a melhor pista de identificação. Secreta o **osteoide**, matriz orgânica não mineralizada de colágeno tipo I, osteocalcina e osteonectina, e depois promove sua mineralização liberando vesículas com fosfatase alcalina. Ao ser cercado pela matriz que produziu, torna-se **osteócito**. Também comanda a reabsorção indiretamente, expressando RANKL, que ativa os osteoclastos.',
+    roteiro: [
+      'Procure a fileira contínua de células cúbicas basófilas sobre a superfície óssea.',
+      'Note a faixa pálida de osteoide entre o osteoblasto e o osso mineralizado.',
+    ],
+  },
+
+  'bone cells: osteoclasts': {
+    panorama:
+      'O osteoclasto é a célula que **reabsorve** o osso, e não pertence à linhagem óssea: deriva da fusão de precursores monocíticos, e por isso é **multinucleada**, com cinco a cinquenta núcleos, gigante e intensamente **acidófila**. Assenta-se em depressões da superfície óssea chamadas **lacunas de Howship**, que ela mesma escava. Sua face voltada ao osso tem duas regiões: a **zona clara**, um anel de adesão selado por integrinas, e a **borda pregueada**, invaginações profundas que ampliam a área de secreção. Ali ela bombeia prótons, acidificando o compartimento selado e dissolvendo a hidroxiapatita, e libera catepsina K e metaloproteinases que digerem o colágeno. É ativada por RANKL e inibida por osteoprotegerina e calcitonina.',
+    roteiro: [
+      'Procure a célula gigante multinucleada dentro de uma depressão da superfície — os dois achados juntos.',
+      'Note a borda pregueada voltada para o osso em grande aumento.',
+    ],
+  },
+
+  'bone matrix: remodeling (compact bone)': {
+    panorama:
+      'A remodelação do osso compacto ocorre por **unidades de remodelação óssea** que avançam pelo tecido como um túnel escavando e reconstruindo. À frente vai um **cone de corte** de osteoclastos, que perfura um canal cilíndrico ao longo do eixo do osso; atrás dele entram vasos e, na superfície do túnel recém-aberto, osteoblastos depositam lamelas concêntricas de dentro para fora, até que o canal se estreite e vire o **canal de Havers** de um **ósteon** novo. Por isso o osso compacto adulto é um mosaico de ósteons de idades diferentes, separados por **linhas de cementação**, e cheio de **lamelas intersticiais**, restos de ósteons antigos parcialmente destruídos pelos mais novos.',
+    roteiro: [
+      'Compare o número de lamelas e a nitidez das linhas de cementação entre ósteons vizinhos.',
+      'Procure lamelas intersticiais entre os ósteons — elas são o registro das gerações anteriores.',
+    ],
+  },
+
+  'bone matrix: remodeling (spongy bone)': {
+    panorama:
+      'No osso esponjoso a remodelação não escava túneis: ela ocorre **na superfície das trabéculas**, que são finas e banhadas pela medula, de modo que osteoclastos e osteoblastos trabalham lado a lado sobre a mesma face. Um osteoclasto escava uma lacuna de Howship, e osteoblastos a preenchem com lamelas paralelas ao contorno da trabécula — daí o padrão de lamelas planas, não concêntricas, que caracteriza o osso esponjoso. Como a área de superfície por unidade de volume é muito maior que no compacto, o esponjoso tem **taxa de renovação várias vezes mais rápida**, e é ele que responde primeiro a alterações metabólicas: é onde a osteoporose se manifesta antes, e é por isso que a fratura vertebral precede a do colo do fêmur.',
+    roteiro: [
+      'Confirme que as lamelas acompanham o contorno da trabécula em vez de formar círculos.',
+      'Procure osteoclastos e osteoblastos na mesma superfície — a proximidade é característica.',
+    ],
+  },
+
+  "bone: volkmann's canal": {
+    panorama:
+      'Os canais de Volkmann, ou canais perfurantes, são condutos vasculares que atravessam o osso compacto **transversal ou obliquamente ao eixo longo**, conectando os canais de Havers entre si e ligando-os às superfícies periosteal e endosteal. Essa orientação é o que os define e distingue: em um corte transversal do osso, os canais de Havers aparecem como círculos no centro de cada ósteon, e os de Volkmann como canais que cruzam de lado, atravessando lamelas em vez de serem envolvidos por elas. Não têm lamelas concêntricas próprias — outro critério prático. Trazem vasos, nervos e linfáticos do periósteo para o interior, garantindo que nenhum osteócito fique a mais de 200 µm de um capilar.',
+    roteiro: [
+      'Verifique a orientação e a ausência de lamelas concêntricas para separar de um canal de Havers.',
+      'Siga o canal até ver se ele conecta dois ósteons ou alcança a superfície.',
+    ],
+  },
+
+  'bone: resorption': {
+    panorama:
+      'A reabsorção óssea é feita pelo osteoclasto em um compartimento selado, e o processo tem duas etapas químicas distintas. Primeiro, o **componente mineral**: bombas de prótons na borda pregueada acidificam o espaço abaixo da célula até pH próximo de 4,5, dissolvendo a hidroxiapatita e liberando cálcio e fosfato. Depois, o **componente orgânico**: a catepsina K e metaloproteinases digerem o colágeno tipo I exposto. O resultado é uma cavidade escavada, a lacuna de Howship. O controle é hormonal e local: o PTH age indiretamente, estimulando o osteoblasto a produzir **RANKL**, que ativa o osteoclasto; a osteoprotegerina bloqueia essa via; e a calcitonina inibe o osteoclasto diretamente. Bisfosfonatos exploram exatamente esse eixo.',
+    roteiro: [
+      'Procure a lacuna escavada e a célula gigante dentro dela para documentar reabsorção ativa.',
+      'Note que o osteoblasto vizinho participa do controle — a reabsorção não é autônoma.',
+    ],
+  },
+
+  'bone: interstitial lamellae': {
+    panorama:
+      'As lamelas intersticiais são **fragmentos de ósteons antigos** que sobreviveram parcialmente à remodelação e ficaram encaixados entre os ósteons atuais. Reconhecem-se por serem arcos de lamelas paralelas, sem canal central próprio, com contorno angular e limitados por **linhas de cementação** — faixas de matriz pobre em colágeno e rica em glicoproteínas que marcam onde uma unidade de remodelação parou. Sua presença é a prova histológica de que o osso compacto é continuamente reconstruído: em um corte transversal, elas ocupam todo o espaço entre ósteons completos, e sua abundância aumenta com a idade, à medida que gerações sucessivas de ósteons se sobrepõem.',
+    roteiro: [
+      'Procure grupos de lamelas sem canal central entre ósteons completos.',
+      'Siga as linhas de cementação para reconstruir mentalmente qual ósteon veio antes.',
+    ],
+  },
+
+  blood: {
+    panorama:
+      'O sangue é um tecido conjuntivo especializado cuja matriz é líquida: o **plasma**, 55% do volume, com água, albumina, globulinas, fibrinogênio, íons e nutrientes. Os elementos figurados são três. As **hemácias**, anucleadas e bicôncavas, com 7,5 µm, transportam gases — seu diâmetro constante faz delas a régua natural de toda lâmina. Os **leucócitos** dividem-se em granulócitos (neutrófilo, eosinófilo, basófilo) e agranulócitos (linfócito, monócito), e só cumprem função depois de deixar o vaso. As **plaquetas** são fragmentos de megacariócito, sem núcleo, que iniciam a hemostasia. Ao contrário dos demais conjuntivos, as células não produzem a matriz em que estão, e não há fibras — exceto durante a coagulação, quando o fibrinogênio vira fibrina.',
+    roteiro: [
+      'Use a hemácia como referência de tamanho para calibrar o restante do campo.',
+      'Peça um esfregaço corado por Giemsa ou Wright: em corte histológico os leucócitos são difíceis de tipar.',
+    ],
+  },
+
+  'blood: neutrophil': {
+    panorama:
+      'O neutrófilo é o leucócito mais numeroso, de 50 a 70% do total, e a primeira célula a chegar em uma infecção bacteriana aguda. Identifica-se pelo **núcleo multilobado**, com três a cinco lobos unidos por filamentos finos — daí "polimorfonuclear" —, e por grânulos citoplasmáticos pequenos e pouco corados, que lhe dão aspecto rosa-acinzentado. São dois tipos de grânulo: os **azurófilos** (primários), que são lisossomos com mieloperoxidase, e os **específicos** (secundários), com lisozima, lactoferrina e colagenase. Sobrevive poucas horas no sangue e um a dois dias no tecido. Um aumento na proporção de formas jovens, com núcleo em bastão, é o chamado desvio à esquerda, indicando demanda aguda.',
+    roteiro: [
+      'Conte os lobos: o número separa neutrófilo de eosinófilo com segurança.',
+      'Note que os grânulos são finos e pálidos, o oposto dos grânulos do eosinófilo.',
+    ],
+  },
+
+  'blood: lymphocyte': {
+    panorama:
+      'O linfócito é o segundo leucócito mais numeroso e o único que **recircula** entre sangue, linfa e tecidos, podendo viver anos. Em esfregaço, o pequeno linfócito é pouco maior que uma hemácia e tem núcleo redondo, escuro e denso, ocupando quase toda a célula, com apenas uma orla fina de citoplasma basófilo — morfologia que não permite distinguir suas classes funcionais. **B**, **T** e **NK** só se separam por marcadores de superfície: os B originam plasmócitos e anticorpos, os T dividem-se em auxiliares e citotóxicos e comandam a imunidade celular, e os NK matam células infectadas e tumorais sem sensibilização prévia. Ativado, o linfócito aumenta de tamanho, o citoplasma fica mais azul e o nucléolo aparece.',
+    roteiro: [
+      'Compare o tamanho com a hemácia vizinha para separar linfócito pequeno de monócito.',
+      'Não tente classificar em B ou T pela morfologia — é impossível sem imunofenotipagem.',
+    ],
+  },
+
+  'reticular connective tissue': {
+    panorama:
+      'O tecido conjuntivo reticular é uma variedade especializada cuja matriz é dominada por **fibras reticulares de colágeno tipo III**, produzidas por **células reticulares** — fibroblastos modificados que não apenas fabricam a rede, mas se apoiam sobre ela, envolvendo-a com seus prolongamentos. O resultado é uma malha tridimensional frouxa e macia, capaz de sustentar células livres sem restringir seu movimento, e por isso é o estroma dos órgãos hemocitopoéticos e linfoides: medula óssea, linfonodo, baço, e também do fígado e de glândulas endócrinas. Em H&E é quase invisível, e só a impregnação por prata revela a rede — motivo pelo qual essa arquitetura passa despercebida na maioria das lâminas de rotina.',
+    roteiro: [
+      'Peça impregnação argêntica quando quiser ver o estroma de um órgão linfoide.',
+      'Note que as células reticulares se confundem com as células livres em H&E.',
+    ],
+  },
+
+  'brown adipose connective tissue': {
+    panorama:
+      'O tecido adiposo pardo é especializado em **produzir calor**, não em estocar energia, e sua histologia acompanha essa função. Suas células são **multiloculares**: o lipídio está distribuído em muitas gotículas pequenas, o que multiplica a área de contato com as mitocôndrias, e o núcleo permanece **central e redondo**, não comprimido contra a borda. O citoplasma é abundante e acidófilo pela enorme quantidade de mitocôndrias, cujos citocromos dão a cor parda ao tecido. A vascularização e a inervação simpática são muito mais densas que no tecido branco. O mecanismo é a **termogenina** (UCP1), proteína da membrana mitocondrial interna que desacopla a cadeia respiratória da síntese de ATP, dissipando a energia como calor.',
+    roteiro: [
+      'Confirme as múltiplas gotículas e o núcleo central para separar do adipócito branco.',
+      'Note a densidade capilar, muito maior que a do tecido branco no mesmo aumento.',
+    ],
+  },
+
+  'mucous connective tissue': {
+    panorama:
+      'O tecido conjuntivo mucoso é uma variedade essencialmente **embrionária**, cujo exemplo mais conhecido é a **geleia de Wharton** do cordão umbilical. Sua matriz é predominantemente **substância fundamental**, muito rica em ácido hialurônico e portanto extremamente hidratada, com poucas fibras colágenas dispersas e sem fibras elásticas. As células são fibroblastos estrelados, esparsos, com longos prolongamentos que se tocam formando uma rede frouxa. O aspecto em H&E é o de um campo quase vazio, pálido e finamente fibrilar, com raros núcleos — e é justamente essa pobreza celular e fibrilar que o identifica. No cordão, a rigidez conferida pela hidratação impede que os vasos umbilicais sejam comprimidos ou torcidos.',
+    roteiro: [
+      'Reconheça o campo pálido com poucos núcleos estrelados antes de procurar fibras.',
+      'Confirme o contexto: fora do cordão umbilical e do embrião, ele é raro no adulto.',
+    ],
+  },
+
+  'muscle types': {
+    panorama:
+      'Há três tipos de músculo, e três perguntas os separam. **Há estriações?** O esquelético e o cardíaco têm, porque seus sarcômeros estão alinhados; o liso não tem. **Onde está o núcleo?** No esquelético, os núcleos são **múltiplos e periféricos**, encostados no sarcolema, porque a fibra é um sincício formado pela fusão de mioblastos; no cardíaco há **um ou dois núcleos centrais**; no liso, um núcleo central em forma de charuto, que se enruga quando a célula contrai. **Há ramificação e disco intercalar?** Só no cardíaco. O controle segue: voluntário no esquelético, involuntário nos outros dois. E a regeneração difere radicalmente: boa no liso, limitada no esquelético via células satélites, praticamente nula no cardíaco.',
+    roteiro: [
+      'Responda às três perguntas em ordem — elas classificam sem ambiguidade.',
+      'Confirme o plano de corte antes de concluir: em corte transversal as estriações não aparecem.',
+    ],
+  },
+
+  neurons: {
+    panorama:
+      'O neurônio é a unidade de sinalização do sistema nervoso, e sua morfologia decorre inteiramente disso. O **pericário** contém o núcleo grande, eucromático, com nucléolo proeminente, e um citoplasma cheio de **substância de Nissl** — RER e polissomos em blocos — que sustenta a síntese de um citoplasma potencialmente enorme. Os **dendritos** recebem informação, são múltiplos, afilam-se, ramificam-se perto do corpo e contêm Nissl. O **axônio** é único, emerge do cone de implantação, mantém calibre constante, pode alcançar mais de um metro e **não tem Nissl** — critério prático para identificá-lo. Classificam-se pelo número de prolongamentos em multipolares, bipolares e pseudounipolares, e pela função em sensitivos, motores e interneurônios.',
+    roteiro: [
+      'Ache o prolongamento sem Nissl para identificar o axônio.',
+      'Conte os prolongamentos que saem do corpo para classificar morfologicamente.',
+    ],
+  },
+
+  'spinal cord': {
+    panorama:
+      'A medula espinal inverte a organização do encéfalo: aqui a **substância cinzenta é central**, em forma de H ou de borboleta, e a **branca é periférica**. Os cornos anteriores da cinzenta contêm os grandes **motoneurônios** multipolares, cujos axônios saem pela raiz ventral; os cornos posteriores recebem as fibras sensitivas que entram pela raiz dorsal, vindas dos neurônios pseudounipolares do gânglio espinal; e nos segmentos torácicos e lombares altos há cornos laterais com neurônios autonômicos pré-ganglionares. A substância branca é formada por tratos ascendentes e descendentes mielinizados, organizados em funículos, mais a glia. No centro corre o **canal central**, revestido por epêndima.',
+    roteiro: [
+      'Oriente o corte pelos cornos: os anteriores são mais largos e têm os maiores neurônios.',
+      'Localize o canal central para confirmar o eixo dorsoventral.',
+    ],
+  },
+
+  'schwann cell': {
+    panorama:
+      'A célula de Schwann é a glia do sistema nervoso periférico e tem duas relações possíveis com o axônio. Nas fibras **mielinizadas**, ela envolve **um único internódulo de um único axônio**, enrolando sua membrana dezenas de vezes até formar a bainha de mielina; entre duas células consecutivas fica um **nó de Ranvier**, onde o axônio se expõe e o potencial de ação salta, tornando a condução saltatória e rápida. Nas fibras **amielínicas**, uma só célula acomoda vários axônios em invaginações separadas da sua superfície, sem enrolamento. Produz **lâmina basal** própria, o que a diferencia do oligodendrócito e é decisivo para a regeneração: é ela que forma o tubo por onde o axônio seccionado volta a crescer.',
+    roteiro: [
+      'Ache os nós de Ranvier em corte longitudinal para confirmar a relação um-a-um.',
+      'Note a lâmina basal em microscopia eletrônica — ela não existe no oligodendrócito.',
+    ],
+  },
+
+  astrocytes: {
+    panorama:
+      'O astrócito é a glia mais numerosa do sistema nervoso central e a mais versátil. Tem corpo estrelado com muitos prolongamentos que terminam em **pés vasculares** envolvendo os capilares — é essa cobertura que induz e mantém as junções estreitas do endotélio, isto é, a **barreira hematoencefálica**. Outros prolongamentos formam a membrana glial limitante sob a pia-máter. Funcionalmente, tampona o potássio extracelular, recapta neurotransmissores como o glutamato, fornece lactato ao neurônio e delimita territórios sinápticos. Existem dois tipos: os **protoplasmáticos**, de prolongamentos curtos e ramificados, na substância cinzenta, e os **fibrosos**, de prolongamentos longos e finos, na branca. Marcam-se pela proteína glial fibrilar ácida.',
+    roteiro: [
+      'Peça imuno-histoquímica para GFAP: em H&E só se vê o núcleo, oval e pálido.',
+      'Procure os pés vasculares encostados nos capilares como confirmação funcional.',
+    ],
+  },
 }
 
 /**
