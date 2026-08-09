@@ -1,0 +1,239 @@
+{
+  "versao": 1,
+  "geradoEm": "2026-08-09",
+  "metodo": "Somente URLs e metadados; nenhuma imagem ou lâmina virtual foi baixada.",
+  "origemDoCatalogo": "catalog_data.json",
+  "totais": {
+    "patologias": 2917,
+    "midias": 202593,
+    "falhasDeColeta": 288,
+    "porFonte": {
+      "Unicamp": {
+        "pages": 3964,
+        "media": 202301,
+        "pathologies": 2693,
+        "failures": 288
+      },
+      "Histopathology Atlas": {
+        "pages": 78,
+        "media": 292,
+        "pathologies": 224,
+        "failures": 0
+      }
+    },
+    "porModalidade": {
+      "Histologia": 33818,
+      "Imagem anatomopatológica": 119969,
+      "Imuno-histoquímica": 39224,
+      "Macroscopia": 9348,
+      "Lâmina virtual (WSI)": 234
+    },
+    "porSistema": {
+      "Gastrointestinal": 4025,
+      "Ginecológico / placenta": 124,
+      "Hematolinfoide": 3384,
+      "Hepatobiliopancreático": 238,
+      "Mama": 53,
+      "Não classificado": 107732,
+      "Ossos e partes moles": 6975,
+      "Patologia geral": 3474,
+      "Respiratório / cabeça e pescoço": 1379,
+      "Sistema nervoso": 72475,
+      "Urinário e genital masculino": 790,
+      "Cardiovascular": 1311,
+      "Endócrino": 50,
+      "Pele": 583
+    }
+  },
+  "arquivos": {
+    "fontes": "fontes.json",
+    "patologias": "patologias.json",
+    "falhas": "falhas-de-coleta.json",
+    "fragmentosDeMidia": [
+      {
+        "arquivo": "midias/unicamp-001.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11952,
+        "patologias": 226,
+        "bytesCompactados": 312887,
+        "bytesDescompactados": 9313115,
+        "sha256": "d667089e5d08bcce56d99d06a1759e3bb5df02ec5b0b89a2176566b3e30c11d8",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-002.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11933,
+        "patologias": 199,
+        "bytesCompactados": 328301,
+        "bytesDescompactados": 9743319,
+        "sha256": "8dabe3de733858d73c3515c5173c116ce40ff2385be30e872cd10b3dbb356cfd",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-003.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11973,
+        "patologias": 145,
+        "bytesCompactados": 338200,
+        "bytesDescompactados": 9954604,
+        "sha256": "a6ef9855674ed0c4fb40394ebdbd8fc915cf890e034e2273dd06fe5c978ae3f4",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-004.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11985,
+        "patologias": 120,
+        "bytesCompactados": 305414,
+        "bytesDescompactados": 9289997,
+        "sha256": "2a022e47752e1f12a724ba6386cdcea3eb319e5cb3a181e63a142872834cf881",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-005.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11891,
+        "patologias": 184,
+        "bytesCompactados": 275645,
+        "bytesDescompactados": 9501640,
+        "sha256": "02e0e4ce85ee6f3c4a4c83626dea70d9f098c40174c894a31e0f15f076d21a36",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-006.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11918,
+        "patologias": 135,
+        "bytesCompactados": 286611,
+        "bytesDescompactados": 9496530,
+        "sha256": "e21627a8361b662a7ae366ee315cb1bb64f47b6ad7d0c732bb642ab247902ff4",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-007.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11830,
+        "patologias": 142,
+        "bytesCompactados": 349413,
+        "bytesDescompactados": 9812559,
+        "sha256": "25b2b52699f534104e3960b150ea1088a26fe5043179b4c63b0911cd50f19b33",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-008.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11968,
+        "patologias": 155,
+        "bytesCompactados": 302939,
+        "bytesDescompactados": 9635567,
+        "sha256": "470ed552b2ec849eae917fa3e039dd483d729b9edb2f884b7ff2bea798255107",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-009.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11989,
+        "patologias": 170,
+        "bytesCompactados": 347979,
+        "bytesDescompactados": 9904424,
+        "sha256": "7a73c847cecd518751106fec61e21717a3c31b5be3376c5af741143ad3481453",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-010.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11962,
+        "patologias": 173,
+        "bytesCompactados": 338045,
+        "bytesDescompactados": 10028213,
+        "sha256": "08b46c381f9e556a2e963f40f066c0e6a2fbc9fc6113455de084a41563ecf7f3",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-011.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11990,
+        "patologias": 193,
+        "bytesCompactados": 336424,
+        "bytesDescompactados": 9673293,
+        "sha256": "9d5f7e5ecea234a189b186b552a3c570bf60aef14cd20c593e5d5fc21f8093e8",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-012.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11981,
+        "patologias": 163,
+        "bytesCompactados": 297922,
+        "bytesDescompactados": 9372683,
+        "sha256": "be223a7c2d2892e62bccc847e925e4d64e45864b09be9e1992460221d2ae86ea",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-013.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11951,
+        "patologias": 254,
+        "bytesCompactados": 167442,
+        "bytesDescompactados": 7978437,
+        "sha256": "ff6751f15996a6258937d3c97512a3ec41d1984cd62c8cec611326e6efebab5e",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-014.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11968,
+        "patologias": 225,
+        "bytesCompactados": 224659,
+        "bytesDescompactados": 8656235,
+        "sha256": "351b0befda24359628d794d2ee16f447db1d90f297077e69131c7c1904b14123",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-015.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11994,
+        "patologias": 122,
+        "bytesCompactados": 286483,
+        "bytesDescompactados": 9325032,
+        "sha256": "bbaf21e37590327797bdc76c9bff5521d6f9e56af3bf1ba4e2c7a1e8ff2d111b",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-016.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11502,
+        "patologias": 84,
+        "bytesCompactados": 295399,
+        "bytesDescompactados": 9323693,
+        "sha256": "7dbf570e985c77e25c6c299333d789b3a3eb0369cbce371a15fbb9ccbec3f3dc",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/unicamp-017.json.gz",
+        "fonteId": "unicamp",
+        "registros": 11514,
+        "patologias": 3,
+        "bytesCompactados": 229671,
+        "bytesDescompactados": 8545393,
+        "sha256": "f88c940498872f49b60f9b0002baea195704b8be96b7925c3298057299f98964",
+        "formato": "JSON array comprimido com gzip"
+      },
+      {
+        "arquivo": "midias/histopathology-atlas-001.json.gz",
+        "fonteId": "histopathology-atlas",
+        "registros": 292,
+        "patologias": 224,
+        "bytesCompactados": 17266,
+        "bytesDescompactados": 235473,
+        "sha256": "f7a4fa345be029699f4b5586553b12cdd1ca93978474f0a102f1029b5ecb39bb",
+        "formato": "JSON array comprimido com gzip"
+      }
+    ]
+  },
+  "integridade": {
+    "midiasSemPatologiaOriginal": {},
+    "todasAsMidiasVinculadas": true
+  }
+}

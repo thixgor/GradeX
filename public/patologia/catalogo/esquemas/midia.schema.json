@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gradex.example/schemas/histopatologia-midia.json",
+  "title": "Referência catalogada de mídia histopatológica",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "patologiaId",
+    "fonteId",
+    "patologia",
+    "sistema",
+    "modalidade",
+    "coloracao",
+    "descricao",
+    "urlPaginaFonte",
+    "politicaDeExibicao"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "patologiaId": { "type": "string", "minLength": 1 },
+    "fonteId": { "enum": ["unicamp", "histopathology-atlas"] },
+    "patologia": { "type": "string", "minLength": 1 },
+    "sistema": { "type": "string", "minLength": 1 },
+    "modalidade": { "type": "string", "minLength": 1 },
+    "coloracao": { "type": "string", "minLength": 1 },
+    "descricao": { "type": "string" },
+    "baseDaDescricao": { "type": "string" },
+    "tituloDaPagina": { "type": "string" },
+    "urlPaginaFonte": { "type": "string", "format": "uri" },
+    "urlImagem": { "type": "string", "format": "uri" },
+    "urlMiniatura": { "type": "string", "format": "uri" },
+    "urlVisualizador": { "type": "string", "format": "uri" },
+    "tipoArquivo": { "type": "string" },
+    "acessadoEm": { "type": "string" },
+    "sinalizadorDeQualidade": { "type": "string" },
+    "politicaDeExibicao": { "const": "url-remota-com-portao-de-direitos" }
+  },
+  "anyOf": [
+    { "required": ["urlImagem"] },
+    { "required": ["urlVisualizador"] },
+    { "required": ["urlMiniatura"] }
+  ]
+}
