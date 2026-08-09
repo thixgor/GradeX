@@ -6,26 +6,53 @@ import {
   getManualClinicoConfig,
   serializeManualClinicoProduct,
 } from '@/lib/manual-clinico-product'
-import { CATEGORIAS, carregarTodas } from '@/lib/ferramentas-clinicas'
+import { CATEGORIAS, carregarTodas, ferramentasDaCategoria } from '@/lib/ferramentas-clinicas'
 
 export const dynamic = 'force-dynamic'
+
+export interface ItemCatalogo {
+  id: string
+  nome: string
+  sigla?: string
+  /** O que a ferramenta faz — é o que a vitrine promete e o que a pessoa compra. */
+  resumo: string
+  area: string
+}
+
+export interface CategoriaCatalogo {
+  id: string
+  nome: string
+  subtitulo: string
+  cor: string
+  icone: string
+  total: number
+  /** Ids das ferramentas desta área, inclusive as emprestadas de outras. */
+  ids: string[]
+}
 
 export interface ResumoFerramentas {
   ferramentas: number
   areas: number
   referencias: number
+  lista: ItemCatalogo[]
+  categorias: CategoriaCatalogo[]
 }
 
 /**
- * Números do catálogo para a faixa de assinatura.
+ * Catálogo público das Ferramentas Clínicas.
  *
- * Contados no servidor a partir do próprio conteúdo, nunca escritos à mão, para
- * que o texto da página não possa desencontrar do que a seção entrega. Só
- * quantidades atravessam a rede: o catálogo em si a página já carrega sozinha,
- * e é aberto.
+ * A seção é privativa, mas a lista do que existe não: quem está decidindo se
+ * assina precisa saber exatamente o que vai receber, ferramenta por ferramenta,
+ * e não uma contagem redonda. Então atravessa a rede o nome, a sigla e o resumo
+ * de cada uma — o que ela faz. O que fica do outro lado é o que constitui o
+ * produto: a conta, a fórmula, o fundamento, as armadilhas e as referências.
  *
- * Fica em cache de módulo porque o catálogo é estático — recalcular a cada
- * requisição significaria reimportar os 15 módulos de conteúdo à toa.
+ * As ferramentas vão numa lista única e as áreas guardam só ids. Uma mesma
+ * ferramenta aparece em até três áreas — repetir o texto dela em cada uma
+ * inflaria a resposta sem acrescentar informação.
+ *
+ * Cache de módulo: o catálogo é estático, e recalcular a cada requisição
+ * significaria reimportar os 15 módulos de conteúdo à toa.
  */
 let cacheResumo: ResumoFerramentas | null = null
 
@@ -37,16 +64,35 @@ async function montarResumo(): Promise<ResumoFerramentas> {
     ferramentas: todas.length,
     areas: CATEGORIAS.length,
     referencias: todas.reduce((n, f) => n + f.referencias.length, 0),
+    lista: todas.map((f) => ({
+      id: f.id,
+      nome: f.nome,
+      sigla: f.sigla,
+      resumo: f.resumo,
+      area: f.categorias[0],
+    })),
+    categorias: CATEGORIAS.map((c) => {
+      const daArea = ferramentasDaCategoria(todas, c.id)
+      return {
+        id: c.id,
+        nome: c.nome,
+        subtitulo: c.subtitulo,
+        cor: c.cor,
+        icone: c.icone,
+        total: daArea.length,
+        ids: daArea.map((f) => f.id),
+      }
+    }),
   }
   return cacheResumo
 }
 
 /**
- * Estado do visitante nas Ferramentas Clínicas.
+ * Verificação de acesso às Ferramentas Clínicas.
  *
- * A seção é aberta: as 201 calculadoras funcionam sem login e esta rota não
- * barra ninguém. O `hasFullAccess` serve só para decidir se vale mostrar a
- * faixa de assinatura do Manual Clínico — quem já assina não precisa vê-la.
+ * Seção privativa com a mesma regra do Manual do Eletrocardiograma e do Manual
+ * de Tomografia: liberada para assinantes do Manual Clínico e contas Plus+,
+ * ambos cobertos por `hasFullAccess`.
  */
 export async function GET() {
   try {
