@@ -35,6 +35,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Declarado fora do try para o catch poder decidir se expõe o erro real
+  // (só pra admin — ver comentário no catch abaixo).
+  let isAdminCaller = false
   try {
     const ip = getClientIp(request)
     const generalLimit = checkRateLimitSync(ip, 'pdf-viewer-page', PAGE_RATE_LIMIT_IP)
@@ -43,6 +46,7 @@ export async function GET(
     }
 
     const session = await getSession()
+    isAdminCaller = session?.role === 'admin'
 
     if (!session) {
       const guestLimit = checkRateLimitSync(ip, 'pdf-viewer-page-guest', PAGE_RATE_LIMIT_GUEST)
@@ -153,7 +157,15 @@ export async function GET(
   } catch (error) {
     console.error('[pdf-viewer/page] Erro:', error)
     return NextResponse.json(
-      { error: 'Nao foi possivel carregar esta pagina do PDF.' },
+      {
+        error: 'Nao foi possivel carregar esta pagina do PDF.',
+        // Motivo real só pra admin: a mensagem genérica acima é o que o
+        // usuário final vê, mas sem isso, diagnosticar uma falha de render
+        // específica de um material dependia de olhar os logs do servidor.
+        ...(isAdminCaller
+          ? { adminDetail: error instanceof Error ? error.message : String(error) }
+          : {}),
+      },
       { status: 500 }
     )
   }

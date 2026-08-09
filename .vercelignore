@@ -24,5 +24,11 @@ tsconfig.tsbuildinfo
 __tests__/
 *.test.*
 *.spec.*
-# Acervo-fonte da Histologia: migrar para Blob/CDN; nao enviar ao deploy
+# Manual da Histologia — nada do pacote de origem vai para o deploy.
+# O acervo (2,56 GiB) vive no Vercel Blob; os derivados enxutos que a aplicacao
+# consome estao em data/histologia/, fora de public/.
 public/Manual-Histologia/acervo-fonte/**
+public/Manual-Histologia/dados/**
+public/Manual-Histologia/documentacao/**
+public/Manual-Histologia/scripts/**
+public/Manual-Histologia/*.json

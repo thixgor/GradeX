@@ -1,0 +1,14 @@
+{
+  "orgaos-e-sistemas/sistema-digestorio/oral-cavity/tooth/tooth-development": {
+    "tituloOriginal": "item",
+    "descricao": "asdf",
+    "motivo": "Página de rascunho deixada no CMS de origem: título 'item', descrição 'asdf', sem imagem-base. Não é conteúdo — exibi-la mostraria ao aluno um placeholder.",
+    "detectadoEm": "2026-08-07"
+  },
+  "orgaos-e-sistemas/sistema-digestorio/oral-cavity/advanced": {
+    "tituloOriginal": "test",
+    "descricao": "test",
+    "motivo": "Página de teste deixada no CMS de origem: título e descrição 'test', sem imagem-base. Mesmo caso da anterior.",
+    "detectadoEm": "2026-08-07"
+  }
+}

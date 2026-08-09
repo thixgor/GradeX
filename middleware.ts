@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
+import { histologiaHabilitada } from '@/lib/histologia/licenca'
 import {
   ADMIN_GATE_COOKIE,
   ADMIN_GATE_ERROR_CODE,
@@ -62,6 +63,11 @@ const publicRoutes = [
   // privativas e quem decide é o handler /api/manual-clinico/ferramentas. As
   // áreas (/ferramentas/<slug>) entram pela regex em isPublicRoute.
   '/manual-clinico/ferramentas',
+  // Manual da Histologia: público *por obrigação de licença*. O acervo é
+  // CC BY-NC-SA e a cláusula NãoComercial impede colocá-lo atrás de login ou
+  // assinatura. As subrotas entram pela regex em isPublicRoute; quem decide se
+  // o módulo existe é o portão em lib/histologia/licenca.ts, não o middleware.
+  '/manual-clinico/histologia',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
@@ -151,6 +157,11 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/manual-clinico\/tomografia\/[a-z0-9-]+$/.test(pathname)) return true
   // Áreas das Ferramentas Clínicas (/manual-clinico/ferramentas/<slug>).
   if (/^\/manual-clinico\/ferramentas\/[a-z0-9-]+$/.test(pathname)) return true
+
+  // Todo o Manual da Histologia — inclusive o currículo, que tem até seis
+  // segmentos de profundidade — e as rotas de dados que ele consome.
+  if (/^\/manual-clinico\/histologia(\/[a-z0-9-]+)*$/.test(pathname)) return true
+  if (/^\/api\/manual-clinico\/histologia\//.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||
@@ -224,6 +235,31 @@ export async function middleware(request: NextRequest) {
     pathname.endsWith('.wasm')
   ) {
     return response
+  }
+
+  // ══════════ Portão de licença do Manual da Histologia ══════════
+  //
+  // O bloqueio vive aqui, e não só no layout da rota, por uma razão concreta:
+  // as páginas do módulo são pré-renderizadas, e `notFound()` dentro de uma
+  // página estática faz o servidor devolver **200** com o corpo do not-found.
+  // Verificado em `next start`. Para um portão jurídico isso não serve — 200 é
+  // convite à indexação. O middleware roda antes do roteamento e devolve um 404
+  // de verdade.
+  //
+  // O layout mantém o `notFound()` como segunda barreira, para o caso de alguém
+  // acrescentar uma rota fora do padrão de caminho tratado aqui.
+  //
+  // Ver docs/adr/0001-licenca-manual-histologia.md.
+  if (
+    (pathname === '/manual-clinico/histologia' ||
+      pathname.startsWith('/manual-clinico/histologia/') ||
+      pathname.startsWith('/api/manual-clinico/histologia/')) &&
+    !histologiaHabilitada()
+  ) {
+    return new NextResponse(null, {
+      status: 404,
+      headers: { 'X-Robots-Tag': 'noindex, nofollow' },
+    })
   }
 
   // Checkout de item único do catálogo, visitante: /comprar é quem vende sem

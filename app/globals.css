@@ -2909,3 +2909,140 @@
 @media (prefers-reduced-motion: reduce) {
   .tc-range::-webkit-slider-thumb { transition: none; }
 }
+
+/* ============================================
+   Manual da Histologia
+   ============================================
+
+   A direção de arte nasce do que se vê na bancada: marfim de lâmina, luz
+   transmitida por baixo, grão microscópico e a borda de vidro do espécime.
+   Tudo em intensidade baixa — o material tem de dar profundidade ao fundo sem
+   nunca disputar com o texto, porque a tela é para estudar, não para admirar.
+   ============================================ */
+
+.histologia-superficie {
+  position: relative;
+  background-color: hsl(var(--background));
+}
+
+/* Luz transmitida: o halo quente que o condensador joga por baixo da lâmina. */
+.histologia-superficie::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(91, 62, 142, 0.07), transparent 65%),
+    radial-gradient(ellipse 45% 35% at 92% 8%, rgba(217, 83, 111, 0.05), transparent 60%);
+}
+
+/* Grão microscópico. Fica em 2,5% e some no modo de alto contraste. */
+.histologia-superficie::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.dark .histologia-superficie::before {
+  background:
+    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(139, 107, 196, 0.10), transparent 65%),
+    radial-gradient(ellipse 45% 35% at 92% 8%, rgba(238, 138, 160, 0.06), transparent 60%);
+}
+.dark .histologia-superficie::after {
+  opacity: 0.04;
+}
+
+@media (forced-colors: active) {
+  .histologia-superficie::before,
+  .histologia-superficie::after {
+    display: none;
+  }
+}
+
+/* O conteúdo precisa ficar acima das duas camadas decorativas. */
+.histologia-superficie > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+   Cartão com aresta de vidro: uma linha clara no topo, como o brilho da borda
+   de uma lamínula. Substitui a borda uniforme por algo que sugere espessura.
+*/
+.histologia-cartao {
+  position: relative;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  border-radius: 0.75rem;
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.histologia-cartao::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.55) 22%,
+    rgb(255 255 255 / 0.55) 78%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.dark .histologia-cartao::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.12) 22%,
+    rgb(255 255 255 / 0.12) 78%,
+    transparent
+  );
+}
+
+.histologia-cartao:hover {
+  border-color: hsl(var(--border));
+  box-shadow: 0 2px 10px -4px rgb(31 39 36 / 0.18);
+}
+
+/* Motion só quando ajuda a entender estado. Sob reduced-motion, nada se move. */
+@media (prefers-reduced-motion: reduce) {
+  .histologia-cartao {
+    transition: none;
+  }
+  .histologia-cartao:hover {
+    transform: none;
+  }
+}
+
+/*
+   Medida de leitura. Texto didático corrido acima de ~72ch cansa e faz o olho
+   perder a linha na volta — o oposto do que uma página de estudo quer.
+*/
+.histologia-prosa {
+  max-width: 68ch;
+}
+
+.histologia-prosa p + p {
+  margin-top: 0.75rem;
+}
+
+/*
+   Tarja de estado editorial. Listrada, para o estado não depender só de cor —
+   quem não distingue o âmbar ainda vê o padrão.
+*/
+.histologia-tarja-pendente {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 5px,
+    hsl(var(--muted-foreground) / 0.07) 5px,
+    hsl(var(--muted-foreground) / 0.07) 10px
+  );
+}

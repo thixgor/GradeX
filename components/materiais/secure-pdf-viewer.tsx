@@ -398,7 +398,13 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
     )
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      const err = new Error(data.error || 'Falha ao carregar pagina') as PageFetchError
+      // `adminDetail` só vem preenchido quando quem chamou é admin (ver
+      // route.ts) — mostra o motivo real do 500 em vez do texto genérico,
+      // sem expor detalhe nenhum pro usuário comum.
+      const message = data.adminDetail
+        ? `${data.error || 'Falha ao carregar pagina'} (${data.adminDetail})`
+        : data.error || 'Falha ao carregar pagina'
+      const err = new Error(message) as PageFetchError
       err.status = response.status
       // O servidor manda Retry-After junto do 429. Respeitar esse valor evita
       // que o backoff cego bata de novo antes de a janela do rate limit virar.
