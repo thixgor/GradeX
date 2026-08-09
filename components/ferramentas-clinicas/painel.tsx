@@ -40,6 +40,7 @@ export function PainelFerramenta({
   ancora,
   favorito,
   onFavoritar,
+  fixo,
 }: {
   ferramenta: Ferramenta
   cor: string
@@ -48,6 +49,8 @@ export function PainelFerramenta({
   ancora?: boolean
   favorito?: boolean
   onFavoritar?: () => void
+  /** Sempre aberta e sem cabeçalho clicável — usado na demonstração da vitrine. */
+  fixo?: boolean
 }) {
   const t = tema(cor)
   const [valores, setValores] = useState<Valores>(() => valoresIniciais(ferramenta.campos))
@@ -104,27 +107,43 @@ export function PainelFerramenta({
       } ${ancora ? 'ring-2 ring-primary/30' : ''}`}
     >
       <div className="flex items-stretch">
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={aberto}
-          className={`flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left transition-colors hover:bg-muted/40 sm:py-5 sm:pl-5 ${
-            aberto ? 'rounded-tl-xl' : 'rounded-l-xl'
-          }`}
-        >
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <h3 className="font-heading text-[15px] font-semibold leading-snug tracking-tight sm:text-base">{ferramenta.nome}</h3>
-              {ferramenta.sigla && (
-                <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
-                  {ferramenta.sigla}
-                </span>
-              )}
+        {fixo ? (
+          <div className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 sm:py-5 sm:pl-5">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <h3 className="font-heading text-[15px] font-semibold leading-snug tracking-tight sm:text-base">{ferramenta.nome}</h3>
+                {ferramenta.sigla && (
+                  <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
+                    {ferramenta.sigla}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
             </div>
-            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
           </div>
-          <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${aberto ? 'rotate-180' : ''}`} />
-        </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={aberto}
+            className={`flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left transition-colors hover:bg-muted/40 sm:py-5 sm:pl-5 ${
+              aberto ? 'rounded-tl-xl' : 'rounded-l-xl'
+            }`}
+          >
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <h3 className="font-heading text-[15px] font-semibold leading-snug tracking-tight sm:text-base">{ferramenta.nome}</h3>
+                {ferramenta.sigla && (
+                  <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
+                    {ferramenta.sigla}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
+            </div>
+            <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${aberto ? 'rotate-180' : ''}`} />
+          </button>
+        )}
 
         {/* Botão irmão, não aninhado: um <button> dentro de outro é HTML
             inválido e quebra o teclado e o leitor de tela. */}

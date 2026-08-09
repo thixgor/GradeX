@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { Input } from '@/components/ui/input'
 import { ArrowLeft, ArrowRight, ChevronsDownUp, Loader2, Search, X } from 'lucide-react'
 import {
@@ -20,6 +20,8 @@ import {
 import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
 import { PainelFerramenta } from '@/components/ferramentas-clinicas/painel'
 import { useFavoritos } from '@/components/ferramentas-clinicas/use-favoritos'
+import { useAcessoFerramentas } from '@/components/ferramentas-clinicas/use-acesso'
+import { VitrineFerramentas } from '@/components/ferramentas-clinicas/vitrine'
 
 export default function CategoriaFerramentasPage() {
   return (
@@ -44,6 +46,11 @@ function Conteudo() {
   const [ancorado, setAncorado] = useState<string | null>(null)
   const ancoraRef = useRef<string | null>(searchParams?.get('f') ?? null)
   const { alternar: alternarFavorito, ehFavorito, sincronizar } = useFavoritos()
+  const { loading: carregandoShell } = useAppShell()
+  const { dados, carregado } = useAcessoFerramentas()
+
+  const prontoAcesso = carregado && !carregandoShell
+  const temAcesso = dados?.access?.hasFullAccess === true
 
   /**
    * Carrega o módulo desta categoria e, se houver, os módulos das ferramentas
@@ -52,7 +59,9 @@ function Conteudo() {
    * chunks de gasometria e cardiologia, mas só uma vez e só ao abrir.
    */
   useEffect(() => {
-    if (!valida) return
+    // Sem acesso a página mostra a vitrine, e baixar os 15 módulos de conteúdo
+    // para ninguém ver seria pagar o peso inteiro do produto na página de vendas.
+    if (!valida || !temAcesso) return
     let ativo = true
     const outras = CATEGORIAS.map((c) => c.id).filter((c) => c !== id)
     Promise.all([carregarModulo(id), ...outras.map((c) => carregarModulo(c))])
@@ -73,7 +82,7 @@ function Conteudo() {
     return () => {
       ativo = false
     }
-  }, [id, valida])
+  }, [id, valida, temAcesso])
 
   // Os favoritos guardam um retrato do texto de cada ferramenta. Com o módulo
   // desta área já carregado, aproveita para renovar o que tiver envelhecido —
@@ -108,6 +117,45 @@ function Conteudo() {
   const emprestadas = useMemo(() => visiveis.filter((f) => f.categorias[0] !== id), [visiveis, id])
 
   if (!valida || !categoria) return null
+
+  if (!prontoAcesso) {
+    return (
+      <div className="surface-page flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Link direto para uma área sem ter acesso: mostra a vitrine já dizendo qual
+  // área a pessoa tentou abrir, em vez de jogá-la num índice genérico.
+  if (!temAcesso) {
+    return (
+      <div className="surface-page min-h-screen">
+        <div className="border-b border-border bg-muted/30">
+          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-16 sm:pt-6">
+            <button
+              onClick={() => router.push('/manual-clinico')}
+              className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
+            </button>
+          </div>
+        </div>
+        <div className="container mx-auto max-w-6xl px-4 py-8">
+          <VitrineFerramentas
+            onCheckout={() => router.push('/manual-clinico/checkout')}
+            isAuthenticated={dados?.isAuthenticated ?? false}
+            planos={dados?.product?.plans ?? []}
+            precoAvulso={dados?.product?.currentPrice ?? dados?.product?.price ?? 0}
+            produtoAtivo={dados?.product?.isActive ?? false}
+            resumo={dados?.resumo}
+            areaAlvo={categoria.nome}
+          />
+        </div>
+      </div>
+    )
+  }
+
   const t = tema(categoria.cor)
   const Icone = ICONES[categoria.icone] || ICONE_PADRAO
 

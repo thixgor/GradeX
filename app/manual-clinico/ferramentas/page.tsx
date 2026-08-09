@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import { Input } from '@/components/ui/input'
 import {
   ArrowLeft,
@@ -28,6 +28,8 @@ import {
 } from '@/lib/ferramentas-clinicas'
 import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
 import { useFavoritos } from '@/components/ferramentas-clinicas/use-favoritos'
+import { useAcessoFerramentas } from '@/components/ferramentas-clinicas/use-acesso'
+import { VitrineFerramentas } from '@/components/ferramentas-clinicas/vitrine'
 
 export default function FerramentasClinicasPage() {
   return (
@@ -43,6 +45,11 @@ function Conteudo() {
   const [todas, setTodas] = useState<Ferramenta[] | null>(null)
   const [carregando, setCarregando] = useState(false)
   const { favoritos, pronto: favoritosProntos } = useFavoritos()
+  const { loading: carregandoShell } = useAppShell()
+  const { dados, carregado } = useAcessoFerramentas()
+
+  const prontoAcesso = carregado && !carregandoShell
+  const temAcesso = dados?.access?.hasFullAccess === true
 
   // O catálogo completo só é baixado quando a busca começa a valer a pena.
   // Antes disso, a página inicial não custa nenhum dos 15 chunks de conteúdo.
@@ -56,6 +63,41 @@ function Conteudo() {
 
   const resultados = useMemo(() => (todas ? buscar(todas, busca) : []), [todas, busca])
   const buscando = busca.trim().length >= 2
+
+  if (!prontoAcesso) {
+    return (
+      <div className="surface-page flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!temAcesso) {
+    return (
+      <div className="surface-page min-h-screen">
+        <div className="border-b border-border bg-muted/30">
+          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-16 sm:pt-6">
+            <button
+              onClick={() => router.push('/manual-clinico')}
+              className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
+            </button>
+          </div>
+        </div>
+        <div className="container mx-auto max-w-6xl px-4 py-8">
+          <VitrineFerramentas
+            onCheckout={() => router.push('/manual-clinico/checkout')}
+            isAuthenticated={dados?.isAuthenticated ?? false}
+            planos={dados?.product?.plans ?? []}
+            precoAvulso={dados?.product?.currentPrice ?? dados?.product?.price ?? 0}
+            produtoAtivo={dados?.product?.isActive ?? false}
+            resumo={dados?.resumo}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="surface-page min-h-screen">

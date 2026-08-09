@@ -57,6 +57,11 @@ const publicRoutes = [
   // Manual do Eletrocardiograma: página pública que exibe o paywall a visitantes;
   // o acesso ao simulador é validado no handler /api/manual-clinico/eletrocardiograma.
   '/manual-clinico/eletrocardiograma',
+  // Ferramentas Clínicas: a página é pública para exibir a vitrine (com três
+  // calculadoras liberadas) a quem não assina. As 201 ferramentas em si são
+  // privativas e quem decide é o handler /api/manual-clinico/ferramentas. As
+  // áreas (/ferramentas/<slug>) entram pela regex em isPublicRoute.
+  '/manual-clinico/ferramentas',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
@@ -144,6 +149,8 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
   // Séries do Manual de Tomografia (/manual-clinico/tomografia/<slug>).
   if (/^\/manual-clinico\/tomografia\/[a-z0-9-]+$/.test(pathname)) return true
+  // Áreas das Ferramentas Clínicas (/manual-clinico/ferramentas/<slug>).
+  if (/^\/manual-clinico\/ferramentas\/[a-z0-9-]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||
@@ -156,6 +163,7 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/manual-clinico/product' ||
     pathname === '/api/manual-clinico/eletrocardiograma' ||
     pathname === '/api/manual-clinico/tomografia' ||
+    pathname === '/api/manual-clinico/ferramentas' ||
     pathname === '/api/farmacologia'
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
