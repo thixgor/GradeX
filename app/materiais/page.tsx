@@ -26,6 +26,7 @@ import {
   PdfDownloadState,
 } from '@/components/materiais/pdf-download-progress'
 import { PdfDownloadTermsModal } from '@/components/materiais/pdf-download-terms-modal'
+import { ContinueReading } from '@/components/materiais/continue-reading'
 import { FolderCard } from '@/components/materiais/folder-card'
 import { MaterialCard } from '@/components/materiais/material-card'
 import { PackageCard } from '@/components/materiais/package-card'
@@ -944,6 +945,9 @@ function MateriaisContent() {
           title="Materiais"
           description="Resumos, apostilas, pacotes e produtos impressos organizados por disciplina."
         />
+
+        {/* Retomada de leitura — some sozinha quando não há leitura no leitor. */}
+        <ContinueReading className="mb-5" />
 
         <MateriaisToolbar
           search={search}

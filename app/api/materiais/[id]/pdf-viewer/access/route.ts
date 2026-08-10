@@ -149,6 +149,11 @@ export async function GET(
         material: {
           id: access.materialId,
           title: access.material.title,
+          // Mesma capa já pública no catálogo — o leitor a repassa para o
+          // cartão de "Continuar lendo".
+          coverImage: typeof access.material.coverImage === 'string'
+            ? access.material.coverImage
+            : undefined,
           pageCount: totalPages,
           viewerEnabled: access.material.pdfViewerEnabled === true,
           // Prévia nunca permite download do arquivo completo.

@@ -51,6 +51,11 @@ import {
   onFullscreenChange,
   requestAppFullscreen,
 } from '@/lib/fullscreen'
+import {
+  readSavedPosition,
+  recordReadingProgress,
+  writeSavedPosition,
+} from '@/lib/material-reading-progress'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -95,6 +100,8 @@ interface ViewerAccess {
   material: {
     id: string
     title: string
+    /** Capa do catálogo — usada no cartão de "Continuar lendo". */
+    coverImage?: string
     pageCount: number
     viewerEnabled: boolean
     // O leitor NÃO oferece download, nem quando esta flag é true — decisão de
@@ -869,34 +876,9 @@ function buildTourSteps(): TourStep[] {
   return steps
 }
 
-// Retomada de leitura: guarda a última página/modo por material no
-// localStorage, para reabrir exatamente de onde o usuário parou.
-const POSITION_STORAGE_PREFIX = 'domineaqui:pdf-viewer:last-position:'
-
-function readSavedPosition(materialId: string): { page?: number; mode?: ViewerMode } | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const raw = window.localStorage.getItem(POSITION_STORAGE_PREFIX + materialId)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as { page?: unknown; mode?: unknown }
-    if (!parsed || typeof parsed !== 'object') return null
-    const page = Number(parsed.page)
-    const mode = parsed.mode
-    return {
-      page: Number.isFinite(page) && page > 0 ? Math.floor(page) : undefined,
-      mode: mode === 'single' || mode === 'width' || mode === 'continuous' ? mode : undefined,
-    }
-  } catch {
-    return null
-  }
-}
-
-function writeSavedPosition(materialId: string, position: { page: number; mode: ViewerMode }) {
-  if (typeof window === 'undefined') return
-  try {
-    window.localStorage.setItem(POSITION_STORAGE_PREFIX + materialId, JSON.stringify(position))
-  } catch {}
-}
+// Retomada de leitura: a última página/modo por material vive no localStorage
+// (lib/material-reading-progress), junto com o índice de leituras recentes que
+// alimenta a área "Continuar lendo" em /materiais e /dashboard.
 
 // ─── Preferências do leitor (globais, não por material) ─────────────────────
 // Só a posição de leitura era guardada. Zoom, modo, ferramenta, cores,
@@ -1724,6 +1706,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!access) return
     const timer = window.setTimeout(() => {
       writeSavedPosition(materialId, { page: currentPage, mode })
+      // Índice de "Continuar lendo". Leitura em prévia (quem ainda não tem o
+      // material) fica de fora de propósito: a área é um atalho para o que a
+      // pessoa está lendo de verdade, não vitrine de amostra.
+      if (!access.preview?.active) {
+        recordReadingProgress({
+          materialId,
+          title: access.material.title,
+          coverImage: access.material.coverImage,
+          page: currentPage,
+          totalPages: access.material.pageCount || 0,
+          mode,
+        })
+      }
     }, 400)
     return () => window.clearTimeout(timer)
   }, [access, currentPage, mode, materialId])

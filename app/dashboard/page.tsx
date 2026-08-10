@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
 import { QuestaoDoDiaCard } from '@/components/retencao/questao-do-dia-card'
+import { ContinueReading } from '@/components/materiais/continue-reading'
 import { ExperienceCarousel } from '@/components/dashboard/experience-carousel'
 import { TourTrigger } from '@/components/dashboard/tour-trigger'
 import { usePlatformTour } from '@/hooks/use-platform-tour'
@@ -475,6 +476,12 @@ function DashboardContent() {
             1.5 QUESTÃO DO DIA (gatilho de retorno diário)
            ═══════════════════════════════════════════════════════ */}
         <QuestaoDoDiaCard />
+
+        {/* ═══════════════════════════════════════════════════════
+            1.6 CONTINUAR LENDO (retomada do PDF Viewer)
+            Só aparece para quem tem leitura em andamento neste aparelho.
+           ═══════════════════════════════════════════════════════ */}
+        <ContinueReading className="dash-rise" />
 
         {/* ═══════════════════════════════════════════════════════
             2. PERFORMANCE OVERVIEW CARDS

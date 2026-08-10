@@ -18,6 +18,7 @@ import { MaterialCartButton } from '@/components/materiais/material-cart-button'
 import { cn } from '@/lib/utils'
 import { LogIn, Menu, RefreshCw, ShieldAlert, WifiOff, X } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
+import { clearReadingProgress } from '@/lib/material-reading-progress'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
@@ -182,6 +183,7 @@ export function AppShell({
     // rede lenta). A página de login rejeitaria uma sessão válida de qualquer forma.
     clearBootstrapCache()
     resetProfilePromptDismissal()
+    clearReadingProgress()
     fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' }).catch(() => {})
     router.replace('/auth/login')
   }
