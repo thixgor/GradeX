@@ -12,9 +12,10 @@ import { listarSlugsDeQuiz, obterQuiz } from '@/lib/histologia/repositorio'
 import { BASE, jsonLdDeQuiz, metadadosDoModulo } from '@/lib/histologia/seo'
 
 /**
- * São só 19 quizzes, e eles não mudam entre deploys — este é o único lugar do
- * módulo onde pré-renderizar tudo faz sentido. (As 1.524 páginas do currículo
- * continuam sob demanda; ver o comentário em `[...slug]/page.tsx`.)
+ * São 84 quizzes — 19 do acervo e 65 gerados sobre as lâminas —, e eles não
+ * mudam entre deploys: este é o único lugar do módulo onde pré-renderizar tudo
+ * faz sentido. (As 1.524 páginas do currículo continuam sob demanda; ver o
+ * comentário em `[...slug]/page.tsx`.)
  */
 export function generateStaticParams() {
   return listarSlugsDeQuiz().map((slug) => ({ slug }))
@@ -68,8 +69,24 @@ export default async function PaginaDoQuiz({ params, searchParams }: Props) {
             <p className="editorial-mark mb-2">Quiz de identificação</p>
             <h1 className="font-heading text-2xl font-semibold tracking-tight">{quiz.titulo}</h1>
             <p className="mt-1 text-xs text-muted-foreground">
-              {quiz.questoes.length} questões · no acervo original: {quiz.tituloOriginal}
+              {quiz.questoes.length} questões
+              {quiz.autoria === 'acervo' && ` · no acervo original: ${quiz.tituloOriginal}`}
             </p>
+
+            {/*
+              Quem escreveu as perguntas é informação do aluno, não nota de
+              rodapé: muda o quanto ele deve confiar no gabarito e para onde
+              reclamar quando discordar dele.
+            */}
+            {quiz.autoria === 'proprio' && (
+              <p className="mt-3 rounded-lg border border-border bg-muted/25 p-3 text-xs leading-relaxed text-muted-foreground">
+                Questões montadas pela edição do Manual a partir das camadas de marcação das
+                lâminas deste tema. A fotomicrografia, a marcação e o nome da estrutura são do
+                acervo <strong>Digital Histology</strong> (CC BY-NC-SA 4.0); o enunciado, as
+                alternativas erradas e a devolutiva são nossos — e ainda não passaram por revisão
+                biomédica. Cada questão leva de volta à lâmina de origem depois que você responde.
+              </p>
+            )}
           </header>
 
           <QuizRunner quiz={paraCliente} modoInicial={modo} comGabarito={modo === 'pratica'} />

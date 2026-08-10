@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 import { CANONICAL_ORIGIN } from '@/lib/seo'
 import { podeIndexar } from './licenca'
 import { MODULOS_DE_LABORATORIO } from './laboratorio'
-import { CURRICULO, RESUMO_DE_QUIZZES, achatarCurriculo } from './repositorio'
+import { CURRICULO, TODOS_OS_QUIZZES, achatarCurriculo } from './repositorio'
 import { BASE } from './seo'
 
 /**
@@ -55,7 +55,7 @@ export function entradasDaHistologia(agora = new Date()): MetadataRoute.Sitemap 
     priority: 0.5,
   }))
 
-  const quizzes: MetadataRoute.Sitemap = RESUMO_DE_QUIZZES.map((quiz) => ({
+  const quizzes: MetadataRoute.Sitemap = TODOS_OS_QUIZZES.map((quiz) => ({
     url: canonico(`${BASE}/quizzes/${quiz.slug}`),
     lastModified: agora,
     changeFrequency: 'monthly' as const,

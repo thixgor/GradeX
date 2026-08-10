@@ -259,6 +259,25 @@ export const esquemaQuestao = z.object({
    * leitor de tela.
    */
   midia: esquemaMidia.nullable(),
+  /**
+   * Camada de marcação a sobrepor à imagem, nas questões geradas a partir das
+   * lâminas do atlas (`quizzes-proprios.ts`).
+   *
+   * O acervo desenha as camadas **no mesmo tamanho da imagem-base**, para
+   * sobreposição sem redimensionamento independente — é o que permite mostrar
+   * a marcação real do acervo sem gerar um asset novo e sem risco de a seta
+   * apontar dois pixels ao lado. Ausente nas questões do acervo, que já vêm
+   * com a marcação impressa na própria fotomicrografia.
+   */
+  camada: esquemaMidia.nullish(),
+  /**
+   * Lâmina de onde a questão saiu. Só as questões próprias têm: é o que
+   * permite oferecer "ver no microscópio" **depois** de responder — antes
+   * seria entregar o gabarito.
+   */
+  lamina: z
+    .object({ rota: z.string().min(1), titulo: z.string().min(1), estruturaId: z.string().min(1) })
+    .nullish(),
   alternativas: z.array(esquemaAlternativa).min(2),
   multipla: z.boolean(),
   /** Preenchida por `traduzirQuiz` quando o enunciado segue em inglês. */
@@ -274,7 +293,24 @@ export const esquemaQuiz = z.object({
   tituloOriginal: z.string(),
   idOrigem: z.number().int().nonnegative(),
   idH5p: z.string(),
+  /**
+   * Quem escreveu as questões.
+   *
+   * `acervo` são os 19 quizzes do Digital Histology, traduzidos mas não
+   * reescritos. `proprio` são os quizzes de identificação montados por
+   * `quizzes-proprios.ts` a partir das camadas de marcação das lâminas: a
+   * imagem e o nome da estrutura continuam sendo do acervo, mas a pergunta, os
+   * distratores e a devolutiva são da edição. A distinção não é cosmética — a
+   * interface a declara ao aluno, e é ela que decide se o texto passa pelo
+   * dicionário de tradução (que só faz sentido para o que chegou em inglês).
+   */
+  autoria: z.enum(['acervo', 'proprio']).default('acervo'),
   questoes: z.array(esquemaQuestao).min(1),
+  /**
+   * De onde vem o material. Nos quizzes do acervo, o pacote H5P de origem; nos
+   * próprios, o acervo que cedeu as imagens e o arquivo do gerador que os
+   * produziu — que é o que se audita para conferir uma questão.
+   */
   proveniencia: esquemaProveniencia,
   revisao: esquemaRevisao,
   /** Percentual de acerto para aprovação, herdado do pacote de origem. */
@@ -335,6 +371,13 @@ export const esquemaRelatorio = z.object({
   pacotesH5p: z.number().int(),
   quizzes: z.number().int(),
   questoes: z.number().int(),
+  /**
+   * Quizzes de identificação escritos pela edição a partir das lâminas.
+   * Contados à parte porque a conciliação com o acervo tem de continuar
+   * comparando maçã com maçã: os 19 do acervo são 19 para sempre.
+   */
+  quizzesProprios: z.number().int().default(0),
+  questoesProprias: z.number().int().default(0),
   referenciasDeArquivo: z.number().int(),
   assetsUnicos: z.number().int(),
   bytesUnicos: z.number().int(),

@@ -21,7 +21,13 @@ import { setorDe, tema } from '@/components/histologia/tema'
 import { MODULOS_DE_LABORATORIO } from '@/lib/histologia/laboratorio'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
 import { LARGURA_LAMINA, urlDaMidia, urlOtimizada } from '@/lib/histologia/midia'
-import { CURRICULO, RESUMO_DE_QUIZZES, TOTAIS, obterPagina } from '@/lib/histologia/repositorio'
+import {
+  CURRICULO,
+  RESUMO_DE_QUIZZES,
+  RESUMO_DE_QUIZZES_PROPRIOS,
+  TOTAIS,
+  obterPagina,
+} from '@/lib/histologia/repositorio'
 import { BASE, rotaDaPagina } from '@/lib/histologia/seo'
 
 /**
@@ -223,6 +229,9 @@ export default async function HomeDaHistologia() {
                 <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
                   {TOTAIS.questoes} questões sobre fotomicrografias reais, em modo prática (com
                   devolutiva imediata) ou prova (sem rótulos, com relatório de erros por assunto).
+                  São {TOTAIS.quizzesDoAcervo} quizzes do acervo, por assunto, e{' '}
+                  {TOTAIS.quizzesProprios} montados por tema sobre as marcações das próprias
+                  lâminas.
                 </p>
               </div>
               <Link
@@ -233,19 +242,28 @@ export default async function HomeDaHistologia() {
               </Link>
             </div>
             <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {RESUMO_DE_QUIZZES.slice(0, 6).map((quiz) => (
-                <li key={quiz.slug}>
-                  <Link
-                    href={`${BASE}/quizzes/${quiz.slug}`}
-                    className="flex min-h-[44px] items-center justify-between gap-2 rounded-lg border border-border bg-card p-3 transition-colors hover:border-rose-500/45"
-                  >
-                    <span className="text-sm font-semibold">{quiz.titulo}</span>
-                    <span className="shrink-0 text-[11px] text-muted-foreground">
-                      {quiz.questoes} questões
-                    </span>
-                  </Link>
-                </li>
-              ))}
+              {/* Uma amostra das duas pilhas: quem chega aqui precisa ver que
+                  existem os dois recortes, o amplo e o do tema. */}
+              {[...RESUMO_DE_QUIZZES.slice(0, 3), ...RESUMO_DE_QUIZZES_PROPRIOS.slice(0, 3)].map(
+                (quiz) => (
+                  <li key={quiz.slug}>
+                    <Link
+                      href={`${BASE}/quizzes/${quiz.slug}`}
+                      className="flex min-h-[44px] items-center justify-between gap-2 rounded-lg border border-border bg-card p-3 transition-colors hover:border-rose-500/45"
+                    >
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold">{quiz.titulo}</span>
+                        <span className="block truncate text-[10px] text-muted-foreground">
+                          {quiz.autoria === 'proprio' ? quiz.trilha : 'Quiz do acervo'}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-[11px] text-muted-foreground">
+                        {quiz.questoes} questões
+                      </span>
+                    </Link>
+                  </li>
+                ),
+              )}
             </ul>
           </section>
 

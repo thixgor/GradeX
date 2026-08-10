@@ -2,7 +2,16 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AlertCircle, Check, ChevronLeft, ChevronRight, RotateCcw, Timer, X } from 'lucide-react'
+import {
+  AlertCircle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Microscope,
+  RotateCcw,
+  Timer,
+  X,
+} from 'lucide-react'
 
 import type { Quiz } from '@/lib/histologia/esquemas'
 import { faixaDeAcerto, registrarEvento } from '@/lib/histologia/analitica'
@@ -156,6 +165,7 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
         const chave: {
           questoes: Array<{
             id: string
+            lamina: Quiz['questoes'][number]['lamina']
             alternativas: Array<{
               id: string
               correta: boolean
@@ -174,6 +184,9 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
             const porAlternativa = new Map(gabarito.alternativas.map((a) => [a.id, a]))
             return {
               ...questao,
+              // Só agora a lâmina de origem entra: no modo prova ela foi
+              // retirada do payload inicial junto com o gabarito.
+              lamina: gabarito.lamina ?? questao.lamina,
               alternativas: questao.alternativas.map((alternativa) => ({
                 ...alternativa,
                 correta: porAlternativa.get(alternativa.id)?.correta ?? false,
@@ -200,7 +213,9 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
       ...estado,
       questoes: estado.questoes.map((questao) => {
         const completa = quizCompleto.questoes.find((q) => q.id === questao.id)
-        return completa ? { ...questao, alternativas: completa.alternativas } : questao
+        return completa
+          ? { ...questao, alternativas: completa.alternativas, lamina: completa.lamina }
+          : questao
       }),
     }
     setEstado(estadoCorrigido)
@@ -246,6 +261,15 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
   // A imagem é a própria pergunta: o aluno não consegue responder antes de
   // ela aparecer, então ela entra otimizada e com prioridade.
   const urlImagem = urlOtimizada(questao.midia ? urlDaMidia(questao.midia) : null, LARGURA_LAMINA)
+  /*
+   * Camada de marcação das questões próprias.
+   *
+   * Não passa pelo otimizador: são PNG de 19 KB de mediana com transparência, e
+   * a conversão custaria mais transformações do que os quilobytes que
+   * economizaria — a mesma razão pela qual o microscópio também as serve
+   * direto da origem.
+   */
+  const urlCamada = questao.camada ? urlDaMidia(questao.camada) : null
 
   return (
     <div>
@@ -313,7 +337,19 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
         {questao.enunciadoPendente && <TermoNoOriginal />}
 
         {urlImagem && questao.midia && (
-          <figure className="mt-3 overflow-hidden rounded-lg border border-border bg-[#0d1210]">
+          /*
+           * Com camada, as duas imagens ocupam a *mesma* caixa e usam o mesmo
+           * `object-contain`: como o acervo desenha a marcação no tamanho exato
+           * da base, o retângulo renderizado é idêntico e a seta cai onde tem de
+           * cair. A proporção fixa da figura evita o salto de layout — as
+           * lâminas do atlas não declaram dimensão, e sem ela o texto abaixo
+           * pularia quando a imagem chegasse.
+           */
+          <figure
+            className={`relative mt-3 overflow-hidden rounded-lg border border-border bg-[#0d1210] ${
+              urlCamada ? 'aspect-[3/2]' : ''
+            }`}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urlImagem}
@@ -328,8 +364,24 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
               width={questao.midia.largura}
               height={questao.midia.altura}
               sizes="(max-width: 768px) 100vw, 720px"
-              className="max-h-[420px] w-full object-contain"
+              className={
+                urlCamada
+                  ? 'absolute inset-0 h-full w-full object-contain'
+                  : 'max-h-[420px] w-full object-contain'
+              }
             />
+            {urlCamada && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={urlCamada}
+                // A marcação é decorativa para o leitor de tela: quem descreve o
+                // que se pede é o enunciado, e repetir aqui só duplicaria a
+                // leitura sem acrescentar informação.
+                alt=""
+                aria-hidden
+                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+              />
+            )}
           </figure>
         )}
 
@@ -472,6 +524,25 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
                   </div>
                 ) : null,
               )}
+
+            {/*
+              A ponte de volta para a lâmina — e só aqui, depois de responder.
+              Este link abre a lâmina com a camada da resposta já acesa; oferecê-lo
+              antes seria entregar o gabarito num clique. É também o que separa
+              errar de aprender: quem errou vai ver a estrutura marcada no corte
+              inteiro, com as vizinhas ao redor, em vez de só ler que errou.
+            */}
+            {questao.lamina && (
+              <Link
+                href={`${BASE}/${questao.lamina.rota}?estrutura=${encodeURIComponent(
+                  questao.lamina.estruturaId,
+                )}`}
+                className="mt-2.5 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-semibold transition-colors hover:border-teal-500/50"
+              >
+                <Microscope className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+                Ver esta estrutura no microscópio
+              </Link>
+            )}
           </div>
         )}
 
@@ -679,11 +750,30 @@ function Relatorio({
                   </span>
                 </p>
                 {!certo && (
-                  <p className="mt-1.5 pl-7 text-xs leading-relaxed text-muted-foreground">
-                    <span className="font-semibold">Resposta correta: </span>
-                    {corretas.map((a) => a.texto).join(', ')}
-                    {corretas[0]?.feedback && ` — ${corretas[0].feedback}`}
-                  </p>
+                  <div className="pl-7">
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                      <span className="font-semibold">Resposta correta: </span>
+                      {corretas.map((a) => a.texto).join(', ')}
+                      {corretas[0]?.feedback && ` — ${corretas[0].feedback}`}
+                    </p>
+                    {/*
+                      "Reveja essas lâminas antes de qualquer outra coisa", diz o
+                      bloco acima. Sem um link, revê-las custa procurar a lâmina
+                      no atlas e a camada certa dentro dela — atrito suficiente
+                      para a maioria não fazer.
+                    */}
+                    {questao.lamina && (
+                      <Link
+                        href={`${BASE}/${questao.lamina.rota}?estrutura=${encodeURIComponent(
+                          questao.lamina.estruturaId,
+                        )}`}
+                        className="mt-1.5 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-semibold transition-colors hover:border-teal-500/50"
+                      >
+                        <Microscope className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+                        Rever no microscópio
+                      </Link>
+                    )}
+                  </div>
                 )}
               </li>
             )

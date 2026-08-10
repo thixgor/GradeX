@@ -45,6 +45,11 @@ import {
   traduzirTermo,
 } from '../../lib/histologia/glossario.ts'
 import { traduzirNoDoCurriculo, traduzirTitulo } from '../../lib/histologia/titulos.ts'
+import {
+  gerarQuizzesProprios,
+  resumirQuizzesProprios,
+  slugDoTema,
+} from '../../lib/histologia/quizzes-proprios.ts'
 
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const dirAcervo = path.join(raiz, 'public/Manual-Histologia')
@@ -567,6 +572,10 @@ for (const bruto of quizzesBrutos) {
     tituloOriginal: bruto.titulo_original,
     idOrigem: bruto.id_pagina,
     idH5p: String(bruto.id_h5p),
+    // Explícito no dado, e não deixado ao valor padrão do schema: os JSON são
+    // lidos com `as Quiz` na renderização, sem passar pelo Zod, e um campo que
+    // só existe depois do `parse` chegaria `undefined` à interface.
+    autoria: 'acervo',
     questoes,
     proveniencia: {
       urlOrigem: bruto.url_origem,
@@ -608,6 +617,46 @@ for (const quiz of quizzesConvertidos) {
     }
     marcar(sub)
   }
+}
+
+/* ────────────────── quizzes próprios, a partir das lâminas ────────────────── */
+
+/**
+ * Os quizzes de identificação escritos pela edição.
+ *
+ * Não vêm do acervo: nascem aqui, das camadas de marcação que as lâminas já
+ * trazem. Por isso são gerados **depois** das páginas — precisam delas prontas,
+ * com rótulo traduzido e mídia resolvida — e contados **à parte** na
+ * conciliação, que continua comparando os 19 quizzes do acervo com os 19 do
+ * acervo. A regra e o porquê de cada escolha estão em
+ * `lib/histologia/quizzes-proprios.ts`.
+ */
+const quizzesProprios = gerarQuizzesProprios(paginasConvertidas, { acessadoEm: ACESSADO_EM })
+const resumoDeProprios = resumirQuizzesProprios(quizzesProprios, paginasConvertidas)
+const slugsProprios = new Set(quizzesProprios.map((q) => q.slug))
+
+/*
+ * Aqui a ligação lâmina→quiz é exata, e não uma aposta no título: a lâmina
+ * anuncia o quiz do seu próprio tema porque foi o tema dela que o gerou. Vale
+ * inclusive para as lâminas que não renderam questão — quem está estudando
+ * "Corpúsculo renal" quer o quiz de corpúsculo renal, tenha aquela imagem
+ * específica caído no sorteio ou não.
+ */
+for (const pagina of paginasConvertidas) {
+  if (pagina.tipo !== 'lamina') continue
+  const slug = slugDoTema(pagina.caminho)
+  if (!slug || !slugsProprios.has(slug)) continue
+  if (!pagina.quizzes.includes(slug)) pagina.quizzes.push(slug)
+}
+
+for (const resumo of resumoDeProprios) {
+  entradasDeBusca.push({
+    t: 'q',
+    u: `quizzes/${resumo.slug}`,
+    n: `Quiz: ${resumo.titulo}`,
+    b: 'Quizzes',
+    k: chaveDeBusca(`${resumo.titulo} ${resumo.trilha} quiz identificacao laminas`),
+  })
 }
 
 /* ────────────────────────── currículo ────────────────────────── */
@@ -684,6 +733,14 @@ await escrever(
   })),
 )
 
+// Diretório separado, e não misturado com os 19 do acervo: manter o artefato
+// do acervo intocado é o que permite conferi-lo contra a origem a qualquer
+// momento sem ter de filtrar o que é nosso.
+for (const quiz of quizzesProprios) {
+  await escrever(path.join(dirSaida, 'quizzes-proprios', `${quiz.slug}.json`), quiz)
+}
+await escrever(path.join(dirSaida, 'quizzes-proprios.json'), resumoDeProprios)
+
 /**
  * Gera o módulo de carregadores.
  *
@@ -696,6 +753,12 @@ const linhasFragmento = listaFragmentos
   .join('\n')
 const linhasQuiz = quizzesConvertidos
   .map((q) => `  ${JSON.stringify(q.slug)}: () => import('@/data/histologia/quizzes/${q.slug}.json'),`)
+  .join('\n')
+const linhasQuizProprio = quizzesProprios
+  .map(
+    (q) =>
+      `  ${JSON.stringify(q.slug)}: () => import('@/data/histologia/quizzes-proprios/${q.slug}.json'),`,
+  )
   .join('\n')
 
 await mkdir(path.join(raiz, 'lib/histologia'), { recursive: true })
@@ -723,6 +786,14 @@ ${linhasFragmento}
 
 export const QUIZZES: Record<string, Carregador> = {
 ${linhasQuiz}
+}
+
+// Quizzes de identificação escritos pela edição a partir das lâminas. Mapa
+// separado porque a origem é outra — e porque \`obterQuiz\` decide por ele se o
+// texto passa pelo dicionário de tradução, que só vale para o que veio em
+// inglês.
+export const QUIZZES_PROPRIOS: Record<string, Carregador> = {
+${linhasQuizProprio}
 }
 `,
   'utf8',
@@ -829,6 +900,14 @@ const relatorio = {
   pacotesH5p,
   quizzes: quizzesConvertidos.length,
   questoes: totalQuestoes,
+  /*
+   * Fora da conciliação de propósito: estes não vieram do acervo, então não há
+   * número da origem com que comparar. O que os trava é
+   * `__tests__/histologia/quizzes-proprios.test.ts`, que revalida cada questão
+   * contra o schema e contra as regras que as geraram.
+   */
+  quizzesProprios: quizzesProprios.length,
+  questoesProprias: quizzesProprios.reduce((n, q) => n + q.questoes.length, 0),
   referenciasDeArquivo: midiaBruta.length,
   assetsUnicos: assetsPorSha.size,
   bytesUnicos,
@@ -865,6 +944,10 @@ for (const [chave, valor] of Object.entries(obtido)) {
 }
 console.log(`  ${'lâminas'.padEnd(22)} ${String(laminas).padStart(6)}`)
 console.log(`  ${'seções (índice)'.padEnd(22)} ${String(secoes).padStart(6)}`)
+console.log(
+  `  ${'quizzes próprios'.padEnd(22)} ${String(quizzesProprios.length).padStart(6)}` +
+    `  (${relatorio.questoesProprias} questões de identificação)`,
+)
 console.log(`  ${'entradas de busca'.padEnd(22)} ${String(entradasDeBusca.length).padStart(6)}`)
 console.log(`  ${'fragmentos'.padEnd(22)} ${String(fragmentos.size).padStart(6)}  (${(bytesFragmentos / 1e6).toFixed(1)} MB)`)
 console.log(

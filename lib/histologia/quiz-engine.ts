@@ -188,11 +188,24 @@ export function alternativasParaCliente(questao: Questao, modo: Modo) {
   }))
 }
 
-/** Remove o gabarito de um quiz inteiro, para o modo prova. */
+/**
+ * Remove o gabarito de um quiz inteiro, para o modo prova.
+ *
+ * Tira também a referência à lâmina de origem das questões próprias. Ela
+ * parece inofensiva — serve para o link "ver no microscópio" — mas o
+ * `estruturaId` é o rótulo da estrutura em forma de slug: deixá-la no HTML
+ * seria publicar o gabarito em inglês ao lado da pergunta. A referência volta
+ * junto com o gabarito, na finalização, e o relatório continua levando de
+ * volta à lâmina.
+ */
 export function quizParaCliente(quiz: Quiz, modo: Modo): Quiz {
   if (modo === 'pratica') return quiz
   return {
     ...quiz,
-    questoes: quiz.questoes.map((q) => ({ ...q, alternativas: alternativasParaCliente(q, modo) })),
+    questoes: quiz.questoes.map((q) => ({
+      ...q,
+      lamina: null,
+      alternativas: alternativasParaCliente(q, modo),
+    })),
   }
 }

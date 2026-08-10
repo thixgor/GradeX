@@ -43,6 +43,10 @@ export async function GET(_requisicao: Request, { params }: { params: { slug: st
       slug: quiz.slug,
       questoes: quiz.questoes.map((questao) => ({
         id: questao.id,
+        // A lâmina de origem viaja com o gabarito, e não com a questão: o
+        // `estruturaId` nomeia a estrutura, então antes da correção ele seria
+        // resposta. Depois dela, é o que leva o aluno de volta ao corte.
+        lamina: questao.lamina ?? null,
         alternativas: questao.alternativas.map((alternativa) => ({
           id: alternativa.id,
           correta: alternativa.correta,

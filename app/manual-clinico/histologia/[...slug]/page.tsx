@@ -15,7 +15,7 @@ import {
   urlOtimizada,
 } from '@/lib/histologia/midia'
 import {
-  RESUMO_DE_QUIZZES,
+  TODOS_OS_QUIZZES,
   obterFragmento,
   obterNo,
   obterPagina,
@@ -111,7 +111,14 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
     .map((p) => ({ rota: p.caminho.join('/'), titulo: p.titulo, miniatura: p.base }))
 
   const { anterior, proxima } = vizinhas(params.slug)
-  const quizzes = RESUMO_DE_QUIZZES.filter((q) => pagina.quizzes.includes(q.slug))
+  /*
+   * As duas pilhas de quiz: o do assunto, vindo do acervo, e o do tema desta
+   * lâmina, montado sobre as marcações dela e das vizinhas. O do tema vem
+   * primeiro — é o mais próximo do que está na tela.
+   */
+  const quizzes = TODOS_OS_QUIZZES.filter((q) => pagina.quizzes.includes(q.slug)).sort(
+    (a, b) => Number(b.autoria === 'proprio') - Number(a.autoria === 'proprio'),
+  )
   const imagem = pagina.base ? urlDaMidia(pagina.base) : null
 
   /*

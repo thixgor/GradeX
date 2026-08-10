@@ -19,6 +19,7 @@ const QUIZ: Quiz = {
   tituloOriginal: 'Bone quiz',
   idOrigem: 21102,
   idH5p: '37',
+  autoria: 'acervo',
   percentualAprovacao: 50,
   proveniencia: {
     urlOrigem: 'https://digitalhistology.org/quizzes/bone/',
@@ -140,6 +141,32 @@ describe('modos', () => {
     // Serializado, nada do gabarito sobrevive — é o HTML que o servidor manda.
     const serializado = JSON.stringify(seguro)
     expect(serializado).not.toContain('Correto.')
+  })
+
+  it('prova também tira a lâmina de origem, que nomeia a estrutura', () => {
+    /*
+     * Nas questões próprias, `lamina.estruturaId` é o rótulo da resposta em
+     * forma de slug — "glomerulus". Ele existe para o link "ver no
+     * microscópio", que só aparece depois de responder; deixá-lo no payload
+     * inicial publicaria o gabarito ao lado da pergunta.
+     */
+    const comLamina: Quiz = {
+      ...QUIZ,
+      questoes: [
+        {
+          ...QUIZ.questoes[0],
+          lamina: {
+            rota: 'orgaos-e-sistemas/sistema-urinario/renal-corpuscle/renal-corpuscle-2',
+            titulo: 'Corpúsculo renal 2',
+            estruturaId: 'glomerulus',
+          },
+        },
+      ],
+    }
+    const serializado = JSON.stringify(quizParaCliente(comLamina, 'prova'))
+    expect(serializado).not.toContain('glomerulus')
+    // Em prática ela vem junto: a devolutiva é imediata e o link, parte dela.
+    expect(JSON.stringify(quizParaCliente(comLamina, 'pratica'))).toContain('glomerulus')
   })
 
   it('prática mantém a devolutiva, que é imediata por desenho', () => {

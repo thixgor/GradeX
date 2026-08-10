@@ -221,7 +221,11 @@ describe('currículo e busca', () => {
   it('o índice do cliente não carrega estruturas — elas ficam no servidor', () => {
     const cliente: Array<{ t: string }> = ler('busca-cliente.json')
     expect(cliente.some((e) => e.t === 'e')).toBe(false)
-    expect(cliente).toHaveLength(relatorio.paginas + relatorio.quizzes)
+    // Uma entrada por página e uma por quiz — os do acervo e os que a edição
+    // monta sobre as lâminas, que também precisam ser encontráveis pela busca.
+    expect(cliente).toHaveLength(
+      relatorio.paginas + relatorio.quizzes + relatorio.quizzesProprios,
+    )
   })
 
   it('o índice do cliente cabe num carregamento sob demanda', () => {
@@ -320,6 +324,9 @@ describe('carregadores gerados', () => {
     }
     for (const arquivo of readdirSync(path.join(DADOS, 'quizzes'))) {
       expect(fonte).toContain(`data/histologia/quizzes/${arquivo}`)
+    }
+    for (const arquivo of readdirSync(path.join(DADOS, 'quizzes-proprios'))) {
+      expect(fonte).toContain(`data/histologia/quizzes-proprios/${arquivo}`)
     }
   })
 })

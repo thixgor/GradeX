@@ -2,13 +2,14 @@ import 'server-only'
 
 import type { NoCurriculo, Pagina, Quiz, Relatorio } from './esquemas'
 
-import { FRAGMENTOS, QUIZZES } from './carregadores.gerado'
+import { FRAGMENTOS, QUIZZES, QUIZZES_PROPRIOS } from './carregadores.gerado'
 import { traduzirTermo } from './glossario'
 import { traduzirQuiz } from './quiz-textos'
 
 import curriculoBruto from '@/data/histologia/curriculo.json'
 import relatorioBruto from '@/data/histologia/relatorio.json'
 import listaDeQuizzes from '@/data/histologia/quizzes.json'
+import listaDeQuizzesProprios from '@/data/histologia/quizzes-proprios.json'
 
 /**
  * Acesso aos dados do Manual da Histologia — **somente no servidor**.
@@ -38,13 +39,39 @@ import listaDeQuizzes from '@/data/histologia/quizzes.json'
  */
 export const CURRICULO = curriculoBruto as unknown as NoCurriculo[]
 export const RELATORIO = relatorioBruto as Relatorio
-export const RESUMO_DE_QUIZZES = listaDeQuizzes as Array<{
+export interface ResumoDeQuiz {
   slug: string
   titulo: string
-  tituloOriginal: string
   questoes: number
   comImagem: number
-}>
+  autoria: 'acervo' | 'proprio'
+  /** Só nos próprios: onde o tema fica no currículo e de quantas lâminas veio. */
+  trilha?: string
+  setor?: string
+  laminas?: number
+  tituloOriginal?: string
+}
+
+export const RESUMO_DE_QUIZZES: ResumoDeQuiz[] = (
+  listaDeQuizzes as Array<Omit<ResumoDeQuiz, 'autoria'>>
+).map((q) => ({ ...q, autoria: 'acervo' }))
+
+/**
+ * Quizzes de identificação escritos pela edição a partir das lâminas.
+ *
+ * Ficam numa lista à parte porque são coisa diferente — a interface diz de
+ * quem é cada questão — mas entram na mesma navegação: quem estuda não quer
+ * saber de qual pilha veio o exercício.
+ */
+export const RESUMO_DE_QUIZZES_PROPRIOS: ResumoDeQuiz[] = (
+  listaDeQuizzesProprios as Array<Omit<ResumoDeQuiz, 'autoria'>>
+).map((q) => ({ ...q, autoria: 'proprio' }))
+
+/** As duas pilhas juntas, na ordem em que a interface as apresenta. */
+export const TODOS_OS_QUIZZES: ResumoDeQuiz[] = [
+  ...RESUMO_DE_QUIZZES,
+  ...RESUMO_DE_QUIZZES_PROPRIOS,
+]
 
 /** Chave do fragmento que contém uma rota. Espelha a regra do pipeline. */
 function chaveDoFragmento(caminho: string[]): string {
@@ -80,12 +107,23 @@ export async function obterFragmento(caminho: string[]): Promise<Pagina[]> {
  */
 export async function obterQuiz(slug: string): Promise<Quiz | null> {
   const carregar = QUIZZES[slug]
-  if (!carregar) return null
-  return traduzirQuiz((await carregar()).default as Quiz, traduzirTermo)
+  if (carregar) return traduzirQuiz((await carregar()).default as Quiz, traduzirTermo)
+
+  /*
+   * Os quizzes próprios não passam pelo dicionário — e não é economia, é
+   * correção. `traduzirQuiz` procura o texto em inglês num mapa de traduções;
+   * um enunciado que já nasceu em português não está lá, e o quiz inteiro
+   * voltaria marcado como "ainda no original". A pendência que estes têm é
+   * outra, e já vem gravada no dado: a devolutiva que reaproveita a explicação
+   * do acervo chega com `feedbackPendente` desde a geração.
+   */
+  const carregarProprio = QUIZZES_PROPRIOS[slug]
+  if (!carregarProprio) return null
+  return (await carregarProprio()).default as Quiz
 }
 
 export function listarSlugsDeQuiz(): string[] {
-  return Object.keys(QUIZZES)
+  return [...Object.keys(QUIZZES), ...Object.keys(QUIZZES_PROPRIOS)]
 }
 
 /* ─────────────────────── navegação no currículo ─────────────────────── */
@@ -136,6 +174,12 @@ export const TOTAIS = {
   estruturas: CURRICULO.reduce((n, s) => n + s.estruturas, 0),
   setores: CURRICULO.length,
   subsetores: CURRICULO.reduce((n, s) => n + s.filhos.length, 0),
-  quizzes: RESUMO_DE_QUIZZES.length,
-  questoes: RESUMO_DE_QUIZZES.reduce((n, q) => n + q.questoes, 0),
+  quizzes: TODOS_OS_QUIZZES.length,
+  questoes: TODOS_OS_QUIZZES.reduce((n, q) => n + q.questoes, 0),
+  // A divisão por autoria não é detalhe de bastidor: é o que a página de
+  // quizzes precisa para dizer ao aluno o que veio do acervo e o que escrevemos.
+  quizzesDoAcervo: RESUMO_DE_QUIZZES.length,
+  questoesDoAcervo: RESUMO_DE_QUIZZES.reduce((n, q) => n + q.questoes, 0),
+  quizzesProprios: RESUMO_DE_QUIZZES_PROPRIOS.length,
+  questoesProprias: RESUMO_DE_QUIZZES_PROPRIOS.reduce((n, q) => n + q.questoes, 0),
 }
