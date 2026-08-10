@@ -5,9 +5,13 @@ import { apendiciteAguda } from './doencas/apendicite-aguda.ts'
 import { carcinomaEscamosoDoColoUterino } from './doencas/carcinoma-escamoso-do-colo-uterino.ts'
 import { carcinomaHepatocelular } from './doencas/carcinoma-hepatocelular.ts'
 import { carcinomaPapiliferoDaTireoide } from './doencas/carcinoma-papilifero-da-tireoide.ts'
+import { coliteIsquemica } from './doencas/colite-isquemica.ts'
+import { corioamnioniteAguda } from './doencas/corioamnionite-aguda.ts'
 import { doencaCeliaca } from './doencas/doenca-celiaca.ts'
 import { doencaDeCrohn } from './doencas/doenca-de-crohn.ts'
+import { esofagiteEosinofilica } from './doencas/esofagite-eosinofilica.ts'
 import { esteatoseHepatica } from './doencas/esteatose-hepatica.ts'
+import { giardiase } from './doencas/giardiase.ts'
 import { glioblastoma } from './doencas/glioblastoma.ts'
 import { hiperplasiaNodularDaProstata } from './doencas/hiperplasia-nodular-da-prostata.ts'
 import { linfomaDeHodgkin } from './doencas/linfoma-de-hodgkin.ts'
@@ -44,7 +48,7 @@ import { tuberculosePulmonar } from './doencas/tuberculose-pulmonar.ts'
  * ## O que ele deliberadamente não faz
  *
  * Não tenta promover automaticamente todo o catálogo. O núcleo inicial de seis
- * doenças foi ampliado para dezoito capítulos aprofundados, cobrindo também
+ * doenças foi ampliado para vinte e dois capítulos aprofundados, cobrindo também
  * enteropatias, infecção óssea e neoplasias endócrina, cutânea, óssea e meníngea.
  * A curadoria do restante é incremental:
  * acrescentar uma doença é acrescentar um arquivo aqui e rodar o pipeline.
@@ -55,12 +59,15 @@ import { tuberculosePulmonar } from './doencas/tuberculose-pulmonar.ts'
  * consolidação muda de forma que altere as rotas ou o vínculo entre doença e
  * entradas catalogadas — é o que permite auditar por que um derivado mudou.
  */
-export const VERSAO_DO_MAPA = 3
+export const VERSAO_DO_MAPA = 4
 
 export const DOENCAS: DoencaCanonicaEntrada[] = [
   apendiciteAguda,
   doencaCeliaca,
   doencaDeCrohn,
+  coliteIsquemica,
+  giardiase,
+  esofagiteEosinofilica,
   tuberculosePulmonar,
   tromboseVenosa,
   esteatoseHepatica,
@@ -76,6 +83,7 @@ export const DOENCAS: DoencaCanonicaEntrada[] = [
   meningiomaGrau1,
   linfomaDeHodgkin,
   carcinomaEscamosoDoColoUterino,
+  corioamnioniteAguda,
 ]
 
 /**

@@ -1,0 +1,82 @@
+import type { DoencaCanonicaEntrada } from '../../esquemas'
+
+export const coliteIsquemica: DoencaCanonicaEntrada = {
+  id: 'colite-isquemica',
+  slug: 'colite-isquemica',
+  nome: 'Colite isquêmica',
+  sinonimos: ['isquemia do cólon'],
+  sinonimosEmIngles: ['ischemic colitis', 'colon ischemia'],
+  sistemaId: 'gastrointestinal',
+  orgaos: ['Cólon'],
+  natureza: 'nao-neoplasica',
+  catalogoIds: [
+    'histopathology-atlas-ischemic-colitis-38ada11483',
+    'histopathology-atlas-ischemic-colitis-811148c39f',
+  ],
+  mecanismoIds: ['isquemia-infarto', 'necrose-coagulativa', 'reparo-fibrose'],
+  padroesMorfologicos: ['criptas murchas', 'hialinização da lâmina própria', 'hemorragia', 'necrose superficial'],
+  conteudo: {
+    objetivos: ['Reconhecer criptas murchas e lâmina própria hialinizada.', 'Diferenciar isquemia aguda de colites infecciosa e inflamatória.', 'Relacionar profundidade da necrose a reversibilidade e perfuração.'],
+    definicao: 'Lesão do cólon causada por oferta sanguínea insuficiente para a demanda tecidual, variando de dano mucoso transitório a infarto transmural e perfuração.',
+    etiologias: [
+      { agente: 'Hipoperfusão sistêmica ou vasoconstrição', categoria: 'isquemica', explicacao: 'Baixo fluxo compromete primeiro zonas de fronteira e a superfície mucosa de maior vulnerabilidade.' },
+      { agente: 'Oclusão arterial ou venosa', categoria: 'isquemica', explicacao: 'Trombo, êmbolo ou obstrução venosa reduz entrada ou saída de sangue e amplia necrose.' },
+    ],
+    fatoresDeRisco: [{ fator: 'Aterosclerose, hipotensão, arritmia, cirurgia vascular ou drogas vasoconstritoras', porQue: 'Reduzem reserva perfusional ou precipitam baixo fluxo colônico.', forca: 'estabelecido' }],
+    histologiaNormalDeReferencia: [{
+      titulo: 'Cólon normal — criptas e lâmina própria',
+      caminhoNormal: ['orgaos-e-sistemas', 'sistema-digestorio', 'tubular-digestive-system', 'large-intestine-and-anus', 'large-intestine-1'],
+      oQueObservar: 'Criptas retas e paralelas, epitélio viável, lâmina própria frouxa e sem hemorragia ou material hialino.',
+      aproximado: false,
+    }],
+    mecanismoPatologicoGeral: [
+      { mecanismoId: 'isquemia-infarto', aplicacao: 'A queda de perfusão esgota ATP do epitélio superficial e das criptas, produzindo desprendimento, murchamento e hemorragia antes da necrose profunda.' },
+      { mecanismoId: 'necrose-coagulativa', aplicacao: 'Isquemia sustentada preserva temporariamente contornos de criptas mortas e pode avançar pela parede até infarto transmural.' },
+      { mecanismoId: 'reparo-fibrose', aplicacao: 'Lesões sobrevividas regeneram a mucosa; dano profundo organiza-se por fibrose e pode formar estenose segmentar tardia.' },
+    ],
+    fisiopatologiaEspecifica: [
+      { etapa: 'gatilho', titulo: 'Fluxo colônico cai abaixo da demanda', porQue: 'Oclusão ou baixo débito supera a circulação colateral, sobretudo em zonas de fronteira.' },
+      { etapa: 'alvo', titulo: 'Epitélio superficial e criptas', porQue: 'Alta renovação e posição distal ao suprimento tornam a mucosa o primeiro compartimento lesado.' },
+      { etapa: 'resposta-celular', titulo: 'Perda de ATP e desprendimento epitelial', porQue: 'Falha de bombas iônicas causa tumefação, perda de adesão e morte.', achadoAssociado: 'Epitélio superficial destacado e criptas murchas.' },
+      { etapa: 'resposta-tecidual', titulo: 'Hemorragia e hialinização da lâmina própria', porQue: 'Reperfusão e dano microvascular extravasam hemácias e proteínas no estroma.' },
+      { etapa: 'morfologia', titulo: 'Necrose mucosa ou transmural', porQue: 'Duração e intensidade determinam se a lesão permanece reversível ou destrói toda a parede.' },
+      { etapa: 'complicacao', titulo: 'Perfuração, sepse ou estenose', porQue: 'Necrose profunda rompe barreira; reparo cicatricial contrai segmentos sobreviventes.' },
+    ],
+    macroscopia: [{ achado: 'Mucosa segmentar edemaciada, hemorrágica e ulcerada', processo: 'Dano de baixo fluxo em território vascular vulnerável.', consequencia: 'Distribuição segmentar apoia isquemia e orienta amostragem de borda e centro.', peso: 'sugestivo' }],
+    histopatologia: {
+      panoramica: { procure: 'Mapeie distribuição segmentar e profundidade de necrose, preservando a orientação da parede.', achados: [{ achado: 'Dano abrupto em mucosa antes preservada', processo: 'Território hipoperfundido cria limite vascular relativamente nítido.', consequencia: 'Favorece isquemia frente a colite difusa, mas exige correlação clínica.', peso: 'sugestivo' }] },
+      pequeno: { procure: 'Procure criptas murchas, perda superficial, hemorragia e lâmina própria hialinizada.', achados: [{ achado: 'Criptas atróficas e murchas em estroma hialinizado', processo: 'Necrose epitelial e extravasamento de proteínas plasmáticas.', consequencia: 'É a combinação microscópica mais útil para reconhecer isquemia aguda.', peso: 'sugestivo' }] },
+      medio: { procure: 'Avalie pseudomembrana, regeneração e extensão às camadas profundas.', achados: [{ achado: 'Necrose superficial com fibrina e neutrófilos', processo: 'Barreira morta recebe exsudato inflamatório secundário.', consequencia: 'Pode simular colite por C. difficile; hialinização e contexto separam.', peso: 'frequente' }] },
+      grande: { procure: 'Confirme células-fantasma, hemorragia e epitélio regenerativo nas bordas.', achados: [{ achado: 'Contornos de criptas necróticas com perda nuclear', processo: 'Necrose coagulativa preserva arquitetura por curto intervalo.', consequencia: 'Confirma morte isquêmica quando integrada ao padrão estromal.', peso: 'necessário' }] },
+      sintese: 'Criptas murchas e lâmina própria hialinizada sustentam isquemia, mas profundidade, distribuição, medicamentos, cultura e endoscopia determinam gravidade e excluem mimetizadores.',
+    },
+    correlacaoClinica: [{ achadoMorfologico: 'Hemorragia e necrose mucosa segmentar', consequenciaFuncional: 'Perda de barreira e sangramento luminal.', manifestacao: 'Dor abdominal súbita seguida de hematoquezia.' }],
+    diagnosticosDiferenciais: [
+      { nome: 'Colite por Clostridioides difficile', motivoDaConfusao: 'Também produz necrose superficial e pseudomembrana.', achadosCompartilhados: ['pseudomembrana', 'neutrófilos', 'necrose mucosa'], discriminador: 'Lesão vulcânica de criptas e teste microbiológico favorecem infecção; criptas murchas e hialinização favorecem isquemia.' },
+      { nome: 'Doença inflamatória intestinal', motivoDaConfusao: 'Pode ulcerar e produzir distorção e inflamação ativa.', achadosCompartilhados: ['ulceração', 'criptite', 'regeneração'], discriminador: 'Cronicidade difusa com plasmocitose basal e padrão clínico recorrente favorece DII.' },
+    ],
+    complicacoes: [{ complicacao: 'Infarto transmural e perfuração', mecanismo: 'Isquemia persistente destrói muscular e serosa, liberando conteúdo colônico.' }, { complicacao: 'Estenose isquêmica', mecanismo: 'Organização de dano profundo deposita colágeno e contrai a parede.' }],
+    normalVersusPatologico: [{ aspecto: 'Criptas', normal: 'Retas, viáveis e paralelas.', patologico: 'Murchas, separadas e com perda nuclear.' }, { aspecto: 'Lâmina própria', normal: 'Frouxa e celular.', patologico: 'Hemorrágica e hialinizada.' }],
+    resumoDeProva: ['Criptas murchas + lâmina própria hialinizada é a dupla clássica.', 'Profundidade separa dano transitório de infarto cirúrgico.', 'Pseudomembrana não é exclusiva de C. difficile.'],
+    armadilhas: ['Diagnosticar pela pseudomembrana isolada.', 'Não informar necrose transmural quando presente.'],
+    perguntasDeAutoavaliacao: [{
+      pergunta: 'Qual combinação favorece colite isquêmica aguda?',
+      alternativas: ['Criptas murchas e lâmina própria hialinizada.', 'Granulomas não caseosos.', 'Plasmocitose basal difusa isolada.', 'Parasitas aderidos à borda em escova.'],
+      indiceCorreto: 0,
+      devolutiva: 'A queda de fluxo lesa criptas e microvasos simultaneamente, produzindo murchamento epitelial e extravasamento proteico hialino; os demais achados apontam para Crohn, DII ou giardíase.',
+      nivel: 'essencial',
+    }],
+    referencias: [{
+      citacao: 'American College of Gastroenterology. Clinical Guideline: Epidemiology, Risk Factors, Patterns of Presentation, Diagnosis and Management of Colon Ischemia.',
+      url: 'https://acgcdn.gi.org/wp-content/uploads/2018/04/ACG-Colon-Ischemia-Guideline-Summary.pdf',
+      organizacao: 'ACG',
+      ano: 2015,
+    }],
+  },
+  revisao: {
+    estado: 'revisao-medica',
+    atualizadoEm: '2026-08-10',
+    pendencias: ['Revisão por patologista gastrointestinal antes da publicação médica definitiva.'],
+    historico: [{ data: '2026-08-10', autor: 'Edição Domine Aqui', nota: 'Capítulo aprofundado vinculado a duas lâminas de colite isquêmica.' }],
+  },
+}

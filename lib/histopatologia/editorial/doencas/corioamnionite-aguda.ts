@@ -1,0 +1,78 @@
+import type { DoencaCanonicaEntrada } from '../../esquemas'
+
+export const corioamnioniteAguda: DoencaCanonicaEntrada = {
+  id: 'corioamnionite-aguda',
+  slug: 'corioamnionite-aguda',
+  nome: 'Corioamnionite aguda histológica',
+  sinonimos: ['resposta inflamatória materna aguda das membranas'],
+  sinonimosEmIngles: ['acute histologic chorioamnionitis', 'maternal inflammatory response'],
+  sistemaId: 'ginecologico-placenta',
+  orgaos: ['Placenta', 'Membranas ovulares', 'Cordão umbilical'],
+  natureza: 'nao-neoplasica',
+  catalogoIds: ['histopathology-atlas-chorioamnionitis-f41d07715c'],
+  mecanismoIds: ['inflamacao-aguda', 'infeccao-persistente'],
+  padroesMorfologicos: ['neutrófilos no cório e âmnio', 'subcorionite', 'funisite', 'vasculite fetal'],
+  conteudo: {
+    objetivos: ['Distinguir resposta inflamatória materna da fetal.', 'Estadiar progressão do subcório ao âmnio e ao cordão.', 'Não igualar automaticamente corioamnionite histológica a cultura positiva.'],
+    definicao: 'Inflamação neutrofílica aguda das membranas e placa coriônica que representa resposta materna ao gradiente quimiotático da cavidade amniótica, com ou sem infecção microbiologicamente demonstrada.',
+    etiologias: [
+      { agente: 'Infecção ascendente do trato genital', categoria: 'infecciosa', explicacao: 'Microrganismos alcançam membranas e líquido amniótico, gerando gradiente que recruta neutrófilos maternos.' },
+      { agente: 'Inflamação intra-amniótica estéril', categoria: 'imunologica', explicacao: 'Sinais de dano também podem recrutar neutrófilos sem microrganismo detectável, por isso histologia não equivale sempre a infecção.' },
+    ],
+    fatoresDeRisco: [{ fator: 'Ruptura prolongada de membranas, trabalho de parto prolongado e prematuridade', porQue: 'Aumentam tempo e oportunidade de ascensão microbiana e exposição inflamatória.', forca: 'estabelecido' }],
+    histologiaNormalDeReferencia: [{
+      titulo: 'Placenta normal — placa coriônica e membranas',
+      caminhoNormal: ['orgaos-e-sistemas', 'sistema-reprodutor', 'feminino', 'placenta', 'placenta-1'],
+      oQueObservar: 'Âmnio, cório e placa coriônica sem migração neutrofílica; vasos fetais e cordão livres de inflamação mural.',
+      aproximado: false,
+    }],
+    mecanismoPatologicoGeral: [
+      { mecanismoId: 'inflamacao-aguda', aplicacao: 'Neutrófilos maternos migram da decídua e vasos maternos em direção à cavidade amniótica; resposta fetal aparece em vasos coriônicos e umbilicais.' },
+      { mecanismoId: 'infeccao-persistente', aplicacao: 'Quando microrganismos persistem no líquido e membranas, o estímulo mantém progressão do cório ao âmnio e pode envolver o compartimento fetal.' },
+    ],
+    fisiopatologiaEspecifica: [
+      { etapa: 'gatilho', titulo: 'Sinal microbiano ou estéril surge na cavidade amniótica', porQue: 'Produtos microbianos ou de dano ativam epitélio e mediadores inflamatórios.' },
+      { etapa: 'alvo', titulo: 'Membranas, placa coriônica e vasos fetais', porQue: 'O gradiente dirige células maternas pelas membranas e, se intenso, ativa circulação fetal.' },
+      { etapa: 'resposta-celular', titulo: 'Migração de neutrófilos maternos', porQue: 'Neutrófilos atravessam decídua e cório em direção ao âmnio.', achadoAssociado: 'Subcorionite/chorionite seguida de corioamnionite.' },
+      { etapa: 'resposta-tecidual', titulo: 'Progressão e necrose das membranas', porQue: 'Inflamação sustentada alcança âmnio e pode produzir debris e espessamento da membrana basal.' },
+      { etapa: 'morfologia', titulo: 'Resposta inflamatória fetal', porQue: 'Citocinas no líquido ativam neutrófilos fetais em vasos coriônicos e umbilicais.', achadoAssociado: 'Vasculite coriônica, flebite/arterite umbilical e funisite.' },
+      { etapa: 'complicacao', titulo: 'Parto prematuro e resposta inflamatória fetal sistêmica', porQue: 'Mediadores estimulam contrações e exposição fetal pode contribuir para morbidade neonatal.' },
+    ],
+    macroscopia: [{ achado: 'Membranas opacas, exsudativas ou com odor; aparência pode ser normal', processo: 'Edema e exsudato inflamatório variáveis.', consequencia: 'Macroscopia não exclui lesão histológica e não substitui amostragem padronizada.', peso: 'frequente' }],
+    histopatologia: {
+      panoramica: { procure: 'Oriente membranas em rolo, placa coriônica e cordão e determine quais compartimentos contêm neutrófilos.', achados: [{ achado: 'Inflamação seguindo gradiente até a superfície amniótica', processo: 'Quimiotaxia materna em direção ao líquido amniótico.', consequencia: 'Permite estadiar resposta materna pela profundidade alcançada.', peso: 'necessário' }] },
+      pequeno: { procure: 'Diferencie subcorionite, corionite e envolvimento do âmnio e procure vasos fetais.', achados: [{ achado: 'Neutrófilos no cório e âmnio', processo: 'Progressão da resposta inflamatória materna através das membranas.', consequencia: 'Define corioamnionite aguda histológica no sistema consensual.', peso: 'necessário' }] },
+      medio: { procure: 'Avalie densidade, microabscessos subcoriônicos e necrose para graduação.', achados: [{ achado: 'Inflamação intensa ou confluente com microabscesso', processo: 'Resposta quimiotática de alta intensidade.', consequencia: 'Aumenta o grau, separado do estágio anatômico de progressão.', peso: 'sugestivo' }] },
+      grande: { procure: 'Confirme neutrófilos e procure degeneração, cariorrexe e vasculite do cordão.', achados: [{ achado: 'Neutrófilos na parede de vaso umbilical ou geleia de Wharton', processo: 'Resposta fetal à inflamação intra-amniótica.', consequencia: 'Deve ser relatada separadamente por representar participação fetal.', peso: 'sugestivo' }] },
+      sintese: 'O laudo deve separar resposta materna e fetal, além de estágio e grau. Histologia documenta inflamação; cultura, clínica e testes moleculares determinam se há infecção e qual agente.',
+    },
+    correlacaoClinica: [{ achadoMorfologico: 'Funisite e vasculite fetal', consequenciaFuncional: 'Ativação inflamatória da circulação fetal.', manifestacao: 'Maior preocupação com resposta fetal sistêmica e morbidade neonatal.' }],
+    diagnosticosDiferenciais: [
+      { nome: 'Inflamação crônica das membranas', motivoDaConfusao: 'Também aumenta celularidade e pode associar-se a parto prematuro.', achadosCompartilhados: ['inflamação de membranas'], discriminador: 'Predomínio linfocitário ou histiocitário, não neutrofílico, define processo crônico.' },
+      { nome: 'Meconium e degeneração pós-parto', motivoDaConfusao: 'Pigmento, vacuolização e autólise podem simular dano inflamatório.', achadosCompartilhados: ['alteração de membranas', 'debris'], discriminador: 'Ausência de migração neutrofílica organizada ao longo do gradiente.' },
+    ],
+    complicacoes: [{ complicacao: 'Parto prematuro', mecanismo: 'Citocinas e prostaglandinas estimulam contratilidade e ruptura de membranas.' }, { complicacao: 'Resposta inflamatória fetal', mecanismo: 'Ativação de vasos fetais dissemina mediadores ao organismo neonatal.' }],
+    normalVersusPatologico: [{ aspecto: 'Membranas', normal: 'Sem neutrófilos.', patologico: 'Neutrófilos progridem do cório ao âmnio.' }, { aspecto: 'Cordão', normal: 'Vasos sem inflamação mural.', patologico: 'Flebite/arterite e funisite indicam resposta fetal.' }],
+    resumoDeProva: ['Materna: neutrófilos nas membranas; fetal: vasos coriônicos/umbilicais e funisite.', 'Estágio é extensão; grau é intensidade.', 'Histológica não significa necessariamente cultura positiva.'],
+    armadilhas: ['Misturar resposta materna e fetal no mesmo rótulo.', 'Usar corioamnionite histológica como sinônimo automático de infecção clínica.'],
+    perguntasDeAutoavaliacao: [{
+      pergunta: 'Qual achado representa resposta inflamatória fetal?',
+      alternativas: ['Neutrófilos na parede de vaso umbilical.', 'Neutrófilos restritos ao cório materno.', 'Calcificação vilositária.', 'Fibrina subcoriônica sem células.'],
+      indiceCorreto: 0,
+      devolutiva: 'Neutrófilos em vasos coriônicos ou umbilicais derivam da circulação fetal e constituem resposta fetal. A migração pelas membranas é resposta materna e deve ser estadiada separadamente.',
+      nivel: 'essencial',
+    }],
+    referencias: [{
+      citacao: 'Khong TY et al. Sampling and Definitions of Placental Lesions: Amsterdam Placental Workshop Group Consensus Statement. Arch Pathol Lab Med. 2016.',
+      url: 'https://pubmed.ncbi.nlm.nih.gov/27223167/',
+      organizacao: 'Amsterdam Placental Workshop Group',
+      ano: 2016,
+    }],
+  },
+  revisao: {
+    estado: 'revisao-medica',
+    atualizadoEm: '2026-08-10',
+    pendencias: ['Revisão por patologista perinatal antes da publicação médica definitiva.'],
+    historico: [{ data: '2026-08-10', autor: 'Edição Domine Aqui', nota: 'Capítulo aprofundado vinculado à lâmina de corioamnionite.' }],
+  },
+}
